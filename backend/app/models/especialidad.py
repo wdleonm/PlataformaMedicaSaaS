@@ -1,13 +1,11 @@
 """
 Modelo: Especialidad (tabla maestra compartida, sin RLS).
+Relación N:N con Especialista se gestiona desde el modelo Especialista
+para evitar ciclos de importación y problemas con link_model.
 """
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field
 from datetime import datetime
 from uuid import UUID, uuid4
-from typing import List, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from app.models.especialista import Especialista
 
 
 class Especialidad(SQLModel, table=True):
@@ -21,9 +19,3 @@ class Especialidad(SQLModel, table=True):
     activo: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-
-    # Relación N:N con Especialistas
-    especialistas: List["Especialista"] = Relationship(
-        back_populates="especialidades",
-        link_model="EspecialistaEspecialidad",
-    )
