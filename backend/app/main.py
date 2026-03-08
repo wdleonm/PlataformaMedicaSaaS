@@ -2,11 +2,11 @@
 Punto de entrada FastAPI.
 Fase 1: Configuración completa con CORS, routers y health check mejorado.
 """
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from app.database import engine
-from app.api import auth
+from app.api import auth, pacientes
 
 app = FastAPI(
     title="Odonto-Focus API",
@@ -25,6 +25,7 @@ app.add_middleware(
 
 # Routers
 app.include_router(auth.router)
+app.include_router(pacientes.router)
 
 
 @app.get("/health")
