@@ -184,7 +184,7 @@ En cada respuesta, Cursor debe indicar:
 
 #### 5.5 CRUD en UI
 - [x] Pacientes.
-- [ ] Historias clínicas, presupuestos, abonos, insumos, servicios. Formulario de abono que dispare la notificación (cola en backend).
+- [x] Historias clínicas, presupuestos, abonos, insumos, servicios. Formulario de abono que dispare la notificación (cola en backend).
 
 #### Criterios de aceptación Fase 5
 - Navegación completa; calendario funcional; odontograma visual y evolutivo; flujos de negocio accesibles desde la UI.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { Plus, Search, User, Phone, Mail, FileText, Calendar, Edit2, UserX, X, Loader2, AlertCircle, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +18,7 @@ interface Paciente {
 }
 
 export default function PacientesPage() {
+  const router = useRouter();
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -332,6 +334,13 @@ export default function PacientesPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={() => router.push(`/historias?paciente_id=${paciente.id}`)} 
+                          className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors" 
+                          title="Ver Historia Clínica"
+                        >
+                          <FileText size={16} />
+                        </button>
                         <button 
                           onClick={() => handleOpenEditModal(paciente)} 
                           className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors" 
