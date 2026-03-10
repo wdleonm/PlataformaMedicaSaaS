@@ -1,19 +1,33 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Outfit } from 'next/font/google';
+import './globals.css';
+import { AuthProvider } from '@/contexts/AuthContext';
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-outfit',
+});
 
 export const metadata: Metadata = {
-  title: "Plataforma Médica SaaS",
-  description: "Gestión médica y odontológica multi-tenant",
+  title: 'Odonto-Focus | Médico & Dental SaaS',
+  description: 'Gestión Inteligente, Premium y Dinámica de Práctica Médica y Odontológica.',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="es">
-      <body className="antialiased">{children}</body>
+    <html lang="es" className="dark">
+      <body className={`${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-white`}>
+        {/* Fondo Decorativo Sutil Premium */}
+        <div className="fixed inset-0 z-[-1] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]" />
+        
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

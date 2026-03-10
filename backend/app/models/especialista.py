@@ -15,9 +15,10 @@ class EspecialistaEspecialidad(SQLModel, table=True):
     """Tabla intermedia N:N entre Especialistas y Especialidades."""
 
     __tablename__ = "especialista_especialidades"
+    __table_args__ = {"schema": "sys_config"}
 
-    especialista_id: UUID = Field(foreign_key="especialistas.id", primary_key=True)
-    especialidad_id: UUID = Field(foreign_key="especialidades.id", primary_key=True)
+    especialista_id: UUID = Field(foreign_key="sys_config.especialistas.id", primary_key=True)
+    especialidad_id: UUID = Field(foreign_key="sys_config.especialidades.id", primary_key=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -34,6 +35,7 @@ class Especialista(EspecialistaBase, table=True):
     """Usuario del sistema; cada fila es un tenant. RLS por id."""
 
     __tablename__ = "especialistas"
+    __table_args__ = {"schema": "sys_config"}
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     password_hash: str = Field(max_length=255)

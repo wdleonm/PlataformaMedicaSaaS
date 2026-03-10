@@ -2,6 +2,7 @@
 Rutas de autenticación: registro y login.
 Fase 1: Implementación básica con JWT.
 """
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
@@ -36,7 +37,7 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Crea token JWT."""
     to_encode = data.copy()
     if expires_delta:

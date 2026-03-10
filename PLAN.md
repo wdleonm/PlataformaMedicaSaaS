@@ -59,20 +59,20 @@ En cada respuesta, Cursor debe indicar:
 **Objetivo:** Dockerización, esquema de especialistas/especialidades y configuración de RLS.
 
 #### 1.1 Docker y servicios
-- [ ] Definir `docker-compose.yml` (en `/docker` o raíz): postgres, backend (FastAPI), frontend (Next.js), redis (opcional).
-- [ ] Variables en `.env.example`: `DATABASE_URL`, `JWT_SECRET`, `REDIS_URL`, `YCLOUD_API_KEY` (sin valor; el usuario la añade localmente).
-- [ ] Backend: conexión a PostgreSQL (SQLAlchemy/SQLModel), health-check que verifique DB.
+- [x] Definir `docker-compose.yml` (en `/docker` o raíz): postgres, backend (FastAPI), frontend (Next.js), redis (opcional).
+- [x] Variables en `.env.example`: `DATABASE_URL`, `JWT_SECRET`, `REDIS_URL`, `YCLOUD_API_KEY` (sin valor; el usuario la añade localmente).
+- [x] Backend: conexión a PostgreSQL (SQLAlchemy/SQLModel), health-check que verifique DB.
 
 #### 1.2 Esquema base y RLS
-- [ ] Tabla **especialidades**: `id` (UUID), `nombre`, `codigo` (único), `activo`. Sin RLS (maestra compartida).
-- [ ] Tabla **especialistas**: `id` (UUID), `email` (único), `password_hash`, `nombre`, `apellido`, `activo`, `created_at`, `updated_at`. RLS: solo el propio especialista accede a su fila.
-- [ ] Tabla **especialista_especialidades** (N:N): `especialista_id`, `especialidad_id`. RLS por `especialista_id`.
-- [ ] Políticas RLS en PostgreSQL: habilitar RLS en tablas operativas; usar `current_setting('app.especialista_id')::uuid` (inyectado por backend en cada transacción).
-- [ ] Script SQL inicial creado (o migración Alembic): tablas + políticas.
+- [x] Tabla **especialidades**: `id` (UUID), `nombre`, `codigo` (único), `activo`. Sin RLS (maestra compartida).
+- [x] Tabla **especialistas**: `id` (UUID), `email` (único), `password_hash`, `nombre`, `apellido`, `activo`, `created_at`, `updated_at`. RLS: solo el propio especialista accede a su fila.
+- [x] Tabla **especialista_especialidades** (N:N): `especialista_id`, `especialidad_id`. RLS por `especialista_id`.
+- [x] Políticas RLS en PostgreSQL: habilitar RLS en tablas operativas; usar `current_setting('app.especialista_id')::uuid` (inyectado por backend en cada transacción).
+- [x] Script SQL inicial creado (o migración Alembic): tablas + políticas.
 
 #### 1.3 Autenticación mínima (para probar RLS)
-- [ ] Registro y login de especialistas; JWT con `sub = especialista_id`.
-- [ ] Middleware/dependency que inyecte `especialista_id` y ejecute `SET LOCAL app.especialista_id` en cada request a la DB.
+- [x] Registro y login de especialistas; JWT con `sub = especialista_id`.
+- [x] Middleware/dependency que inyecte `especialista_id` y ejecute `SET LOCAL app.especialista_id` en cada request a la DB.
 
 #### Criterios de aceptación Fase 1
 - Docker levanta Postgres y Backend; `/health` responde OK.
@@ -86,21 +86,21 @@ En cada respuesta, Cursor debe indicar:
 **Objetivo:** Modelado de pacientes y Odontograma Evolutivo (reconstruir estados por fecha).
 
 #### 2.1 Pacientes
-- [ ] Tabla **pacientes**: `id` (UUID), `especialista_id` (FK), `nombre`, `apellido`, `documento`, `telefono`, `email`, `fecha_nacimiento`, `activo`, `created_at`, `updated_at`. RLS por `especialista_id`.
-- [ ] CRUD de pacientes (solo del especialista logueado).
+- [x] Tabla **pacientes**: `id` (UUID), `especialista_id` (FK), `nombre`, `apellido`, `documento`, `telefono`, `email`, `fecha_nacimiento`, `activo`, `created_at`, `updated_at`. RLS por `especialista_id`. → `scripts/002_pacientes.sql`
+- [x] CRUD de pacientes (solo del especialista logueado). → `backend/app/api/pacientes.py`
 
 #### 2.2 Catálogo de hallazgos (odontograma)
-- [ ] Tabla **hallazgos** (o `odontograma_hallazgos`): `id` (UUID), `especialista_id` (opcional; si es por tenant) o global, `codigo`, `nombre`, `descripcion`, `activo`. Ejemplos: sano, caries, obturado, extracción indicada. RLS si es por tenant.
-- [ ] Convención de dientes: FDI (11–18, 21–28, 31–38, 41–48). Caras: Oclusal (O), Mesial (M), Distal (D), Vestibular (V), Lingual (L). Documentar en PLAN o en código.
+- [x] Tabla **odontograma_hallazgos** en `sys_config` (catálogo global, sin tenant): `codigo`, `nombre`, `categoria`, `descripcion_visual`, `activo`, `orden`. → `scripts/001_especialistas_especialidades_rls.sql`
+- [x] Convención de dientes: FDI (11–18, 21–28, 31–38, 41–48 permanentes; 51–55, 61–65, 71–75, 81–85 temporales). Caras: O, M, D, V, L, R. Documentado en modelos y schemas.
 
 #### 2.3 Odontograma evolutivo (Regla de Oro 3.1)
-- [ ] Tabla **odontograma_registros**: `id` (UUID), `especialista_id` (FK), `paciente_id` (FK), `numero_diente` (ej. 11–48), `cara_diente` (O, M, D, V, L), `hallazgo_id` (FK), `fecha_registro`, `notas` (opcional), `created_at`. RLS por `especialista_id`.
-- [ ] **Solo INSERT:** no actualizar registros existentes; cada cambio de estado es una nueva fila. Así se reconstruye el estado por fecha.
-- [ ] Endpoints: `GET /api/pacientes/{id}/odontograma?fecha=YYYY-MM-DD` (estado en esa fecha), `POST /api/odontograma/registros` (nuevo registro).
+- [x] Tabla **odontograma_registros** en `sys_clinical`: `id`, `especialista_id`, `paciente_id`, `numero_diente`, `cara_diente`, `hallazgo_id`, `fecha_registro`, `notas`, `historia_clinica_id` (opcional), `created_at`. RLS por `especialista_id`. → `scripts/003_odontograma_registros_historias_clinicas.sql`
+- [x] **Solo INSERT:** constraints y documentación en SQL y código Python garantizan que nunca se actualiza un registro existente.
+- [x] Endpoints: `GET /api/pacientes/{id}/odontograma?fecha=YYYY-MM-DD`, `GET /api/pacientes/{id}/odontograma/historial`, `POST /api/odontograma/registros`, `GET /api/odontograma/hallazgos`. → `backend/app/api/odontograma.py`
 
 #### 2.4 Historias clínicas
-- [ ] Tabla **historias_clinicas**: `id`, `especialista_id`, `paciente_id`, `fecha_apertura`, `motivo_consulta`, `diagnostico`, `plan_tratamiento`, `notas`, `activo`, `created_at`, `updated_at`. RLS por `especialista_id`.
-- [ ] CRUD historias; opcional: vincular registros de odontograma a una historia (campo `historia_clinica_id` en `odontograma_registros` si se desea).
+- [x] Tabla **historias_clinicas** en `sys_clinical`: `id`, `especialista_id`, `paciente_id`, `fecha_apertura`, `motivo_consulta`, `diagnostico`, `plan_tratamiento`, `notas`, `activo`, `created_at`, `updated_at`. RLS por `especialista_id`. → `scripts/003_odontograma_registros_historias_clinicas.sql`
+- [x] CRUD completo (POST/GET/PATCH/DELETE lógico) con endpoints por paciente y por especialista. Vinculación con odontograma via `historia_clinica_id`. → `backend/app/api/historias_clinicas.py`
 
 #### Criterios de aceptación Fase 2
 - Pacientes CRUD con RLS. Odontograma con inserciones por diente/cara/hallazgo/fecha; consulta por fecha devuelve el estado correcto del odontograma en ese momento.
@@ -112,24 +112,25 @@ En cada respuesta, Cursor debe indicar:
 **Objetivo:** Gestión de insumos, relación costo/beneficio por servicio, presupuestos y planes de pago (cuotas).
 
 #### 3.1 Insumos
-- [ ] Tabla **insumos**: `id` (UUID), `especialista_id`, `nombre`, `codigo`, `unidad`, `costo_unitario`, `stock_actual`, `stock_minimo`, `activo`, `created_at`, `updated_at`. RLS por `especialista_id`.
-- [ ] CRUD insumos.
+- [x] Tabla **insumos** en `sys_config`: `id`, `especialista_id`, `nombre`, `codigo`, `unidad`, `costo_unitario`, `stock_actual`, `stock_minimo`, `activo`, `created_at`, `updated_at`. RLS por `especialista_id`. → `scripts/004_finanzas_inventario.sql`
+- [x] CRUD insumos con filtro `stock_bajo`. → `backend/app/api/inventario.py`
 
 #### 3.2 Servicios y “receta” de insumos (Regla de Oro 3.2)
-- [ ] Tabla **servicios**: `id` (UUID), `especialista_id`, `nombre`, `codigo`, `precio`, `activo`, `created_at`, `updated_at`. RLS por `especialista_id`.
-- [ ] Tabla **servicio_insumos**: `servicio_id`, `insumo_id`, `cantidad_utilizada`. Permite: Costo_servicio = Σ (cantidad_utilizada × costo_unitario del insumo). RLS implícito vía servicio.
-- [ ] Al cobrar un servicio: **Utilidad_Neta = Precio_Cobrado - Costo_servicio** (calculado o persistido por cita/servicio).
+- [x] Tabla **servicios** en `sys_config`: `id`, `especialista_id`, `nombre`, `codigo`, `precio`, `activo`. RLS por `especialista_id`. → `scripts/004_finanzas_inventario.sql`
+- [x] Tabla **servicio_insumos** en `sys_config`: `servicio_id`, `insumo_id`, `cantidad_utilizada`. Vista `v_rentabilidad_servicios` en BD. → `scripts/004_finanzas_inventario.sql`
+- [x] Al completar una cita: **Utilidad_Neta = monto_cobrado − Costo_servicio** calculado desde receta. → `backend/app/api/citas.py`
+- [x] Endpoints `PUT /api/servicios/{id}/receta` y `DELETE /api/servicios/{id}/receta/{insumo_id}`. → `backend/app/api/inventario.py`
 
 #### 3.3 Citas/Consultas
-- [ ] Tabla **citas**: `id`, `especialista_id`, `paciente_id`, `fecha_hora`, `servicio_id` (opcional), `estado`, `monto_cobrado`, `notas`, `created_at`, `updated_at`. RLS por `especialista_id`.
-- [ ] Permite asociar cobro a servicio y calcular utilidad por cita.
+- [x] Tabla **citas** en `sys_clinical`: `id`, `especialista_id`, `paciente_id`, `servicio_id`, `fecha_hora`, `duracion_min`, `estado`, `monto_cobrado`, `costo_insumos`, `utilidad_neta`, `notas`. RLS por `especialista_id`. → `scripts/004_finanzas_inventario.sql`
+- [x] CRUD con filtros por paciente/estado/fecha y cálculo automático de utilidad al completar. → `backend/app/api/citas.py`
 
 #### 3.4 Presupuestos y planes de pago (Regla de Oro 3.3)
-- [ ] Tabla **presupuestos**: `id`, `especialista_id`, `paciente_id`, `fecha`, `total`, `saldo_pendiente` (actualizado en tiempo real), `estado`, `validez_fecha`, `notas`, `created_at`, `updated_at`. RLS por `especialista_id`.
-- [ ] Tabla **presupuesto_detalles**: `presupuesto_id`, `servicio_id`, `cantidad`, `precio_unitario`, `subtotal`. RLS vía presupuesto.
-- [ ] Tabla **abonos**: `id`, `especialista_id`, `presupuesto_id`, `monto`, `fecha_abono`, `metodo_pago`, `notas`, `created_at`. RLS por `especialista_id`.
-- [ ] Al insertar un abono: (1) actualizar `presupuestos.saldo_pendiente = total - SUM(abonos.monto)`, (2) registrar log si se desea, (3) disparar tarea de notificación (Fase 4).
-- [ ] Trigger o lógica en backend para mantener `saldo_pendiente` consistente.
+- [x] Tabla **presupuestos** en `sys_clinical`: `id`, `especialista_id`, `paciente_id`, `fecha`, `total`, `saldo_pendiente`, `estado`, `validez_fecha`, `notas`. RLS. → `scripts/004_finanzas_inventario.sql`
+- [x] Tabla **presupuesto_detalles**: `presupuesto_id`, `servicio_id`, `descripcion`, `cantidad`, `precio_unitario`, `subtotal` (GENERATED ALWAYS). Trigger recalcula `total` del presupuesto. → `scripts/004_finanzas_inventario.sql`
+- [x] Tabla **abonos**: `id`, `especialista_id`, `presupuesto_id`, `monto`, `fecha_abono`, `metodo_pago`, `notas`. RLS. → `scripts/004_finanzas_inventario.sql`
+- [x] **Trigger** `abonos_recalcular_saldo`: INSERT/UPDATE/DELETE en abonos → actualiza `saldo_pendiente` y `estado` del presupuesto en tiempo real. → `scripts/004_finanzas_inventario.sql`
+- [x] CRUD completo de presupuestos, detalles y abonos. Validación de monto vs saldo. TODO Fase 4: encolar mensaje WhatsApp. → `backend/app/api/presupuestos.py`
 
 #### Criterios de aceptación Fase 3
 - CRUD insumos y servicios; receta de insumos por servicio; cálculo de utilidad por servicio/cita.
@@ -142,18 +143,18 @@ En cada respuesta, Cursor debe indicar:
 **Objetivo:** Integración WhatsApp para recordatorios y notificaciones de abonos.
 
 #### 4.1 API YCloud
-- [ ] Documentar uso de la API (envío de mensajes, webhooks). API Key en `.env` (no en repo); `.env.example` con placeholder `YCLOUD_API_KEY=`.
-- [ ] Servicio en backend: enviar mensaje a un número (formato internacional). Reintentos según documentación YCloud.
+- [x] Documentado uso de la API YCloud (envío texto libre, webhook de estados). API Key en `.env` (no en repo); `.env.example` con placeholder `YCLOUD_API_KEY=` y `YCLOUD_WHATSAPP_NUMBER=`. → `backend/app/services/ycloud.py`
+- [x] Servicio asincrónico en backend con `httpx`: envía mensaje a número E.164, reintentos gestionados por el worker, no en el servicio de envío.
 
 #### 4.2 Cola de mensajes (Regla de Oro 3.4)
-- [ ] Tabla **cola_mensajes** (o equivalente en Redis + persistencia): `id` (UUID), `especialista_id`, `tipo` (ej. `abono_confirmacion`, `recordatorio_cita`), `destino` (teléfono), `payload` (JSON), `estado` (`pendiente`, `enviado`, `leído`, `fallido`), `reintentos`, `max_reintentos`, `ultimo_error`, `created_at`, `enviado_at`, `leido_at`. RLS por `especialista_id`.
-- [ ] Worker (o tarea programada) que procesa filas `estado = pendiente`, llama a YCloud, actualiza estado y reintentos.
+- [x] Tabla **cola_mensajes** en `sys_clinical`: `id`, `especialista_id`, `tipo`, `destino` (E.164), `payload` (JSONB), `estado` (`pendiente`, `enviado`, `leido`, `fallido`, `cancelado`), `reintentos`, `max_reintentos`, `ultimo_error`, refs a `abono_id`/`cita_id`, timestamps. RLS por `especialista_id`. → `scripts/005_cola_mensajes.sql`
+- [x] Worker APScheduler (`procesar_cola` cada 2 min): procesa filas pendientes, llama `YCloudService.enviar_mensaje`, aplica **backoff exponencial** (`2^reintentos` minutos), actualiza estado y `reintentos`. Se inicia con el lifespan de FastAPI. → `backend/app/workers/mensajes_worker.py`
 
 #### 4.3 Notificación al abonar
-- [ ] Al registrar un abono (Fase 3): insertar en **cola_mensajes** tipo `abono_confirmacion` con payload: monto abonado, saldo pendiente, fecha. Mensaje: "Monto abonado: X. Saldo pendiente: Y. Fecha: Z."
+- [x] Al registrar un abono: se encola automáticamente un `ColaMensaje` tipo `abono_confirmacion` con payload `{paciente_nombre, moneda, monto, saldo_pendiente, fecha}`. Fallo de encolado es no-bloqueante (el abono ya está guardado). → `backend/app/api/presupuestos.py`
 
 #### 4.4 Recordatorios de cita
-- [ ] Tarea programada (cron/Celery Beat): buscar citas próximas (ej. 24h) y encolar mensajes tipo `recordatorio_cita` con fecha/hora y datos del paciente.
+- [x] Job APScheduler (`encolar_recordatorios_cita` cada 1 hora): busca citas en las próximas 24 h con estado `programada`/`confirmada`, verifica que no tengan recordatorio ya encolado, construye payload y encola `ColaMensaje` tipo `recordatorio_cita`. Solo encola si el paciente tiene teléfono registrado. → `backend/app/workers/mensajes_worker.py`
 
 #### Criterios de aceptación Fase 4
 - Envío de prueba vía YCloud. Abono registrado encola mensaje y se envía por WhatsApp. Cola con estados y reintentos operativa.
@@ -164,12 +165,15 @@ En cada respuesta, Cursor debe indicar:
 
 **Objetivo:** Dashboard, calendario y componente visual del odontograma.
 
-#### 5.1 Next.js base
-- [ ] App Router, Tailwind, Shadcn/UI. `NEXT_PUBLIC_API_URL` apuntando al backend. Cliente HTTP con `Authorization: Bearer <token>`; manejo 401 (logout/redirect).
-- [ ] Login y registro de especialistas; contexto de usuario.
+#### 5.1 Estructura y Temática (Completado)
+- [x] Template inicial: Next.js (App Router), Tailwind CSS, shadcn/ui.
+- [x] Configuración de temas: CSS Variables para personalización por tenant y soporte a Dark Mode.
+- [x] Glassmorphism y animaciones base premium con `framer-motion`.
+- [x] `NEXT_PUBLIC_API_URL` apuntando al backend. Cliente HTTP con `Authorization: Bearer <token>`; manejo 401 (logout/redirect).
+- [x] Login y registro de especialistas; contexto de usuario.
 
 #### 5.2 Dashboard
-- [ ] Layout con menú: Inicio, Pacientes, Citas, Historias, Odontograma, Presupuestos/Abonos, Inventario, Configuración.
+- [x] Layout con menú: Inicio, Pacientes, Citas, Historias, Odontograma, Presupuestos/Abonos, Inventario, Configuración.
 - [ ] Vista principal: resumen (pacientes, citas del día, abonos pendientes, alertas stock bajo).
 
 #### 5.3 Calendario de citas
@@ -179,7 +183,8 @@ En cada respuesta, Cursor debe indicar:
 - [ ] Representación gráfica por diente/cara (FDI). Mostrar estado según fecha seleccionada (GET odontograma por fecha). Crear nuevos registros (POST) sin sobreescribir histórico.
 
 #### 5.5 CRUD en UI
-- [ ] Pacientes, historias clínicas, presupuestos, abonos, insumos, servicios. Formulario de abono que dispare la notificación (cola en backend).
+- [x] Pacientes.
+- [ ] Historias clínicas, presupuestos, abonos, insumos, servicios. Formulario de abono que dispare la notificación (cola en backend).
 
 #### Criterios de aceptación Fase 5
 - Navegación completa; calendario funcional; odontograma visual y evolutivo; flujos de negocio accesibles desde la UI.

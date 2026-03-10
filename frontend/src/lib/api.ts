@@ -1,34 +1,43 @@
-/**
- * Cliente HTTP para el backend. Añadir Authorization y manejo 401 en Fase 6.
- */
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+import axios from 'axios';
 
-export const getApiUrl = () => API_URL;
+// Determina la URL base. Ajustar en producción.
+//const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const NEXT_PUBLIC_API_URL = 'http://127.0.0.1:8001'; // Cambiado a 8001
 
-export const api = {
-  get: (path: string, options?: RequestInit) =>
-    fetch(`${API_URL}${path}`, { ...options, method: "GET" }),
-  post: (path: string, body?: unknown, options?: RequestInit) =>
-    fetch(`${API_URL}${path}`, {
-      ...options,
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...options?.headers },
-      body: body ? JSON.stringify(body) : undefined,
-    }),
-  put: (path: string, body?: unknown, options?: RequestInit) =>
-    fetch(`${API_URL}${path}`, {
-      ...options,
-      method: "PUT",
-      headers: { "Content-Type": "application/json", ...options?.headers },
-      body: body ? JSON.stringify(body) : undefined,
-    }),
-  patch: (path: string, body?: unknown, options?: RequestInit) =>
-    fetch(`${API_URL}${path}`, {
-      ...options,
-      method: "PATCH",
-      headers: { "Content-Type": "application/json", ...options?.headers },
-      body: body ? JSON.stringify(body) : undefined,
-    }),
-  delete: (path: string, options?: RequestInit) =>
-    fetch(`${API_URL}${path}`, { ...options, method: "DELETE" }),
-};
+
+export const api = axios.create({
+  baseURL: NEXT_PUBLIC_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Interceptor para inyectar automáticamente el Token JWT si existe
+api.interceptors.request.use(
+  (config) => {
+    // Al ejecutarse en el navegador, buscamos el token en localStorage
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Aquí en el futuro podemos interceptar las respuestas con error 401 
+// para desloguear automáticamente si el token expira.
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        // Redirigir a login en un caso real se manejaría mejor acá
+      }
+    }
+    return Promise.reject(error);
+  }
+);

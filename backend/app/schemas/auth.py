@@ -16,7 +16,7 @@ class EspecialidadRead(BaseModel):
 
 class EspecialistaRegister(BaseModel):
     """Schema para registro de especialista."""
-    email: EmailStr
+    email: str
     password: str
     nombre: str
     apellido: str
@@ -25,7 +25,7 @@ class EspecialistaRegister(BaseModel):
 
 class EspecialistaLogin(BaseModel):
     """Schema para login."""
-    email: EmailStr
+    email: str
     password: str
 
 

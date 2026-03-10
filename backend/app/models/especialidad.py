@@ -12,6 +12,7 @@ class Especialidad(SQLModel, table=True):
     """Catálogo de especialidades médicas (compartido entre tenants)."""
 
     __tablename__ = "especialidades"
+    __table_args__ = {"schema": "sys_config"}
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     nombre: str = Field(max_length=120, index=True)

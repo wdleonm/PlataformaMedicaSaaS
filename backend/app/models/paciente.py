@@ -25,9 +25,10 @@ class Paciente(PacienteBase, table=True):
     """Tabla de pacientes asociados a un especialista (tenant)."""
 
     __tablename__ = "pacientes"
+    __table_args__ = {"schema": "sys_clinical"}
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    especialista_id: UUID = Field(foreign_key="especialistas.id", index=True)
+    especialista_id: UUID = Field(foreign_key="sys_config.especialistas.id", index=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 

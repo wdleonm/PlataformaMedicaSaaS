@@ -1,0 +1,345 @@
+"""
+Endpoints CRUD — Insumos y Servicios.
+Fase 3.1 + 3.2 — Regla de Oro 3.2: Utilidad_Neta = Precio - Costo_insumos.
+
+Insumos:
+  POST   /api/insumos
+  GET    /api/insumos                  (con filtro stock_bajo=true)
+  GET    /api/insumos/{id}
+  PATCH  /api/insumos/{id}
+  DELETE /api/insumos/{id}             (borrado lógico)
+
+Servicios:
+  POST   /api/servicios
+  GET    /api/servicios
+  GET    /api/servicios/{id}           (incluye receta + costo calculado)
+  PATCH  /api/servicios/{id}
+  DELETE /api/servicios/{id}
+  PUT    /api/servicios/{id}/receta    (reemplaza toda la receta de insumos)
+  DELETE /api/servicios/{id}/receta/{insumo_id}
+"""
+from datetime import datetime
+from typing import List, Optional
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlmodel import Session, select
+
+from app.api.dependencies import get_current_especialista
+from app.database import get_session
+from app.models.especialista import Especialista
+from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo
+from app.schemas.insumos_servicios import (
+    InsumoCreate, InsumoList, InsumoRead, InsumoUpdate,
+    RecetaUpdate, ServicioCreate, ServicioInsumoRead,
+    ServicioList, ServicioRead, ServicioUpdate,
+)
+
+router = APIRouter(tags=["inventario"])
+
+
+# =============================================================================
+# INSUMOS
+# =============================================================================
+
+@router.post("/api/insumos", response_model=InsumoRead, status_code=status.HTTP_201_CREATED)
+def create_insumo(
+    data: InsumoCreate,
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+) -> Insumo:
+    insumo = Insumo(
+        especialista_id=especialista.id,
+        **data.model_dump(),
+    )
+    session.add(insumo)
+    session.commit()
+    session.refresh(insumo)
+    return _insumo_to_read(insumo)
+
+
+@router.get("/api/insumos", response_model=InsumoList)
+def list_insumos(
+    q:          Optional[str]  = Query(default=None, description="Buscar por nombre o código"),
+    stock_bajo: bool           = Query(default=False, description="Solo insumos con stock bajo"),
+    skip:       int            = Query(default=0, ge=0),
+    limit:      int            = Query(default=50, ge=1, le=200),
+    session:    Session        = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+) -> InsumoList:
+    stmt = select(Insumo).where(
+        Insumo.especialista_id == especialista.id,
+        Insumo.activo == True,
+    )
+    if q:
+        like = f"%{q}%"
+        stmt = stmt.where((Insumo.nombre.ilike(like)) | (Insumo.codigo.ilike(like)))  # type: ignore
+    if stock_bajo:
+        # stock_actual <= stock_minimo
+        stmt = stmt.where(Insumo.stock_actual <= Insumo.stock_minimo)
+
+    all_rows = session.exec(stmt).all()
+    total    = len(all_rows)
+    items    = [_insumo_to_read(i) for i in all_rows[skip: skip + limit]]
+    return InsumoList(total=total, items=items)
+
+
+@router.get("/api/insumos/{insumo_id}", response_model=InsumoRead)
+def get_insumo(
+    insumo_id:   UUID,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> InsumoRead:
+    return _insumo_to_read(_get_insumo_or_404(session, insumo_id, especialista.id))
+
+
+@router.patch("/api/insumos/{insumo_id}", response_model=InsumoRead)
+def update_insumo(
+    insumo_id:   UUID,
+    data:        InsumoUpdate,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> InsumoRead:
+    insumo = _get_insumo_or_404(session, insumo_id, especialista.id)
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(insumo, field, value)
+    insumo.updated_at = datetime.utcnow()
+    session.add(insumo)
+    session.commit()
+    session.refresh(insumo)
+    return _insumo_to_read(insumo)
+
+
+@router.delete("/api/insumos/{insumo_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_insumo(
+    insumo_id:   UUID,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> None:
+    insumo = _get_insumo_or_404(session, insumo_id, especialista.id)
+    insumo.activo     = False
+    insumo.updated_at = datetime.utcnow()
+    session.add(insumo)
+    session.commit()
+
+
+# =============================================================================
+# SERVICIOS
+# =============================================================================
+
+@router.post("/api/servicios", response_model=ServicioRead, status_code=status.HTTP_201_CREATED)
+def create_servicio(
+    data:        ServicioCreate,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> ServicioRead:
+    servicio = Servicio(especialista_id=especialista.id, **data.model_dump())
+    session.add(servicio)
+    session.commit()
+    session.refresh(servicio)
+    return _servicio_to_read(session, servicio)
+
+
+@router.get("/api/servicios", response_model=ServicioList)
+def list_servicios(
+    q:           Optional[str]  = Query(default=None),
+    skip:        int            = Query(default=0, ge=0),
+    limit:       int            = Query(default=50, ge=1, le=200),
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> ServicioList:
+    stmt = select(Servicio).where(
+        Servicio.especialista_id == especialista.id,
+        Servicio.activo == True,
+    )
+    if q:
+        like = f"%{q}%"
+        stmt = stmt.where((Servicio.nombre.ilike(like)) | (Servicio.codigo.ilike(like)))  # type: ignore
+
+    rows  = session.exec(stmt).all()
+    total = len(rows)
+    items = [_servicio_to_read(session, s) for s in rows[skip: skip + limit]]
+    return ServicioList(total=total, items=items)
+
+
+@router.get("/api/servicios/{servicio_id}", response_model=ServicioRead)
+def get_servicio(
+    servicio_id: UUID,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> ServicioRead:
+    return _servicio_to_read(session, _get_servicio_or_404(session, servicio_id, especialista.id))
+
+
+@router.patch("/api/servicios/{servicio_id}", response_model=ServicioRead)
+def update_servicio(
+    servicio_id: UUID,
+    data:        ServicioUpdate,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> ServicioRead:
+    servicio = _get_servicio_or_404(session, servicio_id, especialista.id)
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(servicio, field, value)
+    servicio.updated_at = datetime.utcnow()
+    session.add(servicio)
+    session.commit()
+    session.refresh(servicio)
+    return _servicio_to_read(session, servicio)
+
+
+@router.delete("/api/servicios/{servicio_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_servicio(
+    servicio_id: UUID,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> None:
+    servicio = _get_servicio_or_404(session, servicio_id, especialista.id)
+    servicio.activo     = False
+    servicio.updated_at = datetime.utcnow()
+    session.add(servicio)
+    session.commit()
+
+
+# ---------------------------------------------------------------------------
+# Receta de insumos
+# ---------------------------------------------------------------------------
+
+@router.put(
+    "/api/servicios/{servicio_id}/receta",
+    response_model=ServicioRead,
+    summary="Reemplazar la receta de insumos de un servicio",
+)
+def set_receta(
+    servicio_id: UUID,
+    data:        RecetaUpdate,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> ServicioRead:
+    """
+    Sustituye toda la receta del servicio.
+    Validaciones:
+    - Todos los insumos_id deben pertenecer al mismo especialista.
+    - No se permiten duplicados de insumo en la misma receta.
+    """
+    servicio = _get_servicio_or_404(session, servicio_id, especialista.id)
+
+    # Verificar que todos los insumos existen y pertenecen al especialista
+    insumo_ids = [item.insumo_id for item in data.insumos]
+    if len(insumo_ids) != len(set(insumo_ids)):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="La receta no puede tener el mismo insumo dos veces",
+        )
+    for insumo_id in insumo_ids:
+        _get_insumo_or_404(session, insumo_id, especialista.id)
+
+    # Eliminar receta actual
+    old_items = session.exec(
+        select(ServicioInsumo).where(ServicioInsumo.servicio_id == servicio_id)
+    ).all()
+    for item in old_items:
+        session.delete(item)
+
+    # Insertar nueva receta
+    for item in data.insumos:
+        si = ServicioInsumo(
+            servicio_id=servicio_id,
+            insumo_id=item.insumo_id,
+            cantidad_utilizada=item.cantidad_utilizada,
+        )
+        session.add(si)
+
+    session.commit()
+    session.refresh(servicio)
+    return _servicio_to_read(session, servicio)
+
+
+@router.delete(
+    "/api/servicios/{servicio_id}/receta/{insumo_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Quitar un insumo de la receta",
+)
+def remove_receta_item(
+    servicio_id: UUID,
+    insumo_id:   UUID,
+    session:     Session        = Depends(get_session),
+    especialista: Especialista  = Depends(get_current_especialista),
+) -> None:
+    _get_servicio_or_404(session, servicio_id, especialista.id)
+    item = session.exec(
+        select(ServicioInsumo).where(
+            ServicioInsumo.servicio_id == servicio_id,
+            ServicioInsumo.insumo_id   == insumo_id,
+        )
+    ).first()
+    if not item:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Insumo no encontrado en la receta")
+    session.delete(item)
+    session.commit()
+
+
+# =============================================================================
+# Helpers internos
+# =============================================================================
+
+def _get_insumo_or_404(session: Session, insumo_id: UUID, especialista_id: UUID) -> Insumo:
+    insumo = session.exec(
+        select(Insumo).where(Insumo.id == insumo_id, Insumo.especialista_id == especialista_id)
+    ).first()
+    if not insumo:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Insumo no encontrado")
+    return insumo
+
+
+def _get_servicio_or_404(session: Session, servicio_id: UUID, especialista_id: UUID) -> Servicio:
+    servicio = session.exec(
+        select(Servicio).where(Servicio.id == servicio_id, Servicio.especialista_id == especialista_id)
+    ).first()
+    if not servicio:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Servicio no encontrado")
+    return servicio
+
+
+def _insumo_to_read(insumo: Insumo) -> InsumoRead:
+    data = InsumoRead.model_validate(insumo)
+    data.stock_bajo = insumo.stock_actual <= insumo.stock_minimo
+    return data
+
+
+def _servicio_to_read(session: Session, servicio: Servicio) -> ServicioRead:
+    """Construye ServicioRead con receta + costo calculado."""
+    items = session.exec(
+        select(ServicioInsumo).where(ServicioInsumo.servicio_id == servicio.id)
+    ).all()
+
+    insumos_read: List[ServicioInsumoRead] = []
+    costo_total = 0.0
+    for si in items:
+        insumo = session.get(Insumo, si.insumo_id)
+        if insumo:
+            costo_linea = si.cantidad_utilizada * insumo.costo_unitario
+            costo_total += costo_linea
+            insumos_read.append(
+                ServicioInsumoRead(
+                    insumo_id=si.insumo_id,
+                    insumo_nombre=insumo.nombre,
+                    insumo_unidad=insumo.unidad,
+                    cantidad_utilizada=si.cantidad_utilizada,
+                    costo_linea=costo_linea,
+                )
+            )
+
+    return ServicioRead(
+        id=servicio.id,
+        especialista_id=servicio.especialista_id,
+        nombre=servicio.nombre,
+        codigo=servicio.codigo,
+        precio=servicio.precio,
+        activo=servicio.activo,
+        costo_insumos=round(costo_total, 4),
+        utilidad_neta=round(servicio.precio - costo_total, 4),
+        insumos=insumos_read,
+        created_at=servicio.created_at,
+        updated_at=servicio.updated_at,
+    )

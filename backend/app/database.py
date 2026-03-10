@@ -12,16 +12,19 @@ engine = create_engine(
     pool_pre_ping=True,  # Verifica conexiones antes de usarlas
     pool_size=5,
     max_overflow=10,
+    connect_args={
+        "options": "-c search_path=sys_config,sys_clinical,public"
+    }
 )
 
 
-def get_session() -> Session:
-    """
-    Dependency para obtener sesión de DB.
-    El middleware debe ejecutar SET LOCAL app.especialista_id antes de usar esta sesión.
-    """
-    with Session(engine) as session:
+def get_session():
+    """Dependency para obtener sesión de DB."""
+    session = Session(engine)
+    try:
         yield session
+    finally:
+        session.close()
 
 
 def init_db() -> None:

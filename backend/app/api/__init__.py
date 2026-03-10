@@ -1,4 +1,4 @@
-# Routers API (auth, pacientes, historias, odontograma, etc.)
-from app.api import auth, pacientes
+# Routers API (auth, pacientes, odontograma, historias_clinicas, inventario, citas, presupuestos, comunicaciones)
+from app.api import auth, pacientes, odontograma, historias_clinicas, inventario, citas, presupuestos, comunicaciones
 
-__all__ = ["auth", "pacientes"]
+__all__ = ["auth", "pacientes", "odontograma", "historias_clinicas", "inventario", "citas", "presupuestos", "comunicaciones"]

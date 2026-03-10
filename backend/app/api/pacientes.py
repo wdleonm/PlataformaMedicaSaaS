@@ -67,7 +67,10 @@ def list_pacientes(
             | (Paciente.documento.ilike(like_q))
         )
 
-    total = session.exec(base_stmt).count()
+    # Obtener el total de registros que coinciden con el filtro
+    total = len(session.exec(base_stmt).all())
+    
+    # Aplicar paginación para los items a retornar
     stmt = base_stmt.offset(skip).limit(limit)
     items = session.exec(stmt).all()
 
