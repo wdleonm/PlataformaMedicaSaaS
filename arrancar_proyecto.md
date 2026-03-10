@@ -1,8 +1,36 @@
-# Para arrancar el proyecto debo abrir una terminal ubicarme en la ruta C:\xampp\htdocs\github\PlataformaMedicaSaaS\frontend>
-# y  ejecutar npm run dev
+# Guía de Inicio del Proyecto (Local)
 
-# luego abrir otra terminal y ubicarme en la ruta C:\xampp\htdocs\github\PlataformaMedicaSaaS\backend>
-# y ejecutar python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 
+Este documento detalla los pasos para levantar el proyecto localmente con tu instalación de PostgreSQL física.
 
-# Frontend: npm run dev (por defecto en el puerto 3000)
-# Backend: python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
+## Orden de Arranque
+1. **Base de Datos** (Asegúrate de que el servicio PostgreSQL esté corriendo).
+2. **Backend** (FastAPI).
+3. **Frontend** (Next.js).
+---
+
+## Paso 1: Verificar la Base de Datos
+Asegúrate de que tu PostgreSQL local está activo:
+- Abre el "Administrador de Tareas" -> pestaña "Servicios" y busca `postgresql-x64-16` (o tu versión). Debe estar en estado "En ejecución".
+- O simplemente abre **pgAdmin 4** para verificar que puedes conectar.
+---
+
+
+## Pasos resumidos para reiniciar el proyecto:
+
+# Primero validemos los puertos ocupados 
+netstat -ano | findstr :3000
+netstat -ano | findstr :3001
+
+# Segundo liberamos 
+taskkill /F /PID 21404
+taskkill /F /PID 6036
+
+
+# Backend:
+Abre una terminal en la raíz del proyecto. Activa el entorno: 
+C:\xampp\htdocs\github\PlataformaMedicaSaaS\backend>
+ejecuta= python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
+
+# Frontend:
+Abre otra terminal en C:\xampp\htdocs\github\PlataformaMedicaSaaS\frontend
+ejecuta = npm run dev
