@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
-import { Plus, Search, User, Phone, Mail, FileText, Calendar, Edit2, Trash2, X, Loader2, AlertCircle } from "lucide-react";
+import { Plus, Search, User, Phone, Mail, FileText, Calendar, Edit2, UserX, X, Loader2, AlertCircle, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Paciente {
@@ -42,6 +42,7 @@ export default function PacientesPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [pacienteToDelete, setPacienteToDelete] = useState<Paciente | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [inactiveData, setInactiveData] = useState<{ id: string } | null>(null);
 
   const fetchPacientes = async () => {
     try {
@@ -110,6 +111,7 @@ export default function PacientesPage() {
     setSelectedId(null);
     setFormData({ nombre: "", apellido: "", documento: "", telefono: "", email: "", fecha_nacimiento: "" });
     setErrorMsg("");
+    setInactiveData(null);
     setIsModalOpen(true);
   };
 
@@ -136,6 +138,7 @@ export default function PacientesPage() {
   const handleSavePaciente = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
+    setInactiveData(null);
     
     if (!formData.nombre || !formData.apellido) {
       setErrorMsg("Nombre y Apellido son obligatorios.");
@@ -161,9 +164,32 @@ export default function PacientesPage() {
 
       setIsModalOpen(false);
       fetchPacientes();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving paciente:", error);
-      setErrorMsg("Ocurrió un error al guardar el paciente.");
+      const detail = error.response?.data?.detail;
+      
+      if (typeof detail === 'object' && detail.status === 'inactivo') {
+        setErrorMsg(detail.message);
+        setInactiveData({ id: detail.paciente_id });
+      } else {
+        setErrorMsg(typeof detail === 'string' ? detail : detail?.message || "Ocurrió un error al guardar el paciente.");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleReactivate = async () => {
+    if (!inactiveData) return;
+    try {
+      setIsSaving(true);
+      await api.patch(`/api/pacientes/${inactiveData.id}`, { activo: true });
+      setIsModalOpen(false);
+      setInactiveData(null);
+      fetchPacientes();
+    } catch (error) {
+      console.error("Error reactivating:", error);
+      setErrorMsg("No se pudo reactivar el paciente.");
     } finally {
       setIsSaving(false);
     }
@@ -316,9 +342,9 @@ export default function PacientesPage() {
                         <button 
                           onClick={() => handleOpenDeleteModal(paciente)} 
                           className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors" 
-                          title="Eliminar paciente"
+                          title="Desactivar paciente"
                         >
-                          <Trash2 size={16} />
+                          <UserX size={16} />
                         </button>
                       </div>
                     </td>
@@ -355,8 +381,19 @@ export default function PacientesPage() {
               <form onSubmit={handleSavePaciente} className="p-6">
                 
                 {errorMsg && (
-                  <div className="mb-6 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium flex items-center gap-2">
-                    <AlertCircle size={16}/> {errorMsg}
+                  <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
+                    <div className="flex items-center gap-2 mb-2">
+                       <AlertCircle size={16}/> {errorMsg}
+                    </div>
+                    {inactiveData && (
+                      <button 
+                        type="button"
+                        onClick={handleReactivate}
+                        className="w-full mt-2 bg-primary text-primary-foreground py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-sm"
+                      >
+                        <RotateCcw size={14} /> Reactivar el registro existente
+                      </button>
+                    )}
                   </div>
                 )}
 
@@ -416,9 +453,9 @@ export default function PacientesPage() {
               <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4 text-destructive">
                 <AlertCircle size={32} />
               </div>
-              <h2 className="text-xl font-bold mb-2">Eliminar Paciente</h2>
+              <h2 className="text-xl font-bold mb-2">Desactivar Paciente</h2>
               <p className="text-muted-foreground text-sm mb-6">
-                ¿Estás seguro de eliminar a <strong>{pacienteToDelete?.nombre} {pacienteToDelete?.apellido}</strong>? Esta acción podría no ser reversible si no tiene historial.
+                ¿Estás seguro de desactivar a <strong>{pacienteToDelete?.nombre} {pacienteToDelete?.apellido}</strong>? El registro ya no aparecerá en las listas pero sus fotos e historial clínico se mantendrán protegidos.
               </p>
               
               <div className="flex gap-3 w-full">
@@ -427,14 +464,14 @@ export default function PacientesPage() {
                   disabled={isDeleting}
                   className="flex-1 px-4 py-2.5 bg-secondary hover:bg-secondary/80 text-foreground text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
                 >
-                  Cancelar
+                  Regresar
                 </button>
                 <button 
                   onClick={handleDeletePaciente} 
                   disabled={isDeleting}
                   className="flex-1 px-4 py-2.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground text-sm font-semibold rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100 flex items-center justify-center gap-2"
                 >
-                  {isDeleting ? <><Loader2 size={16} className="animate-spin"/> Borrando</> : 'Eliminar'}
+                  {isDeleting ? <><Loader2 size={16} className="animate-spin"/> Desactivando</> : 'Confirmar Desactivación'}
                 </button>
               </div>
             </motion.div>

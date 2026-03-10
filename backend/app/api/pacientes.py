@@ -30,6 +30,24 @@ def create_paciente(
     """
     Crear un nuevo paciente asociado al especialista autenticado.
     """
+    # Validar duplicados por documento para este especialista
+    if data.documento:
+        existing = session.exec(
+            select(Paciente).where(
+                Paciente.especialista_id == especialista.id,
+                Paciente.documento == data.documento
+            )
+        ).first()
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "message": f"Ya existe un paciente con el documento '{data.documento}'.",
+                    "paciente_id": str(existing.id),
+                    "status": "activo" if existing.activo else "inactivo"
+                }
+            )
+
     paciente = Paciente(
         nombre=data.nombre,
         apellido=data.apellido,
@@ -57,7 +75,10 @@ def list_pacientes(
     """
     Listar pacientes del especialista actual con paginación y búsqueda simple.
     """
-    base_stmt = select(Paciente).where(Paciente.especialista_id == especialista.id)
+    base_stmt = select(Paciente).where(
+        Paciente.especialista_id == especialista.id,
+        Paciente.activo == True
+    )
 
     if q:
         like_q = f"%{q}%"
@@ -121,6 +142,23 @@ def update_paciente(
         )
 
     update_data = data.model_dump(exclude_unset=True)
+
+    # Validar duplicados si se está actualizando el documento
+    if "documento" in update_data and update_data["documento"] != paciente.documento:
+        existing = session.exec(
+            select(Paciente).where(
+                Paciente.especialista_id == especialista.id,
+                Paciente.documento == update_data["documento"],
+                Paciente.id != paciente.id
+            )
+        ).first()
+        if existing:
+            status_text = "activo" if existing.activo else "inactivo"
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe otro paciente con el documento '{update_data['documento']}' ({status_text})."
+            )
+
     for field, value in update_data.items():
         if field == "email" and value is not None:
             setattr(paciente, field, str(value))
