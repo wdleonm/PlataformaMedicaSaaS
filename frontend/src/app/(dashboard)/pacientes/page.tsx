@@ -275,26 +275,26 @@ export default function PacientesPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
+                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground bg-card/30">
                     <Loader2 size={32} className="mx-auto animate-spin mb-4 text-primary" />
                     Cargando pacientes...
                   </td>
                 </tr>
               ) : filteredPacientes.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
+                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground bg-card/30">
                     <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-4">
-                        <User size={32} className="text-muted-foreground/50" />
+                      <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-4 border border-border/10">
+                        <User size={32} className="text-muted-foreground/30" />
                       </div>
-                      <p className="text-lg font-medium text-foreground">No hay pacientes</p>
-                      <p>No se encontraron registros activos o que coincidan con la búsqueda.</p>
+                      <p className="text-lg font-bold text-foreground">No hay pacientes</p>
+                      <p className="text-xs">No se encontraron registros activos o que coincidan con la búsqueda.</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 filteredPacientes.map((paciente) => (
-                  <tr key={paciente.id} className="border-b border-border/10 hover:bg-secondary/20 transition-colors group">
+                  <tr key={paciente.id} className="border-b border-border/10 table-row-hover bg-card/40 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">

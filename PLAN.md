@@ -177,7 +177,7 @@ En cada respuesta, Cursor debe indicar:
 - [ ] Vista principal: resumen (pacientes, citas del día, abonos pendientes, alertas stock bajo).
 
 #### 5.3 Calendario de citas
-- [ ] Vista calendario (semanal/mensual); listar y crear/editar citas; asociar paciente y servicio.
+- [x] Vista calendario (semanal/mensual); listar y crear/editar citas; asociar paciente y servicio.
 
 #### 5.4 Componente visual Odontograma
 - [ ] Representación gráfica por diente/cara (FDI). Mostrar estado según fecha seleccionada (GET odontograma por fecha). Crear nuevos registros (POST) sin sobreescribir histórico.

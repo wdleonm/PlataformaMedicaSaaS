@@ -4,69 +4,67 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;      /* Azul-Gris ultra claro base */
-    --foreground: 222.2 84% 4.9%;   /* Texto principal casi negro */
+    /* MODO CLARO "CLINICAL TECH" - Inspirado en Stripe / Modmed.com */
+    --background: 210 40% 98.5%;      /* Slate 50 (#f8fafc) - Higiene y orden */
+    --foreground: 222 47% 11%;         /* Slate 900 - Lectura nítida */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card: 0 0% 100%;                 /* Blanco puro para cards - Estéril */
+    --card-foreground: 222 47% 11%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 221 83% 53%;         /* Azul principal premium (Odontología/Medicina) */
+    /* AZUL CIELO MÉDICO (SKY 600) - Amable y profesional */
+    --primary: 199 89% 38%;            /* #0284c7 - Más balanceado y serio */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 95%;          /* Slate 100 para fondos de tabla */
+    --secondary-foreground: 215 25% 27%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 94%;              /* Gris suave para estados neutros */
+    --muted-foreground: 215 16% 35%;   /* Contraste mejorado para lectura densa */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 199 89% 94%;             /* Sky 50 para hover effects */
+    --accent-foreground: 199 89% 38%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+    --border: 214 32% 91%;             /* Slate 200 - Líneas finas */
+    --input: 214 32% 91%;
+    --ring: 199 89% 48%;
 
-    --radius: 0.75rem;              /* Bordes redondeados y amigables */
-
-    --success: 142.1 76.2% 36.3%;   /* Verde (Ej: presupuestos aprobados) */
-    --warning: 38 92% 50%;          /* Naranja (Ej: stock bajo) */
+    --radius: 0.85rem;                 /* Bordes suaves pero precisos */
+    
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
   }
 
-  /* Modo Oscuro - Premium & Dinámico */
+  /* MODO OSCURO "DARK CLINICAL" - Mantiene la misma jerarquía pero invertida */
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 47% 11%;         /* Slate 900 */
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 6.5%;     /* Ligeramente más claro que el fondo para elevación */
+    --card: 217 33% 14%;               /* Slate 800 - Elevación profunda */
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 217 33% 12%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 91.2% 59.8%;   /* Azul brillante sobre fondo oscuro */
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 199 89% 48%;            /* Sky 500 para mayor brillo en fondo oscuro */
+    --primary-foreground: 222 47% 11%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 215 25% 22%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 214 32% 18%;
+    --muted-foreground: 215 20% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 217 33% 20%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 215 25% 27% / 0.4;
+    --input: 215 25% 27% / 0.4;
   }
 }
 
@@ -75,15 +73,44 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/20 selection:text-primary;
+  }
+  
+  /* Altura touch-friendly 44px según estándar Stripe */
+  input, button, select, textarea {
+    @apply min-h-[44px] transition-all duration-200;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold text-slate-900 dark:text-slate-100;
   }
 }
 
-/* Efectos de Glassmorphism & Animaciones */
+/* Glassmorphism Refinado para Clinical Tech */
 .glass-panel {
-  @apply bg-white/70 dark:bg-black/50 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl;
+  @apply bg-white dark:bg-card border border-slate-200/50 dark:border-white/5 shadow-sm transition-all duration-300;
 }
 
-.hover-glow:hover {
-  @apply shadow-[0_0_20px_rgba(59,130,246,0.3)] dark:shadow-[0_0_20px_rgba(96,165,250,0.3)] transition-all duration-300;
+:root:not(.dark) .glass-panel {
+  @apply shadow-[0_4px_20px_rgb(0,0,0,0.03)] border-slate-200/40;
+}
+
+.table-row-hover {
+  @apply hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer;
+}
+
+/* Scrollbar minimalista Stripe-style */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-primary/50 transition-colors;
+}
+
+/* Efecto de foco en inputs más amable */
+input:focus, select:focus, textarea:focus {
+  @apply border-primary ring-4 ring-primary/10 outline-none;
 }

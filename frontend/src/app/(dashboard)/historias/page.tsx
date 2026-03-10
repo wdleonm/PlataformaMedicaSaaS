@@ -47,11 +47,17 @@ function HistoriasContent() {
 
   const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [historias, setHistorias] = useState<HistoriaClinica[]>([]);
+  const [pacientesList, setPacientesList] = useState<Paciente[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingPacientes, setIsLoadingPacientes] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [selectedHistoriaId, setSelectedHistoriaId] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     motivo_consulta: "",
     diagnostico: "",
@@ -60,8 +66,21 @@ function HistoriasContent() {
     fecha_apertura: new Date().toISOString().split('T')[0]
   });
 
+  const fetchPacientes = async () => {
+    try {
+      setIsLoadingPacientes(true);
+      const res = await api.get("/api/pacientes");
+      setPacientesList(res.data?.items || []);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    } finally {
+      setIsLoadingPacientes(false);
+    }
+  };
+
   const fetchData = async () => {
     if (!pacienteId) {
+      fetchPacientes();
       setIsLoading(false);
       return;
     }
@@ -89,7 +108,9 @@ function HistoriasContent() {
     fetchData();
   }, [pacienteId]);
 
-  const handleOpenModal = () => {
+  const handleOpenCreateModal = () => {
+    setModalMode("create");
+    setSelectedHistoriaId(null);
     setFormData({
       motivo_consulta: "",
       diagnostico: "",
@@ -100,16 +121,33 @@ function HistoriasContent() {
     setIsModalOpen(true);
   };
 
+  const handleOpenEditModal = (h: HistoriaClinica) => {
+    setModalMode("edit");
+    setSelectedHistoriaId(h.id);
+    setFormData({
+      motivo_consulta: h.motivo_consulta,
+      diagnostico: h.diagnostico || "",
+      plan_tratamiento: h.plan_tratamiento || "",
+      notas: h.notas || "",
+      fecha_apertura: h.fecha_apertura
+    });
+    setIsModalOpen(true);
+  };
+
   const handleSaveHistoria = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pacienteId) return;
 
     try {
       setIsSaving(true);
-      await api.post("/api/historias-clinicas", {
-        ...formData,
-        paciente_id: pacienteId
-      });
+      if (modalMode === "create") {
+        await api.post("/api/historias-clinicas", {
+          ...formData,
+          paciente_id: pacienteId
+        });
+      } else {
+        await api.patch(`/api/historias-clinicas/${selectedHistoriaId}`, formData);
+      }
       setIsModalOpen(false);
       fetchData(); // Refresh list
     } catch (error) {
@@ -120,34 +158,76 @@ function HistoriasContent() {
     }
   };
 
+  const filteredPacientes = pacientesList.filter(p => 
+    `${p.nombre} ${p.apellido}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.documento && p.documento.includes(searchTerm))
+  );
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <Loader2 size={40} className="animate-spin text-primary mb-4" />
-        <p className="text-muted-foreground animate-pulse">Cargando historia clínica...</p>
+        <p className="text-muted-foreground animate-pulse">Cargando...</p>
       </div>
     );
   }
 
+  // Vista cuando NO hay un paciente seleccionado
   if (!pacienteId) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
-        <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center text-muted-foreground/50">
-          <User size={40} />
+      <div className="space-y-8 max-w-4xl mx-auto">
+        <div className="text-center space-y-2">
+           <h1 className="text-3xl font-bold tracking-tight">Historias Clínicas</h1>
+           <p className="text-muted-foreground">Selecciona un paciente para gestionar su historial médico.</p>
         </div>
-        <div>
-          <h2 className="text-2xl font-bold">Selecciona un Paciente</h2>
-          <p className="text-muted-foreground mt-2 max-w-sm">
-            Para ver o crear una historia clínica, primero debes seleccionar un paciente desde la lista.
-          </p>
+
+        <div className="glass-panel p-6 rounded-3xl space-y-6">
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={20} />
+            <input 
+              type="text"
+              placeholder="Buscar paciente por nombre o ID..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-background/50 border border-border/50 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-lg"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+            {isLoadingPacientes ? (
+              <div className="py-12 text-center text-muted-foreground">
+                <Loader2 size={32} className="mx-auto animate-spin mb-4" />
+                Cargando lista de pacientes...
+              </div>
+            ) : filteredPacientes.length === 0 ? (
+              <div className="py-12 text-center text-muted-foreground space-y-4">
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto">
+                  <User size={32} />
+                </div>
+                <p>No se encontraron pacientes que coincidan.</p>
+              </div>
+            ) : (
+              filteredPacientes.map(p => (
+                <button 
+                  key={p.id}
+                  onClick={() => router.push(`/historias?paciente_id=${p.id}`)}
+                  className="flex items-center justify-between p-4 bg-background/40 hover:bg-primary/10 border border-border/30 rounded-2xl transition-all group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center font-bold">
+                       {p.nombre[0]}{p.apellido[0]}
+                    </div>
+                    <div className="text-left">
+                      <p className="font-bold text-foreground group-hover:text-primary transition-colors">{p.nombre} {p.apellido}</p>
+                      <p className="text-xs text-muted-foreground">{p.documento || 'Sin ID'}</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={20} className="text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
+                </button>
+              ))
+            )}
+          </div>
         </div>
-        <button 
-          onClick={() => router.push("/pacientes")}
-          className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-primary/30 transition-all active:scale-95 flex items-center gap-2"
-        >
-          Ir a Lista de Pacientes
-          <ChevronRight size={18} />
-        </button>
       </div>
     );
   }
@@ -173,7 +253,7 @@ function HistoriasContent() {
         </div>
         
         <button 
-          onClick={handleOpenModal}
+          onClick={handleOpenCreateModal}
           className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 transform transition-all shadow-lg hover:shadow-primary/40 active:scale-95"
         >
           <Plus size={18} />
@@ -198,7 +278,7 @@ function HistoriasContent() {
             <h3 className="text-xl font-bold">Sin registros clínicos</h3>
             <p className="text-muted-foreground mt-2">Este paciente aún no tiene evoluciones registradas.</p>
             <button 
-              onClick={handleOpenModal}
+              onClick={handleOpenCreateModal}
               className="mt-6 text-primary font-semibold hover:underline"
             >
               Crear el primer registro ahora
@@ -264,8 +344,12 @@ function HistoriasContent() {
 
                   {/* Actions */}
                   <div className="p-4 flex md:flex-col justify-center md:justify-start gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity bg-secondary/5">
-                    <button className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors" title="Editar">
-                      <Edit2 size={16} />
+                    <button 
+                      onClick={() => handleOpenEditModal(h)}
+                      className="p-3 hover:bg-primary/20 text-primary rounded-xl transition-all shadow-sm hover:scale-110" 
+                      title="Editar Evolución"
+                    >
+                      <Edit2 size={18} />
                     </button>
                     {/* <button className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors" title="Eliminar">
                       <Trash2 size={16} />
@@ -278,7 +362,7 @@ function HistoriasContent() {
         )}
       </div>
 
-      {/* Modal Nueva Evolución */}
+      {/* Modal Evolución (Create/Edit) */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -293,7 +377,8 @@ function HistoriasContent() {
             >
               <div className="flex justify-between items-center p-6 border-b border-border/50 bg-secondary/30">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                  <Stethoscope size={20} className="text-primary"/> Nueva Evolución Clínica
+                  <Stethoscope size={20} className="text-primary"/> 
+                  {modalMode === "create" ? "Nueva Evolución Clínica" : "Editar Evolución Clínica"}
                 </h2>
                 <button onClick={() => setIsModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1.5 transition-colors">
                   <X size={20} />
@@ -373,7 +458,7 @@ function HistoriasContent() {
                     disabled={isSaving} 
                     className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100"
                   >
-                    {isSaving ? <><Loader2 size={16} className="animate-spin"/> Guardando</> : 'Guardar Evolución'}
+                    {isSaving ? <><Loader2 size={16} className="animate-spin"/> Guardando</> : 'Guardar Cambios'}
                   </button>
                 </div>
               </form>
