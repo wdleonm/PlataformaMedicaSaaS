@@ -180,7 +180,7 @@ En cada respuesta, Cursor debe indicar:
 - [x] Vista calendario (semanal/mensual); listar y crear/editar citas; asociar paciente y servicio.
 
 #### 5.4 Componente visual Odontograma
-- [ ] Representación gráfica por diente/cara (FDI). Mostrar estado según fecha seleccionada (GET odontograma por fecha). Crear nuevos registros (POST) sin sobreescribir histórico.
+- [x] Representación gráfica por diente/cara (FDI). Mostrar estado según fecha seleccionada (GET odontograma por fecha). Crear nuevos registros (POST) sin sobreescribir histórico.
 
 #### 5.5 CRUD en UI
 - [x] Pacientes.
