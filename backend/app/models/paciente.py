@@ -18,6 +18,17 @@ class PacienteBase(SQLModel):
     telefono: Optional[str] = Field(default=None, max_length=50)
     email: Optional[str] = Field(default=None, max_length=255)
     fecha_nacimiento: Optional[date] = None
+    sexo: Optional[str] = Field(default=None, max_length=2)  # M / F
+    direccion: Optional[str] = Field(default=None)
+    lugar_nacimiento: Optional[str] = Field(default=None, max_length=100)
+    estado_civil: Optional[str] = Field(default=None, max_length=50)
+    ocupacion: Optional[str] = Field(default=None, max_length=100)
+    
+    # Contacto de Emergencia
+    contacto_emergencia_nombre: Optional[str] = Field(default=None, max_length=120)
+    contacto_emergencia_telefono: Optional[str] = Field(default=None, max_length=50)
+    contacto_emergencia_parentesco: Optional[str] = Field(default=None, max_length=50)
+    
     activo: bool = Field(default=True)
 
 

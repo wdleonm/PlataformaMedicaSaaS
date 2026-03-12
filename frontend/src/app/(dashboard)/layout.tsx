@@ -65,7 +65,6 @@ export default function DashboardLayout({
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Pacientes", href: "/pacientes", icon: Users },
     { name: "Citas", href: "/citas", icon: Calendar },
-    { name: "Odontograma", href: "/odontograma", icon: Stethoscope },
     { name: "Historias Clínicas", href: "/historias", icon: FileText },
     { name: "Inventario", href: "/inventario", icon: Package },
     { name: "Finanzas", href: "/presupuestos", icon: CreditCard },
@@ -140,14 +139,14 @@ export default function DashboardLayout({
   );
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground overflow-hidden font-sans">
+    <div className="flex min-h-screen bg-background text-foreground font-sans">
       {/* Sidebar Desktop */}
-      <aside className="w-72 border-r border-border/30 bg-card p-6 hidden lg:flex flex-col shadow-2xl relative z-40 transition-all">
+      <aside className="w-72 border-r border-border/30 bg-card p-6 hidden lg:flex flex-col shadow-2xl relative z-40 transition-all shrink-0">
         <SidebarContent />
       </aside>
 
       {/* Contenido Principal */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header Mobile */}
         <header className="lg:hidden flex items-center justify-between p-4 border-b border-border/10 bg-card/80 backdrop-blur-xl z-30">
           <Link href="/dashboard" className="font-black text-lg text-primary tracking-tighter flex items-center gap-2">

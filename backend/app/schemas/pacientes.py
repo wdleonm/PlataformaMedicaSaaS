@@ -17,6 +17,14 @@ class PacienteBaseSchema(BaseModel):
     telefono: Optional[str] = None
     email: Optional[EmailStr] = None
     fecha_nacimiento: Optional[date] = None
+    sexo: Optional[str] = None
+    direccion: Optional[str] = None
+    lugar_nacimiento: Optional[str] = None
+    estado_civil: Optional[str] = None
+    ocupacion: Optional[str] = None
+    contacto_emergencia_nombre: Optional[str] = None
+    contacto_emergencia_telefono: Optional[str] = None
+    contacto_emergencia_parentesco: Optional[str] = None
     activo: bool = True
 
 
@@ -35,6 +43,14 @@ class PacienteUpdate(BaseModel):
     telefono: Optional[str] = None
     email: Optional[EmailStr] = None
     fecha_nacimiento: Optional[date] = None
+    sexo: Optional[str] = None
+    direccion: Optional[str] = None
+    lugar_nacimiento: Optional[str] = None
+    estado_civil: Optional[str] = None
+    ocupacion: Optional[str] = None
+    contacto_emergencia_nombre: Optional[str] = None
+    contacto_emergencia_telefono: Optional[str] = None
+    contacto_emergencia_parentesco: Optional[str] = None
     activo: Optional[bool] = None
 
 

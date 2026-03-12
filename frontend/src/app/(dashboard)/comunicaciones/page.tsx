@@ -19,7 +19,7 @@ export default function ComunicacionesPage() {
           Comunicaciones Inteligentes
         </h1>
         <p className="text-lg text-muted-foreground font-medium italic">
-          "Conectando especialistas con sus pacientes a través de tecnología de vanguardia."
+          &ldquo;Conectando especialistas con sus pacientes a través de tecnología de vanguardia.&rdquo;
         </p>
       </div>
 

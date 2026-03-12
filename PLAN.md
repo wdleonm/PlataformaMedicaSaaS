@@ -173,40 +173,153 @@ En cada respuesta, Cursor debe indicar:
 - [x] Login y registro de especialistas; contexto de usuario.
 
 #### 5.2 Dashboard
-- [x] Layout con menú: Inicio, Pacientes, Citas, Historias, Odontograma, Presupuestos/Abonos, Inventario, Configuración.
-- [ ] Vista principal: resumen (pacientes, citas del día, abonos pendientes, alertas stock bajo).
+- [x] Layout con menú lateral: Pacientes, Citas, Historias Clínicas, Presupuestos, Inventario, Comunicaciones, Configuración. (Odontograma removido del menú principal — integrado en historia clínica).
+- [x] Vista principal con **datos reales** del backend: KPIs (Pacientes Activos, Citas de Hoy, Ingresos del Mes, Insumos Críticos). Agenda de hoy con estado de cada cita. Pacientes recientes con link directo a su historia. Accesos rápidos a módulos. Stats adicionales (Citas semana, Historias clínicas, Por cobrar).
+- [x] Diseño premium glassmorphism con animaciones framer-motion, colores semánticos por categoría y responsive para todas las vistas.
+- [x] `NEXT_PUBLIC_API_URL` configurado en `.env.local` (necesario para que los fetch del dashboard funcionen). Creado `.env.local` con `NEXT_PUBLIC_API_URL=http://127.0.0.1:8001`.
 
 #### 5.3 Calendario de citas
 - [x] Vista calendario (semanal/mensual); listar y crear/editar citas; asociar paciente y servicio.
 
 #### 5.4 Componente visual Odontograma
-- [x] Representación gráfica por diente/cara (FDI). Mostrar estado según fecha seleccionada (GET odontograma por fecha). Crear nuevos registros (POST) sin sobreescribir histórico.
+- [x] Representación gráfica por diente/cara (FDI). Mostrar estado según fecha seleccionada. Crear registros sin sobreescribir histórico.
+- [x] **Layout FDI completo (4 filas):** Permanentes superiores (18-11 | 21-28) → Temporales superiores (55-51 | 61-65) → Temporales inferiores (85-81 | 71-75) → Permanentes inferiores (48-41 | 31-38).
+- [x] Paleta de hallazgos en **barra horizontal** sobre los dientes (Patologías / Restauraciones / Estados). Banner animado de "Modo Registro activo" al seleccionar un hallazgo.
+- [x] Odontograma integrado en el **paso 4 de la Historia Clínica** (entre Examen Físico y Plan). Acceso desde el modal sin necesidad de menú lateral separado.
+- [x] Página embed dedicada `/embed/odontograma` (fuera del grupo `(dashboard)`) que se carga en iframe **sin sidebar, logo ni menú hamburguesa**. Soluciona conflicto de layout.
+- [x] Botón "Abrir pantalla completa" abre `/embed/odontograma` en nueva pestaña con todo el espacio disponible.
 
 #### 5.5 CRUD en UI
 - [x] Pacientes.
-- [x] Historias clínicas, presupuestos, abonos, insumos, servicios. Formulario de abono que dispare la notificación (cola en backend).
+- [x] Historias clínicas multi-paso (Consulta → Antecedentes → Examen Físico → Odontograma → Plan).
+- [x] Presupuestos, abonos, insumos, servicios. Formulario de abono que dispara notificación (cola en backend).
 
 #### Criterios de aceptación Fase 5
-- Navegación completa; calendario funcional; odontograma visual y evolutivo; flujos de negocio accesibles desde la UI.
+- Navegación completa; calendario funcional; odontograma visual FDI evolutivo integrado en historia clínica; flujos de negocio accesibles desde la UI. **✅ Criterios cumplidos.**
 
 ---
 
-### Fase 6: Despliegue
+### Mejoras y Correcciones UI (Sesión 11/03/2026)
 
-**Objetivo:** Configuración final para Easy Panel en el VPS.
+**Problemas resueltos:**
+- [x] Modal de "Editar Historia Clínica" recortado a la izquierda → solución: `createPortal` para renderizar fuera del layout.
+- [x] Error `TS2322` en `dashboard/page.tsx` con `ease: "easeOut"` de framer-motion → solución: `as const`.
+- [x] Tres errores ESLint: comillas sin escapar en `comunicaciones/page.tsx` (→ `&ldquo;&rdquo;`) y referencia a regla TypeScript inexistente en `page.tsx` (→ `catch (_err)`).
+- [x] Error React en `embed/odontograma`: `<title>` dentro de `<path>` SVG siendo tratado como metadata del documento → eliminado, número visible encima de cada pieza.
+- [x] Logo y menú hamburguesa apareciendo dentro del iframe del odontograma → creada ruta `/embed/odontograma` fuera del grupo `(dashboard)`.
+- [x] Scrollbar visible en la barra de tabs del ---
 
-#### 6.1 Docker Compose para producción
+### Fase 6: Historia Clínica Modular por Especialidad
+
+**Objetivo:** Hacer que el sistema sea utilizable por múltiples especialidades médicas además de la odontología, sin reescribir la lógica existente. Las secciones de la historia clínica se configuran dinámicamente según la especialidad del especialista logueado.
+
+> **Contexto:** Hoy el sistema es solo para odontólogos (maxilofaciales, ortodoncistas, etc.). Un cardiólogo no necesita odontograma, pero sí electrocardiograma. Un traumálogo necesita radiografías. Los datos básicos (consulta, antecedentes, examen físico, plan) pueden coincidir en nombre pero su contenido varía por especialidad.
+
+#### 6.1 Modelo de datos: Catálogo de secciones
+- [ ] Añadir tabla **`hc_secciones`** en `sys_config`: `id` (UUID), `codigo` (único, ej. `ODONTOGRAMA`, `ECG`, `RADIOGRAFIA`, `EXAMEN_FISICO`), `nombre`, `descripcion`, `componente_frontend` (nombre del componente Next.js a renderizar), `activo`. Sin RLS (catálogo global compartido). → `scripts/006_hc_modular.sql`
+- [ ] Tabla **`especialidad_hc_secciones`** (N:N): `especialidad_id` (FK `sys_config.especialidades`), `hc_seccion_id` (FK `hc_secciones`), `orden` (para definir el orden en el modal), `obligatoria` (bool). Sin RLS. → `scripts/006_hc_modular.sql`
+- [ ] **Poblar con especialidad odontología** (primer seed): secciones `CONSULTA` (orden 1), `ANTECEDENTES` (2), `EXAMEN_FISICO` (3), `ODONTOGRAMA` (4), `PLAN` (5). La sección `ODONTOGRAMA` queda marcada como exclusiva de odontología.
+- [ ] Añadir columna `especialidad_id` a **`sys_clinical.historias_clinicas`** para identificar a qué especialidad pertenece cada historia. Migrar registros existentes con la especialidad de odontología.
+
+#### 6.2 Backend: endpoints de configuración modular
+- [ ] `GET /api/especialidades/{id}/hc-secciones` → retorna las secciones ordenadas para una especialidad (usado por el frontend para construir el modal dinámicamente).
+- [ ] `GET /api/hc-secciones` → listado completo del catálogo (para administración).
+- [ ] Endpoints CRUD para el catálogo de secciones y para la asignación especialidad ↔ secciones. → `backend/app/api/hc_secciones.py`
+- [ ] Al crear o editar una historia clínica, el endpoint valida que el `especialista_id` sea de una especialidad que incluya las secciones enviadas.
+
+#### 6.3 Frontend: modal dinámico de Historia Clínica
+- [ ] El modal de Historia Clínica (`historias/page.tsx`) deja de tener los pasos hardcodeados. Al abrirse, llama a `GET /api/especialidades/{id}/hc-secciones` y construye los tabs y el contenido dinámicamente.
+- [ ] Cada sección tiene un `componente_frontend` (string), el modal hace un map de string → componente React:
+  ```
+  CONSULTA        → <ConsultaStep />
+  ANTECEDENTES    → <AntecedentesStep />
+  EXAMEN_FISICO   → <ExamenFisicoStep />
+  ODONTOGRAMA     → <OdontogramaStep /> (iframe a /embed/odontograma)
+  PLAN            → <PlanStep />
+  ECG             → <ElectrocardiogramaStep /> (futuro)
+  RADIOGRAFIA     → <RadiografiasStep /> (futuro)
+  ```
+- [ ] El especialista logueado siempre ve solo las secciones de su especialidad. Nunca ve secciones irrelevantes.
+- [ ] Los datos de cada sección se almacenan en `historias_clinicas` (campos genéricos JSON o columnas por sección según se defina en 6.1).
+
+#### 6.4 Datos específicos por especialidad (futuro, post-odontología)
+- [ ] Para cardiología: sección `ECG` con campos específicos (ritmo, frecuencia, observaciones). Componente `<ElectrocardiogramaStep />`.
+- [ ] Para traumatología: sección `RADIOGRAFIA` con carga de imágenes y observaciones. Componente `<RadiografiasStep />`.
+- [ ] Las especialidades se registran en `sys_config.especialidades` (ya existe); solo se añaden las secciones correspondientes.
+
+#### Criterios de aceptación Fase 6
+- El modal de Historia Clínica construye sus pasos desde la BD, no desde código hardcodeado.
+- Un especialista de odontología ve: Consulta, Antecedentes, Examen Físico, Odontograma, Plan.
+- Un futuro especialista de cardiología vería: Consulta, Antecedentes, Examen Físico, ECG, Plan (sin Odontograma).
+- La especialidad queda registrada en cada historia clínica.
+
+---
+
+### Fase 7: Panel de Administración SaaS
+
+**Objetivo:** Crear un panel separado (ruta `/admin`) donde el dueño del sistema pueda registrar especialistas, gestionar suscripciones y monitorear la plataforma. Este panel es completamente independiente del dashboard del especialista.
+
+> **Contexto:** El dueño del sistema vende suscripciones a especialistas. Él los registra, les configura el acceso y controla el plan contratado. Los especialistas ya existen en `sys_config.especialistas`; solo se necesita enriquecer esa tabla y crear las de administración.
+
+#### 7.1 Arquitectura de esquemas de BD
+
+**Decisión de arquitectura:** Los datos de administración van en el mismo esquema `sys_config` (no se crea un esquema `sys_admin` separado). Justificación: son tablas de configuración del sistema, el esquema `sys_config` ya existe y aplica. Se mantiene la convención: `sys_config` = configuración global, `sys_clinical` = datos clínicos de pacientes.
+
+- [ ] Añadir campos a **`sys_config.especialistas`**: `plan_suscripcion` (VARCHAR: `'basico'`, `'profesional'`, `'enterprise'`), `suscripcion_activa` (bool, default true), `fecha_vencimiento_suscripcion` (DATE), `notas_admin` (TEXT). → `scripts/007_admin_suscripciones.sql`
+- [ ] Tabla **`sys_config.planes_suscripcion`**: `id`, `codigo` (único: `basico`, `profesional`, `enterprise`), `nombre`, `precio_mensual`, `max_pacientes`, `max_citas_mes`, `incluye_whatsapp` (bool), `incluye_multiusuario` (bool), `activo`. → `scripts/007_admin_suscripciones.sql`
+- [ ] Tabla **`sys_config.log_suscripciones`**: `id`, `especialista_id`, `cambio` (JSON: `{de: 'basico', a: 'profesional'}`), `motivo`, `admin_id`, `created_at`. Para auditoría de cambios de plan. → `scripts/007_admin_suscripciones.sql`
+- [ ] Tabla **`sys_config.administradores`**: `id` (UUID), `email` (único), `password_hash`, `nombre`, `apellido`, `activo`, `created_at`. **Sin RLS** (acceso global). JWT separado con `rol = 'admin'`. → `scripts/007_admin_suscripciones.sql`
+
+#### 7.2 Backend: API de administración
+- [ ] Autenticación admin: `POST /api/admin/auth/login` → JWT con claim `rol: admin`. Middleware `get_current_admin` que valida `rol == 'admin'` (independiente del middleware de especialistas). → `backend/app/api/admin_auth.py`
+- [ ] Endpoints de especialistas (admin): `GET /api/admin/especialistas`, `POST /api/admin/especialistas`, `PUT /api/admin/especialistas/{id}`, `PATCH /api/admin/especialistas/{id}/suscripcion` (cambio de plan + log automático). → `backend/app/api/admin_especialistas.py`
+- [ ] Endpoints de planes: `GET /api/admin/planes`, `POST /api/admin/planes`, `PUT /api/admin/planes/{id}`. → `backend/app/api/admin_planes.py`
+- [ ] Endpoint de dashboard admin: `GET /api/admin/dashboard` → estadísticas globales: total especialistas activos, suscripciones por plan, suscripciones por vencer en 30 días, especialistas nuevos este mes. → `backend/app/api/admin_dashboard.py`
+
+#### 7.3 Frontend: Panel /admin
+- [ ] Ruta `/admin` separada del grupo `(dashboard)`. Crear grupo `(admin)` con su propio `layout.tsx` (sidebar distinto, paleta violeta/índigo para diferenciarlo del verde/azul del especialista).
+- [ ] Página de login admin: `/admin/login` (completamente independiente del login del especialista).
+- [ ] Dashboard admin (`/admin/dashboard`): KPIs globales → Total especialistas, Activos, Ingresos estimados del mes, Suscripciones por vencer.
+- [ ] Listado de especialistas (`/admin/especialistas`): tabla con nombre, email, plan, estado, fecha vencimiento, acciones.
+- [ ] Formulario de registro/edición de especialista: nombre, apellido, email, password inicial, especialidad, plan, fecha vencimiento.
+- [ ] Gestión de planes (`/admin/planes`): CRUD de planes de suscripción.
+- [ ] Log de actividad admin: auditoría de cambios de plan (solo lectura).
+
+#### 7.4 Seguridad y separación de roles
+- [ ] El JWT del especialista y el JWT del admin son **completamente separados** (diferentes claims; validados estrictamente).
+- [ ] Las rutas `/api/admin/*` retornan 403 si el token no tiene `rol: admin`.
+- [ ] Las rutas `/api/*` (especialista) retornan 403 si el token tiene `rol: admin` (evitar uso cruzado).
+- [ ] La sesión de admin expira en 4 horas. No hay "recordar sesión" para admin.
+
+#### 7.5 Middleware de suscripción activa
+- [ ] Middleware en FastAPI que, al validar el JWT del especialista, verifica `suscripcion_activa == true` y `fecha_vencimiento >= hoy`. Si está vencida, retorna `HTTP 402 Payment Required`.
+- [ ] Frontend: interceptor global que captura el `402` y muestra un modal de "Suscripción vencida — contacta al administrador" bloqueando el uso del sistema.
+
+#### Criterios de aceptación Fase 7
+- El administrador puede hacer login en `/admin/login` con credenciales propias.
+- Puede registrar un nuevo especialista, asignarle un plan y activar/desactivar su acceso.
+- El dashboard admin muestra estadísticas globales reales.
+- Un especialista con suscripción vencida recibe `402` y ve el modal de bloqueo en el frontend.
+- Los JWTs de admin y especialista no son intercambiables.
+
+---
+
+### Fase 8: Despliegue
+
+**Objetivo:** Configuración final para Easy Panel en el VPS. Se ejecuta únicamente cuando las Fases 6 y 7 estén aprobadas y estables.
+
+#### 8.1 Docker Compose para producción
 - [ ] `docker-compose.yml` listo para Easy Panel (postgres, backend, frontend, redis si aplica). Volúmenes para datos; variables desde entorno.
 - [ ] IP VPS 147.93.184.194 documentada para cuando se configure dominio o acceso.
 
-#### 6.2 Variables y secretos
-- [ ] Todas las variables documentadas (README o PLAN). Usuario configura en Easy Panel; no subir `.env` con secretos. `.env.example` con `YCLOUD_API_KEY=` y resto.
+#### 8.2 Variables y secretos
+- [ ] Todas las variables documentadas (README o PLAN). Usuario configura en Easy Panel; no subir `.env` con secretos. `.env.example` con `YCLOUD_API_KEY=`, `ADMIN_JWT_SECRET=`, `ESPECIALISTA_JWT_SECRET=` y resto.
 
-#### 6.3 Base de datos y SSL
-- [ ] Migraciones aplicadas al desplegar. Estrategia de backups (pg_dump, retención). SSL vía proxy reverso (Easy Panel / Nginx / Traefik).
+#### 8.3 Base de datos y SSL
+- [ ] Migraciones aplicadas al desplegar (scripts 001 a 007). Estrategia de backups (pg_dump, retención). SSL vía proxy reverso (Easy Panel / Nginx / Traefik).
 
-#### Criterios de aceptación Fase 6
-- `docker-compose up` (o despliegue en Easy Panel) levanta todos los servicios. App accesible; RLS y JWT operativos en producción.
+#### Criterios de aceptación Fase 8
+- `docker-compose up` levanta todos los servicios. App accesible con todas las funcionalidades de las fases anteriores. RLS y JWT operativos en producción.
 
 ---
 
@@ -256,9 +369,14 @@ PlataformaMedicaSaaS/   (Odonto-Focus)
 ## 6. Orden de Ejecución
 
 - Trabajar **una fase a la vez**. No pasar a la siguiente sin aprobación del usuario.
-- Ante dudas o detalles faltantes (ej. insumos, estados de cola), pedir: *"Actualiza el PLAN.md para incluir X"* y Cursor actualizará este archivo.
-- Para empezar: *"Empecemos con la Fase 1: genera los archivos de Docker y la estructura de la base de datos"*.
+- Fases pendientes en orden lógico:
+  1. **Fase 6** — Historia Clínica Modular por Especialidad
+  2. **Fase 7** — Panel de Administración SaaS
+  3. **Fase 8** — Despliegue en VPS (siempre al final)
+- Ante dudas o detalles faltantes, pedir: *"Actualiza el PLAN.md para incluir X"*.
+- Para continuar: *"Empecemos con la Fase 6: Historia Clínica Modular"* o la fase que corresponda.
 
 ---
 
-*Documento: Odonto-Focus | Master Plan. Última actualización según Super Prompt (gestión vía PLAN.md, reglas de oro, 6 fases).*
+*Documento: Odonto-Focus | Master Plan. Última actualización: 11/03/2026.*
+*Estado: Fases 1–5 completadas ✅ | Pendiente: Fase 6 (HC Modular), Fase 7 (Admin SaaS), Fase 8 (Despliegue).*

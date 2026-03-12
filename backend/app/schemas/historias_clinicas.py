@@ -13,6 +13,11 @@ class HistoriaClinicaCreate(BaseModel):
     paciente_id:      UUID
     fecha_apertura:   Optional[date]  = None
     motivo_consulta:  Optional[str]   = None
+    enfermedad_actual: Optional[str]  = None
+    antecedentes_familiares: Optional[dict] = None
+    antecedentes_personales: Optional[dict] = None
+    examen_clinico: Optional[dict] = None
+    estudios_complementarios: Optional[dict] = None
     diagnostico:      Optional[str]   = None
     plan_tratamiento: Optional[str]   = None
     notas:            Optional[str]   = None
@@ -22,6 +27,11 @@ class HistoriaClinicaUpdate(BaseModel):
     """Actualización parcial — todos los campos son opcionales."""
     fecha_apertura:   Optional[date]  = None
     motivo_consulta:  Optional[str]   = None
+    enfermedad_actual: Optional[str]  = None
+    antecedentes_familiares: Optional[dict] = None
+    antecedentes_personales: Optional[dict] = None
+    examen_clinico: Optional[dict] = None
+    estudios_complementarios: Optional[dict] = None
     diagnostico:      Optional[str]   = None
     plan_tratamiento: Optional[str]   = None
     notas:            Optional[str]   = None
@@ -34,6 +44,11 @@ class HistoriaClinicaRead(BaseModel):
     paciente_id:      UUID
     fecha_apertura:   date
     motivo_consulta:  Optional[str]
+    enfermedad_actual: Optional[str]
+    antecedentes_familiares: Optional[dict]
+    antecedentes_personales: Optional[dict]
+    examen_clinico: Optional[dict]
+    estudios_complementarios: Optional[dict]
     diagnostico:      Optional[str]
     plan_tratamiento: Optional[str]
     notas:            Optional[str]

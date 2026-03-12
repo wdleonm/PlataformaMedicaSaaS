@@ -15,6 +15,14 @@ interface Paciente {
   email: string | null;
   fecha_nacimiento: string | null;
   activo: boolean;
+  sexo: string | null;
+  direccion: string | null;
+  lugar_nacimiento: string | null;
+  estado_civil: string | null;
+  ocupacion: string | null;
+  contacto_emergencia_nombre: string | null;
+  contacto_emergencia_telefono: string | null;
+  contacto_emergencia_parentesco: string | null;
 }
 
 export default function PacientesPage() {
@@ -28,6 +36,7 @@ export default function PacientesPage() {
   // Estado para Múltiples Acciones (Crear/Editar)
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"personal" | "emergencia">("personal");
 
   // Estado para el formulario
   const [formData, setFormData] = useState({
@@ -37,6 +46,14 @@ export default function PacientesPage() {
     telefono: "",
     email: "",
     fecha_nacimiento: "",
+    sexo: "M",
+    direccion: "",
+    lugar_nacimiento: "",
+    estado_civil: "Soltero/a",
+    ocupacion: "",
+    contacto_emergencia_nombre: "",
+    contacto_emergencia_telefono: "",
+    contacto_emergencia_parentesco: ""
   });
   const [isSaving, setIsSaving] = useState(false);
   
@@ -50,7 +67,6 @@ export default function PacientesPage() {
     try {
       setIsLoading(true);
       const res = await api.get("/api/pacientes");
-      // El backend devuelve { total, items: [...] }
       setPacientes(res.data?.items || []);
     } catch (error) {
       console.error("Error fetching pacientes:", error);
@@ -64,43 +80,30 @@ export default function PacientesPage() {
     fetchPacientes();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
-    // Máscara para Documento de Identidad (ej. V-12345678)
+    // Máscara para Documento de Identidad
     if (name === "documento") {
-      // Remover todo lo que no sea letra inicial, guion, o números
       let cleanVal = value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
-      
-      // Si comienza con número, no es válido (debe tener letra), pero si lo pega completo,
-      // podríamos intentar extraer la letra. Aquí forzamos Estructura: Letra + Guion + Números.
       if (cleanVal.length > 0) {
-        // Asegurar que el primer caracter es letra
         const firstChar = cleanVal.charAt(0);
         if (/[A-Z]/.test(firstChar)) {
-          // Remover guiones extra y dejar solo números en el resto
           const rest = cleanVal.substring(1).replace(/[^0-9]/g, "");
           cleanVal = rest.length > 0 ? `${firstChar}-${rest}` : firstChar;
         } else {
-          cleanVal = ""; // No se permite iniciar sin letra
+          cleanVal = ""; 
         }
       }
       setFormData((prev) => ({ ...prev, [name]: cleanVal }));
       return;
     }
 
-    // Máscara para Teléfono (ej. +58 412 1234567 o 0412 1234567)
-    if (name === "telefono") {
-      // Eliminar letras, permitir solo un + al inicio, números y espacios
+    // Máscara para Teléfonos
+    if (name === "telefono" || name === "contacto_emergencia_telefono") {
       let cleanVal = value.replace(/[^0-9+\s]/g, "");
-      
-      // Solo el primer caracter puede ser +
-      if (cleanVal.indexOf("+") > 0) {
-        cleanVal = cleanVal.replace(/\+/g, "");
-      }
-      // Quitar espacios repetidos
+      if (cleanVal.indexOf("+") > 0) cleanVal = cleanVal.replace(/\+/g, "");
       cleanVal = cleanVal.replace(/\s+/g, " ");
-
       setFormData((prev) => ({ ...prev, [name]: cleanVal }));
       return;
     }
@@ -111,7 +114,12 @@ export default function PacientesPage() {
   const handleOpenCreateModal = () => {
     setModalMode("create");
     setSelectedId(null);
-    setFormData({ nombre: "", apellido: "", documento: "", telefono: "", email: "", fecha_nacimiento: "" });
+    setActiveTab("personal");
+    setFormData({
+      nombre: "", apellido: "", documento: "", telefono: "", email: "", fecha_nacimiento: "",
+      sexo: "M", direccion: "", lugar_nacimiento: "", estado_civil: "Soltero/a", ocupacion: "",
+      contacto_emergencia_nombre: "", contacto_emergencia_telefono: "", contacto_emergencia_parentesco: ""
+    });
     setErrorMsg("");
     setInactiveData(null);
     setIsModalOpen(true);
@@ -120,6 +128,7 @@ export default function PacientesPage() {
   const handleOpenEditModal = (paciente: Paciente) => {
     setModalMode("edit");
     setSelectedId(paciente.id);
+    setActiveTab("personal");
     setFormData({
       nombre: paciente.nombre,
       apellido: paciente.apellido,
@@ -127,6 +136,14 @@ export default function PacientesPage() {
       telefono: paciente.telefono || "",
       email: paciente.email || "",
       fecha_nacimiento: paciente.fecha_nacimiento || "",
+      sexo: paciente.sexo || "M",
+      direccion: paciente.direccion || "",
+      lugar_nacimiento: paciente.lugar_nacimiento || "",
+      estado_civil: paciente.estado_civil || "Soltero/a",
+      ocupacion: paciente.ocupacion || "",
+      contacto_emergencia_nombre: paciente.contacto_emergencia_nombre || "",
+      contacto_emergencia_telefono: paciente.contacto_emergencia_telefono || "",
+      contacto_emergencia_parentesco: paciente.contacto_emergencia_parentesco || ""
     });
     setErrorMsg("");
     setIsModalOpen(true);
@@ -144,14 +161,14 @@ export default function PacientesPage() {
     
     if (!formData.nombre || !formData.apellido) {
       setErrorMsg("Nombre y Apellido son obligatorios.");
+      setActiveTab("personal");
       return;
     }
 
     try {
       setIsSaving(true);
       const payload = {
-        nombre: formData.nombre,
-        apellido: formData.apellido,
+        ...formData,
         documento: formData.documento || null,
         telefono: formData.telefono || null,
         email: formData.email || null,
@@ -376,7 +393,7 @@ export default function PacientesPage() {
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-border relative z-10 overflow-hidden"
+              className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
             >
               <div className="flex justify-between items-center p-6 border-b border-border/50 bg-secondary/30">
                 <h2 className="text-xl font-bold flex items-center gap-2">
@@ -387,7 +404,23 @@ export default function PacientesPage() {
                 </button>
               </div>
 
-              <form onSubmit={handleSavePaciente} className="p-6">
+              {/* Tabs Navigation */}
+              <div className="flex border-b border-border/20 px-6 bg-secondary/10">
+                <button 
+                  onClick={() => setActiveTab("personal")}
+                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "personal" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                >
+                  Información Personal
+                </button>
+                <button 
+                  onClick={() => setActiveTab("emergencia")}
+                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "emergencia" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                >
+                  Contacto de Emergencia
+                </button>
+              </div>
+
+              <form onSubmit={handleSavePaciente} className="p-6 overflow-y-auto custom-scrollbar flex-1">
                 
                 {errorMsg && (
                   <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
@@ -406,34 +439,82 @@ export default function PacientesPage() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div className="space-y-1.5 md:col-span-1">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nombre *</label>
-                    <input autoFocus required type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all" />
-                  </div>
-                  <div className="space-y-1.5 md:col-span-1">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Apellido *</label>
-                    <input required type="text" name="apellido" value={formData.apellido} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all" />
-                  </div>
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Documento de Identidad (Obligatorio letra, Ej. V-12345678)</label>
-                    <input type="text" name="documento" value={formData.documento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all" placeholder="Ej. V-12345678" />
-                  </div>
-                  <div className="space-y-1.5 md:col-span-1">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teléfono (Ej. +58 412 1234567 o 0412 1234567)</label>
-                    <input type="text" name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all" placeholder="+58 412 1234567" />
-                  </div>
-                  <div className="space-y-1.5 md:col-span-1">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all" placeholder="correo@ejemplo.com" />
-                  </div>
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Fecha de Nacimiento</label>
-                    <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all w-full text-foreground/80 [color-scheme:dark]" />
-                  </div>
-                </div>
+                {activeTab === "personal" ? (
+                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nombre *</label>
+                      <input name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Apellido *</label>
+                      <input name="apellido" value={formData.apellido} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Cédula / Pasaporte</label>
+                      <input name="documento" value={formData.documento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="V-12345678" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sexo</label>
+                      <select name="sexo" value={formData.sexo} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5">
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="Otro">Otro</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Fecha Nacimiento</label>
+                      <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 [color-scheme:dark]" />
+                    </div>
+                    <div className="space-y-1.5">
+                       <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Lugar Nacimiento</label>
+                       <input name="lugar_nacimiento" value={formData.lugar_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</label>
+                      <input name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teléfono</label>
+                      <input name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="+58 4xx xxxxxxx" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estado Civil</label>
+                      <select name="estado_civil" value={formData.estado_civil} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5">
+                         <option>Soltero/a</option>
+                         <option>Casado/a</option>
+                         <option>Divorciado/a</option>
+                         <option>Viudo/a</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ocupación</label>
+                      <input name="ocupacion" value={formData.ocupacion} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                    </div>
+                    <div className="space-y-1.5 md:col-span-2">
+                       <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dirección de Habitación</label>
+                       <textarea name="direccion" value={formData.direccion} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none" />
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nombres Completos</label>
+                      <input name="contacto_emergencia_nombre" value={formData.contacto_emergencia_nombre} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teléfono de Contacto</label>
+                        <input name="contacto_emergencia_telefono" value={formData.contacto_emergencia_telefono} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Parentesco / Relación</label>
+                        <input name="contacto_emergencia_parentesco" value={formData.contacto_emergencia_parentesco} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="Ej. Madre, Esposo..." />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-border/30">
+                <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-border/30">
                   <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-medium hover:bg-secondary rounded-xl transition-colors">
                     Cancelar
                   </button>

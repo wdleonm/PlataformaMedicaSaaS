@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
+import { createPortal } from "react-dom";
 import { useSearchParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { 
@@ -34,10 +35,47 @@ interface HistoriaClinica {
   id: string;
   fecha_apertura: string;
   motivo_consulta: string;
+  enfermedad_actual: string | null;
+  antecedentes_familiares: any;
+  antecedentes_personales: any;
+  examen_clinico: any;
+  estudios_complementarios: any;
   diagnostico: string | null;
   plan_tratamiento: string | null;
   notas: string | null;
   created_at: string;
+}
+
+interface FormDataHistoria {
+  fecha_apertura: string;
+  motivo_consulta: string;
+  enfermedad_actual: string;
+  antecedentes_familiares: {
+    madre: { viva: boolean; patologias: string[] };
+    padre: { viva: boolean; patologias: string[] };
+  };
+  antecedentes_personales: {
+    patologias: string[];
+    especifique: string;
+    medicamentos: string;
+  };
+  examen_clinico: {
+    encias: string;
+    carrillos: string;
+    paladar_duro: string;
+    lengua: string;
+    paladar_blando: string;
+    piso_boca: string;
+    observaciones: string;
+  };
+  estudios_complementarios: {
+    radiografias: string[];
+    observaciones: string;
+    laboratorios: string;
+  };
+  diagnostico: string;
+  plan_tratamiento: string;
+  notas: string;
 }
 
 function HistoriasContent() {
@@ -57,14 +95,44 @@ function HistoriasContent() {
   
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedHistoriaId, setSelectedHistoriaId] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataHistoria>({
+    fecha_apertura: new Date().toISOString().split('T')[0],
     motivo_consulta: "",
+    enfermedad_actual: "",
+    antecedentes_familiares: {
+      madre: { viva: true, patologias: [] },
+      padre: { viva: true, patologias: [] }
+    },
+    antecedentes_personales: {
+      patologias: [],
+      especifique: "",
+      medicamentos: ""
+    },
+    examen_clinico: {
+      encias: "",
+      carrillos: "",
+      paladar_duro: "",
+      lengua: "",
+      paladar_blando: "",
+      piso_boca: "",
+      observaciones: ""
+    },
+    estudios_complementarios: {
+      radiografias: [],
+      observaciones: "",
+      laboratorios: ""
+    },
     diagnostico: "",
     plan_tratamiento: "",
-    notas: "",
-    fecha_apertura: new Date().toISOString().split('T')[0]
+    notas: ""
   });
+
+  const filteredPacientes = pacientesList.filter(p => 
+    `${p.nombre} ${p.apellido}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.documento && p.documento.includes(searchTerm))
+  );
 
   const fetchPacientes = async () => {
     try {
@@ -111,12 +179,37 @@ function HistoriasContent() {
   const handleOpenCreateModal = () => {
     setModalMode("create");
     setSelectedHistoriaId(null);
+    setCurrentStep(1);
     setFormData({
+      fecha_apertura: new Date().toISOString().split('T')[0],
       motivo_consulta: "",
+      enfermedad_actual: "",
+      antecedentes_familiares: {
+        madre: { viva: true, patologias: [] },
+        padre: { viva: true, patologias: [] }
+      },
+      antecedentes_personales: {
+        patologias: [],
+        especifique: "",
+        medicamentos: ""
+      },
+      examen_clinico: {
+        encias: "",
+        carrillos: "",
+        paladar_duro: "",
+        lengua: "",
+        paladar_blando: "",
+        piso_boca: "",
+        observaciones: ""
+      },
+      estudios_complementarios: {
+        radiografias: [],
+        observaciones: "",
+        laboratorios: ""
+      },
       diagnostico: "",
       plan_tratamiento: "",
-      notas: "",
-      fecha_apertura: new Date().toISOString().split('T')[0]
+      notas: ""
     });
     setIsModalOpen(true);
   };
@@ -124,12 +217,29 @@ function HistoriasContent() {
   const handleOpenEditModal = (h: HistoriaClinica) => {
     setModalMode("edit");
     setSelectedHistoriaId(h.id);
+    setCurrentStep(1);
     setFormData({
+      fecha_apertura: h.fecha_apertura,
       motivo_consulta: h.motivo_consulta,
+      enfermedad_actual: h.enfermedad_actual || "",
+      antecedentes_familiares: h.antecedentes_familiares || {
+        madre: { viva: true, patologias: [] },
+        padre: { viva: true, patologias: [] }
+      },
+      antecedentes_personales: h.antecedentes_personales || {
+        patologias: [],
+        especifique: "",
+        medicamentos: ""
+      },
+      examen_clinico: h.examen_clinico || {
+        encias: "", carrillos: "", paladar_duro: "", lengua: "", paladar_blando: "", piso_boca: "", observaciones: ""
+      },
+      estudios_complementarios: h.estudios_complementarios || {
+        radiografias: [], observaciones: "", laboratorios: ""
+      },
       diagnostico: h.diagnostico || "",
       plan_tratamiento: h.plan_tratamiento || "",
-      notas: h.notas || "",
-      fecha_apertura: h.fecha_apertura
+      notas: h.notas || ""
     });
     setIsModalOpen(true);
   };
@@ -158,10 +268,39 @@ function HistoriasContent() {
     }
   };
 
-  const filteredPacientes = pacientesList.filter(p => 
-    `${p.nombre} ${p.apellido}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (p.documento && p.documento.includes(searchTerm))
-  );
+  const togglePatologiaFamiliar = (parent: 'madre' | 'padre', pat: string) => {
+    setFormData(prev => {
+      const currentPatologias = prev.antecedentes_familiares[parent].patologias;
+      const newPatologias = currentPatologias.includes(pat)
+        ? currentPatologias.filter((p: string) => p !== pat)
+        : [...currentPatologias, pat];
+      
+      return {
+        ...prev,
+        antecedentes_familiares: {
+          ...prev.antecedentes_familiares,
+          [parent]: { ...prev.antecedentes_familiares[parent], patologias: newPatologias }
+        }
+      };
+    });
+  };
+
+  const togglePatologiaPersonal = (pat: string) => {
+    setFormData(prev => {
+      const current = prev.antecedentes_personales.patologias;
+      const newPats = current.includes(pat)
+        ? current.filter((p: string) => p !== pat)
+        : [...current, pat];
+      
+      return {
+        ...prev,
+        antecedentes_personales: { ...prev.antecedentes_personales, patologias: newPats }
+      };
+    });
+  };
+
+  const patologiasDisponibles = ["Alergias", "Cardiovascular", "Respiratorios", "Diabetes", "Sanguíneos", "Cáncer"];
+  const personalesDisponibles = ["Cardiovasculares", "Enf. Pulmonar", "Sanguíneos", "Hemorrágicos", "Quirúrgicos", "Hospitalización", "Alergias", "Diabetes", "Convulsión", "Enf. Renal", "Asma"];
 
   if (isLoading) {
     return (
@@ -310,13 +449,21 @@ function HistoriasContent() {
 
                   {/* Main Content */}
                   <div className="flex-1 p-6 space-y-4">
-                    <div>
-                      <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-1">Motivo de Consulta</h4>
-                      <p className="text-foreground font-medium">{h.motivo_consulta}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                       <div>
+                          <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-1">Motivo de Consulta</h4>
+                          <p className="text-foreground font-medium">{h.motivo_consulta}</p>
+                       </div>
+                       {h.enfermedad_actual && (
+                       <div>
+                          <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-1">Enfermedad Actual</h4>
+                          <p className="text-sm text-foreground/80">{h.enfermedad_actual}</p>
+                       </div>
+                       )}
                     </div>
 
                     {h.diagnostico && (
-                      <div>
+                      <div className="pt-4 border-t border-border/10">
                         <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Diagnóstico</h4>
                         <p className="text-sm text-foreground/80 bg-background/30 p-3 rounded-xl border border-border/10 italic">
                           {h.diagnostico}
@@ -347,7 +494,7 @@ function HistoriasContent() {
                     <button 
                       onClick={() => handleOpenEditModal(h)}
                       className="p-3 hover:bg-primary/20 text-primary rounded-xl transition-all shadow-sm hover:scale-110" 
-                      title="Editar Evolución"
+                      title="Ver/Editar Detalle Completo"
                     >
                       <Edit2 size={18} />
                     </button>
@@ -362,110 +509,305 @@ function HistoriasContent() {
         )}
       </div>
 
-      {/* Modal Evolución (Create/Edit) */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-              onClick={() => !isSaving && setIsModalOpen(false)}
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
-            >
+      {/* Modal Evolución (Create/Edit) — renderizado con Portal para escapar del layout */}
+      {typeof window !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {isModalOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+              <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+                onClick={() => !isSaving && setIsModalOpen(false)}
+              />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="bg-card w-full max-w-4xl rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden flex flex-col max-h-[95vh]"
+              >
               <div className="flex justify-between items-center p-6 border-b border-border/50 bg-secondary/30">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                  <Stethoscope size={20} className="text-primary"/> 
-                  {modalMode === "create" ? "Nueva Evolución Clínica" : "Editar Evolución Clínica"}
-                </h2>
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                    <Stethoscope size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold leading-tight">
+                      {modalMode === "create" ? "Nueva Historia Clínica" : "Editar Historia Clínica"}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">Paciente: {paciente?.nombre} {paciente?.apellido}</p>
+                  </div>
+                </div>
                 <button onClick={() => setIsModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1.5 transition-colors">
                   <X size={20} />
                 </button>
               </div>
 
-              <form onSubmit={handleSaveHistoria} className="p-6 overflow-y-auto space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5 md:col-span-1">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Fecha de Atención</label>
-                    <input 
-                      type="date" 
-                      value={formData.fecha_apertura} 
-                      onChange={(e) => setFormData({...formData, fecha_apertura: e.target.value})} 
-                      className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all w-full text-foreground/80 [color-scheme:dark]" 
-                    />
-                  </div>
-                  
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Motivo de Consulta *</label>
-                    <input 
-                      required 
-                      autoFocus 
-                      type="text" 
-                      placeholder="Ej. Dolor en molar superior dereche, limpieza general..."
-                      value={formData.motivo_consulta} 
-                      onChange={(e) => setFormData({...formData, motivo_consulta: e.target.value})} 
-                      className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all" 
-                    />
-                  </div>
+              {/* Progress Steps — fijos, sin scrollbar visible */}
+              <div className="flex items-center px-6 py-3 bg-secondary/10 border-b border-border/20 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {[
+                  { n: 1, t: "Consulta" },
+                  { n: 2, t: "Antecedentes" },
+                  { n: 3, t: "Examen Físico" },
+                  { n: 4, t: "Odontograma" },
+                  { n: 5, t: "Plan" }
+                ].map(s => (
+                  <button 
+                    key={s.n}
+                    onClick={() => setCurrentStep(s.n)}
+                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 ${currentStep === s.n ? 'bg-primary text-primary-foreground shadow-md scale-105' : 'text-muted-foreground hover:bg-secondary'}`}
+                  >
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center border text-[10px] ${currentStep === s.n ? 'border-primary-foreground' : 'border-current'}`}>{s.n}</span>
+                    {s.t}
+                  </button>
+                ))}
+              </div>
 
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Diagnóstico</label>
-                    <textarea 
-                      rows={2} 
-                      placeholder="Hallazgos clínicos, radiológicos..."
-                      value={formData.diagnostico} 
-                      onChange={(e) => setFormData({...formData, diagnostico: e.target.value})} 
-                      className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all resize-none" 
-                    />
-                  </div>
+              <form onSubmit={handleSaveHistoria} className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                
+                {currentStep === 1 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Fecha de Atención</label>
+                        <input type="date" value={formData.fecha_apertura} onChange={(e) => setFormData({...formData, fecha_apertura: e.target.value})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none transition-all [color-scheme:dark]" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Motivo de Consulta *</label>
+                        <input required type="text" placeholder="Ej. Dolor agudo, Limpieza..." value={formData.motivo_consulta} onChange={(e) => setFormData({...formData, motivo_consulta: e.target.value})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none transition-all" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Enfermedad Actual / Descripción</label>
+                      <textarea rows={4} placeholder="Describa los síntomas, tiempo de evolución..." value={formData.enfermedad_actual} onChange={(e) => setFormData({...formData, enfermedad_actual: e.target.value})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none transition-all resize-none" />
+                    </div>
+                  </motion.div>
+                )}
 
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Plan de Tratamiento</label>
-                    <textarea 
-                      rows={2} 
-                      placeholder="Pasos a seguir, medicamentos, prótesis..."
-                      value={formData.plan_tratamiento} 
-                      onChange={(e) => setFormData({...formData, plan_tratamiento: e.target.value})} 
-                      className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all resize-none" 
-                    />
-                  </div>
+                {currentStep === 2 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+                    {/* Familiares */}
+                    <div className="space-y-4">
+                      <h3 className="font-bold border-b border-border/20 pb-2 flex items-center gap-2">
+                        <User size={18} className="text-primary"/> Antecedentes Familiares
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Madre */}
+                        <div className="p-4 bg-secondary/20 rounded-2xl space-y-3">
+                          <p className="text-xs font-bold uppercase text-muted-foreground">Madre</p>
+                          <div className="flex flex-wrap gap-2">
+                            {patologiasDisponibles.map(p => (
+                              <button 
+                                key={p} 
+                                type="button" 
+                                onClick={() => togglePatologiaFamiliar('madre', p)}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${formData.antecedentes_familiares.madre.patologias.includes(p) ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-secondary'}`}
+                              >
+                                {p}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        {/* Padre */}
+                        <div className="p-4 bg-secondary/20 rounded-2xl space-y-3">
+                          <p className="text-xs font-bold uppercase text-muted-foreground">Padre</p>
+                          <div className="flex flex-wrap gap-2">
+                            {patologiasDisponibles.map(p => (
+                              <button 
+                                key={p} 
+                                type="button" 
+                                onClick={() => togglePatologiaFamiliar('padre', p)}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${formData.antecedentes_familiares.padre.patologias.includes(p) ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-secondary'}`}
+                              >
+                                {p}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Notas Adicionales</label>
-                    <textarea 
-                      rows={2} 
-                      placeholder="Observaciones generales..."
-                      value={formData.notas} 
-                      onChange={(e) => setFormData({...formData, notas: e.target.value})} 
-                      className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none p-2.5 transition-all resize-none" 
-                    />
-                  </div>
+                    {/* Personales */}
+                    <div className="space-y-4">
+                      <h3 className="font-bold border-b border-border/20 pb-2">Antecedentes Personales Patológicos</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {personalesDisponibles.map(p => (
+                          <button 
+                            key={p} 
+                            type="button" 
+                            onClick={() => togglePatologiaPersonal(p)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${formData.antecedentes_personales.patologias.includes(p) ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-secondary border border-border/20'}`}
+                          >
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="space-y-4 mt-4">
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold uppercase text-muted-foreground">Especifique otros / observaciones</label>
+                          <input type="text" value={formData.antecedentes_personales.especifique} onChange={(e) => setFormData({...formData, antecedentes_personales: {...formData.antecedentes_personales, especifique: e.target.value}})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold uppercase text-muted-foreground">¿Toma algún medicamento?</label>
+                          <input type="text" value={formData.antecedentes_personales.medicamentos} onChange={(e) => setFormData({...formData, antecedentes_personales: {...formData.antecedentes_personales, medicamentos: e.target.value}})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="Nombre y dosis..." />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {currentStep === 3 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                    <h3 className="font-bold border-b border-border/20 pb-2">Examen Clínico Intraoral</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {['encias', 'carrillos', 'paladar_duro', 'lengua', 'paladar_blando', 'piso_boca'].map(field => (
+                        <div key={field} className="space-y-2">
+                          <label className="text-xs font-bold uppercase text-muted-foreground">{field.replace('_', ' ')}</label>
+                          <input type="text" value={(formData.examen_clinico as any)[field]} onChange={(e) => setFormData({...formData, examen_clinico: {...formData.examen_clinico, [field]: e.target.value}})} className="w-full bg-background border border-border/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" placeholder="Observación..." />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase text-muted-foreground">Observaciones Generales y Hallazgos</label>
+                      <textarea rows={3} value={formData.examen_clinico.observaciones} onChange={(e) => setFormData({...formData, examen_clinico: {...formData.examen_clinico, observaciones: e.target.value}})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none resize-none" />
+                    </div>
+                  </motion.div>
+                )}
+
+                {currentStep === 4 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
+                    <div className="flex items-center justify-between border-b border-border/20 pb-3">
+                      <h3 className="font-bold flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2"/><path d="M12 8v4l3 3"/></svg>
+                        </span>
+                        Odontograma
+                      </h3>
+                      {pacienteId && (
+                        <a
+                          href={`/embed/odontograma?paciente_id=${pacienteId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                        >
+                          Abrir pantalla completa
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                      )}
+                    </div>
+                    <div className="rounded-2xl overflow-hidden border border-border/30 bg-background/50">
+                      {pacienteId ? (
+                        <iframe
+                          src={`/embed/odontograma?paciente_id=${pacienteId}`}
+                          className="w-full h-[480px] border-0"
+                          title="Odontograma del paciente"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-3">
+                          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-40"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2"/></svg>
+                          <p className="text-sm font-medium">Selecciona un paciente primero</p>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground text-center">
+                      Los registros del odontograma se guardan de forma independiente y se mantiene un historial evolutivo completo.
+                    </p>
+                  </motion.div>
+                )}
+
+                {currentStep === 5 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <div className="space-y-2">
+                         <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Diagnóstico</label>
+                         <textarea rows={4} value={formData.diagnostico} onChange={(e) => setFormData({...formData, diagnostico: e.target.value})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none resize-none" placeholder="Resumen del diagnóstico..." />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Plan de Tratamiento</label>
+                         <textarea rows={4} value={formData.plan_tratamiento} onChange={(e) => setFormData({...formData, plan_tratamiento: e.target.value})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none resize-none" placeholder="Pasos a seguir..." />
+                       </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="font-bold border-b border-border/20 pb-2">Estudios Complementarios</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold uppercase text-muted-foreground">Estudios Radiográficos</label>
+                          <div className="flex flex-wrap gap-2">
+                            {['Panorámica', 'Periapical', 'Interproximal', 'Oclusal'].map(r => (
+                              <button 
+                                key={r} type="button"
+                                onClick={() => {
+                                  const current = formData.estudios_complementarios.radiografias;
+                                  const next = (current as string[]).includes(r) ? (current as string[]).filter(x => x !== r) : [...current, r];
+                                  setFormData({...formData, estudios_complementarios: {...formData.estudios_complementarios, radiografias: next}});
+                                }}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${(formData.estudios_complementarios.radiografias as string[]).includes(r) ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-secondary border border-border/20'}`}
+                              >
+                                {r}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                           <label className="text-xs font-bold uppercase text-muted-foreground">Exámenes de Laboratorio</label>
+                           <input type="text" value={formData.estudios_complementarios.laboratorios} onChange={(e) => setFormData({...formData, estudios_complementarios: {...formData.estudios_complementarios, laboratorios: e.target.value}})} className="w-full bg-background border border-border/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" placeholder="Resultados relevantes..." />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Notas Internas</label>
+                      <textarea rows={2} value={formData.notas} onChange={(e) => setFormData({...formData, notas: e.target.value})} className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none resize-none" placeholder="Notas que no aparecen en el reporte impreso..." />
+                    </div>
+                  </motion.div>
+                )}
+              </form>
+
+              <div className="p-6 border-t border-border/50 bg-secondary/30 flex justify-between items-center">
+                <div className="flex gap-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                    disabled={currentStep === 1 || isSaving}
+                    className="px-6 py-2.5 text-sm font-bold bg-secondary hover:bg-secondary/80 rounded-2xl transition-all disabled:opacity-0"
+                  >
+                    Anterior
+                  </button>
                 </div>
-
-                <div className="flex justify-end gap-3 pt-4 border-t border-border/30">
+                
+                <div className="flex gap-3">
                   <button 
                     type="button" 
                     onClick={() => setIsModalOpen(false)} 
                     disabled={isSaving}
-                    className="px-5 py-2.5 text-sm font-medium hover:bg-secondary rounded-xl transition-colors disabled:opacity-50"
+                    className="px-6 py-2.5 text-sm font-medium hover:text-primary transition-colors disabled:opacity-50"
                   >
                     Cancelar
                   </button>
-                  <button 
-                    type="submit" 
-                    disabled={isSaving} 
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100"
-                  >
-                    {isSaving ? <><Loader2 size={16} className="animate-spin"/> Guardando</> : 'Guardar Cambios'}
-                  </button>
+                  {currentStep < 5 ? (
+                    <button 
+                      type="button" 
+                      onClick={() => setCurrentStep(currentStep + 1)}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold px-8 py-3 rounded-2xl transition-all shadow-lg active:scale-95"
+                    >
+                      Siguiente
+                    </button>
+                  ) : (
+                    <button 
+                      type="submit" 
+                      disabled={isSaving} 
+                      onClick={handleSaveHistoria}
+                      className="bg-success hover:bg-success/90 text-success-foreground text-sm font-black px-10 py-3 rounded-2xl flex items-center gap-2 transition-all shadow-xl hover:shadow-success/30 active:scale-95 disabled:opacity-75"
+                    >
+                      {isSaving ? <><Loader2 size={18} className="animate-spin"/> Guardando</> : 'Finalizar y Guardar'}
+                    </button>
+                  )}
                 </div>
-              </form>
+              </div>
             </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }

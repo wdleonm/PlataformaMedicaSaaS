@@ -171,6 +171,7 @@ export default function OdontogramaPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pacienteIdParam = searchParams.get("paciente_id");
+  const isEmbed = searchParams.get("embed") === "true";
 
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [selectedPacienteId, setSelectedPacienteId] = useState<string | null>(pacienteIdParam);
@@ -335,141 +336,181 @@ export default function OdontogramaPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setSelectedPacienteId(null)}
-            className="p-3 bg-card hover:bg-secondary rounded-2xl transition-all shadow-sm border border-border/10"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
-              Odontograma: <span className="text-primary">{selectedPaciente?.nombre} {selectedPaciente?.apellido}</span>
-            </h1>
-            <div className="flex items-center gap-4 mt-1">
+      {/* Header con nombre: solo visible en modo standalone, no embebido */}
+      {!isEmbed && (
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setSelectedPacienteId(null)}
+              className="p-3 bg-card hover:bg-secondary rounded-2xl transition-all shadow-sm border border-border/10"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <div>
+              <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+                Odontograma: <span className="text-primary">{selectedPaciente?.nombre} {selectedPaciente?.apellido}</span>
+              </h1>
+              <div className="flex items-center gap-4 mt-1">
                 <span className="text-xs font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest">
                     <User size={12} className="text-primary"/> {selectedPaciente?.documento}
                 </span>
                 <span className="text-xs font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest">
                     <CalendarIcon size={12} className="text-primary"/> {(() => {
                         try {
-                            const d = new Date(fechaCorte + 'T12:00:00'); // Añadir hora para evitar problemas de zona horaria
+                            const d = new Date(fechaCorte + 'T12:00:00');
                             return isNaN(d.getTime()) ? 'Fecha inválida' : format(d, "dd MMM, yyyy", { locale: es });
                         } catch {
                             return 'Fecha inválida';
                         }
                     })()}
                 </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-3 bg-card p-2 rounded-2xl border border-border/10 shadow-sm w-full lg:w-auto">
-            <input 
-                type="date" 
-                value={fechaCorte}
-                onChange={(e) => setFechaCorte(e.target.value)}
-                className="bg-secondary/50 border-none rounded-xl text-xs font-bold p-2.5 outline-none [color-scheme:light]"
-            />
-            <button className="flex-1 lg:flex-none px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                <History size={14} /> Historial Dental
-            </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        
-        {/* Lado Izquierdo: Paleta de Hallazgos */}
-        <div className="xl:col-span-1 space-y-6 order-2 xl:order-1">
-          <div className="glass-panel p-6 rounded-[2rem] border-none sticky top-6">
-             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-primary mb-6 flex items-center gap-2">
-                <Plus size={16} /> Hallazgos
-             </h3>
-
-             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-                {/* Categoría Patologías */}
-                <div className="space-y-2">
-                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest pl-2">Patologías (Rojo)</p>
-                    {hallazgos.filter(h => h.categoria === 'patologia').map(h => (
-                        <button
-                            key={h.id}
-                            onClick={() => setSelectedHallazgo(selectedHallazgo?.id === h.id ? null : h)}
-                            className={`w-full flex items-center justify-between p-3 rounded-xl transition-all border ${
-                                selectedHallazgo?.id === h.id 
-                                ? 'bg-red-500 text-white border-red-500 shadow-lg shadow-red-500/20 scale-[1.02]' 
-                                : 'bg-secondary/30 text-slate-600 dark:text-slate-300 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800'
-                            }`}
-                        >
-                            <span className="text-xs font-bold truncate pr-2">{h.nombre}</span>
-                            <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${selectedHallazgo?.id === h.id ? 'bg-white/20' : 'bg-red-500/10 text-red-500'}`}>
-                                {h.codigo}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Categoría Restauraciones */}
-                <div className="space-y-2 pt-4">
-                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest pl-2">Restauraciones (Azul)</p>
-                    {hallazgos.filter(h => h.categoria === 'restauracion').map(h => (
-                        <button
-                            key={h.id}
-                            onClick={() => setSelectedHallazgo(selectedHallazgo?.id === h.id ? null : h)}
-                            className={`w-full flex items-center justify-between p-3 rounded-xl transition-all border ${
-                                selectedHallazgo?.id === h.id 
-                                ? 'bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-500/20 scale-[1.02]' 
-                                : 'bg-secondary/30 text-slate-600 dark:text-slate-300 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800'
-                            }`}
-                        >
-                            <span className="text-xs font-bold truncate pr-2">{h.nombre}</span>
-                            <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${selectedHallazgo?.id === h.id ? 'bg-white/20' : 'bg-sky-500/10 text-sky-500'}`}>
-                                {h.codigo}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-                
-                {/* Categoría Estados (Gris/Azul) */}
-                <div className="space-y-2 pt-4">
-                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest pl-2">Estados / Otros</p>
-                    {hallazgos.filter(h => h.categoria === 'estado').map(h => (
-                        <button
-                            key={h.id}
-                            onClick={() => setSelectedHallazgo(selectedHallazgo?.id === h.id ? null : h)}
-                            className={`w-full flex items-center justify-between p-3 rounded-xl transition-all border ${
-                                selectedHallazgo?.id === h.id 
-                                ? 'bg-slate-600 text-white border-slate-600 shadow-lg shadow-slate-600/20 scale-[1.02]' 
-                                : 'bg-secondary/30 text-slate-600 dark:text-slate-300 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800'
-                            }`}
-                        >
-                            <span className="text-xs font-bold truncate pr-2">{h.nombre}</span>
-                            <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${selectedHallazgo?.id === h.id ? 'bg-white/20' : 'bg-slate-500/10 text-slate-500'}`}>
-                                {h.codigo}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-             </div>
-
-             <div className="mt-6 p-4 rounded-2xl bg-primary/5 border border-primary/10">
-                <label className="text-[10px] font-black uppercase text-primary tracking-widest mb-2 block">Notas de Hallazgo</label>
-                <textarea 
-                    value={notas}
-                    onChange={(e) => setNotas(e.target.value)}
-                    placeholder="Escribe observaciones adicionales..."
-                    className="w-full bg-white dark:bg-slate-900 border-none rounded-xl text-xs p-3 focus:ring-2 focus:ring-primary outline-none min-h-[80px] resize-none"
-                />
-             </div>
+          <div className="flex items-center gap-3 bg-card p-2 rounded-2xl border border-border/10 shadow-sm w-full lg:w-auto">
+              <input 
+                  type="date" 
+                  value={fechaCorte}
+                  onChange={(e) => setFechaCorte(e.target.value)}
+                  className="bg-secondary/50 border-none rounded-xl text-xs font-bold p-2.5 outline-none [color-scheme:light]"
+              />
+              <button className="flex-1 lg:flex-none px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+                  <History size={14} /> Historial Dental
+              </button>
           </div>
         </div>
+      )}
 
-        {/* Centro: El Odontograma Visual */}
-        <div className="xl:col-span-3 space-y-6 order-1 xl:order-2">
-            <div className="glass-panel p-6 md:p-10 rounded-[2rem] border-none overflow-x-auto custom-scrollbar">
-                
+      <div className="space-y-4">
+
+        {/* Paleta de Hallazgos — barra horizontal compacta ENCIMA del odontograma */}
+        <div className="glass-panel rounded-2xl border-none p-4">
+          <div className="flex flex-wrap items-start gap-6">
+
+            {/* Selector de fecha: solo en modo embed */}
+            {isEmbed && (
+              <div className="flex items-center gap-2 shrink-0">
+                <input
+                  type="date"
+                  value={fechaCorte}
+                  onChange={(e) => setFechaCorte(e.target.value)}
+                  className="bg-secondary/50 border border-border/30 rounded-xl text-xs font-bold px-3 py-2 outline-none [color-scheme:dark]"
+                />
+              </div>
+            )}
+
+            {/* Grupos de hallazgos en fila */}
+            <div className="flex flex-wrap gap-6 flex-1">
+              {/* Patologías */}
+              <div className="space-y-1">
+                <p className="text-[9px] font-black uppercase text-red-400 tracking-widest">Patologías</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {hallazgos.filter(h => h.categoria === 'patologia').map(h => (
+                    <button
+                      key={h.id}
+                      onClick={() => setSelectedHallazgo(selectedHallazgo?.id === h.id ? null : h)}
+                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-all text-[11px] font-bold border ${
+                        selectedHallazgo?.id === h.id
+                          ? 'bg-red-500 text-white border-red-500 shadow-md shadow-red-500/30 scale-105'
+                          : 'bg-secondary/40 text-slate-300 border-transparent hover:border-red-400/40 hover:bg-red-500/10'
+                      }`}
+                    >
+                      {h.nombre}
+                      <span className={`text-[9px] font-black px-1 py-0.5 rounded ${
+                        selectedHallazgo?.id === h.id ? 'bg-white/20' : 'bg-red-500/20 text-red-400'
+                      }`}>{h.codigo}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Restauraciones */}
+              <div className="space-y-1">
+                <p className="text-[9px] font-black uppercase text-sky-400 tracking-widest">Restauraciones</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {hallazgos.filter(h => h.categoria === 'restauracion').map(h => (
+                    <button
+                      key={h.id}
+                      onClick={() => setSelectedHallazgo(selectedHallazgo?.id === h.id ? null : h)}
+                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-all text-[11px] font-bold border ${
+                        selectedHallazgo?.id === h.id
+                          ? 'bg-sky-500 text-white border-sky-500 shadow-md shadow-sky-500/30 scale-105'
+                          : 'bg-secondary/40 text-slate-300 border-transparent hover:border-sky-400/40 hover:bg-sky-500/10'
+                      }`}
+                    >
+                      {h.nombre}
+                      <span className={`text-[9px] font-black px-1 py-0.5 rounded ${
+                        selectedHallazgo?.id === h.id ? 'bg-white/20' : 'bg-sky-500/20 text-sky-400'
+                      }`}>{h.codigo}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Estados */}
+              <div className="space-y-1">
+                <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Estados</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {hallazgos.filter(h => h.categoria === 'estado').map(h => (
+                    <button
+                      key={h.id}
+                      onClick={() => setSelectedHallazgo(selectedHallazgo?.id === h.id ? null : h)}
+                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-all text-[11px] font-bold border ${
+                        selectedHallazgo?.id === h.id
+                          ? 'bg-slate-500 text-white border-slate-500 shadow-md shadow-slate-500/30 scale-105'
+                          : 'bg-secondary/40 text-slate-300 border-transparent hover:border-slate-400/40 hover:bg-slate-500/10'
+                      }`}
+                    >
+                      {h.nombre}
+                      <span className={`text-[9px] font-black px-1 py-0.5 rounded ${
+                        selectedHallazgo?.id === h.id ? 'bg-white/20' : 'bg-slate-500/20 text-slate-400'
+                      }`}>{h.codigo}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Nota del hallazgo a la derecha */}
+            <div className="shrink-0 w-48">
+              <p className="text-[9px] font-black uppercase text-primary tracking-widest mb-1.5">Nota de hallazgo</p>
+              <textarea
+                value={notas}
+                onChange={(e) => setNotas(e.target.value)}
+                placeholder="Observación adicional..."
+                className="w-full bg-background/60 border border-border/30 rounded-xl text-[11px] px-3 py-2 focus:ring-2 focus:ring-primary outline-none resize-none h-16"
+              />
+            </div>
+          </div>
+
+          {/* Banner de modo registro */}
+          <AnimatePresence>
+            {selectedHallazgo && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-3 overflow-hidden"
+              >
+                <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-2 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-primary rounded-full animate-pulse shrink-0" />
+                  <p className="text-[11px] font-bold text-primary">
+                    Modo Registro activo — toca una cara del diente para aplicar{" "}
+                    <span className="underline italic">{selectedHallazgo.nombre}</span>.
+                    Haz clic de nuevo en el hallazgo para deseleccionar.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Odontograma visual — ocupa todo el ancho */}
+        <div className="space-y-4">
+            <div className="glass-panel p-4 md:p-8 rounded-2xl border-none overflow-x-auto custom-scrollbar relative">
                 {isLoading && (
-                    <div className="absolute inset-0 z-10 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm flex items-center justify-center rounded-[2rem]">
+                    <div className="absolute inset-0 z-10 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm flex items-center justify-center rounded-2xl">
                         <div className="flex flex-col items-center gap-3">
                             <Loader2 className="animate-spin text-primary" size={40} />
                             <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">Cargando Mapa Dental...</p>
@@ -477,103 +518,75 @@ export default function OdontogramaPage() {
                     </div>
                 )}
 
-                {/* Banner de Ayuda de Guardado (Solo si hay hallazgo seleccionado) */}
-                <AnimatePresence>
-                    {selectedHallazgo && (
-                        <motion.div 
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-primary/95 text-white px-6 py-2 rounded-full shadow-xl flex items-center gap-2 border border-white/20 backdrop-blur-md"
-                        >
-                            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                            <p className="text-[10px] font-black uppercase tracking-widest">
-                                MODO REGISTRO: Toca una cara del diente para guardar <span className="underline decoration-white/50 italic">{selectedHallazgo.nombre}</span>
-                            </p>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                <div className="min-w-[1000px] flex flex-col items-center gap-12 py-10 px-4">
-                    
+                <div className="min-w-[800px] flex flex-col items-center gap-10 py-6 px-4">
                     {/* Arcada Superior */}
-                    <div className="flex flex-col gap-6 w-full items-center">
-                        <div className="flex gap-2">
-                            {/* Superior Derecha (18-11) */}
-                            <div className="flex gap-1.5 border-r-2 border-slate-200 dark:border-slate-800 pr-4">
-                                {quadrants.upperRight.map(n => (
-                                    <ToothVisual key={n} number={n} state={odontogramaState[n]} selectedHallazgo={selectedHallazgo} onApplyHallazgo={handleApplyHallazgo} />
-                                ))}
-                            </div>
-                            {/* Superior Izquierda (21-28) */}
-                            <div className="flex gap-1.5 pl-4">
-                                {quadrants.upperLeft.map(n => (
-                                    <ToothVisual key={n} number={n} state={odontogramaState[n]} selectedHallazgo={selectedHallazgo} onApplyHallazgo={handleApplyHallazgo} />
-                                ))}
-                            </div>
+                    <div className="flex gap-2">
+                        <div className="flex gap-1.5 border-r-2 border-slate-200 dark:border-slate-800 pr-4">
+                            {quadrants.upperRight.map(n => (
+                                <ToothVisual key={n} number={n} state={odontogramaState[n] ?? {}} selectedHallazgo={selectedHallazgo} onApplyHallazgo={handleApplyHallazgo} />
+                            ))}
+                        </div>
+                        <div className="flex gap-1.5 pl-4">
+                            {quadrants.upperLeft.map(n => (
+                                <ToothVisual key={n} number={n} state={odontogramaState[n] ?? {}} selectedHallazgo={selectedHallazgo} onApplyHallazgo={handleApplyHallazgo} />
+                            ))}
                         </div>
                     </div>
 
-                    <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent relative">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
+                    <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-700 to-transparent relative">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                             Línea Media
                         </div>
                     </div>
 
                     {/* Arcada Inferior */}
-                    <div className="flex flex-col gap-6 w-full items-center">
-                        <div className="flex gap-2">
-                            {/* Inferior Derecha (48-41) */}
-                            <div className="flex gap-1.5 border-r-2 border-slate-200 dark:border-slate-800 pr-4">
-                                {quadrants.lowerRight.map(n => (
-                                    <ToothVisual key={n} number={n} state={odontogramaState[n]} selectedHallazgo={selectedHallazgo} onApplyHallazgo={handleApplyHallazgo} />
-                                ))}
-                            </div>
-                            {/* Inferior Izquierda (31-38) */}
-                            <div className="flex gap-1.5 pl-4">
-                                {quadrants.lowerLeft.map(n => (
-                                    <ToothVisual key={n} number={n} state={odontogramaState[n]} selectedHallazgo={selectedHallazgo} onApplyHallazgo={handleApplyHallazgo} />
-                                ))}
-                            </div>
+                    <div className="flex gap-2">
+                        <div className="flex gap-1.5 border-r-2 border-slate-200 dark:border-slate-800 pr-4">
+                            {quadrants.lowerRight.map(n => (
+                                <ToothVisual key={n} number={n} state={odontogramaState[n] ?? {}} selectedHallazgo={selectedHallazgo} onApplyHallazgo={handleApplyHallazgo} />
+                            ))}
+                        </div>
+                        <div className="flex gap-1.5 pl-4">
+                            {quadrants.lowerLeft.map(n => (
+                                <ToothVisual key={n} number={n} state={odontogramaState[n] ?? {}} selectedHallazgo={selectedHallazgo} onApplyHallazgo={handleApplyHallazgo} />
+                            ))}
                         </div>
                     </div>
-
                 </div>
 
                 {/* Leyenda */}
-                <div className="mt-12 flex flex-wrap justify-center gap-8 border-t border-slate-100 dark:border-slate-800 pt-8">
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-sm bg-red-500 flex items-center justify-center text-[10px] text-white font-bold">C</div>
-                        <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Patología / Caries</span>
+                <div className="mt-6 flex flex-wrap justify-center gap-6 border-t border-slate-100 dark:border-slate-800 pt-4">
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-3 h-3 rounded-sm bg-red-500" />
+                        <span className="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Patología / Caries</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-sm bg-sky-500 flex items-center justify-center text-[10px] text-white font-bold">R</div>
-                        <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Restauración / Resina</span>
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-3 h-3 rounded-sm bg-sky-500" />
+                        <span className="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Restauración</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-sm border-2 border-slate-400 bg-slate-100 dark:bg-slate-800"></div>
-                        <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Sano / Sin registro</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Info size={14} className="text-primary" />
-                        <span className="text-[10px] font-bold text-slate-400">Haz clic en una cara del diente para aplicar el hallazgo seleccionado.</span>
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-3 h-3 rounded-sm border border-slate-400 bg-slate-800" />
+                        <span className="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Sano / Sin registro</span>
                     </div>
                 </div>
             </div>
 
-            {/* Panel de Ayuda / Instrucciones */}
-            <div className="p-6 rounded-[2rem] bg-sky-500/5 border border-sky-500/10 flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-sky-500 text-white shadow-lg shadow-sky-500/20">
-                    <AlertCircle size={24} />
+            {/* Info evolutivo: solo en modo standalone */}
+            {!isEmbed && (
+              <div className="p-5 rounded-2xl bg-sky-500/5 border border-sky-500/10 flex items-start gap-4">
+                <div className="p-2.5 rounded-xl bg-sky-500 text-white shadow-lg shadow-sky-500/20 shrink-0">
+                    <AlertCircle size={20} />
                 </div>
                 <div>
-                    <h4 className="font-black text-sky-900 dark:text-sky-100 leading-tight">¿Cómo funciona el Odontograma Evolutivo?</h4>
+                    <h4 className="font-black text-sky-900 dark:text-sky-100 text-sm leading-tight">¿Cómo funciona el Odontograma Evolutivo?</h4>
                     <p className="text-xs text-sky-700/70 dark:text-sky-400/70 mt-1 leading-relaxed">
-                        Este sistema funciona por <strong>capas cronológicas</strong>. Cada hallazgo que registras se guarda con la fecha actual. Al cambiar la fecha en el selector superior, el odontograma se reconstruye automáticamente mostrando cómo estaban los dientes en ese momento preciso. 
-                        <strong> Regla de Oro 3.1:</strong> Nunca borramos información, solo añadimos capas de evolución clínica.
+                        Este sistema funciona por <strong>capas cronológicas</strong>. Cada hallazgo se guarda con la fecha actual.
+                        Al cambiar la fecha se reconstruye el estado dental exacto de ese momento.
+                        <strong> Regla de Oro 3.1:</strong> Nunca se borra información, solo se añaden capas de evolución clínica.
                     </p>
                 </div>
-            </div>
+              </div>
+            )}
         </div>
       </div>
 

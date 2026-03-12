@@ -32,8 +32,7 @@ export default function Home() {
       // La API devuelve un token JWT
       await login(resp.data.access_token);
       
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch (_err) {
       setErrorLogin("Credenciales incorrectas o servidor no disponible.");
     } finally {
       setIsLoading(false);

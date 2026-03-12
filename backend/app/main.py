@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.database import engine
-from app.api import auth, pacientes, odontograma, historias_clinicas, inventario, citas, presupuestos, comunicaciones
+from app.api import auth, pacientes, odontograma, historias_clinicas, inventario, citas, presupuestos, comunicaciones, dashboard
 from app.workers.mensajes_worker import start_scheduler, stop_scheduler
 
 
@@ -57,6 +57,7 @@ app.include_router(inventario.router)
 app.include_router(citas.router)
 app.include_router(presupuestos.router)
 app.include_router(comunicaciones.router)
+app.include_router(dashboard.router)
 
 
 @app.get("/health")
