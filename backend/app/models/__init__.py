@@ -15,9 +15,12 @@ from app.models.especialista import Especialista, EspecialistaEspecialidad
 from app.models.paciente import Paciente
 from app.models.odontograma import OdontogramaHallazgo, OdontogramaRegistro
 from app.models.historia_clinica import HistoriaClinica
+from app.models.hc_seccion import HCSeccion, EspecialidadHCSeccion
 from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo
 from app.models.finanzas import Cita, Presupuesto, PresupuestoDetalle, Abono
 from app.models.comunicaciones import ColaMensaje
+from app.models.admin import Admin
+from app.models.suscripcion import PlanSuscripcion, LogSuscripcion
 
 __all__ = [
     "Especialidad",
@@ -27,6 +30,8 @@ __all__ = [
     "OdontogramaHallazgo",
     "OdontogramaRegistro",
     "HistoriaClinica",
+    "HCSeccion",
+    "EspecialidadHCSeccion",
     "Insumo",
     "Servicio",
     "ServicioInsumo",
@@ -35,4 +40,7 @@ __all__ = [
     "PresupuestoDetalle",
     "Abono",
     "ColaMensaje",
+    "Admin",
+    "PlanSuscripcion",
+    "LogSuscripcion",
 ]

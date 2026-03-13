@@ -298,6 +298,7 @@ def create_abono(
                     "monto":            f"{abono.monto:,.2f}",
                     "saldo_pendiente":  f"{presupuesto.saldo_pendiente:,.2f}",
                     "fecha":            str(abono.fecha_abono),
+                    "recibo_url":       f"{settings.app_url}/recibo/{abono.id}",
                 },
                 abono_id=abono.id,
                 max_reintentos=3,

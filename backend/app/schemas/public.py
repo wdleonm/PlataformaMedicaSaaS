@@ -1,0 +1,32 @@
+from pydantic import BaseModel
+from typing import List, Optional
+from uuid import UUID
+from datetime import datetime, date
+
+class PublicServiceRead(BaseModel):
+    id: UUID
+    nombre: str
+    precio: float
+    duracion_estimada_min: int
+
+class PublicSpecialistRead(BaseModel):
+    id: UUID
+    nombre: str
+    apellido: str
+    descripcion_perfil: Optional[str]
+    horario_atencion: Optional[dict]
+    especialidades: List[str]
+    servicios: List[PublicServiceRead]
+
+class PublicReservaCreate(BaseModel):
+    # Datos del paciente (auto-registro)
+    nombre: str
+    apellido: str
+    documento: str
+    email: str
+    telefono: str
+    
+    # Datos de la cita
+    servicio_id: UUID
+    fecha_hora: datetime
+    notas: Optional[str] = None

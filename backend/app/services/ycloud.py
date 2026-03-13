@@ -107,6 +107,7 @@ class YCloudService:
                 "Monto abonado: *{moneda} {monto}*\n"
                 "Saldo pendiente: {moneda} {saldo_pendiente}\n"
                 "Fecha: {fecha}\n\n"
+                "📄 Ver recibo digital: {recibo_url}\n\n"
                 "Gracias por su pago. 🦷"
             ),
             "recordatorio_cita": (

@@ -3,7 +3,7 @@ Schemas Pydantic para autenticación (Fase 1).
 """
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
-from typing import List
+from typing import List, Optional
 
 
 class EspecialidadRead(BaseModel):
@@ -36,6 +36,7 @@ class EspecialistaRead(BaseModel):
     nombre: str
     apellido: str
     activo: bool
+    slug_url: Optional[str] = None
     especialidades: List[EspecialidadRead] = []
 
     class Config:

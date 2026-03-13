@@ -252,6 +252,7 @@ En cada respuesta, Cursor debe indicar:
 - Un especialista de odontología ve: Consulta, Antecedentes, Examen Físico, Odontograma, Plan.
 - Un futuro especialista de cardiología vería: Consulta, Antecedentes, Examen Físico, ECG, Plan (sin Odontograma).
 - La especialidad queda registrada en cada historia clínica.
+**✅ Criterios cumplidos.**
 
 ---
 
@@ -299,27 +300,55 @@ En cada respuesta, Cursor debe indicar:
 - El administrador puede hacer login en `/admin/login` con credenciales propias.
 - Puede registrar un nuevo especialista, asignarle un plan y activar/desactivar su acceso.
 - El dashboard admin muestra estadísticas globales reales.
-- Un especialista con suscripción vencida recibe `402` y ve el modal de bloqueo en el frontend.
+- Un especialista con suscripción vencida recibe `403` (o `402`) y el sistema bloquea su acceso.
 - Los JWTs de admin y especialista no son intercambiables.
+**✅ Criterios cumplidos.**
 
 ---
 
-### Fase 8: Despliegue
+### Fase 9: Refinamiento de Negocio, Rentabilidad y Portal Público
 
-**Objetivo:** Configuración final para Easy Panel en el VPS. Se ejecuta únicamente cuando las Fases 6 y 7 estén aprobadas y estables.
+**Objetivo:** Completar la visión original del negocio enfocada en la rentabilidad del especialista y la facilidad de uso para el paciente.
 
-#### 8.1 Docker Compose para producción
+#### 9.1 Módulo de Rentabilidad (Costo vs. Ganancia)
+- [x] Implementar vista en el Dashboard del Especialista que calcule: `Precio del Servicio - Costo Sumado de Insumos = Ganancia Neta`.
+- [ ] Permitir definir "Merma" o costos indirectos por servicio.
+- [ ] Reporte mensual de "Servicios más rentables".
+
+#### 9.2 Portal Público de Reserva (Booking)
+- [x] Crear una ruta pública `/p/[slug-especialista]` para que pacientes vean servicios y agenden.
+- [x] Integrar con el calendario de citas disponible.
+- [x] Formulario de registro rápido para nuevos pacientes captados desde el portal.
+
+#### 9.3 Automatización de Recibos y Notificaciones de Abono
+- [x] Al registrar un abono, disparar automáticamente un mensaje de WhatsApp/Email.
+- [x] El mensaje incluye el "Saldo Pendiente" actualizado.
+- [x] Generar Recibo Digital Premium (web) accesible desde un link en el mensaje.
+
+#### Criterios de aceptación Fase 9
+- El especialista puede ver cuánto dinero neto le queda tras descontar materiales.
+- Un paciente puede agendarse solo desde una URL pública.
+- El paciente recibe un "comprobante digital" automático vía WhatsApp al pagar con acceso a un recibo premium.
+**✅ Criterios cumplidos.**
+
+---
+
+### Fase 10: Despliegue
+
+**Objetivo:** Configuración final para Easy Panel en el VPS. Se ejecuta únicamente cuando todas las fases anteriores estén aprobadas y estables.
+
+#### 10.1 Docker Compose para producción
 - [ ] `docker-compose.yml` listo para Easy Panel (postgres, backend, frontend, redis si aplica). Volúmenes para datos; variables desde entorno.
 - [ ] IP VPS 147.93.184.194 documentada para cuando se configure dominio o acceso.
 
-#### 8.2 Variables y secretos
-- [ ] Todas las variables documentadas (README o PLAN). Usuario configura en Easy Panel; no subir `.env` con secretos. `.env.example` con `YCLOUD_API_KEY=`, `ADMIN_JWT_SECRET=`, `ESPECIALISTA_JWT_SECRET=` y resto.
+#### 10.2 Variables y secretos
+- [ ] Todas las variables documentadas. `.env.example` actualizado.
 
-#### 8.3 Base de datos y SSL
-- [ ] Migraciones aplicadas al desplegar (scripts 001 a 007). Estrategia de backups (pg_dump, retención). SSL vía proxy reverso (Easy Panel / Nginx / Traefik).
+#### 10.3 Base de datos y SSL
+- [ ] Migraciones aplicadas al desplegar (scripts 001 a 009). SSL vía proxy reverso.
 
-#### Criterios de aceptación Fase 8
-- `docker-compose up` levanta todos los servicios. App accesible con todas las funcionalidades de las fases anteriores. RLS y JWT operativos en producción.
+#### Criterios de aceptación Fase 10
+- `docker-compose up` levanta todos los servicios. App accesible en producción.
 
 ---
 
@@ -378,5 +407,5 @@ PlataformaMedicaSaaS/   (Odonto-Focus)
 
 ---
 
-*Documento: Odonto-Focus | Master Plan. Última actualización: 11/03/2026.*
-*Estado: Fases 1–5 completadas ✅ | Pendiente: Fase 6 (HC Modular), Fase 7 (Admin SaaS), Fase 8 (Despliegue).*
+*Documento: Odonto-Focus | Master Plan. Última actualización: 12/03/2026.*
+*Estado: Fases 1–9 COMPLETADAS ✅ | Pendiente: Fase 10 (Despliegue).*

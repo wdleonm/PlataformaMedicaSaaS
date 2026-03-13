@@ -60,8 +60,27 @@ def create_historia(
         )
 
     from datetime import date
+
+    # Validar especialidad_id o asignar la primera del especialista
+    especialidad_id = data.especialidad_id
+    if not especialidad_id:
+        if not especialista.especialidades:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El especialista no tiene ninguna especialidad asignada",
+            )
+        especialidad_id = especialista.especialidades[0].id
+    else:
+        # Validar que el especialista tenga asignada esa especialidad
+        if especialidad_id not in [esp.id for esp in especialista.especialidades]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="El especialista no tiene asignada esta especialidad",
+            )
+
     historia = HistoriaClinica(
         especialista_id=especialista.id,
+        especialidad_id=especialidad_id,
         paciente_id=data.paciente_id,
         fecha_apertura=data.fecha_apertura or date.today(),
         motivo_consulta=data.motivo_consulta,

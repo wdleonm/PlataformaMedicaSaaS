@@ -40,6 +40,7 @@ class Paciente(PacienteBase, table=True):
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     especialista_id: UUID = Field(foreign_key="sys_config.especialistas.id", index=True)
+    origen_registro: str = Field(default="interno", max_length=20) # 'interno' o 'portal_publico'
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 

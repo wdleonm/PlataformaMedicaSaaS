@@ -11,6 +11,7 @@ from sqlalchemy.orm import selectinload
 from app.database import get_session
 from app.config import settings
 from app.models.especialista import Especialista
+from app.models.admin import Admin
 
 
 security = HTTPBearer()
@@ -33,10 +34,12 @@ def get_current_especialista(
             algorithms=[settings.jwt_algorithm],
         )
         especialista_id: str = payload.get("sub")
-        if especialista_id is None:
+        rol: str = payload.get("rol", "especialista")
+        
+        if especialista_id is None or rol != "especialista":
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token inválido",
+                detail="Token inválido o rol no autorizado",
             )
     except JWTError:
         raise HTTPException(
@@ -58,4 +61,51 @@ def get_current_especialista(
             detail="Especialista no encontrado",
         )
     
+    # Fase 7.4: Bloqueo por suscripción
+    if not especialista.suscripcion_activa:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Su suscripcion está inactiva o vencida. Contacte al administrador del sistema.",
+        )
+    
     return especialista
+
+
+def get_current_admin(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    session: Session = Depends(get_session),
+) -> Admin:
+    """
+    Dependency que valida JWT y retorna el administrador actual.
+    El JWT debe tener rol = 'admin'.
+    """
+    token = credentials.credentials
+    
+    try:
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret,
+            algorithms=[settings.jwt_algorithm],
+        )
+        admin_id: str = payload.get("sub")
+        rol: str = payload.get("rol")
+        
+        if admin_id is None or rol != "admin":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token inválido o no es administrador",
+            )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido o expirado",
+        )
+
+    admin = session.get(Admin, admin_id)
+    if admin is None or not admin.activo:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Administrador no encontrado o inactivo",
+        )
+    
+    return admin

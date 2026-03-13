@@ -49,6 +49,8 @@ class Servicio(SQLModel, table=True):
     codigo:          Optional[str]  = Field(default=None, max_length=40)
     precio:          float          = Field(default=0.0, ge=0)
     activo:          bool           = Field(default=True)
+    visible_publico: bool           = Field(default=True)
+    duracion_estimada_min: int      = Field(default=30)
     created_at:      datetime       = Field(default_factory=datetime.utcnow)
     updated_at:      datetime       = Field(default_factory=datetime.utcnow)
 

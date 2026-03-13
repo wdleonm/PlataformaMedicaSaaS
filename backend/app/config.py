@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     # Database fallback (por si no carga el .env)
     database_url: str = "postgresql://postgres:123456@localhost:5432/analytics"
+    app_url: str = "http://localhost:3000"
 
     # JWT
     jwt_secret: str = "change_me_secret_key_min_32_chars"

@@ -12,7 +12,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.database import engine
-from app.api import auth, pacientes, odontograma, historias_clinicas, inventario, citas, presupuestos, comunicaciones, dashboard
+from app.api import (
+    auth, pacientes, odontograma, historias_clinicas, hc_secciones, 
+    inventario, citas, presupuestos, comunicaciones, dashboard,
+    admin_auth, admin_especialistas, admin_planes, admin_dashboard, admin_config,
+    public_portal
+)
 from app.workers.mensajes_worker import start_scheduler, stop_scheduler
 
 
@@ -35,7 +40,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Odonto-Focus API",
     description="API multi-tenant para gestión médica/odontológica con notificaciones WhatsApp",
-    version="0.4.0",
+    version="0.5.0",
     lifespan=lifespan,
 )
 
@@ -53,11 +58,22 @@ app.include_router(auth.router)
 app.include_router(pacientes.router)
 app.include_router(odontograma.router)
 app.include_router(historias_clinicas.router)
+app.include_router(hc_secciones.router)
 app.include_router(inventario.router)
 app.include_router(citas.router)
 app.include_router(presupuestos.router)
 app.include_router(comunicaciones.router)
 app.include_router(dashboard.router)
+
+# Routers Admin (Fase 7)
+app.include_router(admin_auth.router)
+app.include_router(admin_especialistas.router)
+app.include_router(admin_planes.router)
+app.include_router(admin_dashboard.router)
+app.include_router(admin_config.router)
+
+# Portal Público (Fase 9)
+app.include_router(public_portal.router)
 
 
 @app.get("/health")

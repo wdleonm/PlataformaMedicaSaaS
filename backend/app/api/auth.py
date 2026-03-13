@@ -120,7 +120,7 @@ def login(
 
     # Crear token JWT
     access_token = create_access_token(
-        data={"sub": str(especialista.id), "email": especialista.email}
+        data={"sub": str(especialista.id), "email": especialista.email, "rol": "especialista"}
     )
 
     # Cargar especialidades explícitamente

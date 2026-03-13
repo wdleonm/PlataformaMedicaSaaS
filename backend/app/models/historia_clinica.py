@@ -28,6 +28,11 @@ class HistoriaClinica(SQLModel, table=True):
                                             foreign_key="sys_clinical.pacientes.id",
                                             index=True,
                                         )
+    especialidad_id:    Optional[UUID] = Field(
+                                            foreign_key="sys_config.especialidades.id",
+                                            index=True,
+                                            default=None
+                                        )
     fecha_apertura:     date           = Field(default_factory=date.today)
     
     # Imagen 1: Motivo de consulta y Enfermedad Actual

@@ -18,8 +18,12 @@ api.interceptors.request.use(
     // Al ejecutarse en el navegador, buscamos el token en localStorage
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
+      const adminToken = localStorage.getItem('admin_token');
+      
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+      } else if (adminToken) {
+        config.headers.Authorization = `Bearer ${adminToken}`;
       }
     }
     return config;

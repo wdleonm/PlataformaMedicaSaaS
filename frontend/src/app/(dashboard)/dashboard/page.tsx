@@ -21,6 +21,9 @@ import {
   ArrowUpRight,
   Stethoscope,
   CreditCard,
+  ExternalLink,
+  Copy,
+  Globe
 } from "lucide-react";
 
 interface CitaResumen {
@@ -47,6 +50,8 @@ interface DashboardStats {
   citas_semana: number;
   insumos_criticos: number;
   ingresos_mes: number;
+  costos_mes: number;
+  utilidad_mes: number;
   saldo_pendiente_total: number;
   historias_totales: number;
   proximas_citas: CitaResumen[];
@@ -142,13 +147,24 @@ export default function DashboardHome() {
       href: "/citas",
     },
     {
-      label: "Ingresos del Mes",
-      value: formatCurrency(stats?.ingresos_mes ?? 0),
-      sub: `${formatCurrency(stats?.saldo_pendiente_total ?? 0)} por cobrar`,
-      icon: DollarSign,
+      label: "Utilidad Neta (Mes)",
+      value: formatCurrency(stats?.utilidad_mes ?? 0),
+      sub: `Costo insumos: ${formatCurrency(stats?.costos_mes ?? 0)}`,
+      icon: TrendingUp,
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
       border: "border-emerald-400/20",
+      href: "/presupuestos",
+      isText: true,
+    },
+    {
+      label: "Cartera Pendiente",
+      value: formatCurrency(stats?.saldo_pendiente_total ?? 0),
+      sub: "Total deudores",
+      icon: CreditCard,
+      color: "text-amber-400",
+      bg: "bg-amber-400/10",
+      border: "border-amber-400/20",
       href: "/presupuestos",
       isText: true,
     },
@@ -219,6 +235,30 @@ export default function DashboardHome() {
               day: "numeric",
             })}
           </p>
+          {usuario?.slug_url && (
+            <div className="flex items-center gap-3 mt-4">
+              <Link 
+                href={`/p/${usuario.slug_url}`} 
+                target="_blank"
+                className="flex items-center gap-2 px-3 py-1.5 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 rounded-xl text-violet-400 text-xs font-bold transition-all group"
+              >
+                <Globe size={14} />
+                Portal Público
+                <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Link>
+              <button 
+                onClick={() => {
+                  const url = `${window.location.origin}/p/${usuario.slug_url}`;
+                  navigator.clipboard.writeText(url);
+                  alert("Enlace copiado al portapapeles");
+                }}
+                className="p-1.5 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-colors"
+                title="Copiar enlace"
+              >
+                <Copy size={14} />
+              </button>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2 px-4 py-2 glass-panel rounded-2xl border border-border/20">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />

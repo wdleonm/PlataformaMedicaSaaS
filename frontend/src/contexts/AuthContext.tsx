@@ -4,12 +4,22 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 
+interface Especialidad {
+  id: string;
+  nombre: string;
+  codigo: string;
+  activo: boolean;
+}
+
 type UsoUsuario = {
   id: string;
   nombre: string;
   apellido: string;
   email: string;
-  especialidad_principal: string | null;
+  especialidades: Especialidad[];
+  /** Primera especialidad activa del especialista (shortcut) */
+  especialidad_principal: Especialidad | null;
+  slug_url: string | null;
 };
 
 type AuthContextType = {
@@ -45,7 +55,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data } = await api.get("/api/auth/me", {
         headers: { Authorization: `Bearer ${currentToken}` }
       });
-      setUsuario(data);
+
+      // Normalizar: extraer especialidad_principal desde el array de especialidades
+      const especialidades: Especialidad[] = data.especialidades ?? [];
+      const principal = especialidades.find((e) => e.activo) ?? especialidades[0] ?? null;
+
+      setUsuario({
+        id: data.id,
+        nombre: data.nombre,
+        apellido: data.apellido,
+        email: data.email,
+        especialidades,
+        especialidad_principal: principal,
+        slug_url: data.slug_url ?? null,
+      });
     } catch (error) {
       console.error("Error validando token:", error);
       logout(); // Token inválido o expirado

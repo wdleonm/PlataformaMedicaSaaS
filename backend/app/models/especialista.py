@@ -3,9 +3,11 @@ Modelos: Especialista y relación N:N con Especialidades.
 RLS activo en especialistas (a nivel de tabla en PostgreSQL).
 """
 from sqlmodel import SQLModel, Field, Relationship
-from datetime import datetime
+from datetime import datetime, date
 from uuid import UUID, uuid4
-from typing import List, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING
+from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import JSONB
 
 if TYPE_CHECKING:
     from app.models.especialidad import Especialidad
@@ -46,3 +48,13 @@ class Especialista(EspecialistaBase, table=True):
     especialidades: List["Especialidad"] = Relationship(
         link_model=EspecialistaEspecialidad,
     )
+
+    # Fase 7: Suscripción
+    plan_suscripcion_id: Optional[UUID] = Field(default=None, foreign_key="sys_config.planes_suscripcion.id")
+    suscripcion_activa: bool = Field(default=True)
+    fecha_vencimiento_suscripcion: Optional[date] = Field(default=None)
+    # Fase 9: Portal Público
+    slug_url: Optional[str] = Field(default=None, max_length=100, unique=True)
+    portal_visible: bool = Field(default=False)
+    descripcion_perfil: Optional[str] = Field(default=None)
+    horario_atencion: Optional[dict] = Field(default=None, sa_column=Column(JSONB))

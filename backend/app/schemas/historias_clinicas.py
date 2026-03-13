@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 class HistoriaClinicaCreate(BaseModel):
     paciente_id:      UUID
+    especialidad_id:  Optional[UUID]  = None
     fecha_apertura:   Optional[date]  = None
     motivo_consulta:  Optional[str]   = None
     enfermedad_actual: Optional[str]  = None
@@ -25,6 +26,7 @@ class HistoriaClinicaCreate(BaseModel):
 
 class HistoriaClinicaUpdate(BaseModel):
     """Actualización parcial — todos los campos son opcionales."""
+    especialidad_id:  Optional[UUID]  = None
     fecha_apertura:   Optional[date]  = None
     motivo_consulta:  Optional[str]   = None
     enfermedad_actual: Optional[str]  = None
@@ -41,6 +43,7 @@ class HistoriaClinicaUpdate(BaseModel):
 class HistoriaClinicaRead(BaseModel):
     id:               UUID
     especialista_id:  UUID
+    especialidad_id:  Optional[UUID]
     paciente_id:      UUID
     fecha_apertura:   date
     motivo_consulta:  Optional[str]

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -24,9 +25,11 @@ export default function RootLayout({
         {/* Fondo Decorativo Sutil Premium */}
         <div className="fixed inset-0 z-[-1] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]" />
         
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <AdminAuthProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </AdminAuthProvider>
       </body>
     </html>
   );

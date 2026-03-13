@@ -61,8 +61,25 @@ def get_dashboard_stats(
     ).first() or 0
 
     # ── 3. Finanzas del mes ───────────────────────────────────────────────────
+    # Ingresos: Suma de monto_cobrado de citas completadas este mes
     ingresos_mes = session.exec(
         select(func.coalesce(func.sum(Cita.monto_cobrado), 0))
+        .where(Cita.especialista_id == eid)
+        .where(func.date(Cita.fecha_hora) >= inicio_mes)
+        .where(Cita.estado == "completada")
+    ).first() or 0.0
+
+    # Costos: Suma de costo_insumos de citas completadas este mes
+    costos_mes = session.exec(
+        select(func.coalesce(func.sum(Cita.costo_insumos), 0))
+        .where(Cita.especialista_id == eid)
+        .where(func.date(Cita.fecha_hora) >= inicio_mes)
+        .where(Cita.estado == "completada")
+    ).first() or 0.0
+
+    # Utilidad Neta: Suma de utilidad_neta de citas completadas este mes
+    utilidad_mes = session.exec(
+        select(func.coalesce(func.sum(Cita.utilidad_neta), 0))
         .where(Cita.especialista_id == eid)
         .where(func.date(Cita.fecha_hora) >= inicio_mes)
         .where(Cita.estado == "completada")
@@ -140,6 +157,8 @@ def get_dashboard_stats(
         "citas_semana": citas_semana,
         "insumos_criticos": insumos_criticos,
         "ingresos_mes": float(ingresos_mes),
+        "costos_mes": float(costos_mes),
+        "utilidad_mes": float(utilidad_mes),
         "saldo_pendiente_total": float(saldo_pendiente_total),
         "historias_totales": historias_count,
         # Listas
