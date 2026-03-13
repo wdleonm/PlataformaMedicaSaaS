@@ -17,7 +17,8 @@ import {
   X,
   CreditCard,
   User,
-  Trash2
+  Trash2,
+  Edit2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -71,6 +72,7 @@ export default function FinanzasPage() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [newBudget, setNewBudget] = useState({
+    id: "", // Para edición
     paciente_id: "",
     total: 0,
     monto_ajustado: 0,
@@ -137,46 +139,74 @@ export default function FinanzasPage() {
     if (!newBudget.paciente_id || finalTotal <= 0) return;
     setIsSaving(true);
     try {
-      let detallesParaEnviar = newBudget.detalles;
+      let detallesParaEnviar = newBudget.detalles.map(d => ({
+        servicio_id: d.servicio_id || null,
+        descripcion: d.descripcion,
+        cantidad: d.cantidad,
+        precio_unitario: d.precio_unitario
+      }));
       
-      // Si no hay detalles pero hay un total manual, creamos el detalle genérico
       if (detallesParaEnviar.length === 0) {
         detallesParaEnviar = [{
-          servicio_id: "",
+          servicio_id: null,
           descripcion: "Tratamiento / Plan Integral",
           cantidad: 1,
           precio_unitario: finalTotal
         }];
       } else if (newBudget.monto_ajustado > 0 && newBudget.monto_ajustado !== newBudget.total) {
-        // Si hay detalles pero el total fue ajustado, prorrateamos o simplemente 
-        // dejamos que el backend lo guarde. El total final será el que mandamos.
-        // Pero el trigger de la BD sumará los subtotales de los detalles... 
-        // Estrategia: Añadimos un ítem de "Ajuste/Descuento" si el total difiere.
         const diferencia = newBudget.monto_ajustado - newBudget.total;
         detallesParaEnviar.push({
-          servicio_id: "",
+          servicio_id: null,
           descripcion: diferencia < 0 ? "Descuento / Atención Especial" : "Gasto Adicional / Ajuste",
           cantidad: 1,
           precio_unitario: diferencia
         });
       }
 
-      await api.post("/api/presupuestos", {
-        paciente_id: newBudget.paciente_id,
-        notas: newBudget.notas,
-        detalles: detallesParaEnviar,
-        estado: "aprobado"
-      });
+      if (newBudget.id) {
+        // Edición
+        await api.patch(`/api/presupuestos/${newBudget.id}`, {
+          paciente_id: newBudget.paciente_id,
+          notas: newBudget.notas,
+          detalles: detallesParaEnviar
+        });
+      } else {
+        // Creación
+        await api.post("/api/presupuestos", {
+          paciente_id: newBudget.paciente_id,
+          notas: newBudget.notas,
+          detalles: detallesParaEnviar,
+          estado: "aprobado"
+        });
+      }
       
       setIsNewModalOpen(false);
-      setNewBudget({ paciente_id: "", total: 0, monto_ajustado: 0, notas: "", detalles: [] });
+      setNewBudget({ id: "", paciente_id: "", total: 0, monto_ajustado: 0, notas: "", detalles: [] });
       setPatientSearch("");
       fetchData();
     } catch (error) {
-      console.error("Error creating budget:", error);
+      console.error("Error saving budget:", error);
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleOpenEditBudget = (p: Presupuesto) => {
+    setNewBudget({
+      id: p.id,
+      paciente_id: p.paciente_id,
+      total: p.total,
+      monto_ajustado: 0, // No cargamos ajuste previo directamente como tal, se recalculará
+      notas: p.notas || "",
+      detalles: p.detalles.map(d => ({
+        servicio_id: d.servicio_id || "",
+        descripcion: d.descripcion || "",
+        cantidad: d.cantidad,
+        precio_unitario: d.precio_unitario
+      }))
+    });
+    setPatientSearch(getPacienteNombre(p.paciente_id));
+    setIsNewModalOpen(true);
   };
 
   const addServicioToBudget = (s: any) => {
@@ -326,7 +356,11 @@ export default function FinanzasPage() {
             className="flex-1 lg:flex-none"
           >
             <button 
-              onClick={() => setIsNewModalOpen(true)}
+              onClick={() => {
+                setNewBudget({ id: "", paciente_id: "", total: 0, monto_ajustado: 0, notas: "", detalles: [] });
+                setPatientSearch("");
+                setIsNewModalOpen(true);
+              }}
               className="w-full flex items-center justify-center gap-2 p-6 rounded-2xl glass-panel border border-border/20 hover:border-primary/40 hover:bg-primary/5 transition-all group"
             >
               <div className="p-2 rounded-lg bg-primary/20 text-primary group-hover:scale-110 transition-transform">
@@ -406,6 +440,13 @@ export default function FinanzasPage() {
                           disabled={p.saldo_pendiente === 0}
                         >
                           Abonar
+                        </button>
+                        <button 
+                          onClick={() => handleOpenEditBudget(p)}
+                          className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors"
+                          title="Editar Presupuesto"
+                        >
+                          <Edit2 size={16} />
                         </button>
                         <button 
                           onClick={() => handleOpenDetail(p)}
@@ -564,8 +605,8 @@ export default function FinanzasPage() {
             >
               <div className="p-6 border-b border-border/10 bg-secondary/30 flex justify-between items-center">
                 <div>
-                  <h2 className="text-lg font-black tracking-tight">Crear Nuevo Presupuesto</h2>
-                  <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Inicia un nuevo plan de tratamiento</p>
+                  <h2 className="text-lg font-black tracking-tight">{newBudget.id ? 'Editar Presupuesto' : 'Crear Nuevo Presupuesto'}</h2>
+                  <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">{newBudget.id ? 'Actualiza los términos del plan' : 'Inicia un nuevo plan de tratamiento'}</p>
                 </div>
                 <button onClick={() => setIsNewModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
               </div>
@@ -695,7 +736,7 @@ export default function FinanzasPage() {
                   disabled={isSaving || !newBudget.paciente_id || (newBudget.total <= 0 && newBudget.monto_ajustado <= 0)} 
                   className="flex-1 py-3 px-4 bg-primary text-primary-foreground hover:scale-105 rounded-xl font-black text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
                 > 
-                  {isSaving ? "Guardando..." : "Emitir Presupuesto"}
+                  {isSaving ? "Guardando..." : newBudget.id ? "Guardar Cambios" : "Emitir Presupuesto"}
                 </button>
               </div>
             </motion.div>

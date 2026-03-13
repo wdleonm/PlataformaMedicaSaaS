@@ -57,10 +57,12 @@ class PresupuestoCreate(BaseModel):
 
 
 class PresupuestoUpdate(BaseModel):
+    paciente_id:   Optional[UUID]  = None
     fecha:         Optional[date]  = None
     validez_fecha: Optional[date]  = None
     notas:         Optional[str]   = None
     estado:        Optional[str]   = None
+    detalles:      Optional[List[PresupuestoDetalleCreate]] = None
 
     @field_validator("estado")
     @classmethod

@@ -4,10 +4,10 @@ Fase 3.3: Citas/Consultas.
 Fase 3.4: Presupuestos, PresupuestoDetalle y Abonos (Regla de Oro 3.3).
 """
 from datetime import date, datetime
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID, uuid4
 
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 
 
 # ---------------------------------------------------------------------------
@@ -65,6 +65,12 @@ class Presupuesto(SQLModel, table=True):
     created_at:      datetime       = Field(default_factory=datetime.utcnow)
     updated_at:      datetime       = Field(default_factory=datetime.utcnow)
 
+    # Relación con detalles
+    detalles: List["PresupuestoDetalle"] = Relationship(
+        back_populates="presupuesto", 
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
+
 
 # ---------------------------------------------------------------------------
 # 3.4b  PresupuestoDetalle
@@ -84,6 +90,9 @@ class PresupuestoDetalle(SQLModel, table=True):
     precio_unitario: float          = Field(default=0.0)
     # subtotal es GENERATED ALWAYS en la BD; se omite en el modelo para evitar conflictos
     # Se puede calcular en Python como: cantidad * precio_unitario
+
+    # Relación inversa
+    presupuesto: Optional[Presupuesto] = Relationship(back_populates="detalles")
 
 
 # ---------------------------------------------------------------------------

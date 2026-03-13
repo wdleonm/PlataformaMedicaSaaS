@@ -26,7 +26,7 @@ from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlmodel import Session, select
+from sqlmodel import Session, select, text
 
 from app.api.dependencies import get_current_especialista
 from app.database import get_session
@@ -135,8 +135,41 @@ def update_presupuesto(
     especialista:   Especialista   = Depends(get_current_especialista),
 ) -> PresupuestoRead:
     presupuesto = _get_presupuesto_or_404(session, presupuesto_id, especialista.id)
-    for field, value in data.model_dump(exclude_unset=True).items():
-        setattr(presupuesto, field, value)
+    update_data = data.model_dump(exclude_unset=True)
+    
+    # Manejar reemplazo de detalles si vienen en la petición
+    if "detalles" in update_data:
+        nuevos_detalles = update_data.pop("detalles")
+        print(f"DEBUG: Actualizando presupuesto {presupuesto_id} con {len(nuevos_detalles)} detalles")
+        
+        # Limpiar la lista actual
+        presupuesto.detalles = []
+        
+        # Agregar los nuevos detalles
+        for det in nuevos_detalles:
+            s_id = det.get("servicio_id")
+            if s_id == "" or s_id is None:
+                s_id = None
+            
+            detalle = PresupuestoDetalle(
+                presupuesto_id=presupuesto.id,
+                servicio_id=s_id,
+                descripcion=det.get("descripcion"),
+                cantidad=det.get("cantidad", 1.0),
+                precio_unitario=det.get("precio_unitario", 0.0),
+            )
+            presupuesto.detalles.append(detalle)
+        
+        # Forzar flush para que los triggers de la BD calculen total y saldo
+        session.flush()
+        # Expirar campos calculados para que SQLAlchemy los recargue de la BD tras el flush/commit
+        session.expire(presupuesto, ["total", "saldo_pendiente"])
+
+    # Actualizar campos básicos (notas, estado, etc.)
+    for field, value in update_data.items():
+        if hasattr(presupuesto, field):
+            setattr(presupuesto, field, value)
+    
     presupuesto.updated_at = datetime.utcnow()
     session.add(presupuesto)
     session.commit()
