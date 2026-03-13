@@ -17,15 +17,31 @@ class PlanSuscripcionRead(BaseModel):
     max_citas_mes: Optional[int]
     incluye_whatsapp: bool
     incluye_multiusuario: bool
+    soporte_prioritario: bool
     activo: bool
 
     class Config:
         from_attributes = True
 
+class PlanSuscripcionUpdate(BaseModel):
+    codigo: Optional[str] = None
+    nombre: Optional[str] = None
+    precio_mensual: Optional[float] = None
+    max_pacientes: Optional[int] = None
+    max_citas_mes: Optional[int] = None
+    incluye_whatsapp: Optional[bool] = None
+    incluye_multiusuario: Optional[bool] = None
+    soporte_prioritario: Optional[bool] = None
+    activo: Optional[bool] = None
+
 # --- Admin Auth ---
 class AdminLogin(BaseModel):
     email: str
     password: str
+
+class AdminChangePassword(BaseModel):
+    current_password: str
+    new_password: str
 
 class AdminRead(BaseModel):
     id: UUID

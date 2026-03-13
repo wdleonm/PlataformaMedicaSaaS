@@ -12,36 +12,43 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { motion } from "framer-motion";
-
-interface Plan {
-  id: string;
-  codigo: string;
-  nombre: string;
-  precio_mensual: number;
-  max_pacientes: number | null;
-  max_citas_mes: number | null;
-  incluye_whatsapp: boolean;
-  incluye_multiusuario: boolean;
-  activo: boolean;
-}
+import PlanModal, { Plan } from "./PlanModal";
 
 export default function AdminPlanesPage() {
   const [planes, setPlanes] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+
+  const fetchPlanes = async () => {
+    try {
+      const { data } = await api.get("/api/admin/planes/");
+      setPlanes(data);
+    } catch (err) {
+      console.error("Error fetching planes:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPlanes = async () => {
-      try {
-        const { data } = await api.get("/api/admin/planes/");
-        setPlanes(data);
-      } catch (err) {
-        console.error("Error fetching planes:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchPlanes();
   }, []);
+
+  const handleEdit = (plan: Plan) => {
+    setSelectedPlan(plan);
+    setIsModalOpen(true);
+  };
+
+  const handleCreate = () => {
+    setSelectedPlan(null);
+    setIsModalOpen(true);
+  };
+
+  const handleModalSuccess = () => {
+    fetchPlanes();
+  };
 
   return (
     <div className="space-y-10">
@@ -50,7 +57,10 @@ export default function AdminPlanesPage() {
           <h1 className="text-3xl font-black text-white tracking-tight">Planes de Suscripción</h1>
           <p className="text-slate-400 mt-1 font-medium">Configura la oferta comercial y los límites de la plataforma.</p>
         </div>
-        <button className="bg-violet-600 hover:bg-violet-500 text-white font-bold px-6 py-3 rounded-2xl flex items-center gap-2 shadow-lg shadow-violet-900/20 active:scale-95 transition-all text-sm">
+        <button 
+          onClick={handleCreate}
+          className="bg-violet-600 hover:bg-violet-500 text-white font-bold px-6 py-3 rounded-2xl flex items-center gap-2 shadow-lg shadow-violet-900/20 active:scale-95 transition-all text-sm"
+        >
           <Plus size={18} /> Crear Nuevo Plan
         </button>
       </div>
@@ -122,14 +132,30 @@ export default function AdminPlanesPage() {
                 </div>
                 <span className={`${plan.incluye_multiusuario ? "text-slate-300" : "text-slate-600"} font-medium`}>Multi-Usuario</span>
               </div>
+              <div className="flex items-center gap-3 text-sm">
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.soporte_prioritario ? "bg-amber-500/10 text-amber-500" : "bg-white/5 text-slate-600"}`}>
+                  {plan.soporte_prioritario ? <Check size={12} strokeWidth={4} /> : <X size={12} />}
+                </div>
+                <span className={`${plan.soporte_prioritario ? "text-amber-500" : "text-slate-600"} font-medium`}>Soporte Prioritario 24/7</span>
+              </div>
             </div>
 
-            <button className="w-full mt-10 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-all group-hover:border-violet-500/50">
+            <button 
+              onClick={() => handleEdit(plan)}
+              className="w-full mt-10 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-all group-hover:border-violet-500/50"
+            >
               Editar Características
             </button>
           </motion.div>
         ))}
       </div>
+
+      <PlanModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        plan={selectedPlan}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 }

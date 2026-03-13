@@ -7,8 +7,9 @@ from sqlmodel import Session, select
 from app.database import get_session
 from app.models.admin import Admin
 from app.schemas.admin import AdminLogin, AdminToken, AdminRead
-from app.api.auth import verify_password, create_access_token
+from app.api.auth import verify_password, create_access_token, get_password_hash
 from app.api.dependencies import get_current_admin
+from app.schemas.admin import AdminChangePassword
 
 router = APIRouter(prefix="/api/admin/auth", tags=["Admin Auth"])
 
@@ -49,3 +50,22 @@ def get_current_admin_user(
 ):
     """Obtener información del administrador actual."""
     return admin
+
+@router.post("/change-password", response_model=dict)
+def admin_change_password(
+    data: AdminChangePassword,
+    session: Session = Depends(get_session),
+    admin: Admin = Depends(get_current_admin),
+):
+    """Cambiar contraseña de administrador."""
+    if not verify_password(data.current_password, admin.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La contraseña actual es incorrecta",
+        )
+    
+    admin.password_hash = get_password_hash(data.new_password)
+    session.add(admin)
+    session.commit()
+    
+    return {"message": "Contraseña actualizada exitosamente"}

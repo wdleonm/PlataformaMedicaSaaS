@@ -22,6 +22,7 @@ class PlanSuscripcion(SQLModel, table=True):
     max_citas_mes: Optional[int] = Field(default=None)
     incluye_whatsapp: bool = Field(default=False)
     incluye_multiusuario: bool = Field(default=False)
+    soporte_prioritario: bool = Field(default=False)
     activo: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
