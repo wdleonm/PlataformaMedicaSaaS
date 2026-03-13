@@ -163,19 +163,7 @@ export default function InventarioPage() {
     const { name, value } = e.target;
     
     if (name === "codigo") {
-      let cleanVal = value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
-      if (cleanVal.length > 0) {
-        const firstChar = cleanVal.charAt(0);
-        // Validar que la primera letra sea I, M o O
-        if (/[IMO]/.test(firstChar)) {
-          // Remover guiones extra y dejar solo números en el resto
-          const rest = cleanVal.substring(1).replace(/[^0-9]/g, "");
-          cleanVal = rest.length > 0 ? `${firstChar}-${rest}` : firstChar;
-        } else {
-          // Si no empieza con I, M o O, no permitir el cambio o resetear
-          return; 
-        }
-      }
+      const cleanVal = value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
       setInsumoForm(prev => ({ ...prev, [name]: cleanVal }));
       return;
     }
@@ -214,8 +202,8 @@ export default function InventarioPage() {
       }
       setIsInsumoModalOpen(false);
       fetchData();
-    } catch (error) {
-      alert("Error al guardar el insumo");
+    } catch (error: any) {
+      alert(error.response?.data?.detail || "Error al guardar el insumo");
     }
   };
 
@@ -237,6 +225,13 @@ export default function InventarioPage() {
       // Forzar primera letra Mayúscula
       const capitalized = value.charAt(0).toUpperCase() + value.slice(1);
       setServicioForm(prev => ({ ...prev, [name]: capitalized }));
+      return;
+    }
+
+    if (name === "codigo") {
+      // Forzar Mayúsculas y limpiar caracteres raros
+      const cleanVal = value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      setServicioForm(prev => ({ ...prev, [name]: cleanVal }));
       return;
     }
 
@@ -264,8 +259,8 @@ export default function InventarioPage() {
       }
       setIsServicioModalOpen(false);
       fetchData();
-    } catch (error) {
-      alert("Error al guardar el servicio");
+    } catch (error: any) {
+      alert(error.response?.data?.detail || "Error al guardar el servicio");
     }
   };
 
@@ -484,7 +479,7 @@ export default function InventarioPage() {
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className={`px-2 py-1 rounded-full text-xs font-bold ${servicio.utilidad_neta > 0 ? 'bg-green-500/10 text-green-500' : 'bg-destructive/10 text-destructive'}`}>
-                          ${servicio.utilidad_neta.toLocaleString()}
+                           ${servicio.utilidad_neta.toLocaleString()}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -521,8 +516,8 @@ export default function InventarioPage() {
                     <input required name="nombre" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.nombre} onChange={handleInsumoInputChange} placeholder="Ej. Guantes de Nitrilo" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Código (I, M, O)</label>
-                    <input name="codigo" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.codigo} onChange={handleInsumoInputChange} placeholder="Ej. I-100" />
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Código (Ej: I0001)</label>
+                    <input name="codigo" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.codigo} onChange={handleInsumoInputChange} placeholder="Vacío para auto-generar" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Unidad</label>
@@ -578,8 +573,8 @@ export default function InventarioPage() {
                    </div>
                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Código</label>
-                        <input name="codigo" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-[48px]" value={servicioForm.codigo} onChange={handleServicioInputChange} placeholder="Ej. LIMP" />
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Código (Ej: S0001)</label>
+                        <input name="codigo" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-[48px]" value={servicioForm.codigo} onChange={handleServicioInputChange} placeholder="Vacío para auto-generar" />
                       </div>
                       <NumberInput 
                         label="Precio" 

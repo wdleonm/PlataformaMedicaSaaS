@@ -16,6 +16,7 @@ class CitaCreate(BaseModel):
     servicio_id:   Optional[UUID]    = None
     fecha_hora:    datetime
     duracion_min:  Optional[int]     = None
+    presupuesto_id: Optional[UUID]    = None
     notas:         Optional[str]     = None
 
     @field_validator("duracion_min")
@@ -34,6 +35,7 @@ class CitaUpdate(BaseModel):
     monto_cobrado:  Optional[float]   = None
     costo_insumos:  Optional[float]   = None
     utilidad_neta:  Optional[float]   = None
+    presupuesto_id: Optional[UUID]    = None
     notas:          Optional[str]     = None
 
     @field_validator("estado")
@@ -55,6 +57,8 @@ class CitaRead(BaseModel):
     monto_cobrado:   Optional[float]
     costo_insumos:   Optional[float]
     utilidad_neta:   Optional[float]
+    presupuesto_id:  Optional[UUID]
+    abono_id:        Optional[UUID]
     notas:           Optional[str]
     created_at:      datetime
     updated_at:      datetime

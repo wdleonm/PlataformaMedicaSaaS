@@ -18,6 +18,7 @@ security = HTTPBearer()
 
 
 def get_current_especialista(
+    request: Request,
     credentials: HTTPAuthorizationCredentials = Depends(security),
     session: Session = Depends(get_session),
 ) -> Especialista:
@@ -67,6 +68,21 @@ def get_current_especialista(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Su suscripcion está inactiva o vencida. Contacte al administrador del sistema.",
         )
+    
+    # NUEVA REGLA: Cambio de contraseña obligatorio
+    if especialista.exigir_cambio_password:
+        from datetime import datetime, timedelta
+        ahora = datetime.utcnow()
+        intervalo = especialista.intervalo_cambio_password or 90
+        vencimiento = especialista.fecha_ultimo_cambio_password + timedelta(days=intervalo)
+        
+        if ahora > vencimiento:
+            # Permitir solo si la ruta es el cambio de contraseña propio
+            if not request.url.path.endswith("/api/auth/change-password") and not request.url.path.endswith("/api/auth/me"):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Tu contraseña ha expirado por políticas de seguridad. Debes actualizarla para continuar.",
+                )
     
     return especialista
 

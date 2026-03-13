@@ -18,6 +18,8 @@ from app.schemas.auth import (
     EspecialistaLogin,
     EspecialistaRead,
     Token,
+    EspecialistaChangePassword,
+    EspecialistaSecurityUpdate
 )
 from app.api.dependencies import get_current_especialista
 
@@ -138,4 +140,52 @@ def get_current_user(
     especialista: Especialista = Depends(get_current_especialista),
 ):
     """Obtener información del especialista actual (ruta protegida)."""
+    return especialista
+
+
+@router.post("/change-password")
+def change_password(
+    data: EspecialistaChangePassword,
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+):
+    """Cambiar contraseña del especialista actual."""
+    if not verify_password(data.current_password, especialista.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La contraseña actual es incorrecta",
+        )
+    
+    especialista.password_hash = get_password_hash(data.new_password)
+    especialista.fecha_ultimo_cambio_password = datetime.utcnow()
+    
+    session.add(especialista)
+    session.commit()
+    
+    return {"message": "Contraseña actualizada exitosamente"}
+
+
+@router.patch("/security-settings")
+def update_security_settings(
+    data: EspecialistaSecurityUpdate,
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+):
+    """Actualizar preferencias de rotación de contraseña del especialista."""
+    update_data = data.model_dump(exclude_unset=True)
+    
+    if "exigir_cambio_password" in update_data:
+        especialista.exigir_cambio_password = update_data["exigir_cambio_password"]
+        
+    if "intervalo_cambio_password" in update_data:
+        especialista.intervalo_cambio_password = update_data["intervalo_cambio_password"]
+        
+    # Limpiar intervalo si se desactiva
+    if not especialista.exigir_cambio_password:
+        especialista.intervalo_cambio_password = None
+        
+    session.add(especialista)
+    session.commit()
+    session.refresh(especialista)
+    
     return especialista

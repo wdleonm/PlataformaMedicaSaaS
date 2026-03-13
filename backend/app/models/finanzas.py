@@ -29,6 +29,8 @@ class Cita(SQLModel, table=True):
     servicio_id:     Optional[UUID]  = Field(default=None, foreign_key="sys_config.servicios.id")
     fecha_hora:      datetime        = Field()
     duracion_min:    Optional[int]   = Field(default=None, gt=0)
+    presupuesto_id:  Optional[UUID]  = Field(default=None, foreign_key="sys_clinical.presupuestos.id", index=True)
+    abono_id:        Optional[UUID]  = Field(default=None, foreign_key="sys_clinical.abonos.id")
     estado:          str             = Field(default="programada", max_length=20)
     monto_cobrado:   Optional[float] = Field(default=None, ge=0)
     costo_insumos:   Optional[float] = Field(default=None, ge=0)
@@ -78,8 +80,8 @@ class PresupuestoDetalle(SQLModel, table=True):
     presupuesto_id:  UUID           = Field(foreign_key="sys_clinical.presupuestos.id", index=True)
     servicio_id:     Optional[UUID] = Field(default=None, foreign_key="sys_config.servicios.id")
     descripcion:     Optional[str]  = Field(default=None, max_length=200)
-    cantidad:        float          = Field(default=1.0, gt=0)
-    precio_unitario: float          = Field(default=0.0, ge=0)
+    cantidad:        float          = Field(default=1.0)
+    precio_unitario: float          = Field(default=0.0)
     # subtotal es GENERATED ALWAYS en la BD; se omite en el modelo para evitar conflictos
     # Se puede calcular en Python como: cantidad * precio_unitario
 
@@ -108,5 +110,6 @@ class Abono(SQLModel, table=True):
     monto:           float          = Field(gt=0)
     fecha_abono:     date           = Field(default_factory=date.today)
     metodo_pago:     str            = Field(default="efectivo", max_length=30)
+    cita_id:         Optional[UUID] = Field(default=None, foreign_key="sys_clinical.citas.id")
     notas:           Optional[str]  = Field(default=None)
     created_at:      datetime       = Field(default_factory=datetime.utcnow)

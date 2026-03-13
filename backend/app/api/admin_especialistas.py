@@ -6,6 +6,7 @@ from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
+from sqlalchemy import text
 from app.database import get_session
 from app.models.especialista import Especialista, EspecialistaEspecialidad
 from app.models.suscripcion import PlanSuscripcion, LogSuscripcion
@@ -67,7 +68,9 @@ def admin_crear_especialista(
         password_hash=get_password_hash(data.password),
         plan_suscripcion_id=data.plan_suscripcion_id,
         fecha_vencimiento_suscripcion=data.fecha_vencimiento_suscripcion,
-        suscripcion_activa=True
+        suscripcion_activa=True,
+        exigir_cambio_password=data.exigir_cambio_password,
+        intervalo_cambio_password=data.intervalo_cambio_password if data.exigir_cambio_password else None
     )
     session.add(especialista)
     session.flush()
@@ -116,6 +119,9 @@ def admin_actualizar_especialista(
         )
         session.add(log)
 
+    # notas_admin no es un campo del modelo Especialista
+    update_data.pop("notas_admin", None)
+
     # Manejar cambio de especialidad
     if "especialidad_principal_id" in update_data:
         new_spec_id = update_data.pop("especialidad_principal_id")
@@ -127,6 +133,10 @@ def admin_actualizar_especialista(
 
     for key, value in update_data.items():
         setattr(especialista, key, value)
+    
+    # Limpiar intervalo si se desactiva
+    if not especialista.exigir_cambio_password:
+        especialista.intervalo_cambio_password = None
         
     session.add(especialista)
     session.commit()
@@ -141,4 +151,3 @@ def admin_actualizar_especialista(
         res.especialidad_principal_id = spec_rel.especialidad_id
         
     return res
-

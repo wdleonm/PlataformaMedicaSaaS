@@ -301,6 +301,8 @@ En cada respuesta, Cursor debe indicar:
 - [x] Interfaz de Seguridad (`/admin/seguridad`): Formulario moderno con indicador visual animado de fortaleza de la nueva contraseña (Débil, Media, Fuerte), con políticas de validación estrictas obligatorias (mínimo 8 caracteres, mayúsculas, minúsculas, números y al menos un símbolo especial).
 - [x] Gestión de Características de Planes: Adaptación del backend (endpoint PUT) y componente UX/UI (Modal Animado) para crear y editar dinámicamente el precio, límites y características de los planes suscripción.
 - [x] Extensibilidad de características en los planes: Nueva columna en BD (`soporte_prioritario` boolean DEFAULT FALSE) para ofrecer nuevos beneficios. El cambio de BD quedó respaldado documentadamente en `scripts/011_add_col_prioritario.sql`.
+- [x] **Autogestión de Seguridad (Especialista):** Nueva interfaz en el panel del especialista que permite a cada doctor activar su propia rotación de claves y elegir el intervalo de días, dándoles control total sobre la seguridad de su cuenta independientemente de los ajustes globales.
+- [x] **Rediseño Premium de Seguridad (UX/UI):** Re-organización de la página de seguridad situando las recomendaciones junto al formulario de clave, moviendo la configuración de rotación a un panel inferior destacado para mayor claridad, y aplicando una paleta de alto contraste para mejorar la legibilidad.
 
 #### Criterios de aceptación Fase 7
 - El administrador puede hacer login en `/admin/login` con credenciales propias.
@@ -441,5 +443,5 @@ PlataformaMedicaSaaS/   (Odonto-Focus)
 
 ---
 
-*Documento: Odonto-Focus | Master Plan. Última actualización: 12/03/2026.*
+*Documento: Odonto-Focus | Master Plan. Última actualización: 13/03/2026.*
 *Estado: Fases 1–9 COMPLETADAS ✅ | Pendiente: Fase 10 (Despliegue).*

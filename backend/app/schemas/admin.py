@@ -69,6 +69,8 @@ class EspecialistaAdminRead(BaseModel):
     fecha_vencimiento_suscripcion: Optional[date]
     plan_suscripcion_id: Optional[UUID]
     especialidad_principal_id: Optional[UUID] = None
+    exigir_cambio_password: bool = False
+    intervalo_cambio_password: Optional[int] = None
     created_at: datetime
     # Enriquecer con el plan si es necesario
     plan: Optional[PlanSuscripcionRead] = None
@@ -82,6 +84,8 @@ class EspecialistaAdminUpdate(BaseModel):
     fecha_vencimiento_suscripcion: Optional[date] = None
     plan_suscripcion_id: Optional[UUID] = None
     especialidad_principal_id: Optional[UUID] = None
+    exigir_cambio_password: Optional[bool] = None
+    intervalo_cambio_password: Optional[int] = None
     notas_admin: Optional[str] = None
 
 class EspecialistaAdminCreate(BaseModel):
@@ -92,6 +96,8 @@ class EspecialistaAdminCreate(BaseModel):
     especialidad_principal_id: Optional[UUID] = None
     plan_suscripcion_id: Optional[UUID] = None
     fecha_vencimiento_suscripcion: Optional[date] = None
+    exigir_cambio_password: bool = False
+    intervalo_cambio_password: Optional[int] = None
 
 # --- Dashboard Admin ---
 class AdminDashboardStats(BaseModel):

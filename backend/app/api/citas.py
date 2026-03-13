@@ -44,6 +44,7 @@ def create_cita(
         servicio_id=data.servicio_id,
         fecha_hora=data.fecha_hora,
         duracion_min=data.duracion_min,
+        presupuesto_id=data.presupuesto_id,
         notas=data.notas,
     )
     session.add(cita)
@@ -131,6 +132,30 @@ def update_cita(
 
     for field, value in update_data.items():
         setattr(cita, field, value)
+
+    # ─── Lógica de Abono Automático (Fase 8: Refinamiento) ───
+    if (
+        cita.estado == "completada" 
+        and cita.presupuesto_id 
+        and (cita.monto_cobrado or 0) > 0
+        and not cita.abono_id # Evitar duplicados si se edita varias veces
+    ):
+        from app.models.finanzas import Abono, Presupuesto
+        presupuesto = session.get(Presupuesto, cita.presupuesto_id)
+        if presupuesto and presupuesto.estado != "cancelado":
+            # Crear abono vinculado
+            abono = Abono(
+                especialista_id=especialista.id,
+                presupuesto_id=cita.presupuesto_id,
+                monto=cita.monto_cobrado,
+                fecha_abono=datetime.now().date(),
+                metodo_pago="efectivo", 
+                cita_id=cita.id,
+                notas=f"Cobro automático cita {cita.fecha_hora.strftime('%d/%m %H:%M')}"
+            )
+            session.add(abono)
+            session.flush() # Activar triggers de BD
+            cita.abono_id = abono.id
 
     cita.updated_at = datetime.utcnow()
     session.add(cita)

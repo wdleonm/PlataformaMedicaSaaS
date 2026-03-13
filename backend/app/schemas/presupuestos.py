@@ -23,20 +23,6 @@ class PresupuestoDetalleCreate(BaseModel):
     cantidad:        float           = 1.0
     precio_unitario: float           = 0.0
 
-    @field_validator("cantidad")
-    @classmethod
-    def cant_positiva(cls, v: float) -> float:
-        if v <= 0:
-            raise ValueError("La cantidad debe ser mayor que cero")
-        return v
-
-    @field_validator("precio_unitario")
-    @classmethod
-    def precio_no_negativo(cls, v: float) -> float:
-        if v < 0:
-            raise ValueError("El precio unitario no puede ser negativo")
-        return v
-
 
 class PresupuestoDetalleUpdate(BaseModel):
     servicio_id:     Optional[UUID]  = None
@@ -66,6 +52,7 @@ class PresupuestoCreate(BaseModel):
     fecha:         Optional[date]  = None
     validez_fecha: Optional[date]  = None
     notas:         Optional[str]   = None
+    estado:        Optional[str]   = "aprobado"
     detalles:      List[PresupuestoDetalleCreate] = []
 
 

@@ -43,6 +43,7 @@ interface Paciente {
   nombre: string;
   apellido: string;
   documento: string | null;
+  telefono: string | null;
 }
 
 interface Servicio {
@@ -62,6 +63,17 @@ interface Cita {
   monto_cobrado: number | null;
   costo_insumos: number | null;
   utilidad_neta: number | null;
+  presupuesto_id: string | null;
+  abono_id: string | null;
+}
+
+interface Presupuesto {
+  id: string;
+  paciente_id: string;
+  total: number;
+  saldo_pendiente: number;
+  estado: string;
+  fecha: string;
 }
 
 // Horas de la agenda (7:00 AM a 8:00 PM)
@@ -73,6 +85,7 @@ export default function CalendarPage() {
   const [citas, setCitas] = useState<Cita[]>([]);
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [presupuestos, setPresupuestos] = useState<Presupuesto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
@@ -86,6 +99,7 @@ export default function CalendarPage() {
     fecha: format(new Date(), "yyyy-MM-dd"),
     hora: "09:00",
     duracion_min: 30,
+    presupuesto_id: "",
     notas: ""
   });
   const [montoCobrado, setMontoCobrado] = useState(0);
@@ -96,15 +110,17 @@ export default function CalendarPage() {
       const start = view === "week" ? startOfWeek(currentDate, { weekStartsOn: 1 }) : startOfDay(currentDate);
       const end = view === "week" ? endOfWeek(currentDate, { weekStartsOn: 1 }) : addDays(startOfDay(currentDate), 1);
       
-      const [citasRes, pacRes, serRes] = await Promise.all([
+      const [citasRes, pacRes, serRes, presRes] = await Promise.all([
         api.get(`/api/citas?fecha_desde=${start.toISOString()}&fecha_hasta=${end.toISOString()}`),
         api.get("/api/pacientes"),
-        api.get("/api/servicios")
+        api.get("/api/servicios"),
+        api.get("/api/presupuestos")
       ]);
       
       setCitas(citasRes.data.items || []);
       setPacientes(pacRes.data.items || []);
       setServicios(serRes.data.items || []);
+      setPresupuestos(presRes.data.items || []);
     } catch (error) {
       console.error("Error fetching calendar data:", error);
     } finally {
@@ -126,14 +142,27 @@ export default function CalendarPage() {
     return [currentDate];
   }, [currentDate, view]);
 
+  const [patientSearch, setPatientSearch] = useState("");
+  const filteredPatientsForSelect = useMemo(() => {
+    const search = patientSearch.toLowerCase();
+    return pacientes.filter(p => {
+      const doc = p.documento || "";
+      const tel = p.telefono || "";
+      const searchStr = `${p.nombre} ${p.apellido} ${doc} ${tel}`.toLowerCase();
+      return searchStr.includes(search);
+    });
+  }, [pacientes, patientSearch]);
+
   const handleOpenCreate = (date?: Date, hour?: number) => {
     setSelectedCita(null);
+    setPatientSearch("");
     setFormData({
       paciente_id: "",
       servicio_id: "",
       fecha: format(date || new Date(), "yyyy-MM-dd"),
       hora: hour ? `${hour.toString().padStart(2, "0")}:00` : "09:00",
       duracion_min: 30,
+      presupuesto_id: "",
       notas: ""
     });
     setIsModalOpen(true);
@@ -141,6 +170,8 @@ export default function CalendarPage() {
 
   const handleOpenEdit = (cita: Cita) => {
     setSelectedCita(cita);
+    const p = pacientes.find(px => px.id === cita.paciente_id);
+    setPatientSearch(p ? `${p.nombre} ${p.apellido} - ${p.documento || 'S/D'}` : "");
     const dt = parseISO(cita.fecha_hora);
     setFormData({
       paciente_id: cita.paciente_id,
@@ -148,6 +179,7 @@ export default function CalendarPage() {
       fecha: format(dt, "yyyy-MM-dd"),
       hora: format(dt, "HH:mm"),
       duracion_min: cita.duracion_min,
+      presupuesto_id: cita.presupuesto_id || "",
       notas: cita.notas || ""
     });
     setIsModalOpen(true);
@@ -163,7 +195,8 @@ export default function CalendarPage() {
       const payload = {
         ...formData,
         fecha_hora,
-        servicio_id: formData.servicio_id || null
+        servicio_id: formData.servicio_id || null,
+        presupuesto_id: formData.presupuesto_id || null
       };
 
       if (selectedCita) {
@@ -384,21 +417,38 @@ export default function CalendarPage() {
               <form onSubmit={handleSaveCita} className="p-6 space-y-5">
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Paciente</label>
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Buscar Paciente (Documento o Nombre)</label>
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                      <select 
-                        required
-                        className="w-full bg-background border border-border/50 rounded-xl p-2.5 pl-10 text-sm focus:ring-2 focus:ring-primary outline-none"
-                        value={formData.paciente_id}
-                        onChange={(e) => setFormData({...formData, paciente_id: e.target.value})}
-                      >
-                        <option value="">Seleccione un paciente...</option>
-                        {pacientes.map(p => (
-                          <option key={p.id} value={p.id}>{p.nombre} {p.apellido} ({p.documento})</option>
-                        ))}
-                      </select>
+                      <input 
+                        type="text"
+                        placeholder="Ej: 123456 o María..."
+                        className="w-full pl-10 pr-4 py-2.5 bg-background border border-border/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none"
+                        value={patientSearch}
+                        onChange={(e) => {
+                          setPatientSearch(e.target.value);
+                          if (formData.paciente_id) setFormData({...formData, paciente_id: "", presupuesto_id: ""});
+                        }}
+                      />
                     </div>
+                    {patientSearch && !formData.paciente_id && (
+                      <div className="mt-2 max-h-40 overflow-y-auto border border-border/30 rounded-xl bg-background shadow-xl z-[120]">
+                        {filteredPatientsForSelect.map(p => (
+                          <button 
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setFormData({...formData, paciente_id: p.id});
+                              setPatientSearch(`${p.nombre} ${p.apellido} - ${p.documento || 'S/D'}`);
+                            }}
+                            className="w-full text-left px-4 py-2.5 hover:bg-primary/5 text-sm flex justify-between items-center group border-b border-border/5 last:border-0"
+                          >
+                            <span className="font-bold group-hover:text-primary transition-colors">{p.nombre} {p.apellido}</span>
+                            <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground uppercase">{p.documento || 'S/D'}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -465,6 +515,33 @@ export default function CalendarPage() {
                           <option value="completada">Completada</option>
                         </select>
                       </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Vincular a Presupuesto (Si aplica)</label>
+                    <select 
+                      className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none"
+                      value={formData.presupuesto_id || ""}
+                      onChange={(e) => setFormData({...formData, presupuesto_id: e.target.value})}
+                      disabled={!formData.paciente_id}
+                    >
+                      <option value="">Cita Independiente (Consulta)</option>
+                      {presupuestos
+                        .filter(p => 
+                          (p.paciente_id === formData.paciente_id && p.estado !== 'cancelado' && p.estado !== 'pagado') ||
+                          p.id === formData.presupuesto_id // Mantener el seleccionado aunque esté pagado
+                        )
+                        .map(p => (
+                          <option key={p.id} value={p.id}>
+                            Tratamiento: ${p.total.toLocaleString()} (Pend: ${p.saldo_pendiente.toLocaleString()})
+                          </option>
+                        ))}
+                    </select>
+                    {formData.presupuesto_id && (
+                      <p className="text-[10px] text-orange-500 font-bold px-1 animate-pulse">
+                        ★ Al completar la cita, el pago se imputará automáticamente como un ABONO.
+                      </p>
                     )}
                   </div>
 

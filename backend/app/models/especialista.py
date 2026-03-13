@@ -58,3 +58,8 @@ class Especialista(EspecialistaBase, table=True):
     portal_visible: bool = Field(default=False)
     descripcion_perfil: Optional[str] = Field(default=None)
     horario_atencion: Optional[dict] = Field(default=None, sa_column=Column(JSONB))
+
+    # Seguridad: Rotación de contraseñas
+    exigir_cambio_password: bool = Field(default=False)
+    intervalo_cambio_password: Optional[int] = Field(default=None)  # días (60, 90, 120, etc)
+    fecha_ultimo_cambio_password: datetime = Field(default_factory=datetime.utcnow)

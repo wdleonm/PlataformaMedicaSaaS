@@ -48,9 +48,39 @@ def create_insumo(
     session: Session = Depends(get_session),
     especialista: Especialista = Depends(get_current_especialista),
 ) -> Insumo:
+    codigo = data.codigo
+    if not codigo:
+        # Generar correlativo: buscar el último que empiece por 'I-'
+        stmt = select(Insumo).where(
+            Insumo.especialista_id == especialista.id,
+            Insumo.codigo.ilike("I-%")
+        ).order_by(Insumo.codigo.desc())
+        last = session.exec(stmt).first()
+        if last and "-" in last.codigo:
+            try:
+                parts = last.codigo.split("-")
+                num = int(parts[1]) + 1
+            except (ValueError, IndexError):
+                num = 1
+        else:
+            num = 1
+        codigo = f"I-{num:04d}"
+    else:
+        # Validar unicidad manual
+        stmt = select(Insumo).where(
+            Insumo.especialista_id == especialista.id,
+            Insumo.codigo == codigo
+        )
+        if session.exec(stmt).first():
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"El código de insumo '{codigo}' ya existe"
+            )
+
     insumo = Insumo(
         especialista_id=especialista.id,
-        **data.model_dump(),
+        **data.model_dump(exclude={"codigo"}),
+        codigo=codigo
     )
     session.add(insumo)
     session.commit()
@@ -133,7 +163,40 @@ def create_servicio(
     session:     Session        = Depends(get_session),
     especialista: Especialista  = Depends(get_current_especialista),
 ) -> ServicioRead:
-    servicio = Servicio(especialista_id=especialista.id, **data.model_dump())
+    codigo = data.codigo
+    if not codigo:
+        # Generar correlativo: buscar el último que empiece por 'S-'
+        stmt = select(Servicio).where(
+            Servicio.especialista_id == especialista.id,
+            Servicio.codigo.ilike("S-%")
+        ).order_by(Servicio.codigo.desc())
+        last = session.exec(stmt).first()
+        if last and "-" in last.codigo:
+            try:
+                parts = last.codigo.split("-")
+                num = int(parts[1]) + 1
+            except (ValueError, IndexError):
+                num = 1
+        else:
+            num = 1
+        codigo = f"S-{num:04d}"
+    else:
+        # Validar unicidad manual
+        stmt = select(Servicio).where(
+            Servicio.especialista_id == especialista.id,
+            Servicio.codigo == codigo
+        )
+        if session.exec(stmt).first():
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"El código de servicio '{codigo}' ya existe"
+            )
+
+    servicio = Servicio(
+        especialista_id=especialista.id,
+        **data.model_dump(exclude={"codigo"}),
+        codigo=codigo
+    )
     session.add(servicio)
     session.commit()
     session.refresh(servicio)

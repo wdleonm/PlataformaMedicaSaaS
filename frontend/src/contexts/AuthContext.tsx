@@ -20,6 +20,8 @@ type UsoUsuario = {
   /** Primera especialidad activa del especialista (shortcut) */
   especialidad_principal: Especialidad | null;
   slug_url: string | null;
+  exigir_cambio_password: boolean;
+  intervalo_cambio_password: number | null;
 };
 
 type AuthContextType = {
@@ -68,6 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         especialidades,
         especialidad_principal: principal,
         slug_url: data.slug_url ?? null,
+        exigir_cambio_password: data.exigir_cambio_password ?? false,
+        intervalo_cambio_password: data.intervalo_cambio_password ?? 90,
       });
     } catch (error) {
       console.error("Error validando token:", error);

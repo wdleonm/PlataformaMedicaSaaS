@@ -19,7 +19,8 @@ import {
   X,
   Sun,
   Moon,
-  Settings
+  Settings,
+  ShieldCheck
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -69,6 +70,7 @@ export default function DashboardLayout({
     { name: "Inventario", href: "/inventario", icon: Package },
     { name: "Finanzas", href: "/presupuestos", icon: CreditCard },
     { name: "Comunicaciones", href: "/comunicaciones", icon: MessageSquare },
+    { name: "Seguridad", href: "/seguridad", icon: ShieldCheck },
   ];
 
   const SidebarContent = () => (

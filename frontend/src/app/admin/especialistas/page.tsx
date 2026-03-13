@@ -18,7 +18,8 @@ import {
   Save,
   Mail,
   Lock,
-  UserPlus
+  UserPlus,
+  ShieldCheck
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -44,6 +45,8 @@ interface Especialista {
   suscripcion_activa: boolean;
   fecha_vencimiento_suscripcion: string | null;
   plan_suscripcion_id: string | null;
+  exigir_cambio_password: boolean;
+  intervalo_cambio_password: number | null;
   created_at: string;
   plan?: Plan;
 }
@@ -99,7 +102,9 @@ export default function AdminEspecialistasPage() {
       password: "",
       plan_suscripcion_id: planes[0]?.id || "",
       activo: true,
-      suscripcion_activa: true
+      suscripcion_activa: true,
+      exigir_cambio_password: false,
+      intervalo_cambio_password: null
     });
     setIsModalOpen(true);
   };
@@ -113,11 +118,18 @@ export default function AdminEspecialistasPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    
+    // Si no se exige cambio, el intervalo debe ser null para limpieza de BD
+    const payload = { 
+      ...currentEsp, 
+      intervalo_cambio_password: currentEsp.exigir_cambio_password ? currentEsp.intervalo_cambio_password : null 
+    };
+
     try {
       if (isEditing) {
-        await api.patch(`/api/admin/especialistas/${currentEsp.id}`, currentEsp);
+        await api.patch(`/api/admin/especialistas/${currentEsp.id}`, payload);
       } else {
-        await api.post("/api/admin/especialistas/", currentEsp);
+        await api.post("/api/admin/especialistas/", payload);
       }
       setIsModalOpen(false);
       fetchData();
@@ -420,6 +432,38 @@ export default function AdminEspecialistasPage() {
                     <label htmlFor="acc_activo" className="text-sm font-bold text-white cursor-pointer select-none tracking-tight">
                       Acceso a Plataforma
                     </label>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                  <div className="flex flex-col gap-3 p-5 bg-violet-600/5 rounded-[24px] border border-violet-500/10">
+                    <div className="flex items-center gap-4">
+                      <input 
+                        type="checkbox" 
+                        id="exigir_pw"
+                        checked={currentEsp.exigir_cambio_password || false}
+                        onChange={(e) => setCurrentEsp({...currentEsp, exigir_cambio_password: e.target.checked})}
+                        className="w-5 h-5 rounded border-violet-500/20 bg-violet-500/10 text-violet-500 focus:ring-violet-500"
+                      />
+                      <label htmlFor="exigir_pw" className="text-sm font-black text-violet-300 cursor-pointer select-none tracking-tight">
+                        Exigir cambio de clave
+                      </label>
+                    </div>
+                    {currentEsp.exigir_cambio_password && (
+                      <div className="mt-2 space-y-2 animate-fade-in">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Frecuencia sugerida (días)</label>
+                        <select 
+                          value={currentEsp.intervalo_cambio_password || 90}
+                          onChange={(e) => setCurrentEsp({...currentEsp, intervalo_cambio_password: parseInt(e.target.value)})}
+                          className="w-full bg-[#0a0514]/40 border border-violet-500/20 rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-violet-500/40 outline-none"
+                        >
+                          <option value={60} className="bg-[#130b22]">60 Días (Cada 2 meses)</option>
+                          <option value={90} className="bg-[#130b22]">90 Días (Cada 3 meses)</option>
+                          <option value={120} className="bg-[#130b22]">120 Días (Cada 4 meses)</option>
+                          <option value={180} className="bg-[#130b22]">180 Días (Semestral)</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
                 </div>
               </form>

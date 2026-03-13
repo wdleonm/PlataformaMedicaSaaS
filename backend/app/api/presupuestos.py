@@ -58,6 +58,7 @@ def create_presupuesto(
         especialista_id=especialista.id,
         paciente_id=data.paciente_id,
         fecha=data.fecha or date.today(),
+        estado=data.estado or "borrador",
         validez_fecha=data.validez_fecha,
         notas=data.notas,
     )

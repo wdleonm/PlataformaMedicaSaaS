@@ -32,6 +32,18 @@ class EspecialistaLogin(BaseModel):
     password: str
 
 
+class EspecialistaChangePassword(BaseModel):
+    """Schema para cambio de contraseña del especialista."""
+    current_password: str
+    new_password: str
+
+
+class EspecialistaSecurityUpdate(BaseModel):
+    """Schema para actualizar configuración de seguridad del especialista."""
+    exigir_cambio_password: Optional[bool] = None
+    intervalo_cambio_password: Optional[int] = None
+
+
 class EspecialistaRead(BaseModel):
     """Schema para leer especialista (sin password)."""
     id: UUID
@@ -39,6 +51,8 @@ class EspecialistaRead(BaseModel):
     nombre: str
     apellido: str
     activo: bool
+    exigir_cambio_password: bool = False
+    intervalo_cambio_password: Optional[int] = None
     slug_url: Optional[str] = None
     especialidades: List[EspecialidadRead] = []
 
