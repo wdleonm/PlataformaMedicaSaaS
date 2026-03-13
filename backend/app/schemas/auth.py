@@ -13,6 +13,9 @@ class EspecialidadRead(BaseModel):
     codigo: str
     activo: bool
 
+    class Config:
+        from_attributes = True
+
 
 class EspecialistaRegister(BaseModel):
     """Schema para registro de especialista."""

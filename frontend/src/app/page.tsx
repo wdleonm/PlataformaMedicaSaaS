@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Lock, ArrowRight, ShieldCheck, Activity, Stethoscope, Loader2 } from "lucide-react";
+import { User, Lock, ArrowRight, ShieldCheck, Activity, Stethoscope, Loader2, Eye, EyeOff } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -12,6 +12,7 @@ export default function Home() {
   // Estado local para los inputs del formulario
   const [email, setEmail] = useState("admin@odontofocus.com");
   const [password, setPassword] = useState("123456"); 
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorLogin, setErrorLogin] = useState("");
 
@@ -32,8 +33,12 @@ export default function Home() {
       // La API devuelve un token JWT
       await login(resp.data.access_token);
       
-    } catch (_err) {
-      setErrorLogin("Credenciales incorrectas o servidor no disponible.");
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setErrorLogin(
+        err.response?.data?.detail || 
+        "Credenciales incorrectas o servidor no disponible."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -143,13 +148,20 @@ export default function Home() {
                     <Lock size={18} />
                   </div>
                   <input 
-                    type="password" 
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••" 
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
-                    className="w-full bg-background/50 border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent block pl-10 p-3 outline-none transition-all glass-panel group-hover/input:border-primary/50"
+                    className="w-full bg-background/50 border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent block pl-10 pr-10 p-3 outline-none transition-all glass-panel group-hover/input:border-primary/50"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
 
