@@ -296,13 +296,47 @@ En cada respuesta, Cursor debe indicar:
 - [ ] Middleware en FastAPI que, al validar el JWT del especialista, verifica `suscripcion_activa == true` y `fecha_vencimiento >= hoy`. Si está vencida, retorna `HTTP 402 Payment Required`.
 - [ ] Frontend: interceptor global que captura el `402` y muestra un modal de "Suscripción vencida — contacta al administrador" bloqueando el uso del sistema.
 
+#### 7.6 Mejoras de Seguridad y Gestión de Planes
+- [x] Cambio de contraseña de Administrador: Endpoint POST `/api/admin/auth/change-password` verificando que coincida la contraseña actual ingresada en texto plano y encriptandola nuevamente usando bcrypt.
+- [x] Interfaz de Seguridad (`/admin/seguridad`): Formulario moderno con indicador visual animado de fortaleza de la nueva contraseña (Débil, Media, Fuerte), con políticas de validación estrictas obligatorias (mínimo 8 caracteres, mayúsculas, minúsculas, números y al menos un símbolo especial).
+- [x] Gestión de Características de Planes: Adaptación del backend (endpoint PUT) y componente UX/UI (Modal Animado) para crear y editar dinámicamente el precio, límites y características de los planes suscripción.
+- [x] Extensibilidad de características en los planes: Nueva columna en BD (`soporte_prioritario` boolean DEFAULT FALSE) para ofrecer nuevos beneficios. El cambio de BD quedó respaldado documentadamente en `scripts/011_add_col_prioritario.sql`.
+
 #### Criterios de aceptación Fase 7
 - El administrador puede hacer login en `/admin/login` con credenciales propias.
 - Puede registrar un nuevo especialista, asignarle un plan y activar/desactivar su acceso.
 - El dashboard admin muestra estadísticas globales reales.
 - Un especialista con suscripción vencida recibe `403` (o `402`) y el sistema bloquea su acceso.
 - Los JWTs de admin y especialista no son intercambiables.
+- El administrador cuenta con la capacidad de gestionar y asegurar su cuenta mediante actualizaciones validadas de su contraseña y monitoreo de las reglas modernas de claves seguras.
 **✅ Criterios cumplidos.**
+
+---
+
+### Fase 8: Configuración Global y Catálogos Maestros (Panel Admin)
+
+**Objetivo:** Centralizar la gestión del núcleo de la plataforma para permitir su expansión y escalabilidad a nuevas ramas médicas sin tocar directamente la base de datos, manejando los ajustes globales desde una única interfaz gráfica maestra en el Panel Administrativo.
+
+#### 8.1 Gestión de Especialidades Médicas (Expansión Multi-Especialidad)
+- [ ] **Especialidades:** Interfaz administrativa (CRUD) para que el Máster Admin cree nuevas especialidades (ej. Cardiología, Pediatría, Traumatología).
+- [ ] **Mapeo de Módulos Clínicos:** Al crear o editar una especialidad, el Admin podrá "encender" o "apagar" módulos específicos de historia clínica (`hc_secciones`) para esa rama (Ej. Odontograma apagado para Cardiólogos, pero sección de ECG prendido).
+
+#### 8.2 Administración del Catálogo Global de Hallazgos
+- [ ] Permitir a los Master Admins sumar nuevos **Hallazgos / Patologías** al sistema global (ej. un nuevo tipo de "Caries" o "Afección").
+- [ ] Impacto automático: una vez agregado desde el catálogo maestro en configuración, este elemento estará mágicamente disponible para que todos los inquilinos/especialistas de la plataforma puedan usarlo y dibujarlo en sus historias clínicas.
+
+#### 8.3 Ajustes Financieros y Conexiones Externas (Pasarelas e Impuestos)
+- [ ] Módulo seguro interconectado para introducir y almacenar **Claves de API (API Keys) maestras** (e.g. Stripe, PayPal, YCloud general), encriptadas en la base de datos.
+- [ ] Definición de las variables globales como el impuesto predeterminado (porcentajes) para recibos o la moneda global base general de las operaciones del SaaS.
+
+#### 8.4 Gestión de Empleados y Permisos Administrativos (Otras Cuentas Master)
+- [ ] Sistema de creación de cuentas de Soporte/Sub-Admin para empleados directos del dueño del SaaS.
+- [ ] Control de privilegios de acceso basados en Roles (e.g. `Master Admin`, `Agente de Soporte`, `Ventas`), restringiendo de manera estricta la vista de herramientas sensibles (como modificar los planes estructuralmente o ver estadísticas financieras totales).
+
+#### Criterios de aceptación Fase 8
+- El menú de "Configuración" estará 100% operativo en el panel administrativo.
+- Se podrá crear una nueva Especialidad Médica sin recurrir y conectarse a scripts SQL directos en el servidor.
+- Todo catálogo general añadido impactará inmediatamente a todos los arrendatarios (tenants) del ecosistema en su siguiente sesión.
 
 ---
 
