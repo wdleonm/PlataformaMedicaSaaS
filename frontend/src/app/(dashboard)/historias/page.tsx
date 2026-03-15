@@ -15,6 +15,7 @@ import {
   ChevronRight, 
   Loader2, 
   AlertCircle,
+  Activity,
   ArrowLeft,
   Edit2,
   X,
@@ -33,6 +34,9 @@ interface Paciente {
   nombre: string;
   apellido: string;
   documento: string | null;
+  alergias: string | null;
+  patologias_cronicas: string | null;
+  medicacion_frecuente: string | null;
 }
 
 interface HistoriaClinicaAdjunto {
@@ -620,6 +624,25 @@ function HistoriasContent() {
       setIsSaving(false);
     }
   };
+  
+  // ── Copiar anterior ───────────────────────────────────────────────────────
+  const handleCopyLastHistory = () => {
+    if (historias.length === 0) return;
+    const last = historias[0]; // La primera es la más reciente por el order_by desc
+    setFormData({
+      ...formData,
+      motivo_consulta: last.motivo_consulta,
+      enfermedad_actual: last.enfermedad_actual || "",
+      antecedentes_familiares: last.antecedentes_familiares || formDataVacio().antecedentes_familiares,
+      antecedentes_personales: last.antecedentes_personales || formDataVacio().antecedentes_personales,
+      examen_clinico: last.examen_clinico || formDataVacio().examen_clinico,
+      estudios_complementarios: last.estudios_complementarios || formDataVacio().estudios_complementarios,
+      diagnostico: last.diagnostico || "",
+      plan_tratamiento: last.plan_tratamiento || "",
+      notas: last.notas || "",
+      adjuntos: [], // No copiar adjuntos por seguridad
+    });
+  };
 
   // ── Estado de carga ───────────────────────────────────────────────────────
   if (isLoading) {
@@ -710,6 +733,40 @@ function HistoriasContent() {
         <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive flex items-center gap-3">
           <AlertCircle size={20} /><p>{errorMsg}</p>
         </div>
+      )}
+
+      {/* Alertas Médicas Banners */}
+      {(paciente?.alergias || paciente?.patologias_cronicas || paciente?.medicacion_frecuente) && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {paciente.alergias && (
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3">
+              <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="text-[10px] font-black uppercase text-red-500/70 tracking-widest">Alergias</p>
+                <p className="text-sm font-bold text-red-600 leading-tight mt-0.5">{paciente.alergias}</p>
+              </div>
+            </div>
+          )}
+          {paciente.patologias_cronicas && (
+            <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-start gap-3">
+              <Activity className="text-amber-500 shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="text-[10px] font-black uppercase text-amber-500/70 tracking-widest">Patologías Crónicas</p>
+                <p className="text-sm font-bold text-amber-600 leading-tight mt-0.5">{paciente.patologias_cronicas}</p>
+              </div>
+            </div>
+          )}
+          {paciente.medicacion_frecuente && (
+            <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-start gap-3">
+              <Stethoscope className="text-blue-500 shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="text-[10px] font-black uppercase text-blue-500/70 tracking-widest">Medicación Actual</p>
+                <p className="text-sm font-bold text-blue-600 leading-tight mt-0.5">{paciente.medicacion_frecuente}</p>
+              </div>
+            </div>
+          )}
+        </motion.div>
       )}
 
       {/* Timeline */}
@@ -836,14 +893,22 @@ function HistoriasContent() {
                       <h2 className="text-xl font-bold leading-tight">
                         {modalMode === "create" ? "Nueva Historia Clínica" : "Editar Historia Clínica"}
                       </h2>
-                      <p className="text-xs text-muted-foreground">
-                        Paciente: {paciente?.nombre} {paciente?.apellido}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-xs text-muted-foreground">
+                          Paciente: {paciente?.nombre} {paciente?.apellido}
+                        </p>
                         {usuario?.especialidad_principal && (
-                          <span className="ml-2 bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                          <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[10px] font-bold">
                             {usuario.especialidad_principal.nombre}
                           </span>
                         )}
-                      </p>
+                        {modalMode === "create" && historias.length > 0 && (
+                          <button type="button" onClick={handleCopyLastHistory}
+                            className="flex items-center gap-1.5 px-2.5 py-1 bg-violet-500 text-white rounded-lg text-[10px] font-black uppercase tracking-tighter hover:bg-violet-600 transition-all shadow-sm active:scale-95 ml-2">
+                            <Plus size={10} className="rotate-45" /> Copiar último registro
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <button onClick={() => setIsModalOpen(false)}

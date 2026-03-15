@@ -370,6 +370,13 @@ En cada respuesta, Cursor debe indicar:
 - [x] El mensaje incluye el "Saldo Pendiente" actualizado.
 - [x] Generar Recibo Digital Premium (web) accesible desde un link en el mensaje.
 
+#### 9.4 Premium UX/UI Enhancement (Sesión 15/03/2026)
+- [x] **Alertas Médicas:** Banners visuales de alto impacto en la HC para alergias, patologías crónicas y medicación.
+- [x] **Clonación de Evoluciones:** Botón "Copiar Última" para pre-llenar nuevas evoluciones, mejorando la eficiencia del especialista.
+- [x] **Command Search (Ctrl+K):** Paleta de comandos global para navegación ultra-rápida y búsqueda instantánea de pacientes.
+- [x] **Dashboard MoM Trends:** Indicadores porcentuales de crecimiento mensual y alertas de stock en tiempo real.
+- [x] **Presupuesto Público Sharing:** Vista digital profesional para presupuestos, con capacidad para compartir vía WhatsApp y exportar a PDF.
+
 #### Criterios de aceptación Fase 9
 - El especialista puede ver cuánto dinero neto le queda tras descontar materiales.
 - Un paciente puede agendarse solo desde una URL pública.

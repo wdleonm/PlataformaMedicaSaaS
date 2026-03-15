@@ -35,7 +35,7 @@ def get_dashboard_stats(
     pacientes_mes = session.exec(
         select(func.count(Paciente.id))
         .where(Paciente.especialista_id == eid)
-        .where(func.date(Paciente.created_at) >= inicio_mes)
+        .where(Paciente.created_at >= inicio_mes)
     ).first() or 0
 
     # ── 2. Citas ──────────────────────────────────────────────────────────────
@@ -49,7 +49,7 @@ def get_dashboard_stats(
     citas_semana = session.exec(
         select(func.count(Cita.id))
         .where(Cita.especialista_id == eid)
-        .where(func.date(Cita.fecha_hora) >= inicio_semana)
+        .where(Cita.fecha_hora >= inicio_semana)
         .where(Cita.estado != "cancelada")
     ).first() or 0
 
@@ -65,7 +65,7 @@ def get_dashboard_stats(
     ingresos_mes = session.exec(
         select(func.coalesce(func.sum(Cita.monto_cobrado), 0))
         .where(Cita.especialista_id == eid)
-        .where(func.date(Cita.fecha_hora) >= inicio_mes)
+        .where(Cita.fecha_hora >= inicio_mes)
         .where(Cita.estado == "completada")
     ).first() or 0.0
 
@@ -73,7 +73,7 @@ def get_dashboard_stats(
     costos_mes = session.exec(
         select(func.coalesce(func.sum(Cita.costo_insumos), 0))
         .where(Cita.especialista_id == eid)
-        .where(func.date(Cita.fecha_hora) >= inicio_mes)
+        .where(Cita.fecha_hora >= inicio_mes)
         .where(Cita.estado == "completada")
     ).first() or 0.0
 
@@ -81,7 +81,7 @@ def get_dashboard_stats(
     utilidad_mes = session.exec(
         select(func.coalesce(func.sum(Cita.utilidad_neta), 0))
         .where(Cita.especialista_id == eid)
-        .where(func.date(Cita.fecha_hora) >= inicio_mes)
+        .where(Cita.fecha_hora >= inicio_mes)
         .where(Cita.estado == "completada")
     ).first() or 0.0
 
@@ -148,17 +148,52 @@ def get_dashboard_stats(
         .where(HistoriaClinica.activo == True)
     ).first() or 0
 
+    # ── 8. Tendencias (Mes Anterior) ──────────────────────────────────────────
+    # inicio_mes_anterior = (inicio_mes - timedelta(days=1)).replace(day=1)
+    # fin_mes_anterior = inicio_mes - timedelta(days=1)
+
+    # pacientes_mes_anterior = session.exec(
+    #     select(func.count(Paciente.id))
+    #     .where(Paciente.especialista_id == eid)
+    #     .where(func.date(Paciente.created_at) >= inicio_mes_anterior)
+    #     .where(func.date(Paciente.created_at) <= fin_mes_anterior)
+    # ).first() or 0
+
+    # utilidad_mes_anterior = session.exec(
+    #     select(func.coalesce(func.sum(Cita.utilidad_neta), 0))
+    #     .where(Cita.especialista_id == eid)
+    #     .where(func.date(Cita.fecha_hora) >= inicio_mes_anterior)
+    #     .where(func.date(Cita.fecha_hora) <= fin_mes_anterior)
+    #     .where(Cita.estado == "completada")
+    # ).first() or 0.0
+
+    # citas_mes_anterior = session.exec(
+    #     select(func.count(Cita.id))
+    #     .where(Cita.especialista_id == eid)
+    #     .where(func.date(Cita.fecha_hora) >= inicio_mes_anterior)
+    #     .where(func.date(Cita.fecha_hora) <= fin_mes_anterior)
+    #     .where(Cita.estado != "cancelada")
+    # ).first() or 0
+
+    def get_pct_change(current, previous):
+        if previous == 0:
+            return 100 if current > 0 else 0
+        return round(((current - previous) / previous) * 100, 1)
+
     return {
         # KPIs principales
         "pacientes_activos": pacientes_activos,
         "pacientes_nuevos_mes": pacientes_mes,
+        "pacientes_tendencia": 0, # get_pct_change(pacientes_mes, pacientes_mes_anterior),
         "citas_hoy": citas_hoy,
         "citas_completadas_hoy": citas_completadas_hoy,
         "citas_semana": citas_semana,
+        "citas_tendencia": 0, # get_pct_change(citas_semana, citas_mes_anterior / 4), # Aprox semanal
         "insumos_criticos": insumos_criticos,
         "ingresos_mes": float(ingresos_mes),
         "costos_mes": float(costos_mes),
         "utilidad_mes": float(utilidad_mes),
+        "utilidad_tendencia": 0, # get_pct_change(utilidad_mes, utilidad_mes_anterior),
         "saldo_pendiente_total": float(saldo_pendiente_total),
         "historias_totales": historias_count,
         # Listas

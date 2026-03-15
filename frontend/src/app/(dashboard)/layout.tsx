@@ -23,6 +23,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { CommandPalette } from "@/components/CommandPalette";
 
 export default function DashboardLayout({
   children,
@@ -143,7 +144,7 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen bg-background text-foreground font-sans">
       {/* Sidebar Desktop */}
-      <aside className="w-72 border-r border-border/30 bg-card p-6 hidden lg:flex flex-col shadow-2xl relative z-40 transition-all shrink-0">
+      <aside className="w-72 border-r border-border/30 bg-card p-6 flex flex-col shadow-2xl relative z-40 transition-all shrink-0">
         <SidebarContent />
       </aside>
 
@@ -203,6 +204,7 @@ export default function DashboardLayout({
           </>
         )}
       </AnimatePresence>
+      <CommandPalette />
     </div>
   );
 }

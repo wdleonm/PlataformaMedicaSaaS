@@ -25,6 +25,12 @@ class PacienteBaseSchema(BaseModel):
     contacto_emergencia_nombre: Optional[str] = None
     contacto_emergencia_telefono: Optional[str] = None
     contacto_emergencia_parentesco: Optional[str] = None
+    
+    # Alertas Médicas
+    alergias: Optional[str] = None
+    patologias_cronicas: Optional[str] = None
+    medicacion_frecuente: Optional[str] = None
+    
     activo: bool = True
 
 
@@ -51,6 +57,12 @@ class PacienteUpdate(BaseModel):
     contacto_emergencia_nombre: Optional[str] = None
     contacto_emergencia_telefono: Optional[str] = None
     contacto_emergencia_parentesco: Optional[str] = None
+    
+    # Alertas Médicas
+    alergias: Optional[str] = None
+    patologias_cronicas: Optional[str] = None
+    medicacion_frecuente: Optional[str] = None
+    
     activo: Optional[bool] = None
 
 

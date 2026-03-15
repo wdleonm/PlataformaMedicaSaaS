@@ -23,6 +23,9 @@ interface Paciente {
   contacto_emergencia_nombre: string | null;
   contacto_emergencia_telefono: string | null;
   contacto_emergencia_parentesco: string | null;
+  alergias: string | null;
+  patologias_cronicas: string | null;
+  medicacion_frecuente: string | null;
 }
 
 export default function PacientesPage() {
@@ -36,7 +39,7 @@ export default function PacientesPage() {
   // Estado para Múltiples Acciones (Crear/Editar)
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"personal" | "emergencia">("personal");
+  const [activeTab, setActiveTab] = useState<"personal" | "emergencia" | "alertas">("personal");
 
   // Estado para el formulario
   const [formData, setFormData] = useState({
@@ -53,7 +56,10 @@ export default function PacientesPage() {
     ocupacion: "",
     contacto_emergencia_nombre: "",
     contacto_emergencia_telefono: "",
-    contacto_emergencia_parentesco: ""
+    contacto_emergencia_parentesco: "",
+    alergias: "",
+    patologias_cronicas: "",
+    medicacion_frecuente: ""
   });
   const [isSaving, setIsSaving] = useState(false);
   
@@ -118,7 +124,8 @@ export default function PacientesPage() {
     setFormData({
       nombre: "", apellido: "", documento: "", telefono: "", email: "", fecha_nacimiento: "",
       sexo: "M", direccion: "", lugar_nacimiento: "", estado_civil: "Soltero/a", ocupacion: "",
-      contacto_emergencia_nombre: "", contacto_emergencia_telefono: "", contacto_emergencia_parentesco: ""
+      contacto_emergencia_nombre: "", contacto_emergencia_telefono: "", contacto_emergencia_parentesco: "",
+      alergias: "", patologias_cronicas: "", medicacion_frecuente: ""
     });
     setErrorMsg("");
     setInactiveData(null);
@@ -143,7 +150,10 @@ export default function PacientesPage() {
       ocupacion: paciente.ocupacion || "",
       contacto_emergencia_nombre: paciente.contacto_emergencia_nombre || "",
       contacto_emergencia_telefono: paciente.contacto_emergencia_telefono || "",
-      contacto_emergencia_parentesco: paciente.contacto_emergencia_parentesco || ""
+      contacto_emergencia_parentesco: paciente.contacto_emergencia_parentesco || "",
+      alergias: paciente.alergias || "",
+      patologias_cronicas: paciente.patologias_cronicas || "",
+      medicacion_frecuente: paciente.medicacion_frecuente || ""
     });
     setErrorMsg("");
     setIsModalOpen(true);
@@ -418,6 +428,12 @@ export default function PacientesPage() {
                 >
                   Contacto de Emergencia
                 </button>
+                <button 
+                  onClick={() => setActiveTab("alertas")}
+                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "alertas" ? "border-destructive text-destructive" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                >
+                  Alertas Médicas
+                </button>
               </div>
 
               <form onSubmit={handleSavePaciente} className="p-6 overflow-y-auto custom-scrollbar flex-1">
@@ -495,7 +511,7 @@ export default function PacientesPage() {
                        <textarea name="direccion" value={formData.direccion} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none" />
                     </div>
                   </motion.div>
-                ) : (
+                ) : activeTab === "emergencia" ? (
                   <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nombres Completos</label>
@@ -509,6 +525,32 @@ export default function PacientesPage() {
                       <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Parentesco / Relación</label>
                         <input name="contacto_emergencia_parentesco" value={formData.contacto_emergencia_parentesco} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="Ej. Madre, Esposo..." />
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                    <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-2xl flex items-start gap-3">
+                      <AlertCircle className="text-destructive shrink-0 mt-0.5" size={18} />
+                      <div className="text-xs text-destructive/80 leading-relaxed">
+                        <strong>Atención:</strong> Esta información es crítica para la seguridad del paciente durante procedimientos odontológicos.
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-destructive uppercase tracking-wider">Alergias (Medicamentos, látex, etc.)</label>
+                        <textarea name="alergias" value={formData.alergias} onChange={handleInputChange} rows={2} className="w-full bg-background border border-destructive/20 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-destructive outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Penicilina, Lidocaína, Látex..." />
+                      </div>
+                      
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Patologías Crónicas</label>
+                        <textarea name="patologias_cronicas" value={formData.patologias_cronicas} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Hipertensión, Diabetes Tipo II, Asma..." />
+                      </div>
+                      
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Medicación Frecuente</label>
+                        <textarea name="medicacion_frecuente" value={formData.medicacion_frecuente} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Aspirina, Insulina, Enalapril..." />
                       </div>
                     </div>
                   </motion.div>

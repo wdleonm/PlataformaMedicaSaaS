@@ -29,6 +29,11 @@ class PacienteBase(SQLModel):
     contacto_emergencia_telefono: Optional[str] = Field(default=None, max_length=50)
     contacto_emergencia_parentesco: Optional[str] = Field(default=None, max_length=50)
     
+    # Alertas Médicas
+    alergias: Optional[str] = Field(default=None)
+    patologias_cronicas: Optional[str] = Field(default=None)
+    medicacion_frecuente: Optional[str] = Field(default=None)
+    
     activo: bool = Field(default=True)
 
 

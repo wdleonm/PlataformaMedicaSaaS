@@ -17,17 +17,16 @@ import {
   X,
   CreditCard,
   User,
-  Trash2,
-  Edit2
+  Trash2, 
+  Edit2,
+  Share2,
+  MessageCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Detalle {
-  id: string;
-  descripcion: string;
-  cantidad: number;
-  precio_unitario: number;
   subtotal: number;
+  servicio_id?: string | null;
 }
 
 interface Abono {
@@ -39,13 +38,9 @@ interface Abono {
 }
 
 interface Presupuesto {
-  id: string;
-  paciente_id: string;
-  fecha: string;
-  total: number;
-  saldo_pendiente: number;
   estado: "borrador" | "aprobado" | "en_pago" | "pagado" | "cancelado";
   detalles: Detalle[];
+  notas?: string | null;
 }
 
 interface Paciente {
@@ -279,6 +274,19 @@ export default function FinanzasPage() {
     }
   };
 
+  const handleShare = (p: Presupuesto, method: 'link' | 'whatsapp') => {
+    const url = `${window.location.origin}/presupuesto/${p.id}`;
+    if (method === 'link') {
+      navigator.clipboard.writeText(url);
+      alert("Enlace copiado al portapapeles");
+    } else {
+      const paciente = pacientes.find(px => px.id === p.paciente_id);
+      const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
+      const text = encodeURIComponent(`Hola ${paciente?.nombre}, le adjunto el presupuesto de su tratamiento en OdontoFocus: ${url}`);
+      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    }
+  };
+
   const filteredPresupuestos = presupuestos.filter(p => {
     const nombre = getPacienteNombre(p.paciente_id).toLowerCase();
     const searchMatch = nombre.includes(searchTerm.toLowerCase());
@@ -449,6 +457,13 @@ export default function FinanzasPage() {
                           <Edit2 size={16} />
                         </button>
                         <button 
+                          onClick={() => handleShare(p, 'link')}
+                          className="p-2 hover:bg-violet-500/10 text-violet-500 rounded-lg transition-colors"
+                          title="Copiar Enlace Público"
+                        >
+                          <Share2 size={16} />
+                        </button>
+                        <button 
                           onClick={() => handleOpenDetail(p)}
                           className="p-2 hover:bg-secondary rounded-lg transition-colors text-muted-foreground"
                           title="Ver detalles"
@@ -589,6 +604,13 @@ export default function FinanzasPage() {
               <div className="p-6 bg-secondary/30 border-t border-border/10 flex gap-3">
                 <button onClick={() => setIsDetailModalOpen(false)} className="flex-1 py-3 px-4 bg-background border border-border/50 hover:bg-secondary rounded-xl font-bold text-sm transition-all">Cerrar</button>
                 <button onClick={() => { setIsDetailModalOpen(false); handleOpenAbono(selectedPresupuesto); }} className="flex-1 py-3 px-4 bg-primary text-primary-foreground hover:scale-105 rounded-xl font-black text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50" disabled={selectedPresupuesto.saldo_pendiente === 0}>Registrar Abono</button>
+                <button 
+                  onClick={() => handleShare(selectedPresupuesto, 'whatsapp')} 
+                  className="p-3 bg-emerald-500 text-white hover:scale-105 rounded-xl transition-all shadow-lg shadow-emerald-500/20"
+                  title="Enviar por WhatsApp"
+                >
+                  <MessageCircle size={20} />
+                </button>
               </div>
             </motion.div>
           </div>

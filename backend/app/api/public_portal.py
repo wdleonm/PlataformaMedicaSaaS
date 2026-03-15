@@ -148,3 +148,49 @@ def get_public_receipt(abono_id: UUID, session: Session = Depends(get_session)):
             "estado": presupuesto.estado
         }
     }
+
+@router.get("/presupuesto/{presupuesto_id}")
+def get_public_budget(presupuesto_id: UUID, session: Session = Depends(get_session)):
+    """
+    Obtiene los detalles de un presupuesto de forma pública para vista de paciente.
+    """
+    from app.models.finanzas import Presupuesto, PresupuestoDetalle
+    from app.models.especialista import Especialista
+    from app.models.paciente import Paciente
+
+    presupuesto = session.get(Presupuesto, presupuesto_id)
+    if not presupuesto:
+        raise HTTPException(status_code=404, detail="Presupuesto no encontrado")
+    
+    paciente = session.get(Paciente, presupuesto.paciente_id)
+    especialista = session.get(Especialista, presupuesto.especialista_id)
+    detalles = session.exec(
+        select(PresupuestoDetalle).where(PresupuestoDetalle.presupuesto_id == presupuesto.id)
+    ).all()
+
+    return {
+        "id": presupuesto.id,
+        "fecha": presupuesto.fecha,
+        "total": float(presupuesto.total),
+        "saldo_pendiente": float(presupuesto.saldo_pendiente),
+        "estado": presupuesto.estado,
+        "validez_fecha": presupuesto.validez_fecha,
+        "notas": presupuesto.notas,
+        "paciente": {
+            "nombre": f"{paciente.nombre} {paciente.apellido}",
+            "documento": paciente.documento
+        },
+        "especialista": {
+            "nombre": f"{especialista.nombre} {especialista.apellido}",
+            "email": especialista.email
+        },
+        "detalles": [
+            {
+                "id": d.id,
+                "descripcion": d.descripcion,
+                "cantidad": float(d.cantidad),
+                "precio_unitario": float(d.precio_unitario),
+                "subtotal": float(d.cantidad * d.precio_unitario)
+            } for d in detalles
+        ]
+    }

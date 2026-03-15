@@ -10,8 +10,8 @@ export default function Home() {
   const { login } = useAuth();
   
   // Estado local para los inputs del formulario
-  const [email, setEmail] = useState("admin@odontofocus.com");
-  const [password, setPassword] = useState("123456"); 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState(""); 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorLogin, setErrorLogin] = useState("");

@@ -46,13 +46,16 @@ interface PacienteResumen {
 interface DashboardStats {
   pacientes_activos: number;
   pacientes_nuevos_mes: number;
+  pacientes_tendencia: number;
   citas_hoy: number;
   citas_completadas_hoy: number;
   citas_semana: number;
+  citas_tendencia: number;
   insumos_criticos: number;
   ingresos_mes: number;
   costos_mes: number;
   utilidad_mes: number;
+  utilidad_tendencia: number;
   saldo_pendiente_total: number;
   historias_totales: number;
   proximas_citas: CitaResumen[];
@@ -118,11 +121,14 @@ export default function DashboardHome() {
   const saludo =
     hora < 12 ? "Buenos días" : hora < 18 ? "Buenas tardes" : "Buenas noches";
 
-  const kpis = [
-    {
-      label: "Pacientes Activos",
-      value: stats?.pacientes_activos ?? 0,
-      sub: `+${stats?.pacientes_nuevos_mes ?? 0} este mes`,
+  const kpis = [    {
+      label: "Pacientes Mes",
+      value: stats?.pacientes_nuevos_mes ?? 0,
+      sub: stats?.pacientes_tendencia !== undefined ? (
+        <span className={stats.pacientes_tendencia >= 0 ? "text-emerald-400" : "text-rose-400"}>
+          {stats.pacientes_tendencia >= 0 ? "↑" : "↓"} {Math.abs(stats.pacientes_tendencia)}% vs mes ant.
+        </span>
+      ) : "Cargando...",
       icon: Users,
       color: "text-sky-400",
       bg: "bg-sky-400/10",
@@ -130,9 +136,13 @@ export default function DashboardHome() {
       href: "/pacientes",
     },
     {
-      label: "Citas Hoy",
-      value: stats?.citas_hoy ?? 0,
-      sub: `${stats?.citas_completadas_hoy ?? 0} completadas`,
+      label: "Citas Semana",
+      value: stats?.citas_semana ?? 0,
+      sub: stats?.citas_tendencia !== undefined ? (
+        <span className={stats.citas_tendencia >= 0 ? "text-emerald-400" : "text-rose-400"}>
+          {stats.citas_tendencia >= 0 ? "↑" : "↓"} {Math.abs(stats.citas_tendencia)}% vs media
+        </span>
+      ) : "Cargando...",
       icon: Calendar,
       color: "text-violet-400",
       bg: "bg-violet-400/10",
@@ -140,9 +150,15 @@ export default function DashboardHome() {
       href: "/citas",
     },
     {
-      label: "Utilidad Neta (Mes)",
+      label: "Utilidad (Mes)",
       value: formatCurrency(stats?.utilidad_mes ?? 0),
-      sub: `Costo insumos: ${formatCurrency(stats?.costos_mes ?? 0)}`,
+      sub: stats?.utilidad_tendencia !== undefined ? (
+        <div className="flex flex-col">
+          <span className={stats.utilidad_tendencia >= 0 ? "text-emerald-400" : "text-rose-400"}>
+            {stats.utilidad_tendencia >= 0 ? "↑" : "↓"} {Math.abs(stats.utilidad_tendencia)}% rendimiento
+          </span>
+        </div>
+      ) : "Cargando...",
       icon: TrendingUp,
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
@@ -151,35 +167,19 @@ export default function DashboardHome() {
       isText: true,
     },
     {
-      label: "Cartera Pendiente",
-      value: formatCurrency(stats?.saldo_pendiente_total ?? 0),
-      sub: "Total deudores",
-      icon: CreditCard,
-      color: "text-amber-400",
-      bg: "bg-amber-400/10",
-      border: "border-amber-400/20",
-      href: "/presupuestos",
-      isText: true,
-    },
-    {
-      label: "Insumos Críticos",
+      label: "Stock Crítico",
       value: stats?.insumos_criticos ?? 0,
-      sub: stats?.insumos_criticos
-        ? "⚠ Requiere reposición"
-        : "✓ Stock al día",
+      sub: (stats?.insumos_criticos ?? 0) > 0 ? (
+        <span className="text-amber-400 animate-pulse font-bold flex items-center gap-1">
+          <AlertTriangle size={12} /> Reponer Insumos
+        </span>
+      ) : (
+        <span className="text-emerald-400">✓ Inventario al día</span>
+      ),
       icon: Package,
-      color:
-        (stats?.insumos_criticos ?? 0) > 0
-          ? "text-amber-400"
-          : "text-emerald-400",
-      bg:
-        (stats?.insumos_criticos ?? 0) > 0
-          ? "bg-amber-400/10"
-          : "bg-emerald-400/10",
-      border:
-        (stats?.insumos_criticos ?? 0) > 0
-          ? "border-amber-400/20"
-          : "border-emerald-400/20",
+      color: (stats?.insumos_criticos ?? 0) > 0 ? "text-amber-400" : "text-emerald-400",
+      bg: (stats?.insumos_criticos ?? 0) > 0 ? "bg-amber-400/10" : "bg-emerald-400/10",
+      border: (stats?.insumos_criticos ?? 0) > 0 ? "border-amber-400/20" : "border-emerald-400/20",
       href: "/inventario",
     },
   ];
