@@ -371,7 +371,7 @@ En cada respuesta, Cursor debe indicar:
 - [x] Generar Recibo Digital Premium (web) accesible desde un link en el mensaje.
 
 #### 9.4 Premium UX/UI Enhancement (Sesión 15/03/2026)
-- [x] **Alertas Médicas:** Banners visuales de alto impacto en la HC para alergias, patologías crónicas y medicación.
+- [x] **Alertas Médicas (Sincronización Inteligente):** Banners visuales de alto impacto en la HC. Implementada sincronización bidireccional entre alertas globales y antecedentes de la historia clínica, con mapeo automático de botones (Alergias, Asma, Diabetes, etc.) y pre-llenado inteligente.
 - [x] **Clonación de Evoluciones:** Botón "Copiar Última" para pre-llenar nuevas evoluciones, mejorando la eficiencia del especialista.
 - [x] **Command Search (Ctrl+K):** Paleta de comandos global para navegación ultra-rápida y búsqueda instantánea de pacientes.
 - [x] **Dashboard MoM Trends:** Indicadores porcentuales de crecimiento mensual y alertas de stock en tiempo real.

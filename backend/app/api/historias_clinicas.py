@@ -31,6 +31,59 @@ from app.schemas.historias_clinicas import (
 router = APIRouter(tags=["historias_clinicas"])
 
 
+def _sync_paciente_alerts(session: Session, paciente: Paciente, antecedentes_personales: dict):
+    """
+    Sincroniza los antecedentes personales de la historia clínica con el perfil global del paciente.
+    """
+    if not antecedentes_personales:
+        return
+
+    # Extraer información relevante
+    especifique = antecedentes_personales.get("especifique", "")
+    medicamentos = antecedentes_personales.get("medicamentos", "")
+    patologias_seleccionadas = antecedentes_personales.get("patologias", [])
+
+    # --- 1. Sincronizar Alergias ---
+    # Si marcó el botón "Alergias" o lo escribió en el texto
+    has_alergia_btn = "Alergias" in patologias_seleccionadas
+    has_alergia_txt = "alergi" in especifique.lower()
+    
+    if has_alergia_btn or has_alergia_txt:
+        # Si ya había algo, lo mantenemos y añadimos lo nuevo si no está
+        current_alergias = paciente.alergias or ""
+        if especifique and has_alergia_txt and especifique not in current_alergias:
+            paciente.alergias = f"{current_alergias}, {especifique}".strip(", ") if current_alergias else especifique
+        elif has_alergia_btn and not current_alergias:
+            paciente.alergias = "Alergias (ver antecedentes)"
+
+    # --- 2. Sincronizar Patologías Crónicas ---
+    # Combinar patologías seleccionadas (excluyendo Alergias que ya procesamos) con el campo de texto
+    pat_btns = [p for p in patologias_seleccionadas if p != "Alergias"]
+    pat_str_btns = ", ".join(pat_btns)
+    
+    # Si especifique NO es sobre alergias, va a patologías
+    pat_txt = especifique if not has_alergia_txt else ""
+    
+    # Unir todo
+    parts = []
+    if pat_str_btns: parts.append(pat_str_btns)
+    if pat_txt: parts.append(pat_txt)
+    
+    nueva_patologia = " | ".join(parts)
+    if nueva_patologia:
+        paciente.patologias_cronicas = nueva_patologia
+
+    # --- 3. Sincronizar Medicación ---
+    if medicamentos:
+        paciente.medicacion_frecuente = medicamentos
+    
+    from datetime import datetime
+    paciente.updated_at = datetime.utcnow()
+    
+    session.add(paciente)
+
+
+
 # ---------------------------------------------------------------------------
 # Crear historia clínica
 # ---------------------------------------------------------------------------
@@ -94,6 +147,10 @@ def create_historia(
         notas=data.notas,
     )
     session.add(historia)
+    
+    # Sincronizar alertas al paciente
+    _sync_paciente_alerts(session, paciente, data.antecedentes_personales)
+    
     session.commit()
     session.refresh(historia)
     return historia
@@ -226,6 +283,15 @@ def update_historia(
     from datetime import datetime
     historia.updated_at = datetime.utcnow()
     session.add(historia)
+    
+    # Sincronizar si se actualizaron los antecedentes personales
+    if data.antecedentes_personales is not None:
+        paciente = session.exec(
+            select(Paciente).where(Paciente.id == historia.paciente_id)
+        ).first()
+        if paciente:
+            _sync_paciente_alerts(session, paciente, data.antecedentes_personales)
+
     session.commit()
     session.refresh(historia)
     return historia

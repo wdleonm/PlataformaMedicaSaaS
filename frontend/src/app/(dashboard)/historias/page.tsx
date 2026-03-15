@@ -575,7 +575,40 @@ function HistoriasContent() {
     setModalMode("create");
     setSelectedHistoriaId(null);
     setCurrentStepIdx(0);
-    setFormData(formDataVacio());
+    
+    const initialData = formDataVacio();
+    
+    // Pre-llenar con alertas globales del paciente si existen
+    if (paciente) {
+      const patologias: string[] = [];
+      
+      // 1. Si el paciente tiene alergias registradas, marcamos el botón "Alergias"
+      if (paciente.alergias) {
+        patologias.push("Alergias");
+      }
+      
+      // 2. Si tiene patologías crónicas, intentamos mapearlas a los botones disponibles
+      if (paciente.patologias_cronicas) {
+        // Personales disponibles (copiamos la lógica para referencia o usamos la constante)
+        const botonesDisponibles = ["Cardiovasculares", "Enf. Pulmonar", "Sanguíneos", "Hemorrágicos", "Quirúrgicos", "Hospitalización", "Alergias", "Diabetes", "Convulsión", "Enf. Renal", "Asma"];
+        const actualPatologias = paciente.patologias_cronicas.toLowerCase();
+        
+        botonesDisponibles.forEach(btn => {
+          if (actualPatologias.includes(btn.toLowerCase()) && !patologias.includes(btn)) {
+            patologias.push(btn);
+          }
+        });
+      }
+
+      initialData.antecedentes_personales = {
+        ...initialData.antecedentes_personales,
+        patologias: patologias,
+        especifique: [paciente.alergias, paciente.patologias_cronicas].filter(Boolean).join(" | "),
+        medicamentos: paciente.medicacion_frecuente || ""
+      };
+    }
+    
+    setFormData(initialData);
     setIsModalOpen(true);
   };
 
