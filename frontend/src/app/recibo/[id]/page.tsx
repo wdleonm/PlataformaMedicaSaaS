@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { api } from "@/lib/api";
 import { 
   CheckCircle2, 
   Download, 
@@ -47,13 +48,8 @@ export default function PublicReceiptPage() {
   useEffect(() => {
     async function fetchReceipt() {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/public/recibo/${id}`);
-        if (response.ok) {
-          const json = await response.json();
-          setData(json);
-        } else {
-          setError(true);
-        }
+        const { data } = await api.get(`/api/public/recibo/${id}`);
+        setData(data);
       } catch {
         setError(true);
       } finally {

@@ -207,7 +207,16 @@ En cada respuesta, Cursor debe indicar:
 - [x] Tres errores ESLint: comillas sin escapar en `comunicaciones/page.tsx` (→ `&ldquo;&rdquo;`) y referencia a regla TypeScript inexistente en `page.tsx` (→ `catch (_err)`).
 - [x] Error React en `embed/odontograma`: `<title>` dentro de `<path>` SVG siendo tratado como metadata del documento → eliminado, número visible encima de cada pieza.
 - [x] Logo y menú hamburguesa apareciendo dentro del iframe del odontograma → creada ruta `/embed/odontograma` fuera del grupo `(dashboard)`.
-- [x] Scrollbar visible en la barra de tabs del ---
+- [x] Scrollbar visible en la barra de tabs del historial clínico (eliminado con CSS utility).
+
+**Problemas resueltos y nuevas funcionalidades:**
+- [x] **Visibilidad en Línea de Tiempo:** Se modificó el backend (`list_historias_by_paciente`) y el frontend (`page.tsx`) para mostrar los nombres de los archivos adjuntos directamente en la tarjeta de la historia clínica.
+- [x] **Autenticación en Descargas:** Se actualizó `dependencies.py` para permitir la validación de JWT a través de un parámetro de consulta (`?token=...`), permitiendo que los enlaces directos del navegador funcionen correctamente sin encabezados manuales.
+- [x] **Visualización Inline vs Descarga:** 
+  - Backend: El endpoint de descarga ahora soporta `download=true` para forzar la descarga o `"inline"` por defecto.
+  - Frontend: Se agregaron botones separados para "Ver" (pestaña nueva) y "Descargar" (guardar archivo) usando iconos de `lucide-react`.
+
+---
 
 ### Fase 6: Historia Clínica Modular por Especialidad
 

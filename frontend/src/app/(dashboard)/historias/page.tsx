@@ -18,7 +18,9 @@ import {
   ArrowLeft,
   Edit2,
   X,
-  Stethoscope
+  Stethoscope,
+  Download,
+  ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -33,6 +35,12 @@ interface Paciente {
   documento: string | null;
 }
 
+interface HistoriaClinicaAdjunto {
+  id: string;
+  nombre_archivo: string;
+  tipo_mime: string;
+}
+
 interface HistoriaClinica {
   id: string;
   fecha_apertura: string;
@@ -45,6 +53,8 @@ interface HistoriaClinica {
   diagnostico: string | null;
   plan_tratamiento: string | null;
   notas: string | null;
+  adjuntos_count: number;
+  adjuntos: HistoriaClinicaAdjunto[];
   created_at: string;
 }
 
@@ -87,6 +97,7 @@ interface FormDataHistoria {
   diagnostico: string;
   plan_tratamiento: string;
   notas: string;
+  adjuntos: any[];
 }
 
 const formDataVacio = (): FormDataHistoria => ({
@@ -106,6 +117,7 @@ const formDataVacio = (): FormDataHistoria => ({
   diagnostico: "",
   plan_tratamiento: "",
   notas: "",
+  adjuntos: [],
 });
 
 // ─── Secciones del modal (renderers estáticos mapeados por codigo) ────────────
@@ -321,12 +333,110 @@ function PlanStep({ formData, setFormData }: { formData: FormDataHistoria; setFo
   );
 }
 
+function AdjuntosStep({ historiaId, adjuntos, onUpdate }: { historiaId: string | null, adjuntos: any[], onUpdate: () => void }) {
+  const [isUploading, setIsUploading] = useState(false);
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length || !historiaId) return;
+    try {
+      setIsUploading(true);
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      await api.post(`/api/adjuntos/historia/${historiaId}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      onUpdate();
+    } catch (error) {
+      console.error("Error al subir archivo:", error);
+      alert("No se pudo subir el archivo.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const eliminarAdjunto = async (id: string) => {
+    if (!confirm("¿Seguro que deseas eliminar este archivo?")) return;
+    try {
+      await api.delete(`/api/adjuntos/${id}`);
+      onUpdate();
+    } catch (error) {
+      console.error("Error al eliminar adjunto:", error);
+    }
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <div className="flex items-center justify-between border-b border-border/20 pb-3">
+        <h3 className="font-bold flex items-center gap-2">Archivos y Documentos Adjuntos</h3>
+        <label className={`cursor-pointer bg-primary text-primary-foreground text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-primary/90 transition-all ${!historiaId ? 'opacity-50 cursor-not-allowed' : ''}`}>
+          <Plus size={14} /> Subir Archivo
+          <input type="file" className="hidden" onChange={handleFileUpload} disabled={!historiaId || isUploading} />
+        </label>
+      </div>
+
+      {!historiaId && (
+        <div className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-xl text-sm italic">
+          Primero debes guardar la historia clínica para poder adjuntar documentos.
+        </div>
+      )}
+
+      {isUploading && (
+        <div className="flex items-center gap-2 text-sm text-primary animate-pulse">
+          <Loader2 size={16} className="animate-spin" /> Subiendo archivo...
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {adjuntos.map((adj) => (
+          <div key={adj.id} className="p-4 glass-panel border border-border/20 rounded-2xl flex items-center justify-between group">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="p-2 bg-secondary/50 rounded-lg text-muted-foreground shrink-0">
+                <FileText size={20} />
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-sm font-bold truncate">{adj.nombre_archivo}</p>
+                <p className="text-[10px] text-muted-foreground uppercase">{adj.tipo_mime.split('/')[1]}</p>
+              </div>
+            </div>
+            <div className="flex gap-1">
+              <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8001'}/api/adjuntos/${adj.id}/download${token ? `?token=${token}` : ''}`} 
+                target="_blank" rel="noopener noreferrer"
+                className="p-2 hover:bg-primary/20 text-primary rounded-lg transition-colors"
+                title="Ver en pestaña nueva">
+                <ExternalLink size={16} />
+              </a>
+              <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8001'}/api/adjuntos/${adj.id}/download${token ? `?token=${token}&download=true` : '?download=true'}`} 
+                className="p-2 hover:bg-success/20 text-success rounded-lg transition-colors"
+                title="Descargar archivo">
+                <Download size={16} />
+              </a>
+              <button onClick={() => eliminarAdjunto(adj.id)} className="p-2 hover:bg-destructive/20 text-destructive rounded-lg transition-colors">
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        ))}
+        {adjuntos.length === 0 && !isUploading && (
+          <div className="col-span-full py-12 text-center text-muted-foreground border-2 border-dashed border-border/20 rounded-3xl">
+            <p className="text-sm">No hay archivos adjuntos aún.</p>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 /** Renderizador dinámico: mapea codigo → componente React */
 function renderSeccion(
   codigo: string,
   formData: FormDataHistoria,
   setFormData: any,
-  pacienteId: string | null
+  pacienteId: string | null,
+  historiaId: string | null,
+  onUpdateAdjuntos: () => void
 ) {
   switch (codigo) {
     case "CONSULTA":
@@ -339,6 +449,8 @@ function renderSeccion(
       return <OdontogramaStep pacienteId={pacienteId} />;
     case "PLAN":
       return <PlanStep formData={formData} setFormData={setFormData} />;
+    case "ADJUNTOS":
+      return <AdjuntosStep historiaId={historiaId} adjuntos={formData.adjuntos} onUpdate={onUpdateAdjuntos} />;
     default:
       return (
         <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-3">
@@ -355,6 +467,7 @@ function HistoriasContent() {
   const router = useRouter();
   const { usuario } = useAuth();
   const pacienteId = searchParams.get("paciente_id");
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [historias, setHistorias] = useState<HistoriaClinica[]>([]);
@@ -393,6 +506,7 @@ function HistoriasContent() {
         { id: "3", codigo: "EXAMEN_FISICO", nombre: "Examen Físico", componente_frontend: "ExamenFisicoStep",  orden: 3, obligatoria: false },
         { id: "4", codigo: "ODONTOGRAMA",   nombre: "Odontograma",   componente_frontend: "OdontogramaStep",   orden: 4, obligatoria: false },
         { id: "5", codigo: "PLAN",          nombre: "Plan",          componente_frontend: "PlanStep",          orden: 5, obligatoria: false },
+        { id: "6", codigo: "ADJUNTOS",      nombre: "Adjuntos",      componente_frontend: "AdjuntosStep",      orden: 6, obligatoria: false },
       ]);
     } finally {
       setIsLoadingSecciones(false);
@@ -411,6 +525,7 @@ function HistoriasContent() {
         { id: "3", codigo: "EXAMEN_FISICO", nombre: "Examen Físico", componente_frontend: "ExamenFisicoStep",  orden: 3, obligatoria: false },
         { id: "4", codigo: "ODONTOGRAMA",   nombre: "Odontograma",   componente_frontend: "OdontogramaStep",   orden: 4, obligatoria: false },
         { id: "5", codigo: "PLAN",          nombre: "Plan",          componente_frontend: "PlanStep",          orden: 5, obligatoria: false },
+        { id: "6", codigo: "ADJUNTOS",      nombre: "Adjuntos",      componente_frontend: "AdjuntosStep",      orden: 6, obligatoria: false },
       ]);
     }
   }, [usuario?.especialidad_principal?.id]);
@@ -475,6 +590,7 @@ function HistoriasContent() {
       diagnostico: h.diagnostico || "",
       plan_tratamiento: h.plan_tratamiento || "",
       notas: h.notas || "",
+      adjuntos: h.adjuntos || [],
     });
     setIsModalOpen(true);
   };
@@ -615,7 +731,14 @@ function HistoriasContent() {
                 className="glass-panel rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-border/50 group">
                 <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-border/20">
                   <div className="md:w-56 p-6 bg-secondary/20 flex flex-col justify-center items-center md:items-start text-center md:text-left space-y-2">
-                    <div className="p-3 bg-primary/10 rounded-2xl text-primary"><Stethoscope size={24} /></div>
+                    <div className="p-3 bg-primary/10 rounded-2xl text-primary flex items-center gap-2">
+                      <Stethoscope size={24} />
+                      {h.adjuntos_count > 0 && (
+                        <div className="bg-primary text-primary-foreground text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                          {h.adjuntos_count}
+                        </div>
+                      )}
+                    </div>
                     <div className="font-bold text-lg">{format(new Date(h.fecha_apertura), "dd MMM, yyyy", { locale: es })}</div>
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                       <Clock size={12} /> {format(new Date(h.created_at), "HH:mm")}
@@ -647,8 +770,36 @@ function HistoriasContent() {
                       </div>
                     )}
                     {h.notas && (
-                      <div className="pt-4 border-t border-border/10">
+                      <div className="pt-2">
                         <p className="text-xs text-muted-foreground italic"><strong>Notas:</strong> {h.notas}</p>
+                      </div>
+                    )}
+                    
+                    {h.adjuntos && h.adjuntos.length > 0 && (
+                      <div className="pt-4 border-t border-border/10">
+                        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 flex items-center gap-1">
+                          Adjuntos
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {h.adjuntos.map((adj) => (
+                            <div key={adj.id} className="flex items-center gap-2 px-3 py-1.5 bg-secondary/30 border border-border/20 rounded-xl text-xs">
+                              <FileText size={14} className="text-primary" />
+                              <span className="font-medium truncate max-w-[150px]">{adj.nombre_archivo}</span>
+                              <div className="flex items-center gap-2">
+                                <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8001'}/api/adjuntos/${adj.id}/download${token ? `?token=${token}` : ''}`} 
+                                  target="_blank" rel="noopener noreferrer"
+                                  className="text-primary hover:underline flex items-center gap-0.5">
+                                  <ExternalLink size={12} /> Ver
+                                </a>
+                                <span className="text-muted-foreground/30">|</span>
+                                <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8001'}/api/adjuntos/${adj.id}/download${token ? `?token=${token}&download=true` : '?download=true'}`} 
+                                  className="text-success hover:underline flex items-center gap-0.5">
+                                  <Download size={12} /> Descargar
+                                </a>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -723,7 +874,20 @@ function HistoriasContent() {
                 {/* Contenido del paso actual */}
                 <form onSubmit={handleSaveHistoria} className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                   {seccionActual
-                    ? renderSeccion(seccionActual.codigo, formData, setFormData, pacienteId)
+                    ? renderSeccion(
+                        seccionActual.codigo, 
+                        formData, 
+                        setFormData, 
+                        pacienteId, 
+                        selectedHistoriaId,
+                        () => {
+                          if (selectedHistoriaId) {
+                            api.get(`/api/adjuntos/historia/${selectedHistoriaId}`).then(res => {
+                              setFormData(prev => ({ ...prev, adjuntos: res.data || [] }));
+                            });
+                          }
+                        }
+                      )
                     : (
                       <div className="flex items-center justify-center h-48 text-muted-foreground">
                         <Loader2 size={32} className="animate-spin" />

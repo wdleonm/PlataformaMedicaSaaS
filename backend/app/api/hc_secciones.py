@@ -56,5 +56,17 @@ def listar_secciones_por_especialidad(
             "orden": extra.orden,
             "obligatoria": extra.obligatoria
         })
+    # Asegurar que la sección de ADJUNTOS siempre esté presente
+    has_adjuntos = any(s["codigo"] == "ADJUNTOS" for s in secciones_enriquecidas)
+    if not has_adjuntos:
+        secciones_enriquecidas.append({
+            "id": "00000000-0000-0000-0000-000000000000", # ID dummy
+            "codigo": "ADJUNTOS",
+            "nombre": "Adjuntos",
+            "descripcion": "Archivos y documentos adjuntos",
+            "componente_frontend": "AdjuntosStep",
+            "orden": 99,
+            "obligatoria": False
+        })
         
     return secciones_enriquecidas

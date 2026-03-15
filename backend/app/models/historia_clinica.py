@@ -62,3 +62,19 @@ class HistoriaClinica(SQLModel, table=True):
     activo:             bool           = Field(default=True)
     created_at:         datetime       = Field(default_factory=datetime.utcnow)
     updated_at:         datetime       = Field(default_factory=datetime.utcnow)
+
+
+class HistoriaClinicaAdjunto(SQLModel, table=True):
+    """
+    Archivos adjuntos (Rx, PDFs, imágenes) de una historia clínica.
+    """
+    __tablename__ = "historias_clinicas_adjuntos"
+    __table_args__ = {"schema": "sys_clinical"}
+
+    id:             UUID     = Field(default_factory=uuid4, primary_key=True)
+    historia_id:    UUID     = Field(foreign_key="sys_clinical.historias_clinicas.id", index=True)
+    nombre_archivo: str      = Field(max_length=255)
+    ruta_archivo:   str      = Field(max_length=500)
+    tipo_mime:      str      = Field(max_length=100)
+    tamano:         int      = Field(default=0) # Tamaño en bytes
+    created_at:     datetime = Field(default_factory=datetime.utcnow)

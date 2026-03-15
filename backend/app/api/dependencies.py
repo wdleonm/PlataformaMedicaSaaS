@@ -2,7 +2,8 @@
 Dependencies para FastAPI (autenticación, tenant context).
 Fase 1: Implementación básica.
 """
-from fastapi import Depends, HTTPException, status, Request
+from typing import List, Optional
+from fastapi import Depends, HTTPException, status, Request, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from sqlmodel import Session, select
@@ -14,19 +15,30 @@ from app.models.especialista import Especialista
 from app.models.admin import Admin
 
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
 def get_current_especialista(
     request: Request,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    token_query: Optional[str] = Query(None, alias="token"),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     session: Session = Depends(get_session),
 ) -> Especialista:
     """
     Dependency que valida JWT y retorna el especialista actual.
     También ejecuta SET LOCAL para activar RLS en la sesión actual.
     """
-    token = credentials.credentials
+    token = None
+    if credentials:
+        token = credentials.credentials
+    elif token_query:
+        token = token_query
+    
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token no proporcionado",
+        )
     
     try:
         payload = jwt.decode(
@@ -88,14 +100,25 @@ def get_current_especialista(
 
 
 def get_current_admin(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    token_query: Optional[str] = Query(None, alias="token"),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     session: Session = Depends(get_session),
 ) -> Admin:
     """
     Dependency que valida JWT y retorna el administrador actual.
     El JWT debe tener rol = 'admin'.
     """
-    token = credentials.credentials
+    token = None
+    if credentials:
+        token = credentials.credentials
+    elif token_query:
+        token = token_query
+        
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token no proporcionado",
+        )
     
     try:
         payload = jwt.decode(

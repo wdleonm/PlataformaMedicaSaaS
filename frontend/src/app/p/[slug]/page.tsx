@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 import { 
   Calendar, 
   Clock, 
@@ -61,13 +62,8 @@ export default function PublicBookingPortal() {
   useEffect(() => {
     async function fetchPortal() {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/public/p/${slug}`);
-        if (response.ok) {
-          const data = await response.json();
-          setSpecialist(data);
-        } else {
-          setError(true);
-        }
+        const { data } = await api.get(`/api/public/p/${slug}`);
+        setSpecialist(data);
       } catch {
         setError(true);
       } finally {
@@ -84,27 +80,19 @@ export default function PublicBookingPortal() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/public/p/${slug}/reserva`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre: formData.nombre,
-          apellido: formData.apellido,
-          documento: formData.documento,
-          email: formData.email,
-          telefono: formData.telefono,
-          servicio_id: selectedService?.id,
-          fecha_hora: `${formData.fecha}T${formData.hora}:00`,
-          notas: formData.notas
-        })
+      await api.post(`/api/public/p/${slug}/reserva`, {
+        nombre: formData.nombre,
+        apellido: formData.apellido,
+        documento: formData.documento,
+        email: formData.email,
+        telefono: formData.telefono,
+        servicio_id: selectedService?.id,
+        fecha_hora: `${formData.fecha}T${formData.hora}:00`,
+        notas: formData.notas
       });
-      if (response.ok) {
-        setStep(3);
-      } else {
-        alert("Error al agendar la cita. Por favor verifique los datos.");
-      }
+      setStep(3);
     } catch {
-      alert("Error de conexión. Intente más tarde.");
+      alert("Error al agendar la cita. Por favor verifique los datos o intente más tarde.");
     } finally {
       setSubmitting(false);
     }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -156,7 +156,7 @@ function OdontoEmbed() {
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState("");
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
+  // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
 
   const headers = () => {
     const t = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -168,8 +168,8 @@ function OdontoEmbed() {
     try {
       setLoading(true);
       const [rH, rO] = await Promise.all([
-        axios.get(`${apiUrl}/api/odontograma/hallazgos`, { headers: headers() }),
-        axios.get(`${apiUrl}/api/pacientes/${pacienteId}/odontograma?fecha=${fecha}`, { headers: headers() }),
+        api.get(`/api/odontograma/hallazgos`, { headers: headers() }),
+        api.get(`/api/pacientes/${pacienteId}/odontograma?fecha=${fecha}`, { headers: headers() }),
       ]);
       setHallazgos(rH.data);
       const map: Record<number, Record<string, EstadoCara>> = {};
@@ -194,7 +194,7 @@ function OdontoEmbed() {
     const full = nom.includes("corona") || nom.includes("ausente") || nom.includes("endodoncia") || nom.includes("sano") || nom.includes("protesis") || cod === "COR" || cod === "AUS" || cod === "ENDO" || cod === "ENDO_IND" || cod === "SANO";
     try {
       setSaving(true);
-      await axios.post(`${apiUrl}/api/odontograma/registros`, {
+      await api.post(`/api/odontograma/registros`, {
         paciente_id: pacienteId,
         numero_diente: numero,
         cara_diente: full ? "R" : cara,

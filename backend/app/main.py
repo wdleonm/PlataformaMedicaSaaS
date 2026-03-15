@@ -9,14 +9,15 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 
 from app.database import engine
 from app.api import (
-    auth, pacientes, odontograma, historias_clinicas, hc_secciones, 
+    auth, pacientes, odontograma, historias_clinicas, hc_secciones,
     inventario, citas, presupuestos, comunicaciones, dashboard,
     admin_auth, admin_especialistas, admin_planes, admin_dashboard, admin_config,
-    public_portal
+    public_portal, adjuntos
 )
 from app.workers.mensajes_worker import start_scheduler, stop_scheduler
 
@@ -48,8 +49,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "http://localhost:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -67,6 +68,7 @@ app.include_router(citas.router)
 app.include_router(presupuestos.router)
 app.include_router(comunicaciones.router)
 app.include_router(dashboard.router)
+app.include_router(adjuntos.router)
 
 # Routers Admin (Fase 7)
 app.include_router(admin_auth.router)

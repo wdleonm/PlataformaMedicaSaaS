@@ -143,7 +143,7 @@ def list_historias_by_paciente(
     paciente_id: UUID,
     session: Session = Depends(get_session),
     especialista: Especialista = Depends(get_current_especialista),
-) -> List[HistoriaClinica]:
+) -> List[HistoriaClinicaRead]:
     # Verificar que el paciente pertenece al especialista
     paciente = session.exec(
         select(Paciente).where(
@@ -162,7 +162,27 @@ def list_historias_by_paciente(
         )
         .order_by(HistoriaClinica.fecha_apertura.desc())  # type: ignore[attr-defined]
     )
-    return list(session.exec(stmt).all())
+    items = list(session.exec(stmt).all())
+    from sqlmodel import func
+    from app.models.historia_clinica import HistoriaClinicaAdjunto
+    
+    ret = []
+    for h in items:
+        # Forma correcta de contar con SQLModel
+        stmt_count = select(func.count()).select_from(HistoriaClinicaAdjunto).where(HistoriaClinicaAdjunto.historia_id == h.id)
+        count = session.exec(stmt_count).one() or 0
+        
+        # Obtener los adjuntos reales
+        stmt_adjuntos = select(HistoriaClinicaAdjunto).where(HistoriaClinicaAdjunto.historia_id == h.id)
+        adjuntos_obj = list(session.exec(stmt_adjuntos).all())
+        
+        # Convertir a esquema Pydantic para añadir el contador y los objetos (SQLModel prohíbe campos extra en el modelo de tabla)
+        h_read = HistoriaClinicaRead.model_validate(h)
+        h_read.adjuntos_count = count
+        h_read.adjuntos = adjuntos_obj
+        ret.append(h_read)
+        
+    return ret
 
 
 # ---------------------------------------------------------------------------

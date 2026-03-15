@@ -40,6 +40,18 @@ class HistoriaClinicaUpdate(BaseModel):
     activo:           Optional[bool]  = None
 
 
+class HistoriaClinicaAdjuntoRead(BaseModel):
+    id: UUID
+    historia_id: UUID
+    nombre_archivo: str
+    ruta_archivo: str
+    tipo_mime: str
+    tamano: int
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
 class HistoriaClinicaRead(BaseModel):
     id:               UUID
     especialista_id:  UUID
@@ -58,6 +70,8 @@ class HistoriaClinicaRead(BaseModel):
     activo:           bool
     created_at:       datetime
     updated_at:       datetime
+    adjuntos_count:   int = 0
+    adjuntos:         List[HistoriaClinicaAdjuntoRead] = []
 
     model_config = {"from_attributes": True}
 

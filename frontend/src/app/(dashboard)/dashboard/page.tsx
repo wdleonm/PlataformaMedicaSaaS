@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -101,16 +102,8 @@ export default function DashboardHome() {
     async function fetchStats() {
       if (!token) return;
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard/stats`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data);
-        } else {
-          setError(true);
-        }
+        const { data } = await api.get("/api/dashboard/stats");
+        setStats(data);
       } catch {
         setError(true);
       } finally {
@@ -498,6 +491,7 @@ export default function DashboardHome() {
             icon: TrendingUp,
             color: "text-indigo-400",
             bg: "bg-indigo-400/10",
+            href: "/citas",
           },
           {
             label: "Historias Clínicas",
@@ -505,6 +499,7 @@ export default function DashboardHome() {
             icon: FileText,
             color: "text-teal-400",
             bg: "bg-teal-400/10",
+            href: "/historias",
           },
           {
             label: "Por Cobrar",
@@ -513,6 +508,7 @@ export default function DashboardHome() {
             color: "text-orange-400",
             bg: "bg-orange-400/10",
             isText: true,
+            href: "/presupuestos",
           },
         ].map((item, i) => (
           <motion.div
@@ -522,15 +518,19 @@ export default function DashboardHome() {
             initial="hidden"
             animate="visible"
             whileHover={{ y: -3 }}
-            className="p-5 glass-panel rounded-2xl border border-border/20 flex items-center gap-4"
           >
-            <div className={`p-3 rounded-xl ${item.bg} shrink-0`}>
-              <item.icon size={20} className={item.color} />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground font-semibold">{item.label}</p>
-              <p className={`text-2xl font-black ${item.color}`}>{item.value}</p>
-            </div>
+            <Link
+              href={item.href}
+              className="p-5 glass-panel rounded-2xl border border-border/20 flex items-center gap-4 hover:border-primary/40 transition-all group"
+            >
+              <div className={`p-3 rounded-xl ${item.bg} shrink-0 group-hover:scale-110 transition-transform`}>
+                <item.icon size={20} className={item.color} />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground font-semibold">{item.label}</p>
+                <p className={`text-2xl font-black ${item.color}`}>{item.value}</p>
+              </div>
+            </Link>
           </motion.div>
         ))}
       </motion.div>
