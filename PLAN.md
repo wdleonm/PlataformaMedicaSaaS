@@ -404,6 +404,26 @@ En cada respuesta, Cursor debe indicar:
 
 ---
 
+### Fase 11: Mi Perfil y Configuración de Clínica
+**Objetivo:** Permitir al especialista personalizar su identidad digital, datos de contacto y presencia en redes sociales para el portal público y recibos digitales.
+
+#### 11.1 Gestión de Identidad y Clínica
+- [ ] **Configuración de Botón:** Vincular el icono de engranaje (Settings) del dashboard a la nueva ruta `/configuracion`.
+- [ ] **Perfil del Especialista:** Permitir la carga de foto de perfil (avatar), biografía corta y actualización de datos profesionales.
+- [ ] **Redes Sociales:** Campos para Instagram, Facebook, TikTok y link directo de WhatsApp.
+- [ ] **Datos de la Clínica:** Nombre comercial, dirección física, teléfonos de contacto y carga de **Logo de la Clínica** para que aparezca en los recibos y el portal.
+
+#### 11.2 Impacto Visual
+- [ ] Mostrar la foto y redes sociales en el **Portal Público de Reserva** (`/p/[slug]`).
+- [ ] Utilizar el logo y datos de contacto en la generación del **Recibo Digital** y en los PDFs de presupuesto.
+
+#### Criterios de aceptación Fase 11
+- El botón de configuración abre una interfaz funcional.
+- El especialista puede cambiar su foto y links de redes.
+- Los cambios se reflejan automáticamente en el portal público que ven los pacientes.
+
+---
+
 ## 5. Estructura de Carpetas del Monorepo
 
 ```
@@ -451,13 +471,12 @@ PlataformaMedicaSaaS/   (Odonto-Focus)
 
 - Trabajar **una fase a la vez**. No pasar a la siguiente sin aprobación del usuario.
 - Fases pendientes en orden lógico:
-  1. **Fase 6** — Historia Clínica Modular por Especialidad
-  2. **Fase 7** — Panel de Administración SaaS
-  3. **Fase 8** — Despliegue en VPS (siempre al final)
+  1. **Fase 8** — Configuración Global (Panel Admin)
+  2. **Fase 10** — Despliegue en VPS (Easy Panel)
+  3. **Fase 11** — Mi Perfil y Configuración de Clínica (Redes sociales, logo, etc.)
 - Ante dudas o detalles faltantes, pedir: *"Actualiza el PLAN.md para incluir X"*.
-- Para continuar: *"Empecemos con la Fase 6: Historia Clínica Modular"* o la fase que corresponda.
 
 ---
 
-*Documento: Odonto-Focus | Master Plan. Última actualización: 13/03/2026.*
-*Estado: Fases 1–9 COMPLETADAS ✅ | Pendiente: Fase 10 (Despliegue).*
+*Documento: Odonto-Focus | Master Plan. Última actualización: 16/03/2026.*
+*Estado: Fases 1–7 y 9 COMPLETADAS ✅ | Pendiente: Fases 8, 10 y 11.*
