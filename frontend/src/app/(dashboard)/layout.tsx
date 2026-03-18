@@ -116,9 +116,13 @@ export default function DashboardLayout({
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            <button className="p-2.5 rounded-xl bg-secondary/50 text-muted-foreground hover:text-primary transition-all active:scale-95">
+            <Link 
+              href="/configuracion"
+              className="p-2.5 rounded-xl bg-secondary/50 text-muted-foreground hover:text-primary transition-all active:scale-95"
+              title="Configuración de Perfil"
+            >
               <Settings size={20} />
-            </button>
+            </Link>
           </div>
 
           <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded-2xl border border-border/5 group cursor-default">

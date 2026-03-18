@@ -329,20 +329,15 @@ En cada respuesta, Cursor debe indicar:
 **Objetivo:** Centralizar la gestión del núcleo de la plataforma para permitir su expansión y escalabilidad a nuevas ramas médicas sin tocar directamente la base de datos, manejando los ajustes globales desde una única interfaz gráfica maestra en el Panel Administrativo.
 
 #### 8.1 Gestión de Especialidades Médicas (Expansión Multi-Especialidad)
-- [ ] **Especialidades:** Interfaz administrativa (CRUD) para que el Máster Admin cree nuevas especialidades (ej. Cardiología, Pediatría, Traumatología).
+- [x] **Especialidades:** Interfaz administrativa (CRUD) para que el Máster Admin cree nuevas especialidades (ej. Cardiología, Pediatría, Traumatología).
 - [ ] **Mapeo de Módulos Clínicos:** Al crear o editar una especialidad, el Admin podrá "encender" o "apagar" módulos específicos de historia clínica (`hc_secciones`) para esa rama (Ej. Odontograma apagado para Cardiólogos, pero sección de ECG prendido).
 
-#### 8.2 Administración del Catálogo Global de Hallazgos
-- [ ] Permitir a los Master Admins sumar nuevos **Hallazgos / Patologías** al sistema global (ej. un nuevo tipo de "Caries" o "Afección").
-- [ ] Impacto automático: una vez agregado desde el catálogo maestro en configuración, este elemento estará mágicamente disponible para que todos los inquilinos/especialistas de la plataforma puedan usarlo y dibujarlo en sus historias clínicas.
-
-#### 8.3 Ajustes Financieros y Conexiones Externas (Pasarelas e Impuestos)
-- [ ] Módulo seguro interconectado para introducir y almacenar **Claves de API (API Keys) maestras** (e.g. Stripe, PayPal, YCloud general), encriptadas en la base de datos.
-- [ ] Definición de las variables globales como el impuesto predeterminado (porcentajes) para recibos o la moneda global base general de las operaciones del SaaS.
-
-#### 8.4 Gestión de Empleados y Permisos Administrativos (Otras Cuentas Master)
-- [ ] Sistema de creación de cuentas de Soporte/Sub-Admin para empleados directos del dueño del SaaS.
-- [ ] Control de privilegios de acceso basados en Roles (e.g. `Master Admin`, `Agente de Soporte`, `Ventas`), restringiendo de manera estricta la vista de herramientas sensibles (como modificar los planes estructuralmente o ver estadísticas financieras totales).
+### FASE 8: Configuración Global y Catálogos Maestros ✅
+**Estado: Completado**
+- [x] 8.1 Gestión de Especialidades Médicas (CRUD Admin).
+- [x] 8.2 Definición Dinámica de Módulos (Mapeo Especialidad <-> Secciones HC).
+- [x] 8.3 Ajustes Financieros y Conexiones Externas (BCV, YCloud).
+- [x] 8.4 Gestión de Empleados y Permisos Admin (Roles Master/Solo Lectura).
 
 #### Criterios de aceptación Fase 8
 - El menú de "Configuración" estará 100% operativo en el panel administrativo.

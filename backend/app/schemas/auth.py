@@ -54,10 +54,28 @@ class EspecialistaRead(BaseModel):
     exigir_cambio_password: bool = False
     intervalo_cambio_password: Optional[int] = None
     slug_url: Optional[str] = None
+    descripcion_perfil: Optional[str] = None
+    redes_sociales: Optional[dict] = None
+    horario_atencion: Optional[dict] = None
+    clinica_nombre: Optional[str] = None
+    clinica_logo_url: Optional[str] = None
+    clinica_direccion: Optional[str] = None
     especialidades: List[EspecialidadRead] = []
 
     class Config:
         from_attributes = True
+
+class EspecialistaUpdate(BaseModel):
+    """Schema para actualizar datos del perfil del especialista."""
+    nombre: Optional[str] = None
+    apellido: Optional[str] = None
+    descripcion_perfil: Optional[str] = None
+    redes_sociales: Optional[dict] = None
+    horario_atencion: Optional[dict] = None
+    clinica_nombre: Optional[str] = None
+    clinica_logo_url: Optional[str] = None
+    clinica_direccion: Optional[str] = None
+    portal_visible: Optional[bool] = None
 
 
 class Token(BaseModel):

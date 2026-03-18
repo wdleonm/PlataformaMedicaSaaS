@@ -17,7 +17,7 @@ from app.api import (
     auth, pacientes, odontograma, historias_clinicas, hc_secciones,
     inventario, citas, presupuestos, comunicaciones, dashboard,
     admin_auth, admin_especialistas, admin_planes, admin_dashboard, admin_config,
-    public_portal, adjuntos
+    admin_users, public_portal, adjuntos
 )
 from app.workers.mensajes_worker import start_scheduler, stop_scheduler
 
@@ -79,6 +79,7 @@ app.include_router(admin_especialistas.router)
 app.include_router(admin_planes.router)
 app.include_router(admin_dashboard.router)
 app.include_router(admin_config.router)
+app.include_router(admin_users.router)
 
 # Portal Público (Fase 9)
 app.include_router(public_portal.router)

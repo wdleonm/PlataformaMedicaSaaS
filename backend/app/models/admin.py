@@ -17,6 +17,7 @@ class Admin(SQLModel, table=True):
     password_hash: str = Field(max_length=255)
     nombre: str = Field(max_length=120)
     apellido: str = Field(max_length=120)
+    rol: str = Field(default="master", max_length=20) # master | solo_lectura
     activo: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)

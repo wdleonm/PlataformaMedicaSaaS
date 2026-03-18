@@ -58,6 +58,10 @@ class Especialista(EspecialistaBase, table=True):
     portal_visible: bool = Field(default=False)
     descripcion_perfil: Optional[str] = Field(default=None)
     horario_atencion: Optional[dict] = Field(default=None, sa_column=Column(JSONB))
+    redes_sociales: Optional[dict] = Field(default=None, sa_column=Column(JSONB))
+    clinica_nombre: Optional[str] = Field(default=None, max_length=200)
+    clinica_logo_url: Optional[str] = Field(default=None, max_length=500)
+    clinica_direccion: Optional[str] = Field(default=None)
 
     # Seguridad: Rotación de contraseñas
     exigir_cambio_password: bool = Field(default=False)

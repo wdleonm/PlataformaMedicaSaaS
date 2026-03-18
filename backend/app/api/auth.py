@@ -19,7 +19,8 @@ from app.schemas.auth import (
     EspecialistaRead,
     Token,
     EspecialistaChangePassword,
-    EspecialistaSecurityUpdate
+    EspecialistaSecurityUpdate,
+    EspecialistaUpdate
 )
 from app.api.dependencies import get_current_especialista
 
@@ -164,6 +165,24 @@ def change_password(
     
     return {"message": "Contraseña actualizada exitosamente"}
 
+
+@router.patch("/me", response_model=EspecialistaRead)
+def update_profile(
+    data: EspecialistaUpdate,
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+):
+    """Actualizar datos del perfil del especialista actual."""
+    update_data = data.model_dump(exclude_unset=True)
+    
+    for key, value in update_data.items():
+        setattr(especialista, key, value)
+        
+    especialista.updated_at = datetime.utcnow()
+    session.add(especialista)
+    session.commit()
+    session.refresh(especialista)
+    return especialista
 
 @router.patch("/security-settings")
 def update_security_settings(

@@ -48,10 +48,26 @@ class AdminRead(BaseModel):
     email: str
     nombre: str
     apellido: str
+    rol: str
     activo: bool
 
     class Config:
         from_attributes = True
+
+class AdminCreate(BaseModel):
+    email: EmailStr
+    password: str
+    nombre: str
+    apellido: str
+    rol: str = "master"
+
+class AdminUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+    nombre: Optional[str] = None
+    apellido: Optional[str] = None
+    rol: Optional[str] = None
+    activo: Optional[bool] = None
 
 class AdminToken(BaseModel):
     access_token: str

@@ -20,6 +20,13 @@ type UsoUsuario = {
   /** Primera especialidad activa del especialista (shortcut) */
   especialidad_principal: Especialidad | null;
   slug_url: string | null;
+  descripcion_perfil: string | null;
+  redes_sociales: any | null;
+  horario_atencion: any | null;
+  clinica_nombre: string | null;
+  clinica_logo_url: string | null;
+  clinica_direccion: string | null;
+  portal_visible: boolean;
   exigir_cambio_password: boolean;
   intervalo_cambio_password: number | null;
 };
@@ -70,6 +77,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         especialidades,
         especialidad_principal: principal,
         slug_url: data.slug_url ?? null,
+        descripcion_perfil: data.descripcion_perfil ?? null,
+        redes_sociales: data.redes_sociales ?? null,
+        horario_atencion: data.horario_atencion ?? null,
+        clinica_nombre: data.clinica_nombre ?? null,
+        clinica_logo_url: data.clinica_logo_url ?? null,
+        clinica_direccion: data.clinica_direccion ?? null,
+        portal_visible: data.portal_visible ?? false,
         exigir_cambio_password: data.exigir_cambio_password ?? false,
         intervalo_cambio_password: data.intervalo_cambio_password ?? 90,
       });
