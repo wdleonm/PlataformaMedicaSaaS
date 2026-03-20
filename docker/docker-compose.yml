@@ -1,4 +1,4 @@
-# Odonto-Focus | Docker Compose (Fase 1 y Fase 6)
+# VitalNexus | Docker Compose (Fase 1 y Fase 6)
 # Ejecutar desde la raíz del repo: docker compose -f docker/docker-compose.yml up -d
 # O desde esta carpeta: docker compose up -d (con build context ../backend y ../frontend)
 

@@ -29,9 +29,9 @@ from app.workers.mensajes_worker import start_scheduler, stop_scheduler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Ciclo de vida de la aplicación: startup → yield → shutdown."""
-    # start_scheduler()  # Comentado temporalmente para estabilidad en Windows
+    start_scheduler()  
     yield
-    # stop_scheduler()
+    stop_scheduler()
 
 
 # ---------------------------------------------------------------------------
@@ -39,8 +39,8 @@ async def lifespan(app: FastAPI):
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Odonto-Focus API",
-    description="API multi-tenant para gestión médica/odontológica con notificaciones WhatsApp",
+    title="VitalNexus API",
+    description="API multi-tenant para gestión médica con gestión de alta precisión",
     version="0.5.0",
     lifespan=lifespan,
 )

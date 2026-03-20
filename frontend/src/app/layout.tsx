@@ -10,8 +10,11 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'Odonto-Focus | Médico & Dental SaaS',
-  description: 'Gestión Inteligente, Premium y Dinámica de Práctica Médica y Odontológica.',
+  title: 'VitalNexus | Médico & Dental SaaS',
+  description: 'La evolución digital de tu práctica médica con gestión de alta precisión y control financiero.',
+  icons: {
+    icon: '/img/logo/favicon.png',
+  },
 };
 
 export default function RootLayout({

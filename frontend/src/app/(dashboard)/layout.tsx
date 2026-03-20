@@ -76,14 +76,12 @@ export default function DashboardLayout({
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      <Link href="/dashboard" className="font-bold text-2xl text-primary mb-10 tracking-tight flex items-center gap-2 px-2 hover:scale-105 transition-transform">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/30">
-            <span className="text-xl">o</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-foreground leading-none">Odonto</span>
-            <span className="text-primary text-[10px] uppercase tracking-[0.2em] font-black">Focus SaaS</span>
-          </div>
+      <Link href="/dashboard" className="mb-10 px-2 hover:scale-105 transition-transform flex items-center justify-start">
+          <img 
+            src="/img/logo/logo-full.png" 
+            alt="VitalNexus Logo" 
+            className="h-12 w-auto object-contain"
+          />
       </Link>
       
       <nav className="space-y-1 flex-1 relative custom-scrollbar overflow-y-auto pr-2">
@@ -156,9 +154,13 @@ export default function DashboardLayout({
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header Mobile */}
         <header className="lg:hidden flex items-center justify-between p-4 border-b border-border/10 bg-card/80 backdrop-blur-xl z-30">
-          <Link href="/dashboard" className="font-black text-lg text-primary tracking-tighter flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">O</div>
-            <span>Odonto-Focus</span>
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <img 
+              src="/img/logo/isotipo.png" 
+              alt="VitalNexus" 
+              className="w-10 h-10 rounded-xl shadow-lg shadow-primary/20"
+            />
+            <span className="font-black text-lg text-primary tracking-tighter">VitalNexus</span>
           </Link>
           <button 
             onClick={() => setIsMobileMenuOpen(true)}

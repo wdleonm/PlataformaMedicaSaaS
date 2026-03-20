@@ -60,12 +60,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         className="bg-[#130b22] border-r border-violet-500/10 flex flex-col relative z-20"
       >
         <div className="p-6 flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/20">
-            <ShieldCheck className="text-white" size={24} />
-          </div>
+          <img 
+            src="/img/logo/isotipo.png"
+            alt="Admin Logo"
+            className="w-12 h-12 rounded-xl shadow-lg shadow-violet-500/30 ring-1 ring-violet-500/20"
+          />
           <div className="overflow-hidden whitespace-nowrap">
             <h1 className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-violet-400">ADMIN SaaS</h1>
-            <p className="text-[10px] text-violet-400/60 uppercase tracking-[0.2em] font-bold">Odonto-Focus Panel</p>
+            <p className="text-[10px] text-violet-400/60 uppercase tracking-[0.2em] font-bold">VitalNexus Panel</p>
           </div>
         </div>
 

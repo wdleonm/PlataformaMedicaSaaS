@@ -51,11 +51,15 @@ export default function AdminLoginPage() {
         className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-10">
-          <div className="w-20 h-20 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-violet-500/30 ring-1 ring-violet-400/50">
-            <ShieldCheck className="text-white" size={40} />
+          <div className="w-24 h-24 bg-white/5 backdrop-blur-xl rounded-[40px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-violet-500/20 ring-1 ring-white/10 overflow-hidden">
+            <img 
+              src="/img/logo/isotipo.png" 
+              alt="VitalNexus Admin" 
+              className="w-full h-full object-cover"
+            />
           </div>
           <h1 className="text-4xl font-black text-white mb-2 tracking-tight">Master Admin</h1>
-          <p className="text-violet-400/80 font-bold uppercase tracking-widest text-[10px]">Portal Propietario Odonto-Focus</p>
+          <p className="text-violet-400/80 font-bold uppercase tracking-widest text-[10px]">Portal Propietario VitalNexus</p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[40px] border border-white/10 shadow-2xl relative group overflow-hidden">
@@ -131,7 +135,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center mt-8 text-slate-500 text-xs">
-          Acceso restringido únicamente a personal autorizado de <strong>Odonto-Focus SaaS</strong>.
+          Acceso restringido únicamente a personal autorizado de <strong>VitalNexus SaaS</strong>.
           <br />Se registran todos los intentos de acceso por IP.
         </p>
       </motion.div>

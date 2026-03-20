@@ -22,6 +22,7 @@ from app.models.insumo_servicio import Servicio
 from app.models.paciente import Paciente
 from app.models.especialista import Especialista
 from app.services.ycloud import YCloudService
+from app.services.email import EmailService
 
 logger = logging.getLogger(__name__)
 
@@ -91,11 +92,23 @@ async def procesar_cola() -> None:
         logger.info("Worker: procesando %d mensajes de la cola", len(mensajes))
 
         for msg in mensajes:
-            texto = YCloudService.construir_mensaje(msg.tipo, msg.payload)
-            ok, error = await YCloudService.enviar_mensaje(
-                destino=msg.destino,
-                mensaje=texto,
-            )
+            ok, error = False, "Método no soportado"
+            
+            if msg.metodo == "email":
+                # Lógica para Email (Fase 9.5)
+                asunto, cuerpo = EmailService.construir_correo(msg.tipo, msg.payload)
+                ok, error = await EmailService.enviar_mensaje(
+                    destino=msg.destino,
+                    cuerpo=cuerpo,
+                    asunto=asunto
+                )
+            else:
+                # Lógica predeterminada: WhatsApp (YCloud)
+                texto = YCloudService.construir_mensaje(msg.tipo, msg.payload)
+                ok, error = await YCloudService.enviar_mensaje(
+                    destino=msg.destino,
+                    mensaje=texto,
+                )
 
             if ok:
                 msg.estado     = "enviado"
@@ -152,17 +165,6 @@ async def encolar_recordatorios_cita() -> None:
 
         encoladas = 0
         for cita in citas:
-            # Verificar que no haya recordatorio ya encolado para esta cita
-            existe = session.exec(
-                select(ColaMensaje).where(
-                    ColaMensaje.cita_id == cita.id,
-                    ColaMensaje.tipo    == "recordatorio_cita",
-                    ColaMensaje.estado.notin_(["cancelado"]),  # type: ignore[attr-defined]
-                )
-            ).first()
-            if existe:
-                continue
-
             # Obtener datos del paciente y especialista
             paciente     = session.get(Paciente, cita.paciente_id)
             especialista = session.get(Especialista, cita.especialista_id)
@@ -173,30 +175,67 @@ async def encolar_recordatorios_cita() -> None:
             if not paciente or not especialista:
                 continue
 
-            # Solo encolar si el paciente tiene teléfono registrado
-            if not paciente.telefono:
-                logger.debug(
-                    "Worker: cita %s sin teléfono de paciente — recordatorio omitido", cita.id
-                )
-                continue
-
             fecha_hora_local = cita.fecha_hora.strftime("%d/%m/%Y %H:%M")
 
-            recordatorio = ColaMensaje(
-                especialista_id=cita.especialista_id,
-                tipo="recordatorio_cita",
-                destino=paciente.telefono.lstrip("+").replace(" ", ""),
-                payload={
-                    "paciente_nombre":     f"{paciente.nombre} {paciente.apellido}",
-                    "especialista_nombre": f"{especialista.nombre} {especialista.apellido}",
-                    "servicio_nombre":     servicio.nombre if servicio else "Consulta",
-                    "fecha_hora":          fecha_hora_local,
-                },
-                cita_id=cita.id,
-                max_reintentos=3,
-            )
-            session.add(recordatorio)
-            encoladas += 1
+            # 1. Encolar WhatsApp si tiene teléfono
+            if paciente.telefono:
+                destino_wa = paciente.telefono.lstrip("+").replace(" ", "")
+                # Verificar si ya existe recordatorio de WhatsApp
+                existe_wa = session.exec(
+                    select(ColaMensaje).where(
+                        ColaMensaje.cita_id == cita.id,
+                        ColaMensaje.tipo    == "recordatorio_cita",
+                        ColaMensaje.metodo  == "whatsapp",
+                        ColaMensaje.estado.notin_(["cancelado"]),  # type: ignore[attr-defined]
+                    )
+                ).first()
+                if not existe_wa:
+                    recordatorio_wa = ColaMensaje(
+                        especialista_id=cita.especialista_id,
+                        tipo="recordatorio_cita",
+                        metodo="whatsapp",
+                        destino=destino_wa,
+                        payload={
+                            "paciente_nombre":     f"{paciente.nombre} {paciente.apellido}",
+                            "especialista_nombre": f"{especialista.nombre} {especialista.apellido}",
+                            "servicio_nombre":     servicio.nombre if servicio else "Consulta",
+                            "fecha_hora":          fecha_hora_local,
+                        },
+                        cita_id=cita.id,
+                        max_reintentos=3,
+                    )
+                    session.add(recordatorio_wa)
+                    encoladas += 1
+
+            # 2. Encolar Email si tiene correo
+            if paciente.email:
+                # Verificar si ya existe recordatorio de Email
+                existe_em = session.exec(
+                    select(ColaMensaje).where(
+                        ColaMensaje.cita_id == cita.id,
+                        ColaMensaje.tipo    == "recordatorio_cita",
+                        ColaMensaje.metodo  == "email",
+                        ColaMensaje.estado.notin_(["cancelado"]),  # type: ignore[attr-defined]
+                    )
+                ).first()
+                if not existe_em:
+                    recordatorio_em = ColaMensaje(
+                        especialista_id=cita.especialista_id,
+                        tipo="recordatorio_cita",
+                        metodo="email",
+                        destino=paciente.email,
+                        payload={
+                            "paciente_nombre":     f"{paciente.nombre} {paciente.apellido}",
+                            "especialista_nombre": f"{especialista.nombre} {especialista.apellido}",
+                            "servicio_nombre":     servicio.nombre if servicio else "Consulta",
+                            "fecha_hora":          fecha_hora_local,
+                            "moneda":              settings.moneda_simbolo,
+                        },
+                        cita_id=cita.id,
+                        max_reintentos=3,
+                    )
+                    session.add(recordatorio_em)
+                    encoladas += 1
 
         if encoladas:
             session.commit()

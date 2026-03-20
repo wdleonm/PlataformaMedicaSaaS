@@ -1,5 +1,5 @@
 """
-Modelos SQLModel para Odonto-Focus.
+Modelos SQLModel para VitalNexus.
 Fase 1: Especialidades, Especialistas y relación N:N.
 Fase 2.1: Pacientes.
 Fase 2.2: OdontogramaHallazgo (catálogo).

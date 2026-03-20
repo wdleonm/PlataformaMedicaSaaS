@@ -77,13 +77,13 @@ export default function Home() {
             <span>Sistema Multitenant Seguro</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-foreground">
-             Odonto-Focus <br/>
+             VitalNexus <br/>
              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">
-               Next-Gen Médico SaaS
+               Evolución Médica Digital
              </span>
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto md:mx-0">
-             Una solución premium para especialistas que buscan digitalizar su clínica con inteligencia, inventario en tiempo real y comunicación por WhatsApp de nivel superior.
+             La evolución digital de tu práctica médica con gestión de alta precisión y control financiero.
           </p>
           <div className="flex gap-4 items-center justify-center md:justify-start">
              <div className="flex -space-x-3">

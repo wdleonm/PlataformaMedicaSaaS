@@ -114,6 +114,13 @@ export default function PacientesPage() {
       return;
     }
 
+    // Formateo de Nombre y Apellido (Cada palabra inicia en Mayúscula)
+    if (name === "nombre" || name === "apellido" || name === "contacto_emergencia_nombre") {
+      const formatted = value.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+      setFormData((prev) => ({ ...prev, [name]: formatted }));
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 

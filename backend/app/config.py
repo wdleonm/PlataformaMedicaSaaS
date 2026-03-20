@@ -29,6 +29,13 @@ class Settings(BaseSettings):
     # Ejemplo Venezuela: 58414XXXXXXX
     ycloud_whatsapp_number: str = ""
 
+    # SMTP Correo (Fase 9.5)
+    smtp_host: str     = "smtp.gmail.com"
+    smtp_port: int     = 587
+    smtp_user: str     = ""
+    smtp_password: str = ""
+    smtp_from: str     = "no-reply@vitalnexus.com"
+
     # Moneda para mensajes (usado en plantillas de WhatsApp)
     moneda_simbolo: str = "Bs."
 

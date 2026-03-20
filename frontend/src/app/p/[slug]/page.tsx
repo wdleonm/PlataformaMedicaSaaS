@@ -79,6 +79,21 @@ export default function PublicBookingPortal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    // Validación de Documento (V-12345678, E-..., P-...)
+    const dniRegex = /^[VEP]-\d+$/;
+    if (!dniRegex.test(formData.documento)) {
+      alert("El documento debe tener el formato V-12345678, E-12345678 o P-12345678 (Letra en mayúscula y con guion).");
+      setSubmitting(false);
+      return;
+    }
+
+    // Validación de Contacto (al menos uno)
+    if (!formData.email && !formData.telefono) {
+      alert("Debes proporcionar al menos un medio de contacto (Correo o Teléfono).");
+      setSubmitting(false);
+      return;
+    }
+
     try {
       await api.post(`/api/public/p/${slug}/reserva`, {
         nombre: formData.nombre,
@@ -199,9 +214,7 @@ export default function PublicBookingPortal() {
                       <div className={`p-3 rounded-2xl ${selectedService?.id === servicio.id ? "bg-violet-600 text-white" : "bg-white/5 text-violet-400"}`}>
                         <Stethoscope size={20} />
                       </div>
-                      <span className="text-lg font-black text-emerald-400">
-                        ${servicio.precio}
-                      </span>
+                      {/* Precio oculto en portal público */}
                     </div>
                     <h3 className="font-bold text-white mb-2">{servicio.nombre}</h3>
                     <div className="flex items-center gap-2 text-xs text-slate-500 font-bold uppercase tracking-widest">
@@ -239,7 +252,11 @@ export default function PublicBookingPortal() {
                         className="booking-input"
                         placeholder="Tu nombre"
                         value={formData.nombre}
-                        onChange={e => setFormData({...formData, nombre: e.target.value})}
+                        onChange={e => {
+                          const val = e.target.value;
+                          const formatted = val.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                          setFormData({...formData, nombre: formatted})
+                        }}
                       />
                     </div>
                   </div>
@@ -252,7 +269,11 @@ export default function PublicBookingPortal() {
                         className="booking-input"
                         placeholder="Tu apellido"
                         value={formData.apellido}
-                        onChange={e => setFormData({...formData, apellido: e.target.value})}
+                        onChange={e => {
+                          const val = e.target.value;
+                          const formatted = val.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                          setFormData({...formData, apellido: formatted})
+                        }}
                       />
                     </div>
                   </div>
@@ -264,8 +285,26 @@ export default function PublicBookingPortal() {
                         required
                         className="booking-input"
                         placeholder="V-12345678"
+                        pattern="^[VEP]-\d+$"
                         value={formData.documento}
-                        onChange={e => setFormData({...formData, documento: e.target.value})}
+                        onChange={e => {
+                          let val = e.target.value.toUpperCase().replace(/\s/g, '');
+                          
+                          // Si empieza con número, insertar V- automáticamente
+                          if (/^\d/.test(val)) {
+                            val = 'V-' + val;
+                          }
+                          
+                          // Si empieza con letra correcta pero le falta el guion
+                          if (/^[VEP]\d/.test(val)) {
+                            val = val[0] + '-' + val.substring(1);
+                          }
+
+                          // Solo permitir caracteres válidos (Letra, guion, números)
+                          if (val.length > 0 && !/^[VEP-]/.test(val)) return;
+
+                          setFormData({...formData, documento: val});
+                        }}
                       />
                     </div>
                   </div>
@@ -274,11 +313,23 @@ export default function PublicBookingPortal() {
                     <div className="relative">
                       <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                       <input 
-                        required
                         className="booking-input"
-                        placeholder="+58 412 0000000"
+                        placeholder="+58 412 1234567"
                         value={formData.telefono}
                         onChange={e => setFormData({...formData, telefono: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Correo Electrónico</label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                      <input 
+                        type="email"
+                        className="booking-input"
+                        placeholder="ejemplo@correo.com"
+                        value={formData.email}
+                        onChange={e => setFormData({...formData, email: e.target.value})}
                       />
                     </div>
                   </div>
@@ -325,7 +376,7 @@ export default function PublicBookingPortal() {
                       <p className="font-bold text-emerald-400">{selectedService?.nombre}</p>
                     </div>
                   </div>
-                  <span className="text-2xl font-black text-emerald-400">${selectedService?.precio}</span>
+                  {/* Precio oculto */}
                 </div>
 
                 <button 
@@ -367,10 +418,14 @@ export default function PublicBookingPortal() {
         <footer className="mt-20 text-center grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
           <p className="text-[10px] uppercase font-black tracking-[0.5em] text-violet-400 mb-2">Powered by</p>
           <div className="flex items-center justify-center gap-2">
-            <div className="w-6 h-6 bg-violet-600 rounded-lg flex items-center justify-center">
-              <CheckCircle2 size={14} className="text-white" />
+            <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
+              <img 
+                src="/img/logo/isotipo.png" 
+                alt="VitalNexus" 
+                className="w-full h-full object-cover"
+              />
             </div>
-            <span className="font-black text-white text-sm tracking-tighter">Odonto-Focus SaaS</span>
+            <span className="font-black text-white text-sm tracking-tighter">VitalNexus SaaS</span>
           </div>
         </footer>
       </div>

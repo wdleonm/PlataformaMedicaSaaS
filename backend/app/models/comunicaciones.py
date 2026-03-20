@@ -41,8 +41,8 @@ class ColaMensaje(SQLModel, table=True):
     id:               UUID           = Field(default_factory=uuid4, primary_key=True)
     especialista_id:  UUID           = Field(foreign_key="sys_config.especialistas.id", index=True)
     tipo:             str            = Field(max_length=40)
-    destino:          str            = Field(max_length=20,
-                                            description="Número E.164 sin + (ej. 58414XXXXXXX)")
+    metodo:           str            = Field(default="whatsapp", max_length=15, description="whatsapp | email")
+    destino:          str            = Field(max_length=255, description="Número o Correo")
     payload:          Dict[str, Any] = Field(
                                           default_factory=dict,
                                           sa_column=Column(JSONB, nullable=False, default={}),

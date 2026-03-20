@@ -1,4 +1,4 @@
-# PLAN.md — Odonto-Focus | SaaS Médico Multi-Tenant
+# PLAN.md — VitalNexus | SaaS Médico Multi-Tenant
 
 **Fuente de verdad del proyecto.** No pasar a la siguiente fase sin aprobación del usuario.
 
@@ -422,7 +422,7 @@ En cada respuesta, Cursor debe indicar:
 ## 5. Estructura de Carpetas del Monorepo
 
 ```
-PlataformaMedicaSaaS/   (Odonto-Focus)
+PlataformaMedicaSaaS/   (VitalNexus)
 ├── PLAN.md                 # Este documento (fuente de verdad)
 ├── .env.example             # Variables sin secretos; YCLOUD_API_KEY vacío
 │
@@ -473,5 +473,5 @@ PlataformaMedicaSaaS/   (Odonto-Focus)
 
 ---
 
-*Documento: Odonto-Focus | Master Plan. Última actualización: 16/03/2026.*
+*Documento: VitalNexus | Master Plan. Última actualización: 16/03/2026.*
 *Estado: Fases 1–7 y 9 COMPLETADAS ✅ | Pendiente: Fases 8, 10 y 11.*

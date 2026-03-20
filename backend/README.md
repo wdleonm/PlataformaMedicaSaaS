@@ -1,4 +1,4 @@
-# Backend - Odonto-Focus | FastAPI
+# Backend - VitalNexus | FastAPI
 
 ## Fase 1: Core & Infra
 
