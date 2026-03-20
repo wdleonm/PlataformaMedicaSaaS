@@ -336,7 +336,9 @@ En cada respuesta, Cursor debe indicar:
 **Estado: Completado**
 - [x] 8.1 Gestión de Especialidades Médicas (CRUD Admin).
 - [x] 8.2 Definición Dinámica de Módulos (Mapeo Especialidad <-> Secciones HC).
-- [x] 8.3 Ajustes Financieros y Conexiones Externas (BCV, YCloud).
+- [x] 8.3 Ajustes Financieros y Conexiones Externas (BCV completado, YCloud Infra preparada).
+- [ ] 8.3.1 WhatsApp: Aprobación de plantillas en Meta/YCloud (recordatorio_cita, abono_confirmacion).
+- [ ] 8.3.2 WhatsApp: Verificación de número oficial en producción.
 - [x] 8.4 Gestión de Empleados y Permisos Admin (Roles Master/Solo Lectura).
 
 #### Criterios de aceptación Fase 8
@@ -473,5 +475,26 @@ PlataformaMedicaSaaS/   (VitalNexus)
 
 ---
 
-*Documento: VitalNexus | Master Plan. Última actualización: 16/03/2026.*
-*Estado: Fases 1–7 y 9 COMPLETADAS ✅ | Pendiente: Fases 8, 10 y 11.*
+---
+
+### Nota de Implementación WhatsApp (YCloud) - 20/03/2026
+
+Se ha preparado la infraestructura para el envío de notificaciones vía WhatsApp, pero queda en **pausa** por decisión del usuario.
+
+**Lo que se completó:**
+
+1. **DB:** Agregado campo `ycloud_whatsapp_number` a `sys_config.configuracion_global` (Script `020_add_ycloud_number_col.py`).
+2. **Modelos:** Sincronizados modelos de SQLModel y schemas de Pydantic en el Backend.
+3. **UI:** Campos de configuración para API Key y Número de WhatsApp añadidos al Panel de Administración Global.
+4. **Servicios:** Modificado `YCloudService` y el worker de mensajes para priorizar la configuración de la BD sobre el `.env`.
+
+**Pendientes para el futuro:**
+
+- [ ] Configurar las API Keys reales en el Panel Admin.
+- [ ] Crear y aprobar plantillas en Meta (`recordatorio_cita`, `abono_confirmacion`).
+- [ ] Realizar pruebas de envío en producción con número verificado.
+
+---
+
+*Documento: VitalNexus | Master Plan. Última actualización: 20/03/2026.*
+*Estado: Fases 1–7 y 9 COMPLETADAS ✅ | Fase 8 (Ajustes YCloud pendientes) | Pendiente: Fases 10 y 11.*

@@ -140,18 +140,27 @@ def cancel_mensaje(
 )
 async def enviar_directo(
     data:         EnviarMensajeDirectoRequest,
+    session:      Session = Depends(get_session),
     especialista: Especialista = Depends(get_current_especialista),
 ) -> dict:
     """
     Envía un mensaje de texto libre por WhatsApp directamente, sin pasar por la cola.
     Útil para probar la integración con YCloud.
     """
+    # Cargar configuración global para obtener API Keys sobreescritas
+    from app.models.config_global import ConfiguracionGlobal
+    config = session.exec(select(ConfiguracionGlobal)).first()
+    ycloud_key = config.ycloud_api_key if config else None
+    ycloud_num = config.ycloud_whatsapp_number if config else None
+
     ok, error = await YCloudService.enviar_mensaje(
         destino=data.destino,
         mensaje=data.mensaje,
+        api_key=ycloud_key,
+        from_number=ycloud_num,
     )
     if ok:
-        return {"status": "enviado", "destino": data.destino}
+        return {"status": "enviado", "destino": data.destino, "via": "db" if ycloud_key else "env"}
     raise HTTPException(
         status_code=status.HTTP_502_BAD_GATEWAY,
         detail=f"Error al enviar por YCloud: {error}",

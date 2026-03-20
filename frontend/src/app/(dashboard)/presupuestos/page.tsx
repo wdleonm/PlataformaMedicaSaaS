@@ -25,19 +25,20 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Detalle {
-  subtotal: number;
+  id?: string;
   servicio_id?: string | null;
-}
-
-interface Abono {
-  id: string;
-  monto: number;
-  fecha_abono: string;
-  metodo_pago: string;
-  notas: string | null;
+  descripcion: string;
+  cantidad: number;
+  precio_unitario: number;
+  subtotal: number;
 }
 
 interface Presupuesto {
+  id: string;
+  paciente_id: string;
+  fecha: string;
+  total: number;
+  saldo_pendiente: number;
   estado: "borrador" | "aprobado" | "en_pago" | "pagado" | "cancelado";
   detalles: Detalle[];
   notas?: string | null;
@@ -65,6 +66,13 @@ export default function FinanzasPage() {
   const [selectedPresupuesto, setSelectedPresupuesto] = useState<Presupuesto | null>(null);
   const [montoAbono, setMontoAbono] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
+  const [finConfig, setFinConfig] = useState({
+    moneda_principal: "USD",
+    moneda_simbolo: "$",
+    tasa_usd: 1.0,
+    tasa_eur: 1.0,
+    sincronizacion_retrasada: false,
+  });
 
   const [newBudget, setNewBudget] = useState({
     id: "", // Para edición
@@ -100,14 +108,16 @@ export default function FinanzasPage() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const [presRes, pacRes, serRes] = await Promise.all([
+      const [presRes, pacRes, serRes, configRes] = await Promise.all([
         api.get("/api/presupuestos"),
         api.get("/api/pacientes"),
-        api.get("/api/servicios")
+        api.get("/api/servicios"),
+        api.get("/api/dashboard/config")
       ]);
       setPresupuestos(presRes.data.items || []);
       setPacientes(pacRes.data.items || []);
       setServicios(serRes.data.items || []);
+      setFinConfig(configRes.data);
     } catch (error) {
       console.error("Error fetching financial data:", error);
     } finally {
@@ -500,10 +510,33 @@ export default function FinanzasPage() {
                 <button onClick={() => setIsAbonoModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
               </div>
               
-              <div className="p-4 bg-orange-500/5 border-b border-orange-500/10">
+              <div className="p-4 bg-orange-500/5 border-b border-orange-500/10 space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold text-muted-foreground uppercase">Saldo Pendiente</span>
                   <span className="text-xl font-bold text-orange-500">${selectedPresupuesto.saldo_pendiente.toLocaleString()}</span>
+                </div>
+                
+                {/* Banner de alerta si la tasa está vieja */}
+                {finConfig.sincronizacion_retrasada && (
+                  <div className="flex items-center gap-2 p-2 bg-red-500/10 border border-red-500/20 rounded-xl mb-2">
+                    <AlertCircle className="text-red-500" size={14} />
+                    <p className="text-[9px] font-bold text-red-500 uppercase leading-none">Tasas BCV desactualizadas. Usando último valor conocido.</p>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center">
+                  <div className="bg-background/50 p-2 rounded-xl">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1">Bs. (BCV Euro)</p>
+                    <p className="text-sm font-bold text-foreground">
+                      {(abonoForm.monto * finConfig.tasa_eur).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                  <div className="bg-background/50 p-2 rounded-xl opacity-70">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1">Bs. (BCV Dólar)</p>
+                    <p className="text-sm font-bold text-foreground">
+                      {(abonoForm.monto * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -719,12 +752,38 @@ export default function FinanzasPage() {
 
                 <div className="p-4 bg-primary/5 rounded-2xl border border-primary/20 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-muted-foreground">SUBTOTAL CALCULADO</span>
+                    <span className="text-xs font-bold text-muted-foreground uppercase">Monto en Cripto/Divisa</span>
                     <span className="text-lg font-black text-primary">${newBudget.total.toLocaleString()}</span>
                   </div>
+
+                  {/* Conversiones BCV */}
+                  {newBudget.total > 0 && (
+                    <div className="space-y-2">
+                      {finConfig.sincronizacion_retrasada && (
+                        <div className="flex items-center gap-2 p-1.5 bg-red-500/5 border border-red-500/10 rounded-lg">
+                          <AlertCircle className="text-red-500" size={12} />
+                          <p className="text-[8px] font-black text-red-500 uppercase leading-none">Alerta: Tasa BCV no actualizada hoy.</p>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-2 gap-3 p-3 bg-background/40 rounded-xl border border-primary/10">
+                        <div>
+                          <p className="text-[9px] font-black text-primary/60 uppercase tracking-tighter leading-none mb-1">Total en Bs. (BCV Euro)</p>
+                          <p className="text-md font-black text-foreground">
+                            {(newBudget.total * finConfig.tasa_eur).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
+                          </p>
+                        </div>
+                        <div className="opacity-60">
+                          <p className="text-[9px] font-black text-muted-foreground uppercase tracking-tighter leading-none mb-1">Total en Bs. (BCV Dólar)</p>
+                          <p className="text-md font-bold text-foreground">
+                            {(newBudget.total * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest">Monto Final Acordado (Opcional)</label>
+                  <div className="space-y-1.5 pt-2 border-t border-primary/10">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">Ajustar Total USD (Opcional)</label>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" size={16} />
                       <input 
@@ -732,12 +791,12 @@ export default function FinanzasPage() {
                         className="w-full pl-10 pr-4 py-2.5 bg-background border-2 border-primary/30 rounded-xl text-xl font-black text-primary outline-none focus:border-primary transition-all"
                         placeholder={newBudget.total > 0 ? newBudget.total.toString() : "0.00"}
                         value={newBudget.monto_ajustado === 0 ? '' : newBudget.monto_ajustado}
-                        onChange={(e) => setNewBudget({...newBudget, monto_ajustado: Number(e.target.value)})}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setNewBudget({...newBudget, monto_ajustado: val, total: val > 0 ? val : newBudget.total});
+                        }}
                       />
                     </div>
-                    <p className="text-[10px] text-muted-foreground italic pl-1">
-                      Si el monto final es diferente al subtotal, se aplicará un ajuste automático.
-                    </p>
                   </div>
                 </div>
 

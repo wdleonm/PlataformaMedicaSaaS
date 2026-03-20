@@ -21,6 +21,7 @@ from app.models.finanzas import Cita
 from app.models.insumo_servicio import Servicio
 from app.models.paciente import Paciente
 from app.models.especialista import Especialista
+from app.models.config_global import ConfiguracionGlobal
 from app.services.ycloud import YCloudService
 from app.services.email import EmailService
 
@@ -50,8 +51,59 @@ def start_scheduler() -> None:
         id="recordatorios_citas",
         replace_existing=True,
     )
+    # Job 3: Sincronizar tasas BCV (Específicamente en la tarde cuando el BCV actualiza)
+    # Intento 1: 17:35 (5:35pm)
+    scheduler.add_job(
+        sincronizar_tasas_bcv,
+        "cron",
+        hour=17,
+        minute=35,
+        id="sincronizar_bcv_tarde_1",
+        replace_existing=True,
+    )
+    # Intento 2: 18:05 (6:05pm) por si hubo retrasos en la web del BCV
+    scheduler.add_job(
+        sincronizar_tasas_bcv,
+        "cron",
+        hour=18,
+        minute=5,
+        id="sincronizar_bcv_tarde_2",
+        replace_existing=True,
+    )
+    # Intento 3: 09:00 (9:00am) para asegurar que iniciamos el día con la tasa correcta
+    scheduler.add_job(
+        sincronizar_tasas_bcv,
+        "cron",
+        hour=9,
+        minute=0,
+        id="sincronizar_bcv_mañana",
+        replace_existing=True,
+    )
     scheduler.start()
-    logger.info("Worker de mensajes iniciado (procesar_cola cada 2 min, recordatorios cada 1 h)")
+    logger.info("Worker: iniciado (mensajes 2min, recordatorios 1h, sync_bcv cron 9am/5:35pm/6:05pm)")
+
+
+async def sincronizar_tasas_bcv() -> None:
+    """
+    Sincroniza las tasas USD y EUR desde el BCV.
+    Usa el servicio centralizado para historial y limpieza.
+    """
+    from app.services.bcv_service import BCVService
+    from app.models.config_global import ConfiguracionGlobal
+
+    with Session(engine) as session:
+        config = session.exec(select(ConfiguracionGlobal)).first()
+        if not config or not config.bcv_modo_automatico:
+            return
+
+        logger.info("Worker: Iniciando sincronización de tasas BCV...")
+        # Lógica centralizada en el servicio
+        exito = await BCVService.sincronizar_tasas(session)
+        
+        if exito:
+            logger.info("Worker: Tasas BCV sincronizadas exitosamente.")
+        else:
+            logger.warning("Worker: No se pudieron sincronizar las tasas del BCV.")
 
 
 def stop_scheduler() -> None:
@@ -75,6 +127,11 @@ async def procesar_cola() -> None:
     ahora = datetime.now(timezone.utc)
 
     with Session(engine) as session:
+        # Cargar configuración global para obtener API Keys sobreescritas
+        config = session.exec(select(ConfiguracionGlobal)).first()
+        ycloud_key = config.ycloud_api_key if config else None
+        ycloud_num = config.ycloud_whatsapp_number if config else None
+
         stmt = (
             select(ColaMensaje)
             .where(
@@ -108,6 +165,8 @@ async def procesar_cola() -> None:
                 ok, error = await YCloudService.enviar_mensaje(
                     destino=msg.destino,
                     mensaje=texto,
+                    api_key=ycloud_key,
+                    from_number=ycloud_num,
                 )
 
             if ok:

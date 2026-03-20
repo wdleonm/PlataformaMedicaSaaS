@@ -9,6 +9,12 @@ class PublicServiceRead(BaseModel):
     precio: float
     duracion_estimada_min: int
 
+class FinancialConfigRead(BaseModel):
+    moneda_principal: str
+    moneda_simbolo: str
+    tasa_usd: float
+    tasa_eur: float
+
 class PublicSpecialistRead(BaseModel):
     id: UUID
     nombre: str
@@ -17,6 +23,7 @@ class PublicSpecialistRead(BaseModel):
     horario_atencion: Optional[dict]
     especialidades: List[str]
     servicios: List[PublicServiceRead]
+    fin_config: FinancialConfigRead
 
 class PublicReservaCreate(BaseModel):
     # Datos del paciente (auto-registro)

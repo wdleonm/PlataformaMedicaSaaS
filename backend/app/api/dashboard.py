@@ -200,3 +200,36 @@ def get_dashboard_stats(
         "proximas_citas": proximas_citas,
         "ultimos_pacientes": ultimos_pacientes,
     }
+
+
+@router.get("/config")
+def get_financial_config(
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+):
+    """
+    Retorna la configuración financiera global (tasas, moneda) para uso del especialista.
+    """
+    from app.models.config_global import ConfiguracionGlobal
+    config = session.exec(select(ConfiguracionGlobal)).first()
+    if not config:
+        return {
+            "moneda_principal": "USD",
+            "moneda_simbolo": "$",
+            "tasa_usd": 1.0,
+            "tasa_eur": 1.0,
+        }
+    
+    # Alerta de desincronización (si han pasado más de 24 horas)
+    retrasada = False
+    if config.bcv_ultima_sincronizacion:
+        retrasada = (datetime.utcnow() - config.bcv_ultima_sincronizacion) > timedelta(hours=24)
+    
+    return {
+        "moneda_principal": config.moneda_principal,
+        "moneda_simbolo": config.moneda_simbolo,
+        "tasa_usd": config.tasa_usd,
+        "tasa_eur": config.tasa_eur,
+        "ultima_sincronizacion": config.bcv_ultima_sincronizacion,
+        "sincronizacion_retrasada": retrasada
+    }

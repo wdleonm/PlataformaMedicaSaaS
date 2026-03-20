@@ -37,6 +37,8 @@ class YCloudService:
     async def enviar_mensaje(
         destino: str,
         mensaje: str,
+        api_key: Optional[str] = None,
+        from_number: Optional[str] = None,
     ) -> Tuple[bool, Optional[str]]:
         """
         Envía un mensaje de texto libre vía WhatsApp.
@@ -44,12 +46,17 @@ class YCloudService:
         Args:
             destino: Número en formato E.164 sin '+' (ej. '58414XXXXXXX').
             mensaje: Texto del mensaje (máx. 4096 caracteres).
+            api_key: (Opcional) API Key para usar (sobrescribe la de .env).
+            from_number: (Opcional) Número de origen para usar (sobrescribe el de .env).
 
         Returns:
             (True, None) si el envío fue aceptado por YCloud.
             (False, str) con descripción del error si falló.
         """
-        if not settings.ycloud_api_key:
+        key = api_key or settings.ycloud_api_key
+        orig = from_number or settings.ycloud_whatsapp_number
+
+        if not key:
             msg = "YCLOUD_API_KEY no configurada — mensaje no enviado"
             logger.warning(msg)
             return False, msg
@@ -58,7 +65,7 @@ class YCloudService:
             "to":       f"+{destino}",
             "type":     "text",
             "text":     {"body": mensaje},
-            "from":     settings.ycloud_whatsapp_number,
+            "from":     orig,
         }
 
         try:

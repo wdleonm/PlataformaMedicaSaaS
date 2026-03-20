@@ -23,6 +23,20 @@ class ConfiguracionGlobal(SQLModel, table=True):
     bcv_ultima_sincronizacion: Optional[datetime] = Field(default=None)
     
     ycloud_api_key: Optional[str] = Field(default=None)
+    ycloud_whatsapp_number: Optional[str] = Field(default=None)
     
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class BCVTasaHistorial(SQLModel, table=True):
+    """Histórico de tasas del BCV para auditoría y respaldo."""
+
+    __tablename__ = "bcv_tasas_historial"
+    __table_args__ = {"schema": "sys_config"}
+
+    id:        UUID     = Field(default_factory=uuid4, primary_key=True)
+    fecha:     datetime = Field(default_factory=datetime.utcnow, index=True)
+    tasa_usd:  float
+    tasa_eur:  float
+    fuente:    str      = Field(default="BCV")

@@ -62,25 +62,18 @@ async def admin_sincronizar_bcv(
     session: Session = Depends(get_session),
     admin: Admin = Depends(get_current_admin)
 ):
-    """Forzar la sincronización de las tasas desde el BCV."""
-    rates = await fetch_bcv_rates()
-    if not rates:
-        raise HTTPException(status_code=503, detail="No se pudo conectar con el BCV en este momento.")
+    """Forzar la sincronización de las tasas desde el BCV usando el servicio centralizado."""
+    from app.services.bcv_service import BCVService
     
+    exito = await BCVService.sincronizar_tasas(session)
+    if not exito:
+        raise HTTPException(
+            status_code=503, 
+            detail="No se pudo sincronizar con el BCV. Verifique la conexión o el estado de la página oficial."
+        )
+    
+    # Recargar config para devolver el valor actualizado
     config = session.exec(select(ConfiguracionGlobal)).first()
-    if not config:
-        config = ConfiguracionGlobal()
-    
-    if 'USD' in rates:
-        config.tasa_usd = rates['USD']
-    if 'EUR' in rates:
-        config.tasa_eur = rates['EUR']
-        
-    config.bcv_ultima_sincronizacion = datetime.utcnow()
-    
-    session.add(config)
-    session.commit()
-    session.refresh(config)
     return config
 
 # --- Especialidades ---

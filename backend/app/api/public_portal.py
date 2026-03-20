@@ -37,8 +37,15 @@ def get_public_profile(slug: str, session: Session = Depends(get_session)):
         )
     ).all()
 
-    # Especialidades
-    especialidades_nombres = [e.nombre for e in especialista.especialidades]
+    # Obtener configuración financiera
+    from app.models.config_global import ConfiguracionGlobal
+    config = session.exec(select(ConfiguracionGlobal)).first()
+    fin_config = {
+        "moneda_principal": config.moneda_principal if config else "USD",
+        "moneda_simbolo": config.moneda_simbolo if config else "$",
+        "tasa_usd": config.tasa_usd if config else 1.0,
+        "tasa_eur": config.tasa_eur if config else 1.0,
+    }
 
     return {
         "id": especialista.id,
@@ -54,7 +61,8 @@ def get_public_profile(slug: str, session: Session = Depends(get_session)):
                 "precio": float(s.precio),
                 "duracion_estimada_min": s.duracion_estimada_min
             } for s in servicios
-        ]
+        ],
+        "fin_config": fin_config
     }
 
 @router.post("/p/{slug}/reserva")

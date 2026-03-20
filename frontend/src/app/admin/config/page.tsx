@@ -48,6 +48,7 @@ interface GlobalConfig {
   bcv_modo_automatico: boolean;
   bcv_ultima_sincronizacion: string | null;
   ycloud_api_key?: string;
+  ycloud_whatsapp_number?: string;
 }
 
 export default function AdminConfigPage() {
@@ -438,14 +439,24 @@ export default function AdminConfigPage() {
                     <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Base impositiva y contable</p>
                   </div>
                 </div>
-                <button 
-                  onClick={handleSyncBCV}
-                  disabled={isSyncing}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl flex items-center gap-2 transition-all disabled:opacity-50"
-                >
-                  {isSyncing ? <Loader2 className="animate-spin" size={14} /> : <Globe size={14} />}
-                  Sincronizar BCV ahora
-                </button>
+                <div className="flex flex-col items-end gap-2">
+                  <button 
+                    onClick={handleSyncBCV}
+                    disabled={isSyncing}
+                    className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-2xl flex items-center gap-2 transition-all disabled:opacity-50 shadow-xl shadow-indigo-900/40"
+                  >
+                    {isSyncing ? <Loader2 className="animate-spin" size={14} /> : <Globe size={14} />}
+                    Sincronizar BCV ahora
+                  </button>
+                  {config?.bcv_ultima_sincronizacion && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/5 rounded-lg">
+                      <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                      <p className="text-[9px] text-slate-400 font-black uppercase tracking-tighter">
+                          Sincronizado: {new Date(config.bcv_ultima_sincronizacion).toLocaleString('es-VE')}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
               
               <div className="space-y-4">
@@ -491,12 +502,6 @@ export default function AdminConfigPage() {
                     </div>
                 </div>
 
-                {config?.bcv_ultima_sincronizacion && (
-                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest italic">
-                        Última sincronización: {new Date(config.bcv_ultima_sincronizacion).toLocaleString()}
-                    </p>
-                )}
-
                 <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
                   <p className="text-xs text-emerald-400 font-bold leading-relaxed">
                     Estos valores maestros afectan a todos los especialistas. Los precios en $ se convertirán a Bs. usando estas tasas.
@@ -528,6 +533,17 @@ export default function AdminConfigPage() {
                 </div>
                 <div className="p-4 bg-violet-600/5 border border-violet-500/20 rounded-2xl flex items-center gap-4">
                   <span className="text-xs text-violet-400 font-bold italic">La llave se guarda encriptada. Solo ingrésela si desea cambiarla.</span>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-1">Origen WhatsApp (E.164)</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ej: 584141234567 (sin +)"
+                    value={config?.ycloud_whatsapp_number || ""}
+                    onChange={(e) => setConfig(config ? {...config, ycloud_whatsapp_number: e.target.value} : null)}
+                    className="w-full bg-black/20 border border-white/5 rounded-2xl p-4 text-violet-400 font-mono" 
+                  />
                 </div>
               </div>
             </div>

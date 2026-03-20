@@ -27,14 +27,25 @@ async def fetch_bcv_rates():
             # Dólar (USD)
             dolar_container = soup.find('div', id='dolar')
             if dolar_container:
-                val_text = dolar_container.find('strong').text.strip()
-                rates['USD'] = float(val_text.replace(',', '.'))
+                val_element = dolar_container.find('strong')
+                if val_element:
+                    val_text = val_element.text.strip()
+                    # Limpiamos: removemos puntos de miles y cambiamos coma por punto decimal
+                    # Ejemplo: "1.234,56" -> "1234.56"
+                    clean_val = val_text.replace('.', '').replace(',', '.')
+                    rates['USD'] = float(clean_val)
             
             # Euro (EUR)
             euro_container = soup.find('div', id='euro')
             if euro_container:
-                val_text = euro_container.find('strong').text.strip()
-                rates['EUR'] = float(val_text.replace(',', '.'))
+                val_element = euro_container.find('strong')
+                if val_element:
+                    val_text = val_element.text.strip()
+                    clean_val = val_text.replace('.', '').replace(',', '.')
+                    rates['EUR'] = float(clean_val)
+                
+            if not rates:
+                print("BCV Scraper: No se encontraron los contenedores de tasas esperados.")
                 
             return rates
             

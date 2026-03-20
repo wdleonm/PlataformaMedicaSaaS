@@ -90,6 +90,12 @@ export default function CalendarPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [finConfig, setFinConfig] = useState({
+    moneda_principal: "USD",
+    moneda_simbolo: "$",
+    tasa_usd: 1.0,
+    tasa_eur: 1.0,
+  });
 
   // Form states
   const [selectedCita, setSelectedCita] = useState<Cita | null>(null);
@@ -110,17 +116,19 @@ export default function CalendarPage() {
       const start = view === "week" ? startOfWeek(currentDate, { weekStartsOn: 1 }) : startOfDay(currentDate);
       const end = view === "week" ? endOfWeek(currentDate, { weekStartsOn: 1 }) : addDays(startOfDay(currentDate), 1);
       
-      const [citasRes, pacRes, serRes, presRes] = await Promise.all([
+      const [citasRes, pacRes, serRes, presRes, configRes] = await Promise.all([
         api.get(`/api/citas?fecha_desde=${start.toISOString()}&fecha_hasta=${end.toISOString()}`),
         api.get("/api/pacientes"),
         api.get("/api/servicios"),
-        api.get("/api/presupuestos")
+        api.get("/api/presupuestos"),
+        api.get("/api/dashboard/config")
       ]);
       
       setCitas(citasRes.data.items || []);
       setPacientes(pacRes.data.items || []);
       setServicios(serRes.data.items || []);
       setPresupuestos(presRes.data.items || []);
+      setFinConfig(configRes.data);
     } catch (error) {
       console.error("Error fetching calendar data:", error);
     } finally {
@@ -601,15 +609,33 @@ export default function CalendarPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-secondary/30 p-4 rounded-2xl space-y-1">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Monto a Cobrar</p>
-                    <input 
-                      type="number" 
-                      autoFocus
-                      className="w-full bg-transparent text-center text-4xl font-black outline-none"
-                      value={montoCobrado}
-                      onChange={(e) => setMontoCobrado(Number(e.target.value))}
-                    />
+                  <div className="bg-secondary/30 p-4 rounded-2xl space-y-3">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Monto Final USD</p>
+                      <input 
+                        type="number" 
+                        autoFocus
+                        className="w-full bg-transparent text-center text-4xl font-black outline-none text-primary"
+                        value={montoCobrado}
+                        onChange={(e) => setMontoCobrado(Number(e.target.value))}
+                      />
+                    </div>
+
+                    {/* Conversiones BCV dinámicas */}
+                    <div className="grid grid-cols-2 gap-2 pt-3 border-t border-border/10">
+                      <div className="bg-background/40 p-2 rounded-xl text-left border border-primary/10">
+                        <p className="text-[8px] font-black text-primary/60 uppercase leading-none mb-1">Bs. (BCV Euro)</p>
+                        <p className="text-xs font-bold text-foreground truncate">
+                          {(montoCobrado * finConfig.tasa_eur).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                      <div className="bg-background/40 p-2 rounded-xl text-left opacity-60">
+                        <p className="text-[8px] font-black text-muted-foreground uppercase leading-none mb-1">Bs. (BCV Dólar)</p>
+                        <p className="text-xs font-bold text-foreground truncate">
+                          {(montoCobrado * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                   <div className="flex gap-3">
                     <button onClick={() => setIsCompleteModalOpen(false)} className="flex-1 py-4 font-bold hover:bg-secondary rounded-2xl transition-colors">Volver</button>

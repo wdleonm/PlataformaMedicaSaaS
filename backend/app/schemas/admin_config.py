@@ -76,3 +76,4 @@ class ConfigGlobalUpdate(BaseModel):
     iva_porcentaje: Optional[float] = None
     bcv_modo_automatico: Optional[bool] = None
     ycloud_api_key: Optional[str] = None
+    ycloud_whatsapp_number: Optional[str] = None
