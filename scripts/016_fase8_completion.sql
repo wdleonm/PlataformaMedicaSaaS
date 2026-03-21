@@ -53,8 +53,6 @@ BEGIN
     -- Obtener IDs de las secciones básicas
     SELECT id INTO v_sec_consulta      FROM sys_config.hc_secciones WHERE codigo = 'CONSULTA';
     SELECT id INTO v_sec_antecedentes  FROM sys_config.hc_secciones WHERE codigo = 'ANTECEDENTES';
-    SELECT id INTO v_sec_examen        FROM sys_config.hc_secciones WHERE codigo = 'EXAMEN_FISICO';
-    SELECT id INTO v_sec_plan          FROM sys_config.hc_secciones WHERE codigo = 'PLAN';
 
     -- Iterar sobre las nuevas especialidades
     FOREACH v_cod_esp IN ARRAY v_codigos_esp
@@ -66,9 +64,7 @@ BEGIN
             INSERT INTO sys_config.especialidad_hc_secciones (especialidad_id, hc_seccion_id, orden, obligatoria)
             VALUES 
                 (v_esp_id, v_sec_consulta,     1, true),
-                (v_esp_id, v_sec_antecedentes, 2, false),
-                (v_esp_id, v_sec_examen,       3, false),
-                (v_esp_id, v_sec_plan,         4, false)
+                (v_esp_id, v_sec_antecedentes, 2, false)
             ON CONFLICT (especialidad_id, hc_seccion_id) DO NOTHING;
         END IF;
     END LOOP;
