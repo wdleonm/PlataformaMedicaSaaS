@@ -116,7 +116,8 @@ export default function CalendarPage() {
       const start = view === "week" ? startOfWeek(currentDate, { weekStartsOn: 1 }) : startOfDay(currentDate);
       const end = view === "week" ? endOfWeek(currentDate, { weekStartsOn: 1 }) : addDays(startOfDay(currentDate), 1);
       
-      const [citasRes, pacRes, serRes, presRes, configRes] = await Promise.all([
+      // Fetch each resource independently so a failure in one doesn't block the others
+      const [citasRes, pacRes, serRes, presRes, configRes] = await Promise.allSettled([
         api.get(`/api/citas?fecha_desde=${start.toISOString()}&fecha_hasta=${end.toISOString()}`),
         api.get("/api/pacientes"),
         api.get("/api/servicios"),
@@ -124,11 +125,19 @@ export default function CalendarPage() {
         api.get("/api/dashboard/config")
       ]);
       
-      setCitas(citasRes.data.items || []);
-      setPacientes(pacRes.data.items || []);
-      setServicios(serRes.data.items || []);
-      setPresupuestos(presRes.data.items || []);
-      setFinConfig(configRes.data);
+      if (citasRes.status === "fulfilled") setCitas(citasRes.value.data.items || []);
+      if (pacRes.status === "fulfilled") setPacientes(pacRes.value.data.items || []);
+      if (serRes.status === "fulfilled") setServicios(serRes.value.data.items || []);
+      if (presRes.status === "fulfilled") setPresupuestos(presRes.value.data.items || []);
+      if (configRes.status === "fulfilled") setFinConfig(configRes.value.data);
+
+      // Log failures for debugging
+      [citasRes, pacRes, serRes, presRes, configRes].forEach((r, i) => {
+        if (r.status === "rejected") {
+          const names = ["citas", "pacientes", "servicios", "presupuestos", "config"];
+          console.error(`Error fetching ${names[i]}:`, r.reason);
+        }
+      });
     } catch (error) {
       console.error("Error fetching calendar data:", error);
     } finally {
@@ -441,20 +450,26 @@ export default function CalendarPage() {
                     </div>
                     {patientSearch && !formData.paciente_id && (
                       <div className="mt-2 max-h-40 overflow-y-auto border border-border/30 rounded-xl bg-background shadow-xl z-[120]">
-                        {filteredPatientsForSelect.map(p => (
-                          <button 
-                            key={p.id}
-                            type="button"
-                            onClick={() => {
-                              setFormData({...formData, paciente_id: p.id});
-                              setPatientSearch(`${p.nombre} ${p.apellido} - ${p.documento || 'S/D'}`);
-                            }}
-                            className="w-full text-left px-4 py-2.5 hover:bg-primary/5 text-sm flex justify-between items-center group border-b border-border/5 last:border-0"
-                          >
-                            <span className="font-bold group-hover:text-primary transition-colors">{p.nombre} {p.apellido}</span>
-                            <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground uppercase">{p.documento || 'S/D'}</span>
-                          </button>
-                        ))}
+                        {filteredPatientsForSelect.length === 0 ? (
+                          <div className="px-4 py-3 text-sm text-muted-foreground text-center italic">
+                            No se encontraron pacientes
+                          </div>
+                        ) : (
+                          filteredPatientsForSelect.map(p => (
+                            <button 
+                              key={p.id}
+                              type="button"
+                              onClick={() => {
+                                setFormData({...formData, paciente_id: p.id});
+                                setPatientSearch(`${p.nombre} ${p.apellido} - ${p.documento || 'S/D'}`);
+                              }}
+                              className="w-full text-left px-4 py-2.5 hover:bg-primary/5 text-sm flex justify-between items-center group border-b border-border/5 last:border-0"
+                            >
+                              <span className="font-bold group-hover:text-primary transition-colors">{p.nombre} {p.apellido}</span>
+                              <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground uppercase">{p.documento || 'S/D'}</span>
+                            </button>
+                          ))
+                        )}
                       </div>
                     )}
                   </div>

@@ -251,7 +251,10 @@ En cada respuesta, Cursor debe indicar:
 - [ ] El especialista logueado siempre ve solo las secciones de su especialidad. Nunca ve secciones irrelevantes.
 - [ ] Los datos de cada sección se almacenan en `historias_clinicas` (campos genéricos JSON o columnas por sección según se defina en 6.1).
 
-#### 6.4 Datos específicos por especialidad (futuro, post-odontología)
+#### 6.4 Datos específicos por especialidad (Refinamiento modular)
+- [ ] Para especialidades no odontológicas: habilitar configuración dinámica de los campos en "Examen Físico" y "Plan de Tratamiento".
+- [ ] Ocultar odontograma y campos específicos de boca para médicos internistas y otras especialidades.
+- [ ] Las secciones de Consulta Inicial y Antecedentes se mantienen estables como base común.
 - [ ] Para cardiología: sección `ECG` con campos específicos (ritmo, frecuencia, observaciones). Componente `<ElectrocardiogramaStep />`.
 - [ ] Para traumatología: sección `RADIOGRAFIA` con carga de imágenes y observaciones. Componente `<RadiografiasStep />`.
 - [ ] Las especialidades se registran en `sys_config.especialidades` (ya existe); solo se añaden las secciones correspondientes.
@@ -337,8 +340,9 @@ En cada respuesta, Cursor debe indicar:
 - [x] 8.1 Gestión de Especialidades Médicas (CRUD Admin).
 - [x] 8.2 Definición Dinámica de Módulos (Mapeo Especialidad <-> Secciones HC).
 - [x] 8.3 Ajustes Financieros y Conexiones Externas (BCV completado, YCloud Infra preparada).
-- [ ] 8.3.1 WhatsApp: Aprobación de plantillas en Meta/YCloud (recordatorio_cita, abono_confirmacion).
-- [ ] 8.3.2 WhatsApp: Verificación de número oficial en producción.
+- [ ] 8.3.1 Motor Financiero Multi-moneda: Calcular precios en Bs basándose automáticamente en la tasa del BCV, tomando el **Euro** como referencia principal (ej: consulta 25$ -> cobro en Bs a tasa Euro BCV). Mostrar también comparativa con tasa Dólar BCV.
+- [ ] 8.3.2 WhatsApp: Aprobación de plantillas en Meta/YCloud (recordatorio_cita, abono_confirmacion).
+- [ ] 8.3.3 WhatsApp: Verificación de número oficial en producción.
 - [x] 8.4 Gestión de Empleados y Permisos Admin (Roles Master/Solo Lectura).
 
 #### Criterios de aceptación Fase 8
@@ -359,6 +363,7 @@ En cada respuesta, Cursor debe indicar:
 
 #### 9.2 Portal Público de Reserva (Booking)
 - [x] Crear una ruta pública `/p/[slug-especialista]` para que pacientes vean servicios y agenden.
+- [ ] **Configuración de Visibilidad**: Opción para quitar/ocultar los precios de los servicios en el perfil público.
 - [x] Integrar con el calendario de citas disponible.
 - [x] Formulario de registro rápido para nuevos pacientes captados desde el portal.
 
@@ -378,6 +383,7 @@ En cada respuesta, Cursor debe indicar:
 - El especialista puede ver cuánto dinero neto le queda tras descontar materiales.
 - Un paciente puede agendarse solo desde una URL pública.
 - El paciente recibe un "comprobante digital" automático vía WhatsApp al pagar con acceso a un recibo premium.
+- **Recordatorios Automáticos**: Al registrar una cita, se envía recordatorio por WhatsApp/Email (si existe el dato) con antelación configurable.
 **✅ Criterios cumplidos.**
 
 ---

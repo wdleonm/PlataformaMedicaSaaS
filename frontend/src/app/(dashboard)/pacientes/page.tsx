@@ -94,10 +94,16 @@ export default function PacientesPage() {
       let cleanVal = value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
       if (cleanVal.length > 0) {
         const firstChar = cleanVal.charAt(0);
-        if (/[A-Z]/.test(firstChar)) {
+        if (/[VEP]/.test(firstChar)) {
+          // Letra válida (V, E, P) como primer carácter
           const rest = cleanVal.substring(1).replace(/[^0-9]/g, "");
           cleanVal = rest.length > 0 ? `${firstChar}-${rest}` : firstChar;
+        } else if (/[0-9]/.test(firstChar)) {
+          // Si empieza con número, auto-prefijo V-
+          const digits = cleanVal.replace(/[^0-9]/g, "");
+          cleanVal = digits.length > 0 ? `V-${digits}` : "V";
         } else {
+          // Otra letra no válida → limpiar
           cleanVal = ""; 
         }
       }

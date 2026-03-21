@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, Lock, ArrowRight, ShieldCheck, Activity, Stethoscope, Loader2, Eye, EyeOff } from "lucide-react";
+import { User, Lock, ArrowRight, ShieldCheck, Activity, Stethoscope, Loader2, Eye, EyeOff, Clock } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -15,7 +15,19 @@ export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorLogin, setErrorLogin] = useState("");
+  const [sessionExpiredMsg, setSessionExpiredMsg] = useState(false);
 
+  // Detectar si fue redirigido por expiración de sesión
+  useEffect(() => {
+    const expired = sessionStorage.getItem("session_expired");
+    if (expired) {
+      setSessionExpiredMsg(true);
+      sessionStorage.removeItem("session_expired");
+      // Auto-ocultar después de 10 segundos
+      const timer = setTimeout(() => setSessionExpiredMsg(false), 10000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -114,6 +126,19 @@ export default function Home() {
 
             <form className="space-y-5 relative z-10" onSubmit={handleLogin}>
               
+              {/* Notificación de Sesión Expirada */}
+              {sessionExpiredMsg && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-500 text-sm font-medium flex items-center gap-2"
+                >
+                  <Clock size={16} className="shrink-0" />
+                  Tu sesión fue cerrada por inactividad. Inicia sesión nuevamente.
+                </motion.div>
+              )}
+
               {/* Notificación de Error */}
               {errorLogin && (
                 <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium animate-fade-in text-center">

@@ -1,7 +1,0 @@
-Podemos continuar con la actividad 8.3 que es la del motor financiero del SaaS, el objetivo es que sistema calcule los precios en Bolivares(bs) basandose automaticamente en la tasa el banco central de Venezuela (BCV) pero tomando el Euro como referencia es decir si una consulta cuesta 25 dolares , ese es el precio si paga en Dividas pero si paga en Bs el precio es a la tasa del euro del BCV igual calculemos tambien el precio con la tasa del Dolar BCV  
-
-Otro punto pendiente es quitarle el precio a los servicios que ofrece enl especialista en esa sesión que dice perfil publico
-
-Cuando se registra la cita del paciente se debe enviar un recordatorio por mensasje usando el telefono o por correo usando el correo esto si el pacinete lo tiene registrado si no lo tiene registrado no se hace el envio de estos recordatorios claro el periodo de envio del recordatorio previo a la cita si lo dejo a tu criterio de cuanto tiempo de anticipación debe tener
-
-Queda pendiente para las demas especialidades poder agregar lo que iria en examen fisico y plan de tratamiento, que por ahora la unicas activas es para las especialidades de odontologia para el resto solo se tiene Consulta Inicialk, EAntecedentes y Adjuntos 

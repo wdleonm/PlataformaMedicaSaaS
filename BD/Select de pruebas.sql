@@ -10,7 +10,9 @@ SELECT * FROM sys_clinical.citas;
 
 
 SELECT * FROM sys_config.insumos;
+
 SELECT * FROM sys_config.servicios;
+
 SELECT * FROM sys_config.servicio_insumos;
 
 SELECT * FROM sys_config.especialistas;

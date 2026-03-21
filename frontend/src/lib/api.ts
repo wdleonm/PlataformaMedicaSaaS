@@ -31,15 +31,14 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Aquí en el futuro podemos interceptar las respuestas con error 401 
-// para desloguear automáticamente si el token expira.
+// Interceptor de respuesta: detecta 401 y emite evento para logout global
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        // Redirigir a login en un caso real se manejaría mejor acá
+        // Emitir evento global para que AuthContext maneje el logout
+        window.dispatchEvent(new CustomEvent('session-expired'));
       }
     }
     return Promise.reject(error);
