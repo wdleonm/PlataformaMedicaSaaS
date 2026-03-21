@@ -24,6 +24,10 @@ class PublicSpecialistRead(BaseModel):
     especialidades: List[str]
     servicios: List[PublicServiceRead]
     fin_config: FinancialConfigRead
+    clinica_nombre: Optional[str] = None
+    clinica_logo_url: Optional[str] = None
+    clinica_direccion: Optional[str] = None
+    redes_sociales: Optional[dict] = None
 
 class PublicReservaCreate(BaseModel):
     # Datos del paciente (auto-registro)

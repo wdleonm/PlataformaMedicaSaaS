@@ -3,7 +3,10 @@ Rutas de autenticación: registro y login.
 Fase 1: Implementación básica con JWT.
 """
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, status
+import os
+import shutil
+from uuid import uuid4
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 from jose import jwt
@@ -203,6 +206,47 @@ def update_security_settings(
     if not especialista.exigir_cambio_password:
         especialista.intervalo_cambio_password = None
         
+    session.add(especialista)
+    session.commit()
+    session.refresh(especialista)
+    
+    return especialista
+
+@router.post("/logo", response_model=EspecialistaRead)
+async def upload_logo(
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+):
+    """Cargar logo de la clínica del especialista."""
+    # Validar que sea imagen
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="El archivo debe ser una imagen")
+
+    # Crear directorio si no existe
+    logo_dir = os.path.join("uploads", "logos")
+    if not os.path.exists(logo_dir):
+        os.makedirs(logo_dir)
+
+    # Generar nombre único
+    ext = os.path.splitext(file.filename or "")[1]
+    if not ext:
+        ext = ".png" # default
+    
+    filename = f"logo_{especialista.id}_{uuid4().hex[:8]}{ext}"
+    file_path = os.path.join(logo_dir, filename)
+
+    # Guardar archivo
+    try:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al guardar logo: {str(e)}")
+
+    # Actualizar URL (relativa para que funcione en cualquier host)
+    especialista.clinica_logo_url = f"/uploads/logos/{filename}"
+    especialista.updated_at = datetime.now(timezone.utc)
+    
     session.add(especialista)
     session.commit()
     session.refresh(especialista)

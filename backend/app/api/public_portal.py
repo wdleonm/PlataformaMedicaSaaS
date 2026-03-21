@@ -47,6 +47,8 @@ def get_public_profile(slug: str, session: Session = Depends(get_session)):
         "tasa_eur": config.tasa_eur if config else 1.0,
     }
 
+    especialidades_nombres = [e.nombre for e in especialista.especialidades]
+
     return {
         "id": especialista.id,
         "nombre": especialista.nombre,
@@ -62,7 +64,11 @@ def get_public_profile(slug: str, session: Session = Depends(get_session)):
                 "duracion_estimada_min": s.duracion_estimada_min
             } for s in servicios
         ],
-        "fin_config": fin_config
+        "fin_config": fin_config,
+        "clinica_nombre": especialista.clinica_nombre,
+        "clinica_logo_url": especialista.clinica_logo_url,
+        "clinica_direccion": especialista.clinica_direccion,
+        "redes_sociales": especialista.redes_sociales
     }
 
 @router.post("/p/{slug}/reserva")
@@ -148,7 +154,10 @@ def get_public_receipt(abono_id: UUID, session: Session = Depends(get_session)):
         },
         "especialista": {
             "nombre": f"{especialista.nombre} {especialista.apellido}",
-            "email": especialista.email
+            "email": especialista.email,
+            "clinica_nombre": especialista.clinica_nombre,
+            "clinica_logo_url": especialista.clinica_logo_url,
+            "clinica_direccion": especialista.clinica_direccion
         },
         "presupuesto": {
             "total": float(presupuesto.total),
@@ -190,7 +199,10 @@ def get_public_budget(presupuesto_id: UUID, session: Session = Depends(get_sessi
         },
         "especialista": {
             "nombre": f"{especialista.nombre} {especialista.apellido}",
-            "email": especialista.email
+            "email": especialista.email,
+            "clinica_nombre": especialista.clinica_nombre,
+            "clinica_logo_url": especialista.clinica_logo_url,
+            "clinica_direccion": especialista.clinica_direccion
         },
         "detalles": [
             {

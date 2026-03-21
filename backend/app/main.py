@@ -60,6 +60,9 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+# Montar archivos estáticos (Logos públicos y adjuntos - Nota: Adjuntos están protegidos por API, pero logos necesitan ser estáticos)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 # Routers
 app.include_router(auth.router)
 app.include_router(pacientes.router)

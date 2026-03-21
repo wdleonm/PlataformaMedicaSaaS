@@ -38,6 +38,7 @@ type AuthContextType = {
   isLoading: boolean;
   login: (access_token: string) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -130,6 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUsuario(null);
     router.push("/");
   }, [router]);
+
+  const refreshUser = useCallback(async () => {
+    if (token) {
+      await fetchUsuario(token);
+    }
+  }, [token]);
 
   // ─── Inactivity Timer Logic ─────────────────────────────────────────────────
 
@@ -226,7 +233,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [logout]);
 
   return (
-    <AuthContext.Provider value={{ usuario, token, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ usuario, token, isLoading, login, logout, refreshUser }}>
       {children}
       <SessionWarningModal
         isOpen={showWarning}
