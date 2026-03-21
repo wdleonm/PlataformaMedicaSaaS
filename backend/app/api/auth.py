@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 from jose import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 from app.database import get_session
 from app.config import settings
@@ -44,9 +44,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     """Crea token JWT."""
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=settings.jwt_expire_minutes)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.jwt_expire_minutes)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.jwt_secret, algorithm=settings.jwt_algorithm)
     return encoded_jwt
@@ -158,7 +158,7 @@ def change_password(
         )
     
     especialista.password_hash = get_password_hash(data.new_password)
-    especialista.fecha_ultimo_cambio_password = datetime.utcnow()
+    especialista.fecha_ultimo_cambio_password = datetime.now(timezone.utc)
     
     session.add(especialista)
     session.commit()
@@ -178,7 +178,7 @@ def update_profile(
     for key, value in update_data.items():
         setattr(especialista, key, value)
         
-    especialista.updated_at = datetime.utcnow()
+    especialista.updated_at = datetime.now(timezone.utc)
     session.add(especialista)
     session.commit()
     session.refresh(especialista)

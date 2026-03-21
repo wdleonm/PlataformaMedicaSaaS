@@ -8,6 +8,12 @@ SELECT * FROM sys_clinical.odontograma_registros;
 
 SELECT * FROM sys_clinical.citas;
 
+SELECT * FROM sys_clinical.presupuestos;
+
+SELECT * FROM sys_clinical.presupuesto_detalles;
+
+
+SELECT * FROM sys_config.administradores;
 
 SELECT * FROM sys_config.insumos;
 

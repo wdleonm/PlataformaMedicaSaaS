@@ -2,7 +2,7 @@
 Modelo SQLModel — ColaMensaje.
 Fase 4.2 — Regla de Oro 3.4: cola persistente de mensajes WhatsApp vía YCloud.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 from uuid import UUID, uuid4
 
@@ -57,7 +57,7 @@ class ColaMensaje(SQLModel, table=True):
     cita_id:          Optional[UUID] = Field(default=None, foreign_key="sys_clinical.citas.id")
 
     # Timestamps
-    created_at:       datetime       = Field(default_factory=datetime.utcnow)
+    created_at:       datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
     enviado_at:       Optional[datetime] = Field(default=None)
     leido_at:         Optional[datetime] = Field(default=None)
-    proximo_intento:  datetime       = Field(default_factory=datetime.utcnow)
+    proximo_intento:  datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))

@@ -18,7 +18,7 @@ Servicios:
   PUT    /api/servicios/{id}/receta    (reemplaza toda la receta de insumos)
   DELETE /api/servicios/{id}/receta/{insumo_id}
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 from uuid import UUID
 
@@ -133,7 +133,7 @@ def update_insumo(
     insumo = _get_insumo_or_404(session, insumo_id, especialista.id)
     for field, value in data.model_dump(exclude_unset=True).items():
         setattr(insumo, field, value)
-    insumo.updated_at = datetime.utcnow()
+    insumo.updated_at = datetime.now(timezone.utc)
     session.add(insumo)
     session.commit()
     session.refresh(insumo)
@@ -148,7 +148,7 @@ def delete_insumo(
 ) -> None:
     insumo = _get_insumo_or_404(session, insumo_id, especialista.id)
     insumo.activo     = False
-    insumo.updated_at = datetime.utcnow()
+    insumo.updated_at = datetime.now(timezone.utc)
     session.add(insumo)
     session.commit()
 
@@ -244,7 +244,7 @@ def update_servicio(
     servicio = _get_servicio_or_404(session, servicio_id, especialista.id)
     for field, value in data.model_dump(exclude_unset=True).items():
         setattr(servicio, field, value)
-    servicio.updated_at = datetime.utcnow()
+    servicio.updated_at = datetime.now(timezone.utc)
     session.add(servicio)
     session.commit()
     session.refresh(servicio)
@@ -259,7 +259,7 @@ def delete_servicio(
 ) -> None:
     servicio = _get_servicio_or_404(session, servicio_id, especialista.id)
     servicio.activo     = False
-    servicio.updated_at = datetime.utcnow()
+    servicio.updated_at = datetime.now(timezone.utc)
     session.add(servicio)
     session.commit()
 

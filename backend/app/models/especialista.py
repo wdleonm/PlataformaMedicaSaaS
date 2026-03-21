@@ -3,7 +3,7 @@ Modelos: Especialista y relación N:N con Especialidades.
 RLS activo en especialistas (a nivel de tabla en PostgreSQL).
 """
 from sqlmodel import SQLModel, Field, Relationship
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from uuid import UUID, uuid4
 from typing import List, Optional, TYPE_CHECKING
 from sqlalchemy import Column
@@ -21,7 +21,7 @@ class EspecialistaEspecialidad(SQLModel, table=True):
 
     especialista_id: UUID = Field(foreign_key="sys_config.especialistas.id", primary_key=True)
     especialidad_id: UUID = Field(foreign_key="sys_config.especialidades.id", primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class EspecialistaBase(SQLModel):
@@ -41,8 +41,8 @@ class Especialista(EspecialistaBase, table=True):
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     password_hash: str = Field(max_length=255)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # Relación N:N con Especialidades (solo desde este lado para evitar ciclos)
     especialidades: List["Especialidad"] = Relationship(
@@ -66,4 +66,4 @@ class Especialista(EspecialistaBase, table=True):
     # Seguridad: Rotación de contraseñas
     exigir_cambio_password: bool = Field(default=False)
     intervalo_cambio_password: Optional[int] = Field(default=None)  # días (60, 90, 120, etc)
-    fecha_ultimo_cambio_password: datetime = Field(default_factory=datetime.utcnow)
+    fecha_ultimo_cambio_password: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

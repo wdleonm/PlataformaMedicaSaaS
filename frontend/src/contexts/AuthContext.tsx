@@ -108,6 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (access_token: string) => {
     localStorage.setItem("token", access_token);
+    sessionStorage.removeItem("session_expired");
     setToken(access_token);
     await fetchUsuario(access_token);
     router.push("/dashboard");

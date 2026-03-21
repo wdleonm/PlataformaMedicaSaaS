@@ -3,7 +3,7 @@ Modelos SQLModel — Citas y Presupuestos.
 Fase 3.3: Citas/Consultas.
 Fase 3.4: Presupuestos, PresupuestoDetalle y Abonos (Regla de Oro 3.3).
 """
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Optional, List
 from uuid import UUID, uuid4
 
@@ -36,8 +36,8 @@ class Cita(SQLModel, table=True):
     costo_insumos:   Optional[float] = Field(default=None, ge=0)
     utilidad_neta:   Optional[float] = Field(default=None)
     notas:           Optional[str]   = Field(default=None)
-    created_at:      datetime        = Field(default_factory=datetime.utcnow)
-    updated_at:      datetime        = Field(default_factory=datetime.utcnow)
+    created_at:      datetime        = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at:      datetime        = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ---------------------------------------------------------------------------
@@ -62,8 +62,8 @@ class Presupuesto(SQLModel, table=True):
     estado:          str            = Field(default="borrador", max_length=20)
     validez_fecha:   Optional[date] = Field(default=None)
     notas:           Optional[str]  = Field(default=None)
-    created_at:      datetime       = Field(default_factory=datetime.utcnow)
-    updated_at:      datetime       = Field(default_factory=datetime.utcnow)
+    created_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # Relación con detalles
     detalles: List["PresupuestoDetalle"] = Relationship(
@@ -121,4 +121,4 @@ class Abono(SQLModel, table=True):
     metodo_pago:     str            = Field(default="efectivo", max_length=30)
     cita_id:         Optional[UUID] = Field(default=None, foreign_key="sys_clinical.citas.id")
     notas:           Optional[str]  = Field(default=None)
-    created_at:      datetime       = Field(default_factory=datetime.utcnow)
+    created_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))

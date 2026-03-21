@@ -78,7 +78,7 @@ def _sync_paciente_alerts(session: Session, paciente: Paciente, antecedentes_per
         paciente.medicacion_frecuente = medicamentos
     
     from datetime import datetime
-    paciente.updated_at = datetime.utcnow()
+    paciente.updated_at = datetime.now(timezone.utc)
     
     session.add(paciente)
 
@@ -281,7 +281,7 @@ def update_historia(
         setattr(historia, field, value)
 
     from datetime import datetime
-    historia.updated_at = datetime.utcnow()
+    historia.updated_at = datetime.now(timezone.utc)
     session.add(historia)
     
     # Sincronizar si se actualizaron los antecedentes personales
@@ -314,7 +314,7 @@ def delete_historia(
     historia = _get_or_404(session, historia_id, especialista.id)
     historia.activo = False
     from datetime import datetime
-    historia.updated_at = datetime.utcnow()
+    historia.updated_at = datetime.now(timezone.utc)
     session.add(historia)
     session.commit()
 

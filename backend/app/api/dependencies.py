@@ -3,6 +3,7 @@ Dependencies para FastAPI (autenticación, tenant context).
 Fase 1: Implementación básica.
 """
 from typing import List, Optional
+from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status, Request, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
@@ -83,8 +84,7 @@ def get_current_especialista(
     
     # NUEVA REGLA: Cambio de contraseña obligatorio
     if especialista.exigir_cambio_password:
-        from datetime import datetime, timedelta
-        ahora = datetime.utcnow()
+        ahora = datetime.now(timezone.utc)
         intervalo = especialista.intervalo_cambio_password or 90
         vencimiento = especialista.fecha_ultimo_cambio_password + timedelta(days=intervalo)
         

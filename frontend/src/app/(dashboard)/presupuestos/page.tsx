@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Wallet, 
   Plus, 
@@ -48,9 +49,12 @@ interface Paciente {
   id: string;
   nombre: string;
   apellido: string;
+  documento?: string;
+  telefono?: string;
 }
 
 export default function FinanzasPage() {
+  const { token } = useAuth();
   const [presupuestos, setPresupuestos] = useState<Presupuesto[]>([]);
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [servicios, setServicios] = useState<any[]>([]);
@@ -126,8 +130,8 @@ export default function FinanzasPage() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (token) fetchData();
+  }, [token]);
 
   const getPacienteNombre = (id: string) => {
     const p = pacientes.find(p => p.id === id);
@@ -249,15 +253,13 @@ export default function FinanzasPage() {
   };
 
   const [patientSearch, setPatientSearch] = useState("");
-  const filteredPatientsForSelect = pacientes.filter(p => {
+  const filteredPatientsForSelect = Array.isArray(pacientes) ? pacientes.filter(p => {
     const search = patientSearch.toLowerCase();
     const doc = (p as any).documento || "";
     const tel = (p as any).telefono || "";
-    return p.nombre.toLowerCase().includes(search) || 
-           p.apellido.toLowerCase().includes(search) ||
-           doc.toLowerCase().includes(search) ||
-           tel.toLowerCase().includes(search);
-  });
+    const searchStr = `${p.nombre} ${p.apellido} ${doc} ${tel}`.toLowerCase();
+    return searchStr.includes(search);
+  }) : [];
 
   const handleOpenAbono = (p: Presupuesto) => {
     setSelectedPresupuesto(p);
@@ -524,16 +526,16 @@ export default function FinanzasPage() {
                   </div>
                 )}
 
-                <div className="flex justify-between items-center">
-                  <div className="bg-background/50 p-2 rounded-xl">
-                    <p className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1">Bs. (BCV Euro)</p>
-                    <p className="text-sm font-bold text-foreground">
+                <div className="flex justify-between items-center bg-indigo-500/5 p-3 rounded-2xl border border-indigo-500/10">
+                  <div className="flex-1">
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Referencia Bs. (BCV Euro)</p>
+                    <p className="text-lg font-black text-white">
                       {(abonoForm.monto * finConfig.tasa_eur).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
-                  <div className="bg-background/50 p-2 rounded-xl opacity-70">
-                    <p className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1">Bs. (BCV Dólar)</p>
-                    <p className="text-sm font-bold text-foreground">
+                  <div className="text-right opacity-40">
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase leading-none mb-1">Informativo USD</p>
+                    <p className="text-xs font-bold text-slate-400">
                       {(abonoForm.monto * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
@@ -673,26 +675,36 @@ export default function FinanzasPage() {
                     <input 
                       type="text"
                       placeholder="Cédula o Nombre..."
-                      className="w-full pl-10 pr-4 py-2 bg-background border border-border/50 rounded-xl text-sm outline-none"
+                      className="w-full pl-10 pr-4 py-2 bg-background border border-border/50 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary"
                       value={patientSearch}
-                      onChange={(e) => setPatientSearch(e.target.value)}
+                      onChange={(e) => {
+                        setPatientSearch(e.target.value);
+                        if (newBudget.paciente_id) setNewBudget({ ...newBudget, paciente_id: "" });
+                      }}
                     />
                   </div>
                   {patientSearch && !newBudget.paciente_id && (
-                    <div className="mt-2 max-h-32 overflow-y-auto border border-border/30 rounded-xl bg-background shadow-xl z-20">
-                      {filteredPatientsForSelect.map(p => (
-                        <button 
-                          key={p.id}
-                          onClick={() => {
-                            setNewBudget({...newBudget, paciente_id: p.id});
-                            setPatientSearch(`${p.nombre} ${p.apellido}`);
-                          }}
-                          className="w-full text-left px-4 py-2 hover:bg-primary/5 text-sm flex justify-between"
-                        >
-                          <span className="font-bold">{p.nombre} {p.apellido}</span>
-                          <span className="text-[10px] opacity-50 uppercase">{(p as any).documento || ''}</span>
-                        </button>
-                      ))}
+                    <div className="mt-2 max-h-40 overflow-y-auto border border-border/30 rounded-xl bg-background shadow-xl z-[100]">
+                      {filteredPatientsForSelect.length === 0 ? (
+                        <div className="px-4 py-3 text-sm text-muted-foreground text-center italic">
+                          No se encontraron pacientes
+                        </div>
+                      ) : (
+                        filteredPatientsForSelect.map(p => (
+                          <button 
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setNewBudget({...newBudget, paciente_id: p.id});
+                              setPatientSearch(`${p.nombre} ${p.apellido}`);
+                            }}
+                            className="w-full text-left px-4 py-2.5 hover:bg-primary/5 text-sm flex justify-between items-center group border-b border-border/5 last:border-0"
+                          >
+                             <span className="font-bold group-hover:text-primary transition-colors">{p.nombre} {p.apellido}</span>
+                             <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground uppercase">{(p as any).documento || 'S/D'}</span>
+                          </button>
+                        ))
+                      )}
                     </div>
                   )}
                   {newBudget.paciente_id && (
@@ -765,16 +777,16 @@ export default function FinanzasPage() {
                           <p className="text-[8px] font-black text-red-500 uppercase leading-none">Alerta: Tasa BCV no actualizada hoy.</p>
                         </div>
                       )}
-                      <div className="grid grid-cols-2 gap-3 p-3 bg-background/40 rounded-xl border border-primary/10">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-indigo-500/5 rounded-2xl border border-indigo-500/10">
                         <div>
-                          <p className="text-[9px] font-black text-primary/60 uppercase tracking-tighter leading-none mb-1">Total en Bs. (BCV Euro)</p>
-                          <p className="text-md font-black text-foreground">
+                          <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Cobro en Bs. (BVC Euro)</p>
+                          <p className="text-xl font-black text-white">
                             {(newBudget.total * finConfig.tasa_eur).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
                           </p>
                         </div>
-                        <div className="opacity-60">
-                          <p className="text-[9px] font-black text-muted-foreground uppercase tracking-tighter leading-none mb-1">Total en Bs. (BCV Dólar)</p>
-                          <p className="text-md font-bold text-foreground">
+                        <div className="opacity-40 flex flex-col justify-center">
+                          <p className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter leading-none mb-1">Ref. Informativa (BCV Dólar)</p>
+                          <p className="text-sm font-bold text-slate-400">
                             {(newBudget.total * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
                           </p>
                         </div>

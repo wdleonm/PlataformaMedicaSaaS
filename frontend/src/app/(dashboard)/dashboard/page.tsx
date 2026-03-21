@@ -101,19 +101,28 @@ export default function DashboardHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const [finConfig, setFinConfig] = useState<any>(null);
+
   useEffect(() => {
-    async function fetchStats() {
+    async function fetchDashboardData() {
       if (!token) return;
       try {
-        const { data } = await api.get("/api/dashboard/stats");
-        setStats(data);
-      } catch {
+        setLoading(true);
+        setError(false);
+        const [statsRes, configRes] = await Promise.all([
+          api.get("/api/dashboard/stats"),
+          api.get("/api/dashboard/config")
+        ]);
+        setStats(statsRes.data);
+        setFinConfig(configRes.data);
+      } catch (err) {
+        console.error("Dashboard fetch error:", err);
         setError(true);
       } finally {
         setLoading(false);
       }
     }
-    fetchStats();
+    fetchDashboardData();
   }, [token]);
 
   const now = new Date();
@@ -153,12 +162,19 @@ export default function DashboardHome() {
       label: "Utilidad (Mes)",
       value: formatCurrency(stats?.utilidad_mes ?? 0),
       sub: stats?.utilidad_tendencia !== undefined ? (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-1">
           <span className={stats.utilidad_tendencia >= 0 ? "text-emerald-400" : "text-rose-400"}>
             {stats.utilidad_tendencia >= 0 ? "↑" : "↓"} {Math.abs(stats.utilidad_tendencia)}% rendimiento
           </span>
+          {finConfig && (
+            <span className="text-[10px] text-slate-500 font-bold border-t border-white/5 pt-1 uppercase">
+              ≈ Bs. {((stats?.utilidad_mes || 0) * finConfig.tasa_eur).toLocaleString('es-VE')}
+            </span>
+          )}
         </div>
-      ) : "Cargando...",
+      ) : (
+        <span className="text-muted-foreground animate-pulse">Cargando...</span>
+      ),
       icon: TrendingUp,
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
@@ -201,6 +217,28 @@ export default function DashboardHome() {
           <Activity size={24} className="absolute inset-0 m-auto text-primary animate-pulse" />
         </div>
         <p className="text-muted-foreground font-medium animate-pulse">Cargando tu clínica...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center">
+        <div className="p-4 bg-red-500/10 rounded-full border border-red-500/20 text-red-500">
+          <AlertTriangle size={48} strokeWidth={1.5} />
+        </div>
+        <div className="max-w-md space-y-2">
+          <h2 className="text-xl font-black">Error de Conexión</h2>
+          <p className="text-muted-foreground text-sm">
+            Ha ocurrido un problema al cargar el dashboard. Es posible que el servidor esté reiniciando o haya un problema de red.
+          </p>
+        </div>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all active:scale-95"
+        >
+          Reintentar ahora
+        </button>
       </div>
     );
   }
@@ -504,6 +542,11 @@ export default function DashboardHome() {
           {
             label: "Por Cobrar",
             value: formatCurrency(stats?.saldo_pendiente_total ?? 0),
+            sub: finConfig ? (
+              <span className="text-[10px] text-orange-400/80 font-black uppercase tracking-tighter">
+                ≈ Bs. {((stats?.saldo_pendiente_total || 0) * finConfig.tasa_eur).toLocaleString('es-VE')}
+              </span>
+            ) : null,
             icon: CreditCard,
             color: "text-orange-400",
             bg: "bg-orange-400/10",

@@ -32,8 +32,8 @@ class OdontogramaHallazgo(SQLModel, table=True):
     descripcion_visual:  Optional[str]     = Field(default=None, max_length=200)
     activo:              bool              = Field(default=True)
     orden:               int               = Field(default=0)
-    created_at:          datetime          = Field(default_factory=datetime.utcnow)
-    updated_at:          datetime          = Field(default_factory=datetime.utcnow)
+    created_at:          datetime          = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at:          datetime          = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ---------------------------------------------------------------------------
@@ -77,4 +77,4 @@ class OdontogramaRegistro(SQLModel, table=True):
                                                 default=None,
                                                 foreign_key="sys_clinical.historias_clinicas.id",
                                             )
-    created_at:          datetime          = Field(default_factory=datetime.utcnow)
+    created_at:          datetime          = Field(default_factory=lambda: datetime.now(timezone.utc))

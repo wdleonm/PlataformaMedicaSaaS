@@ -3,7 +3,7 @@ Modelos SQLModel — Insumos y Servicios.
 Fase 3.1: Insumos (inventario por tenant).
 Fase 3.2: Servicios + ServicioInsumo (receta — Regla de Oro 3.2).
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
 
@@ -29,8 +29,8 @@ class Insumo(SQLModel, table=True):
     stock_actual:    float          = Field(default=0.0, ge=0)
     stock_minimo:    float          = Field(default=0.0, ge=0)
     activo:          bool           = Field(default=True)
-    created_at:      datetime       = Field(default_factory=datetime.utcnow)
-    updated_at:      datetime       = Field(default_factory=datetime.utcnow)
+    created_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ---------------------------------------------------------------------------
@@ -51,8 +51,8 @@ class Servicio(SQLModel, table=True):
     activo:          bool           = Field(default=True)
     visible_publico: bool           = Field(default=True)
     duracion_estimada_min: int      = Field(default=30)
-    created_at:      datetime       = Field(default_factory=datetime.utcnow)
-    updated_at:      datetime       = Field(default_factory=datetime.utcnow)
+    created_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 Modelo SQLModel — HistoriaClinica.
 Fase 2.4: Historias Clínicas (tabla transaccional en sys_clinical).
 """
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
 
@@ -60,8 +60,8 @@ class HistoriaClinica(SQLModel, table=True):
     notas:              Optional[str]  = Field(default=None)
     
     activo:             bool           = Field(default=True)
-    created_at:         datetime       = Field(default_factory=datetime.utcnow)
-    updated_at:         datetime       = Field(default_factory=datetime.utcnow)
+    created_at:         datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at:         datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class HistoriaClinicaAdjunto(SQLModel, table=True):
@@ -77,4 +77,4 @@ class HistoriaClinicaAdjunto(SQLModel, table=True):
     ruta_archivo:   str      = Field(max_length=500)
     tipo_mime:      str      = Field(max_length=100)
     tamano:         int      = Field(default=0) # Tamaño en bytes
-    created_at:     datetime = Field(default_factory=datetime.utcnow)
+    created_at:     datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

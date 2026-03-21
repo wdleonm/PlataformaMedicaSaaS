@@ -2,7 +2,7 @@
 Modelo: Paciente.
 Fase 2.1 - Pacientes con RLS por especialista_id.
 """
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
 
@@ -46,6 +46,6 @@ class Paciente(PacienteBase, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     especialista_id: UUID = Field(foreign_key="sys_config.especialistas.id", index=True)
     origen_registro: str = Field(default="interno", max_length=20) # 'interno' o 'portal_publico'
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

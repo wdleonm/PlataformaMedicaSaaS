@@ -3,7 +3,7 @@ Modelos: PlanSuscripcion y LogSuscripcion.
 Fase 7: Gestión de planes y auditoría de suscripciones.
 """
 from sqlmodel import SQLModel, Field, JSON
-from datetime import datetime, date
+from datetime import datetime, timezone, date
 from uuid import UUID, uuid4
 from typing import Optional
 from sqlalchemy import Column
@@ -24,8 +24,8 @@ class PlanSuscripcion(SQLModel, table=True):
     incluye_multiusuario: bool = Field(default=False)
     soporte_prioritario: bool = Field(default=False)
     activo: bool = Field(default=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class LogSuscripcion(SQLModel, table=True):
     """Auditoría de cambios en suscripciones."""
@@ -38,4 +38,4 @@ class LogSuscripcion(SQLModel, table=True):
     admin_id: Optional[UUID] = Field(default=None, foreign_key="sys_config.administradores.id")
     cambio: dict = Field(sa_column=Column(JSON))
     motivo: Optional[str] = Field(default=None)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

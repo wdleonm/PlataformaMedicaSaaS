@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select, func
 from app.database import get_session
@@ -223,10 +223,10 @@ def get_financial_config(
     # Alerta de desincronización (si han pasado más de 24 horas)
     retrasada = False
     if config.bcv_ultima_sincronizacion:
-        retrasada = (datetime.utcnow() - config.bcv_ultima_sincronizacion) > timedelta(hours=24)
+        retrasada = (datetime.now(timezone.utc) - config.bcv_ultima_sincronizacion) > timedelta(hours=24)
     
     return {
-        "moneda_principal": config.moneda_principal,
+        "moneda_nombre": config.moneda_nombre,
         "moneda_simbolo": config.moneda_simbolo,
         "tasa_usd": config.tasa_usd,
         "tasa_eur": config.tasa_eur,

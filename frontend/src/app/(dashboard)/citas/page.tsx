@@ -637,16 +637,16 @@ export default function CalendarPage() {
                     </div>
 
                     {/* Conversiones BCV dinámicas */}
-                    <div className="grid grid-cols-2 gap-2 pt-3 border-t border-border/10">
-                      <div className="bg-background/40 p-2 rounded-xl text-left border border-primary/10">
-                        <p className="text-[8px] font-black text-primary/60 uppercase leading-none mb-1">Bs. (BCV Euro)</p>
-                        <p className="text-xs font-bold text-foreground truncate">
+                    <div className="grid grid-cols-1 gap-3 pt-3 border-t border-border/10">
+                      <div className="bg-indigo-500/10 p-3 rounded-2xl text-center border border-indigo-500/20">
+                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1.5">Monto en Bs. (BCV Euro)</p>
+                        <p className="text-xl font-black text-white">
                           {(montoCobrado * finConfig.tasa_eur).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
                         </p>
                       </div>
-                      <div className="bg-background/40 p-2 rounded-xl text-left opacity-60">
-                        <p className="text-[8px] font-black text-muted-foreground uppercase leading-none mb-1">Bs. (BCV Dólar)</p>
-                        <p className="text-xs font-bold text-foreground truncate">
+                      <div className="opacity-40 text-center">
+                        <p className="text-[9px] font-bold text-muted-foreground uppercase leading-none mb-1">Ref. Informativa USD</p>
+                        <p className="text-sm font-bold text-slate-400">
                           {(montoCobrado * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
                         </p>
                       </div>

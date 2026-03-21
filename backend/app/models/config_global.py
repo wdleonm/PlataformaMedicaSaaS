@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
 from sqlmodel import SQLModel, Field
@@ -25,8 +25,8 @@ class ConfiguracionGlobal(SQLModel, table=True):
     ycloud_api_key: Optional[str] = Field(default=None)
     ycloud_whatsapp_number: Optional[str] = Field(default=None)
     
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class BCVTasaHistorial(SQLModel, table=True):
@@ -36,7 +36,7 @@ class BCVTasaHistorial(SQLModel, table=True):
     __table_args__ = {"schema": "sys_config"}
 
     id:        UUID     = Field(default_factory=uuid4, primary_key=True)
-    fecha:     datetime = Field(default_factory=datetime.utcnow, index=True)
+    fecha:     datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True)
     tasa_usd:  float
     tasa_eur:  float
     fuente:    str      = Field(default="BCV")

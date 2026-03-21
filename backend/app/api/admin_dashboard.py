@@ -2,7 +2,7 @@
 Endpoint para el Dashboard de Administración.
 Fase 7: Estadísticas globales del SaaS.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select, func
 from app.database import get_session
@@ -27,11 +27,11 @@ def get_admin_dashboard(
     activos = session.exec(select(func.count(Especialista.id)).where(Especialista.activo == True)).one()
     
     # Nuevos este mes
-    hace_un_mes = datetime.utcnow() - timedelta(days=30)
+    hace_un_mes = datetime.now(timezone.utc) - timedelta(days=30)
     nuevos = session.exec(select(func.count(Especialista.id)).where(Especialista.created_at >= hace_un_mes)).one()
     
     # Próximos a vencer (30 días)
-    hoy = datetime.utcnow().date()
+    hoy = datetime.now(timezone.utc).date()
     en_30_dias = hoy + timedelta(days=30)
     por_vencer = session.exec(
         select(func.count(Especialista.id))

@@ -10,7 +10,7 @@ Endpoints:
   PATCH  /api/citas/{id}                 (incluyendo completar con monto_cobrado)
   DELETE /api/citas/{id}                 (cancelación lógica: estado=cancelada)
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 from uuid import UUID
 
@@ -157,7 +157,7 @@ def update_cita(
             session.flush() # Activar triggers de BD
             cita.abono_id = abono.id
 
-    cita.updated_at = datetime.utcnow()
+    cita.updated_at = datetime.now(timezone.utc)
     session.add(cita)
     session.commit()
     session.refresh(cita)
@@ -173,7 +173,7 @@ def cancel_cita(
     """Cancela la cita (borrado lógico: estado=cancelada)."""
     cita = _get_or_404(session, cita_id, especialista.id)
     cita.estado     = "cancelada"
-    cita.updated_at = datetime.utcnow()
+    cita.updated_at = datetime.now(timezone.utc)
     session.add(cita)
     session.commit()
 

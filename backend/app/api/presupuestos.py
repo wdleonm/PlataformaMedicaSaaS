@@ -21,7 +21,7 @@ Abonos:
   GET    /api/abonos/{id}
   DELETE /api/abonos/{id}                       (elimina; trigger revierte saldo)
 """
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import List, Optional
 from uuid import UUID
 
@@ -170,7 +170,7 @@ def update_presupuesto(
         if hasattr(presupuesto, field):
             setattr(presupuesto, field, value)
     
-    presupuesto.updated_at = datetime.utcnow()
+    presupuesto.updated_at = datetime.now(timezone.utc)
     session.add(presupuesto)
     session.commit()
     session.refresh(presupuesto)
@@ -185,7 +185,7 @@ def cancel_presupuesto(
 ) -> None:
     presupuesto = _get_presupuesto_or_404(session, presupuesto_id, especialista.id)
     presupuesto.estado     = "cancelado"
-    presupuesto.updated_at = datetime.utcnow()
+    presupuesto.updated_at = datetime.now(timezone.utc)
     session.add(presupuesto)
     session.commit()
 

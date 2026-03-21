@@ -481,30 +481,37 @@ export default function AdminConfigPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-6 rounded-3xl border border-white/5">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-1">Tasa USD (BCV)</label>
-                      <input 
-                        type="number" step="0.0001"
-                        value={config?.tasa_usd || 0} 
-                        onChange={(e) => setConfig(config ? {...config, tasa_usd: parseFloat(e.target.value)} : null)}
-                        className="w-full bg-violet-600/5 border border-violet-500/20 rounded-2xl p-4 text-white font-black" 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-1">Tasa EUR (BCV)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400 ml-1 flex items-center gap-2">
+                        <Globe size={12} /> Tasa EUR (Referencia Principal Bs)
+                      </label>
                       <input 
                         type="number" step="0.0001"
                         value={config?.tasa_eur || 0} 
                         onChange={(e) => setConfig(config ? {...config, tasa_eur: parseFloat(e.target.value)} : null)}
-                        className="w-full bg-indigo-600/5 border border-indigo-500/20 rounded-2xl p-4 text-white font-black" 
+                        className="w-full bg-indigo-600/10 border border-indigo-500/30 rounded-2xl p-4 text-white font-black text-xl focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all" 
+                      />
+                      <p className="text-[9px] text-slate-500 font-bold italic ml-1">Esta tasa se usará para convertir montos de $ a Bs automáticamente.</p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Tasa USD (Informativa)</label>
+                      <input 
+                        type="number" step="0.0001"
+                        value={config?.tasa_usd || 0} 
+                        onChange={(e) => setConfig(config ? {...config, tasa_usd: parseFloat(e.target.value)} : null)}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-slate-400 font-black text-xl focus:ring-2 focus:ring-white/20 outline-none transition-all" 
                       />
                     </div>
                 </div>
 
-                <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
-                  <p className="text-xs text-emerald-400 font-bold leading-relaxed">
-                    Estos valores maestros afectan a todos los especialistas. Los precios en $ se convertirán a Bs. usando estas tasas.
+                <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-start gap-3">
+                  <div className="mt-1 p-1 bg-indigo-500/20 rounded-lg">
+                    <CheckCircle2 size={14} className="text-indigo-400" />
+                  </div>
+                  <p className="text-xs text-indigo-300 font-bold leading-relaxed">
+                    Motor Financiero: Los precios base en Dólares ($) se multiplicarán por la <span className="text-white italic underline">Tasa Euro</span> para determinar el cobro final en Bolívares (Bs.). La tasa USD se mantiene como referencia comparativa.
                   </p>
                 </div>
               </div>
