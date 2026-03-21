@@ -286,6 +286,17 @@ export default function FinanzasPage() {
     }
   };
 
+  const handleDeleteBudget = async (id: string) => {
+    if (!window.confirm("¿Está seguro de que desea anular este presupuesto? Esta acción no se puede deshacer y el saldo pendiente dejará de contar en sus estadísticas.")) return;
+    try {
+      await api.delete(`/api/presupuestos/${id}`);
+      fetchData();
+    } catch (error) {
+      console.error("Error cancelling budget:", error);
+      alert("No se pudo anular el presupuesto");
+    }
+  };
+
   const handleShare = (p: Presupuesto, method: 'link' | 'whatsapp') => {
     const url = `${window.location.origin}/presupuesto/${p.id}`;
     if (method === 'link') {
@@ -335,7 +346,7 @@ export default function FinanzasPage() {
         </div>
         
         <div className="flex gap-2 bg-secondary/50 p-1 rounded-2xl border border-border/10">
-          {["todos", "en_pago", "aprobado", "pagado"].map(f => (
+          {["todos", "en_pago", "aprobado", "pagado", "cancelado"].map(f => (
             <button 
               key={f}
               onClick={() => setActiveFilter(f)}
@@ -454,20 +465,26 @@ export default function FinanzasPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
-                          onClick={() => handleOpenAbono(p)}
-                          className="px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all"
-                          disabled={p.saldo_pendiente === 0}
-                        >
-                          Abonar
-                        </button>
-                        <button 
-                          onClick={() => handleOpenEditBudget(p)}
-                          className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors"
-                          title="Editar Presupuesto"
-                        >
-                          <Edit2 size={16} />
-                        </button>
+                          <button 
+                            onClick={() => handleOpenAbono(p)}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg transition-all ${
+                              p.estado === 'cancelado' 
+                                ? 'bg-secondary text-muted-foreground cursor-not-allowed border border-border/10' 
+                                : 'bg-primary text-primary-foreground shadow-primary/20 hover:scale-105'
+                            }`}
+                            disabled={p.saldo_pendiente === 0 || p.estado === 'cancelado'}
+                          >
+                            Abonar
+                          </button>
+                        {p.estado !== 'cancelado' && (
+                          <button 
+                            onClick={() => handleOpenEditBudget(p)}
+                            className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors"
+                            title="Editar Presupuesto"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                        )}
                         <button 
                           onClick={() => handleShare(p, 'link')}
                           className="p-2 hover:bg-violet-500/10 text-violet-500 rounded-lg transition-colors"
@@ -482,6 +499,15 @@ export default function FinanzasPage() {
                         >
                           <FileText size={16} />
                         </button>
+                        {p.estado !== 'cancelado' && (
+                          <button 
+                            onClick={() => handleDeleteBudget(p.id)}
+                            className="p-2 hover:bg-red-500/10 text-red-500 rounded-lg transition-colors"
+                            title="Anular Presupuesto"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
