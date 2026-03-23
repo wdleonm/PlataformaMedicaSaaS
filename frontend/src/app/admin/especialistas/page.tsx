@@ -47,6 +47,7 @@ interface Especialista {
   plan_suscripcion_id: string | null;
   exigir_cambio_password: boolean;
   intervalo_cambio_password: number | null;
+  forzar_cambio_password_proximo_acceso: boolean;
   created_at: string;
   plan?: Plan;
 }
@@ -104,7 +105,8 @@ export default function AdminEspecialistasPage() {
       activo: true,
       suscripcion_activa: true,
       exigir_cambio_password: false,
-      intervalo_cambio_password: null
+      intervalo_cambio_password: null,
+      forzar_cambio_password_proximo_acceso: true
     });
     setIsModalOpen(true);
   };
@@ -364,21 +366,39 @@ export default function AdminEspecialistasPage() {
                   </div>
                 </div>
 
-                {!isEditing && (
+                <div className="space-y-4 p-6 bg-slate-900/40 rounded-[32px] border border-white/5">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400/80 ml-1">Seguridad de Acceso</h4>
+                  
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Contraseña Inicial</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
+                      {isEditing ? "Resetear Contraseña (opcional)" : "Contraseña Inicial"}
+                    </label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
                       <input 
                         type="password" 
-                        required
+                        required={!isEditing}
+                        placeholder={isEditing ? "Ingresa nueva clave para resetear..." : "••••••••"}
                         value={currentEsp.password || ""}
                         onChange={(e) => setCurrentEsp({...currentEsp, password: e.target.value})}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pl-12 text-white focus:ring-2 focus:ring-violet-500/50 outline-none"
                       />
                     </div>
                   </div>
-                )}
+
+                  <div className="flex items-center gap-4 p-4 bg-violet-500/5 rounded-2xl border border-violet-500/10 hover:bg-violet-500/10 transition-colors cursor-pointer" onClick={() => setCurrentEsp({...currentEsp, forzar_cambio_password_proximo_acceso: !currentEsp.forzar_cambio_password_proximo_acceso})}>
+                    <input 
+                      type="checkbox" 
+                      id="forzar_pw_next"
+                      checked={currentEsp.forzar_cambio_password_proximo_acceso || false}
+                      onChange={(e) => setCurrentEsp({...currentEsp, forzar_cambio_password_proximo_acceso: e.target.checked})}
+                      className="w-5 h-5 rounded border-violet-500/20 bg-violet-500/10 text-violet-500 focus:ring-violet-500"
+                    />
+                    <label htmlFor="forzar_pw_next" className="text-sm font-bold text-violet-200 cursor-pointer select-none tracking-tight">
+                      Forzar cambio de clave en el próximo inicio de sesión
+                    </label>
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -436,7 +456,7 @@ export default function AdminEspecialistasPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                  <div className="flex flex-col gap-3 p-5 bg-violet-600/5 rounded-[24px] border border-violet-500/10">
+                  <div className="flex flex-col gap-3 p-5 bg-white/5 rounded-[24px] border border-white/10">
                     <div className="flex items-center gap-4">
                       <input 
                         type="checkbox" 
@@ -445,17 +465,17 @@ export default function AdminEspecialistasPage() {
                         onChange={(e) => setCurrentEsp({...currentEsp, exigir_cambio_password: e.target.checked})}
                         className="w-5 h-5 rounded border-violet-500/20 bg-violet-500/10 text-violet-500 focus:ring-violet-500"
                       />
-                      <label htmlFor="exigir_pw" className="text-sm font-black text-violet-300 cursor-pointer select-none tracking-tight">
-                        Exigir cambio de clave
+                      <label htmlFor="exigir_pw" className="text-sm font-black text-slate-300 cursor-pointer select-none tracking-tight">
+                        Rotación periódica de clave
                       </label>
                     </div>
                     {currentEsp.exigir_cambio_password && (
                       <div className="mt-2 space-y-2 animate-fade-in">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Frecuencia sugerida (días)</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Frecuencia sugerida (días)</label>
                         <select 
                           value={currentEsp.intervalo_cambio_password || 90}
                           onChange={(e) => setCurrentEsp({...currentEsp, intervalo_cambio_password: parseInt(e.target.value)})}
-                          className="w-full bg-[#0a0514]/40 border border-violet-500/20 rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-violet-500/40 outline-none"
+                          className="w-full bg-[#0a0514]/40 border border-white/20 rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-violet-500/40 outline-none"
                         >
                           <option value={60} className="bg-[#130b22]">60 Días (Cada 2 meses)</option>
                           <option value={90} className="bg-[#130b22]">90 Días (Cada 3 meses)</option>

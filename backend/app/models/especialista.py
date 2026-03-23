@@ -67,3 +67,4 @@ class Especialista(EspecialistaBase, table=True):
     exigir_cambio_password: bool = Field(default=False)
     intervalo_cambio_password: Optional[int] = Field(default=None)  # días (60, 90, 120, etc)
     fecha_ultimo_cambio_password: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    forzar_cambio_password_proximo_acceso: bool = Field(default=False)

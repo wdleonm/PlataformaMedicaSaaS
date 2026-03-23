@@ -70,7 +70,8 @@ def admin_crear_especialista(
         fecha_vencimiento_suscripcion=data.fecha_vencimiento_suscripcion,
         suscripcion_activa=True,
         exigir_cambio_password=data.exigir_cambio_password,
-        intervalo_cambio_password=data.intervalo_cambio_password if data.exigir_cambio_password else None
+        intervalo_cambio_password=data.intervalo_cambio_password if data.exigir_cambio_password else None,
+        forzar_cambio_password_proximo_acceso=data.forzar_cambio_password_proximo_acceso
     )
     session.add(especialista)
     session.flush()
@@ -121,6 +122,14 @@ def admin_actualizar_especialista(
 
     # notas_admin no es un campo del modelo Especialista
     update_data.pop("notas_admin", None)
+
+    # Manejar cambio de password
+    if "password" in update_data:
+        new_password = update_data.pop("password")
+        if new_password:
+            especialista.password_hash = get_password_hash(new_password)
+            # Si el admin le pone una clave manual, es buena idea registrarlo o setear que cambie en proximo acceso si el admin lo pide
+            # (ya se pasaria via forzar_cambio_password_proximo_acceso si se desea)
 
     # Manejar cambio de especialidad
     if "especialidad_principal_id" in update_data:

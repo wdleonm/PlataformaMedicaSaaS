@@ -162,6 +162,7 @@ def change_password(
     
     especialista.password_hash = get_password_hash(data.new_password)
     especialista.fecha_ultimo_cambio_password = datetime.now(timezone.utc)
+    especialista.forzar_cambio_password_proximo_acceso = False
     
     session.add(especialista)
     session.commit()

@@ -83,18 +83,22 @@ def get_current_especialista(
         )
     
     # NUEVA REGLA: Cambio de contraseña obligatorio
-    if especialista.exigir_cambio_password:
+    debe_cambiar = especialista.forzar_cambio_password_proximo_acceso
+    
+    if not debe_cambiar and especialista.exigir_cambio_password:
         ahora = datetime.now(timezone.utc)
         intervalo = especialista.intervalo_cambio_password or 90
         vencimiento = especialista.fecha_ultimo_cambio_password + timedelta(days=intervalo)
-        
         if ahora > vencimiento:
-            # Permitir solo si la ruta es el cambio de contraseña propio
-            if not request.url.path.endswith("/api/auth/change-password") and not request.url.path.endswith("/api/auth/me"):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Tu contraseña ha expirado por políticas de seguridad. Debes actualizarla para continuar.",
-                )
+            debe_cambiar = True
+            
+    if debe_cambiar:
+        # Permitir solo si la ruta es el cambio de contraseña propio
+        if not request.url.path.endswith("/api/auth/change-password") and not request.url.path.endswith("/api/auth/me"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Debes actualizar tu contraseña para continuar. Por favor vaya a Configuración > Seguridad.",
+            )
     
     return especialista
 
