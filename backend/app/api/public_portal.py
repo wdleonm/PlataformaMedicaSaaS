@@ -41,7 +41,7 @@ def get_public_profile(slug: str, session: Session = Depends(get_session)):
     from app.models.config_global import ConfiguracionGlobal
     config = session.exec(select(ConfiguracionGlobal)).first()
     fin_config = {
-        "moneda_principal": config.moneda_principal if config else "USD",
+        "moneda_principal": config.moneda_nombre if config else "USD",
         "moneda_simbolo": config.moneda_simbolo if config else "$",
         "tasa_usd": config.tasa_usd if config else 1.0,
         "tasa_eur": config.tasa_eur if config else 1.0,

@@ -77,6 +77,7 @@ class EspecialistaUpdate(BaseModel):
     clinica_logo_url: Optional[str] = None
     clinica_direccion: Optional[str] = None
     portal_visible: Optional[bool] = None
+    slug_url: Optional[str] = None
 
 
 class Token(BaseModel):

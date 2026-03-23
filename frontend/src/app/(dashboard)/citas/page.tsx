@@ -421,9 +421,9 @@ export default function CalendarPage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-card w-full max-w-lg rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden"
+              className="bg-card w-full max-w-lg max-h-[90vh] rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden flex flex-col"
             >
-              <div className="p-6 border-b border-border/50 bg-secondary/30 flex justify-between items-center">
+              <div className="p-6 border-b border-border/50 bg-secondary/30 flex justify-between items-center shrink-0">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <CalendarIcon className="text-primary"/> 
                   {selectedCita ? "Editar Cita" : "Nueva Cita"}
@@ -431,7 +431,8 @@ export default function CalendarPage() {
                 <button onClick={() => setIsModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1.5"><X size={20}/></button>
               </div>
 
-              <form onSubmit={handleSaveCita} className="p-6 space-y-5">
+              <form onSubmit={handleSaveCita} className="flex-1 overflow-hidden flex flex-col">
+                <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
                 <div className="space-y-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Buscar Paciente (Documento o Nombre)</label>
@@ -578,8 +579,9 @@ export default function CalendarPage() {
                     />
                   </div>
                 </div>
+              </div>
 
-                <div className="flex justify-between items-center pt-4 border-t border-border/10">
+                <div className="flex justify-between items-center p-6 border-t border-border/10 bg-secondary/5 shrink-0">
                   {selectedCita && (
                     <button 
                       type="button"
