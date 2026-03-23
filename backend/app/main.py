@@ -4,6 +4,7 @@ Fase 1: Configuración completa con CORS, routers y health check mejorado.
 Fase 2: Odontograma evolutivo e historias clínicas.
 Fase 3: Inventario (insumos/servicios), Citas y Presupuestos/Abonos.
 Fase 4: Cola de mensajes YCloud y worker de notificaciones.
+Fase 5: Sistema de seguridad con cambio de contraseña forzado.
 """
 from contextlib import asynccontextmanager
 

@@ -18,7 +18,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function SeguridadPage() {
-  const { usuario } = useAuth();
+  const { usuario, refreshUser } = useAuth();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,6 +30,8 @@ export default function SeguridadPage() {
   // States for security settings
   const [exigirCambio, setExigirCambio] = useState(false);
   const [intervalo, setIntervalo] = useState(90);
+
+  const mustChangePassword = usuario?.forzar_cambio_password_proximo_acceso || false;
 
   useEffect(() => {
     if (usuario) {
@@ -81,6 +83,8 @@ export default function SeguridadPage() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      // Refrescar datos del usuario para quitar el flag de cambio forzado
+      if (refreshUser) await refreshUser();
     } catch (err: any) {
       setMessage({ 
         type: 'error', 
@@ -117,6 +121,26 @@ export default function SeguridadPage() {
           <p className="text-primary font-black uppercase tracking-[0.2em] text-[9px] mt-0.5 opacity-90">Protección y Gestión de Accesos</p>
         </div>
       </div>
+
+      {/* Banner obligatorio de cambio de contraseña */}
+      {mustChangePassword && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-5 bg-amber-500/15 border-2 border-amber-500/40 rounded-[28px] flex items-center gap-4 shadow-lg"
+        >
+          <div className="w-12 h-12 bg-amber-500/30 rounded-2xl flex items-center justify-center text-amber-400 shrink-0">
+            <AlertCircle size={24} />
+          </div>
+          <div>
+            <h3 className="text-sm font-black text-amber-300 uppercase tracking-widest">Cambio de Contraseña Obligatorio</h3>
+            <p className="text-xs text-amber-200/80 font-bold mt-1">
+              El administrador ha solicitado que establezcas una contraseña personal. 
+              No podrás acceder a ninguna sección de la plataforma hasta completar este paso.
+            </p>
+          </div>
+        </motion.div>
+      )}
 
       {/* Grid Principal - Sección Superior */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
@@ -166,9 +190,16 @@ export default function SeguridadPage() {
                       required
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-12 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
+                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
                       placeholder="Actual"
                     />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPasswords(!showPasswords)}
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors p-2"
+                    >
+                      {showPasswords ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                 </div>
 
@@ -183,9 +214,16 @@ export default function SeguridadPage() {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 outline-none focus:ring-4 focus:ring-primary/15 focus:border-primary/30 transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
+                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 outline-none focus:ring-4 focus:ring-primary/15 focus:border-primary/30 transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
                       placeholder="Confirmar"
                     />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPasswords(!showPasswords)}
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors p-2"
+                    >
+                      {showPasswords ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                 </div>
 

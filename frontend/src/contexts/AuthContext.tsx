@@ -30,6 +30,7 @@ type UsoUsuario = {
   portal_visible: boolean;
   exigir_cambio_password: boolean;
   intervalo_cambio_password: number | null;
+  forzar_cambio_password_proximo_acceso: boolean;
 };
 
 type AuthContextType = {
@@ -98,10 +99,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         portal_visible: data.portal_visible ?? false,
         exigir_cambio_password: data.exigir_cambio_password ?? false,
         intervalo_cambio_password: data.intervalo_cambio_password ?? 90,
+        forzar_cambio_password_proximo_acceso: data.forzar_cambio_password_proximo_acceso ?? false,
       });
+
+      return data; // Retornamos los datos para usarlos en el login si es necesario
     } catch (error) {
       console.error("Error validando token:", error);
       logout(); // Token inválido o expirado
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -111,8 +116,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("token", access_token);
     sessionStorage.removeItem("session_expired");
     setToken(access_token);
-    await fetchUsuario(access_token);
-    router.push("/dashboard");
+    const data = await fetchUsuario(access_token);
+    
+    if (data?.forzar_cambio_password_proximo_acceso) {
+      router.push("/seguridad");
+    } else {
+      router.push("/dashboard");
+    }
   };
 
   const logout = useCallback((sessionExpired: boolean = false) => {

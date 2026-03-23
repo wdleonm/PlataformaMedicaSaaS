@@ -88,13 +88,20 @@ def get_current_especialista(
     if not debe_cambiar and especialista.exigir_cambio_password:
         ahora = datetime.now(timezone.utc)
         intervalo = especialista.intervalo_cambio_password or 90
-        vencimiento = especialista.fecha_ultimo_cambio_password + timedelta(days=intervalo)
+        ult_cambio = especialista.fecha_ultimo_cambio_password
+        
+        # Asegurar compatibilidad de timezones para la comparación
+        if ult_cambio.tzinfo is None:
+            ahora = ahora.replace(tzinfo=None)
+            
+        vencimiento = ult_cambio + timedelta(days=intervalo)
         if ahora > vencimiento:
             debe_cambiar = True
             
     if debe_cambiar:
-        # Permitir solo si la ruta es el cambio de contraseña propio
-        if not request.url.path.endswith("/api/auth/change-password") and not request.url.path.endswith("/api/auth/me"):
+        # Permitir solo rutas de cambio de contraseña y consulta de perfil
+        allowed_paths = ["/api/auth/change-password", "/api/auth/me", "/api/auth/security-settings"]
+        if not any(request.url.path.endswith(p) for p in allowed_paths):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Debes actualizar tu contraseña para continuar. Por favor vaya a Configuración > Seguridad.",

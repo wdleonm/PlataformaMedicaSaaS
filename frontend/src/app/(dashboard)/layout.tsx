@@ -52,6 +52,13 @@ export default function DashboardLayout({
     }
   }, [usuario, isLoading, router]);
 
+  // Guard de seguridad: Forzar cambio de contraseña
+  useEffect(() => {
+    if (!isLoading && usuario?.forzar_cambio_password_proximo_acceso && pathname !== "/seguridad") {
+      router.push("/seguridad");
+    }
+  }, [usuario, isLoading, pathname, router]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">

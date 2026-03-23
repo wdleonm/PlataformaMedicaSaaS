@@ -1,20 +1,20 @@
 """
 Schemas Pydantic para autenticación (Fase 1).
+Fase 5: Añadido soporte para cambio de contraseña forzado.
 """
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from uuid import UUID
 from typing import List, Optional
 
 
 class EspecialidadRead(BaseModel):
     """Schema para leer especialidad."""
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     nombre: str
     codigo: str
     activo: bool
-
-    class Config:
-        from_attributes = True
 
 
 class EspecialistaRegister(BaseModel):
@@ -45,7 +45,9 @@ class EspecialistaSecurityUpdate(BaseModel):
 
 
 class EspecialistaRead(BaseModel):
-    """Schema para leer especialista (sin password)."""
+    """Schema para leer especialista (sin password). Incluye flag de cambio forzado."""
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     email: str
     nombre: str
@@ -53,6 +55,7 @@ class EspecialistaRead(BaseModel):
     activo: bool
     exigir_cambio_password: bool = False
     intervalo_cambio_password: Optional[int] = None
+    forzar_cambio_password_proximo_acceso: bool = False
     slug_url: Optional[str] = None
     descripcion_perfil: Optional[str] = None
     redes_sociales: Optional[dict] = None
@@ -62,8 +65,6 @@ class EspecialistaRead(BaseModel):
     clinica_direccion: Optional[str] = None
     especialidades: List[EspecialidadRead] = []
 
-    class Config:
-        from_attributes = True
 
 class EspecialistaUpdate(BaseModel):
     """Schema para actualizar datos del perfil del especialista."""

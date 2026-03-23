@@ -31,14 +31,21 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor de respuesta: detecta 401 y emite evento para logout global
+// Interceptor de respuesta: detecta 401 y 403 para redirecciones globales
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        // Emitir evento global para que AuthContext maneje el logout
+    if (typeof window !== 'undefined') {
+      if (error.response?.status === 401) {
+        // Token expirado o inválido
         window.dispatchEvent(new CustomEvent('session-expired'));
+      } else if (error.response?.status === 403) {
+        const detail = error.response?.data?.detail || '';
+        if (detail.includes('actualizar tu contraseña') || detail.includes('contraseña para continuar')) {
+          // Forzar cambio de contraseña - redirigir a seguridad
+          window.location.href = '/seguridad';
+          return new Promise(() => {}); // Never resolve, page is redirecting
+        }
       }
     }
     return Promise.reject(error);
