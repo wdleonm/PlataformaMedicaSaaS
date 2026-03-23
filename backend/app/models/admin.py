@@ -5,6 +5,7 @@ Fase 7: Privilegios de administrador para gestión SaaS.
 from sqlmodel import SQLModel, Field
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
+from typing import Optional
 
 class Admin(SQLModel, table=True):
     """Usuario con privilegios administrativos globales (Dueño del SaaS)."""
@@ -19,5 +20,6 @@ class Admin(SQLModel, table=True):
     apellido: str = Field(max_length=120)
     rol: str = Field(default="master", max_length=20) # master | solo_lectura
     activo: bool = Field(default=True)
+    pin_seguridad_hash: Optional[str] = Field(default=None, max_length=255) # Para borrados en cascada
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

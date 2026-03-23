@@ -19,7 +19,9 @@ import {
   Mail,
   Lock,
   UserPlus,
-  ShieldCheck
+  ShieldCheck,
+  Trash2,
+  AlertTriangle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -64,6 +66,15 @@ export default function AdminEspecialistasPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentEsp, setCurrentEsp] = useState<Partial<Especialista & { password?: string, especialidad_principal_id?: string }>>({});
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Delete state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [dependencyCheck, setDependencyCheck] = useState<any>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Especialista | null>(null);
+  const [adminPin, setAdminPin] = useState("");
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const [newPin, setNewPin] = useState("");
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -151,6 +162,54 @@ export default function AdminEspecialistasPage() {
     }
   };
 
+  const handleOpenDelete = async (esp: Especialista) => {
+    setDeleteTarget(esp);
+    try {
+      setIsLoading(true);
+      const { data } = await api.get(`/api/admin/especialistas/${esp.id}/check-dependencies`);
+      setDependencyCheck(data);
+      setIsDeleteModalOpen(true);
+    } catch (err) {
+      alert("Error al verificar dependencias del especialista");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleConfirmDelete = async (cascade: boolean = false) => {
+    if (!deleteTarget) return;
+    if (cascade && !adminPin) {
+      alert("Debes ingresar el PIN de seguridad para eliminaciones en cascada");
+      return;
+    }
+    setIsDeleting(true);
+    try {
+      await api.delete(`/api/admin/especialistas/${deleteTarget.id}?cascade=${cascade}&admin_pin=${adminPin}`);
+      setIsDeleteModalOpen(false);
+      setAdminPin("");
+      fetchData();
+    } catch (err: any) {
+      alert(err.response?.data?.detail || "Error al eliminar especialista");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleSetPin = async () => {
+    if (!newPin || newPin.length < 4) {
+       alert("El PIN debe tener al menos 4 caracteres");
+       return;
+    }
+    try {
+      await api.post(`/api/admin/especialistas/config/set-pin?pin=${newPin}`);
+      alert("PIN de seguridad configurado exitosamente");
+      setShowPinSetup(false);
+      setNewPin("");
+    } catch (err) {
+      alert("Error al configurar el PIN");
+    }
+  };
+
   const filtered = especialistas.filter(e => 
     `${e.nombre} ${e.apellido}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     e.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -168,6 +227,24 @@ export default function AdminEspecialistasPage() {
           className="bg-violet-600 hover:bg-violet-500 text-white font-bold px-6 py-3 rounded-2xl flex items-center gap-2 shadow-lg shadow-violet-900/20 active:scale-95 transition-all text-sm"
         >
           <UserPlus size={18} /> Registrar Nuevo Médico
+        </button>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-violet-500/5 border border-violet-500/10 p-4 rounded-3xl">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-violet-500/10 rounded-xl text-violet-400">
+            <ShieldCheck size={20} />
+          </div>
+          <div>
+            <p className="text-xs font-black text-white uppercase tracking-widest">Seguridad Master</p>
+            <p className="text-[10px] text-slate-500 font-medium">El PIN de seguridad protege eliminaciones irreversibles.</p>
+          </div>
+        </div>
+        <button 
+          onClick={() => setShowPinSetup(true)}
+          className="text-[10px] font-black uppercase tracking-widest bg-violet-600/10 hover:bg-violet-600/20 text-violet-400 px-4 py-2 rounded-xl transition-all border border-violet-500/20"
+        >
+          {dependencyCheck?.pin_configurado ? "Cambiar PIN de Seguridad" : "Configurar PIN de Seguridad"}
         </button>
       </div>
 
@@ -280,8 +357,16 @@ export default function AdminEspecialistasPage() {
                         <button 
                           onClick={() => handleOpenEdit(esp)}
                           className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                          title="Editar Especialista"
                         >
                           <Edit size={18} />
+                        </button>
+                        <button 
+                          onClick={() => handleOpenDelete(esp)}
+                          className="p-2.5 bg-red-600/10 border border-red-500/20 rounded-xl text-red-400 hover:text-white hover:bg-red-600 transition-all"
+                          title="Eliminar Especialista"
+                        >
+                          <Trash2 size={18} />
                         </button>
                       </div>
                     </td>
@@ -511,6 +596,153 @@ export default function AdminEspecialistasPage() {
                     </>
                   )}
                 </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      {/* Modal Eliminación */}
+      <AnimatePresence>
+        {isDeleteModalOpen && deleteTarget && dependencyCheck && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => !isDeleting && setIsDeleteModalOpen(false)}
+              className="absolute inset-0 bg-black/90 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-lg bg-[#0a0514] border border-red-500/20 rounded-[40px] shadow-2xl overflow-hidden p-8"
+            >
+              <div className="flex flex-col items-center text-center gap-6">
+                <div className="w-20 h-20 rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 animate-pulse">
+                  <Trash2 size={40} />
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black text-white italic tracking-tight">¿Eliminar Especialista?</h3>
+                  <p className="text-slate-400 text-sm font-medium">Estás a punto de eliminar a <span className="text-white font-bold">{deleteTarget.nombre} {deleteTarget.apellido}</span></p>
+                </div>
+
+                {/* Resumen de Dependencias */}
+                <div className="w-full bg-red-500/5 border border-red-500/10 rounded-3xl p-6 space-y-4">
+                  <div className="flex items-center gap-3 text-red-400 mb-2">
+                    <ShieldAlert size={18} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Registros Vinculados Encontrados</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { label: "Pacientes", val: dependencyCheck.pacientes },
+                      { label: "Citas", val: dependencyCheck.citas },
+                      { label: "Servicios", val: dependencyCheck.servicios },
+                      { label: "Insumos", val: dependencyCheck.insumos },
+                    ].map(d => (
+                      <div key={d.label} className="bg-black/40 border border-white/5 p-3 rounded-2xl flex justify-between items-center">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase">{d.label}</span>
+                        <span className={`text-sm font-black ${d.val > 0 ? 'text-red-400' : 'text-slate-600'}`}>{d.val}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {dependencyCheck.es_borrable_directo ? (
+                    <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-400">
+                      <CheckCircle2 size={16} />
+                      <p className="text-[10px] font-black uppercase tracking-tight">Solo posee datos de prueba. Seguro para eliminar.</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-3 p-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl text-orange-400 text-left">
+                      <AlertTriangle size={20} className="shrink-0" />
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-tight mb-1">Protección de Datos</p>
+                        <p className="text-[11px] leading-relaxed font-medium">Este especialista tiene datos reales. Si continúas, se borrarán permanentemente pacientes, historias y finanzas relacionadas.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {!dependencyCheck.es_borrable_directo && (
+                  <div className="w-full space-y-2 animate-in slide-in-from-top-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-red-400/80 ml-1">Ingresa PIN de Seguridad Master</label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400/50" size={18} />
+                      <input 
+                        type="password"
+                        placeholder="••••"
+                        value={adminPin}
+                        onChange={(e) => setAdminPin(e.target.value)}
+                        className="w-full bg-red-500/5 border border-red-500/20 rounded-2xl p-4 pl-12 text-white text-center text-xl tracking-[0.5em] focus:ring-2 focus:ring-red-500/50 outline-none font-black"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-col w-full gap-3 pt-4">
+                   <button 
+                    onClick={() => handleConfirmDelete(!dependencyCheck.es_borrable_directo)}
+                    disabled={isDeleting}
+                    className="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl shadow-lg shadow-red-900/20 transition-all flex items-center justify-center gap-2 group uppercase tracking-widest text-xs"
+                  >
+                    {isDeleting ? <Loader2 className="animate-spin" size={18} /> : (
+                      dependencyCheck.es_borrable_directo ? "Confirmar Eliminación" : "Eliminar todo en Cascada"
+                    )}
+                  </button>
+                  <button 
+                    onClick={() => setIsDeleteModalOpen(false)}
+                    disabled={isDeleting}
+                    className="w-full py-4 bg-white/5 hover:bg-white/10 text-slate-400 font-bold rounded-2xl transition-all uppercase tracking-widest text-xs"
+                  >
+                    Cancelar y Volver
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Configurar PIN */}
+      <AnimatePresence>
+        {showPinSetup && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setShowPinSetup(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-sm bg-[#130b22] border border-white/10 rounded-[40px] shadow-2xl overflow-hidden p-8"
+            >
+              <div className="flex flex-col items-center text-center gap-6">
+                 <div className="w-20 h-20 rounded-3xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+                    <ShieldCheck size={40} />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-black text-white italic tracking-tight">PIN de Seguridad</h3>
+                    <p className="text-slate-400 text-xs font-medium">Este PIN será necesario para autorizar eliminaciones masivas o de datos reales.</p>
+                  </div>
+                  <input 
+                    type="password"
+                    placeholder="Nuevo PIN (min. 4 carac.)"
+                    value={newPin}
+                    onChange={(e) => setNewPin(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-center text-lg tracking-[0.5em] focus:ring-2 focus:ring-violet-500/50 outline-none"
+                  />
+                  <div className="grid grid-cols-2 w-full gap-3">
+                    <button 
+                      onClick={() => setShowPinSetup(false)}
+                      className="py-3 bg-white/5 text-slate-400 font-bold rounded-xl text-xs uppercase tracking-widest"
+                    >
+                      Cerrar
+                    </button>
+                    <button 
+                      onClick={handleSetPin}
+                      className="py-3 bg-violet-600 text-white font-black rounded-xl text-xs uppercase tracking-widest shadow-lg shadow-violet-900/20"
+                    >
+                      Guardar
+                    </button>
+                  </div>
               </div>
             </motion.div>
           </div>

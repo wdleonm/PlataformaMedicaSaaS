@@ -14,6 +14,7 @@ import {
   DollarSign
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface Stats {
   total_especialistas: number;
@@ -55,28 +56,32 @@ export default function AdminDashboardPage() {
       value: stats?.total_especialistas || 0, 
       icon: Users, 
       trend: "+12%", 
-      color: "from-violet-600 to-indigo-600" 
+      color: "from-violet-600 to-indigo-600",
+      href: "/admin/especialistas"
     },
     { 
       label: "Especialistas Activos", 
       value: stats?.especialistas_activos || 0, 
       icon: Activity, 
       trend: "Estable", 
-      color: "from-blue-600 to-cyan-600" 
+      color: "from-blue-600 to-cyan-600",
+      href: "/admin/especialistas"
     },
     { 
       label: "Nuevos del Mes", 
       value: stats?.especialistas_nuevos_mes || 0, 
       icon: UserPlus, 
       trend: "+3", 
-      color: "from-emerald-600 to-teal-600" 
+      color: "from-emerald-600 to-teal-600",
+      href: "/admin/especialistas"
     },
     { 
       label: "Suscripciones por Vencer", 
       value: stats?.suscripciones_por_vencer_30d || 0, 
       icon: Clock, 
       trend: "Atención", 
-      color: "from-orange-600 to-amber-600" 
+      color: "from-orange-600 to-amber-600",
+      href: "/admin/especialistas"
     },
   ];
 
@@ -103,22 +108,25 @@ export default function AdminDashboardPage() {
             transition={{ delay: idx * 0.1 }}
             className="group relative"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-[32px] blur-xl" />
-            <div className="relative bg-white/5 border border-white/10 p-6 rounded-[32px] shadow-sm hover:border-violet-500/30 transition-all duration-500">
-              <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-2xl bg-gradient-to-br ${card.color} shadow-lg ring-4 ring-white/5`}>
-                  <card.icon className="text-white" size={24} />
+            <Link href={card.href} className="block group">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-[32px] blur-xl" />
+              <div className="relative bg-white/5 border border-white/10 p-6 rounded-[32px] shadow-sm group-hover:border-violet-500/50 group-hover:bg-white/10 transition-all duration-500 active:scale-[0.98]">
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`p-3 rounded-2xl bg-gradient-to-br ${card.color} shadow-lg ring-4 ring-white/5`}>
+                    <card.icon className="text-white" size={24} />
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">
+                    <TrendingUp size={10} />
+                    {card.trend}
+                  </div>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">
-                  <TrendingUp size={10} />
-                  {card.trend}
+                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{card.label}</p>
+                <div className="flex items-baseline gap-2">
+                  <h3 className="text-3xl font-black text-white">{card.value}</h3>
+                  <ArrowUpRight size={14} className="text-white/20 group-hover:text-white transition-all ml-auto" />
                 </div>
               </div>
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{card.label}</p>
-              <div className="flex items-baseline gap-2">
-                <h3 className="text-3xl font-black text-white">{card.value}</h3>
-              </div>
-            </div>
+            </Link>
           </motion.div>
         ))}
       </div>
@@ -163,14 +171,14 @@ export default function AdminDashboardPage() {
               Acciones Rápidas
             </h3>
             <div className="space-y-4">
-              <button className="w-full bg-white/10 hover:bg-white/20 border border-white/20 py-4 rounded-2xl flex items-center justify-between px-6 transition-all group/btn active:scale-[0.98]">
+              <Link href="/admin/especialistas" className="w-full bg-white/10 hover:bg-white/20 border border-white/20 py-4 rounded-2xl flex items-center justify-between px-6 transition-all group/btn active:scale-[0.98] block">
                 <span className="font-bold text-sm">Registrar Especialista</span>
                 <ArrowUpRight size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-              </button>
-              <button className="w-full bg-white/10 hover:bg-white/20 border border-white/20 py-4 rounded-2xl flex items-center justify-between px-6 transition-all group/btn active:scale-[0.98]">
-                <span className="font-bold text-sm">Crear Nuevo Plan</span>
+              </Link>
+              <Link href="/admin/planes" className="w-full bg-white/10 hover:bg-white/20 border border-white/20 py-4 rounded-2xl flex items-center justify-between px-6 transition-all group/btn active:scale-[0.98] block">
+                <span className="font-bold text-sm">Gestionar Planes</span>
                 <PlusIcon size={18} className="group-hover/btn:rotate-90 transition-transform" />
-              </button>
+              </Link>
               <button className="w-full bg-white/20 hover:bg-white/30 border border-white/30 py-4 rounded-2xl flex items-center justify-center gap-2 transition-all font-black text-sm tracking-tight active:scale-[0.98]">
                 Enviar Reporte Global
               </button>

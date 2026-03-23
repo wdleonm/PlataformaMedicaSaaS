@@ -29,8 +29,3 @@ SELECT * from sys_config.hc_secciones;
 
 SELECT * from sys_config.especialidad_hc_secciones;
 
-
-
-
-
-
