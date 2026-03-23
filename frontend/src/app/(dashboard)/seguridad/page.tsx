@@ -179,7 +179,7 @@ export default function SeguridadPage() {
               </AnimatePresence>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2 group">
+                <div className="md:col-span-2 space-y-2 group">
                   <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-2 group-focus-within:text-primary transition-all">Contraseña Actual</label>
                   <div className="relative">
                     <div className="absolute left-5 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-primary transition-colors">
@@ -192,6 +192,30 @@ export default function SeguridadPage() {
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
                       placeholder="Actual"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPasswords(!showPasswords)}
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors p-2"
+                    >
+                      {showPasswords ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2 group relative">
+                   <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-2 group-focus-within:text-primary transition-all">Nueva Contraseña</label>
+                   <div className="relative">
+                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-primary transition-colors">
+                      <Lock size={16} />
+                    </div>
+                    <input 
+                      type={showPasswords ? "text" : "password"}
+                      required
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
+                      placeholder="8+ Caracteres"
                     />
                     <button 
                       type="button"
@@ -227,29 +251,7 @@ export default function SeguridadPage() {
                   </div>
                 </div>
 
-                <div className="md:col-span-2 space-y-2 group relative">
-                   <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-2 group-focus-within:text-primary transition-all">Nueva Contraseña</label>
-                   <div className="relative">
-                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-primary transition-colors">
-                      <Lock size={16} />
-                    </div>
-                    <input 
-                      type={showPasswords ? "text" : "password"}
-                      required
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
-                      placeholder="8+ Caracteres"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => setShowPasswords(!showPasswords)}
-                      className="absolute right-5 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors p-2"
-                    >
-                      {showPasswords ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                  
+                <div className="md:col-span-2">
                   {/* Fortaleza Visual Compacta */}
                   <AnimatePresence>
                     {newPassword && (

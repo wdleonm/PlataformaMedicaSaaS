@@ -132,7 +132,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setShowWarning(false);
 
     // Marcar si se cerró por expiración para mostrar mensaje en login
-    if (sessionExpired) {
+    if (sessionExpired === true) {
       sessionStorage.setItem("session_expired", "1");
     }
 
