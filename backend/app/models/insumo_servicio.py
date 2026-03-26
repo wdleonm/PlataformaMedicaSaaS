@@ -26,6 +26,7 @@ class Insumo(SQLModel, table=True):
     codigo:          Optional[str]  = Field(default=None, max_length=40)
     unidad:          str            = Field(default="unidad", max_length=30)
     costo_unitario:  float          = Field(default=0.0, ge=0)
+    unidades_por_paquete: int       = Field(default=1, ge=1)
     stock_actual:    float          = Field(default=0.0, ge=0)
     stock_minimo:    float          = Field(default=0.0, ge=0)
     activo:          bool           = Field(default=True)

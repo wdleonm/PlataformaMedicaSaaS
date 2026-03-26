@@ -18,6 +18,7 @@ class InsumoCreate(BaseModel):
     codigo:         Optional[str]   = None
     unidad:         str             = "unidad"
     costo_unitario: float           = 0.0
+    unidades_por_paquete: int       = 1
     stock_actual:   float           = 0.0
     stock_minimo:   float           = 0.0
 
@@ -34,6 +35,7 @@ class InsumoUpdate(BaseModel):
     codigo:         Optional[str]   = None
     unidad:         Optional[str]   = None
     costo_unitario: Optional[float] = None
+    unidades_por_paquete: Optional[int] = None
     stock_actual:   Optional[float] = None
     stock_minimo:   Optional[float] = None
     activo:         Optional[bool]  = None
@@ -46,6 +48,8 @@ class InsumoRead(BaseModel):
     codigo:          Optional[str]
     unidad:          str
     costo_unitario:  float
+    unidades_por_paquete: int
+    costo_por_unidad: float          = 0.0  # Calculado: costo_unitario / unidades_por_paquete
     stock_actual:    float
     stock_minimo:    float
     activo:          bool

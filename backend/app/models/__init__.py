@@ -44,3 +44,5 @@ __all__ = [
     "PlanSuscripcion",
     "LogSuscripcion",
 ]
+
+from app.models.catalogo_insumo import CatalogoInsumo

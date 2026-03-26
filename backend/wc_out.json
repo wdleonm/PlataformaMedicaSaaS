@@ -1,0 +1,391 @@
+[
+  {
+    "id": 28328,
+    "name": "Kit de Forceps Infantiles x 7",
+    "slug": "kit-de-forceps-infantiles-x-7",
+    "parent": 0,
+    "type": "simple",
+    "variation": "",
+    "permalink": "https://bluedentalvzla.com/product/kit-de-forceps-infantiles-x-7/",
+    "sku": "7828",
+    "short_description": "",
+    "description": "",
+    "on_sale": true,
+    "prices": {
+      "price": "5260915",
+      "regular_price": "5845461",
+      "sale_price": "5260915",
+      "price_range": null,
+      "currency_code": "VES",
+      "currency_symbol": "Bs.",
+      "currency_minor_unit": 2,
+      "currency_decimal_separator": ",",
+      "currency_thousand_separator": ".",
+      "currency_prefix": "Bs.",
+      "currency_suffix": ""
+    },
+    "price_html": "<del aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>58.454,61</span></del> <span class=\"screen-reader-text\">El precio original era: Bs.58.454,61.</span><ins aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>52.609,15</span></ins><span class=\"screen-reader-text\">El precio actual es: Bs.52.609,15.</span>",
+    "average_rating": "0",
+    "review_count": 0,
+    "images": [
+      {
+        "id": 28329,
+        "src": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Kit-de-Forceps-Infantiles-x-7.png",
+        "thumbnail": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Kit-de-Forceps-Infantiles-x-7-300x300.png",
+        "srcset": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Kit-de-Forceps-Infantiles-x-7.png 323w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Kit-de-Forceps-Infantiles-x-7-300x300.png 300w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Kit-de-Forceps-Infantiles-x-7-150x150.png 150w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Kit-de-Forceps-Infantiles-x-7-100x100.png 100w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Kit-de-Forceps-Infantiles-x-7-64x64.png 64w",
+        "sizes": "(max-width: 323px) 100vw, 323px",
+        "name": "Kit de Forceps Infantiles x 7",
+        "alt": ""
+      }
+    ],
+    "categories": [
+      {
+        "id": 76,
+        "name": "Cirug\u00eda",
+        "slug": "cirugia",
+        "link": "https://bluedentalvzla.com/categoria-productos/insumos-odontologicos/cirugia/"
+      }
+    ],
+    "tags": [],
+    "brands": [],
+    "attributes": [],
+    "variations": [],
+    "grouped_products": [],
+    "has_options": false,
+    "is_purchasable": true,
+    "is_in_stock": true,
+    "is_on_backorder": false,
+    "low_stock_remaining": 2,
+    "stock_availability": {
+      "text": "Disponible",
+      "class": "disponible"
+    },
+    "sold_individually": false,
+    "add_to_cart": {
+      "text": "A\u00f1adir al carrito",
+      "description": "A\u00f1adir al carrito: &ldquo;Kit de Forceps Infantiles x 7&rdquo;",
+      "url": "/wp-json/wc/store/products?page=1&#038;per_page=5&#038;add-to-cart=28328",
+      "single_text": "A\u00f1adir al carrito",
+      "minimum": 1,
+      "maximum": 2,
+      "multiple_of": 1
+    },
+    "extensions": {}
+  },
+  {
+    "id": 28076,
+    "name": "Camara Con Monitor Intraoral DEOCA",
+    "slug": "camara-con-monitor-intraoral-deoca",
+    "parent": 0,
+    "type": "simple",
+    "variation": "",
+    "permalink": "https://bluedentalvzla.com/product/camara-con-monitor-intraoral-deoca/",
+    "sku": "7822",
+    "short_description": "",
+    "description": "",
+    "on_sale": true,
+    "prices": {
+      "price": "20404418",
+      "regular_price": "22671576",
+      "sale_price": "20404418",
+      "price_range": null,
+      "currency_code": "VES",
+      "currency_symbol": "Bs.",
+      "currency_minor_unit": 2,
+      "currency_decimal_separator": ",",
+      "currency_thousand_separator": ".",
+      "currency_prefix": "Bs.",
+      "currency_suffix": ""
+    },
+    "price_html": "<del aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>226.715,76</span></del> <span class=\"screen-reader-text\">El precio original era: Bs.226.715,76.</span><ins aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>204.044,18</span></ins><span class=\"screen-reader-text\">El precio actual es: Bs.204.044,18.</span>",
+    "average_rating": "0",
+    "review_count": 0,
+    "images": [
+      {
+        "id": 28287,
+        "src": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Camara-Con-Monitor-Intraoral-DEOCA.png",
+        "thumbnail": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Camara-Con-Monitor-Intraoral-DEOCA-300x300.png",
+        "srcset": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Camara-Con-Monitor-Intraoral-DEOCA.png 500w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Camara-Con-Monitor-Intraoral-DEOCA-300x300.png 300w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Camara-Con-Monitor-Intraoral-DEOCA-150x150.png 150w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Camara-Con-Monitor-Intraoral-DEOCA-100x100.png 100w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Camara-Con-Monitor-Intraoral-DEOCA-64x64.png 64w",
+        "sizes": "(max-width: 500px) 100vw, 500px",
+        "name": "Camara Con Monitor Intraoral DEOCA",
+        "alt": ""
+      }
+    ],
+    "categories": [
+      {
+        "id": 76,
+        "name": "Cirug\u00eda",
+        "slug": "cirugia",
+        "link": "https://bluedentalvzla.com/categoria-productos/insumos-odontologicos/cirugia/"
+      },
+      {
+        "id": 603,
+        "name": "Endodoncia",
+        "slug": "endodoncia-2",
+        "link": "https://bluedentalvzla.com/categoria-productos/endodoncia-2/"
+      },
+      {
+        "id": 42,
+        "name": "Operatoria",
+        "slug": "operatoria",
+        "link": "https://bluedentalvzla.com/categoria-productos/insumos-odontologicos/operatoria/"
+      },
+      {
+        "id": 89,
+        "name": "Ortopedia",
+        "slug": "ortopedia",
+        "link": "https://bluedentalvzla.com/categoria-productos/insumos-odontologicos/ortopedia/"
+      },
+      {
+        "id": 32,
+        "name": "Protesis",
+        "slug": "protesis",
+        "link": "https://bluedentalvzla.com/categoria-productos/insumos-odontologicos/protesis/"
+      }
+    ],
+    "tags": [],
+    "brands": [],
+    "attributes": [],
+    "variations": [],
+    "grouped_products": [],
+    "has_options": false,
+    "is_purchasable": true,
+    "is_in_stock": true,
+    "is_on_backorder": false,
+    "low_stock_remaining": null,
+    "stock_availability": {
+      "text": "Disponible",
+      "class": "disponible"
+    },
+    "sold_individually": false,
+    "add_to_cart": {
+      "text": "A\u00f1adir al carrito",
+      "description": "A\u00f1adir al carrito: &ldquo;Camara Con Monitor Intraoral DEOCA&rdquo;",
+      "url": "/wp-json/wc/store/products?page=1&#038;per_page=5&#038;add-to-cart=28076",
+      "single_text": "A\u00f1adir al carrito",
+      "minimum": 1,
+      "maximum": 4,
+      "multiple_of": 1
+    },
+    "extensions": {}
+  },
+  {
+    "id": 28282,
+    "name": "Silicona Por Condensacion para Laborat. Perfil Lab + Catalizador Vigodent",
+    "slug": "silicona-por-condensacion-para-laborat-perfil-lab-catalizador-vigodent",
+    "parent": 0,
+    "type": "simple",
+    "variation": "",
+    "permalink": "https://bluedentalvzla.com/product/silicona-por-condensacion-para-laborat-perfil-lab-catalizador-vigodent/",
+    "sku": "7826",
+    "short_description": "",
+    "description": "",
+    "on_sale": true,
+    "prices": {
+      "price": "2456649",
+      "regular_price": "2729610",
+      "sale_price": "2456649",
+      "price_range": null,
+      "currency_code": "VES",
+      "currency_symbol": "Bs.",
+      "currency_minor_unit": 2,
+      "currency_decimal_separator": ",",
+      "currency_thousand_separator": ".",
+      "currency_prefix": "Bs.",
+      "currency_suffix": ""
+    },
+    "price_html": "<del aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>27.296,10</span></del> <span class=\"screen-reader-text\">El precio original era: Bs.27.296,10.</span><ins aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>24.566,49</span></ins><span class=\"screen-reader-text\">El precio actual es: Bs.24.566,49.</span>",
+    "average_rating": "0",
+    "review_count": 0,
+    "images": [
+      {
+        "id": 28283,
+        "src": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Silicona-Por-Condensacion-para-Laborat-Perfil-Lab-Catalizador-Vigodent.jpg",
+        "thumbnail": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Silicona-Por-Condensacion-para-Laborat-Perfil-Lab-Catalizador-Vigodent-300x300.jpg",
+        "srcset": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Silicona-Por-Condensacion-para-Laborat-Perfil-Lab-Catalizador-Vigodent.jpg 500w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Silicona-Por-Condensacion-para-Laborat-Perfil-Lab-Catalizador-Vigodent-300x300.jpg 300w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Silicona-Por-Condensacion-para-Laborat-Perfil-Lab-Catalizador-Vigodent-150x150.jpg 150w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Silicona-Por-Condensacion-para-Laborat-Perfil-Lab-Catalizador-Vigodent-100x100.jpg 100w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Silicona-Por-Condensacion-para-Laborat-Perfil-Lab-Catalizador-Vigodent-64x64.jpg 64w",
+        "sizes": "(max-width: 500px) 100vw, 500px",
+        "name": "Silicona Por Condensacion para Laborat Perfil Lab Catalizador Vigodent",
+        "alt": ""
+      }
+    ],
+    "categories": [
+      {
+        "id": 58,
+        "name": "Est\u00e9tica",
+        "slug": "estetica",
+        "link": "https://bluedentalvzla.com/categoria-productos/insumos-odontologicos/estetica/"
+      }
+    ],
+    "tags": [],
+    "brands": [],
+    "attributes": [],
+    "variations": [],
+    "grouped_products": [],
+    "has_options": false,
+    "is_purchasable": true,
+    "is_in_stock": true,
+    "is_on_backorder": false,
+    "low_stock_remaining": null,
+    "stock_availability": {
+      "text": "Disponible",
+      "class": "disponible"
+    },
+    "sold_individually": false,
+    "add_to_cart": {
+      "text": "A\u00f1adir al carrito",
+      "description": "A\u00f1adir al carrito: &ldquo;Silicona Por Condensacion para Laborat. Perfil Lab + Catalizador Vigodent&rdquo;",
+      "url": "/wp-json/wc/store/products?page=1&#038;per_page=5&#038;add-to-cart=28282",
+      "single_text": "A\u00f1adir al carrito",
+      "minimum": 1,
+      "maximum": 5,
+      "multiple_of": 1
+    },
+    "extensions": {}
+  },
+  {
+    "id": 28111,
+    "name": "Anestesia Local Articaina al 4% Blister ARTHEEK",
+    "slug": "anestesia-local-articaina-al-4-blister-artheek",
+    "parent": 0,
+    "type": "simple",
+    "variation": "",
+    "permalink": "https://bluedentalvzla.com/product/anestesia-local-articaina-al-4-blister-artheek/",
+    "sku": "7825",
+    "short_description": "",
+    "description": "",
+    "on_sale": true,
+    "prices": {
+      "price": "601914",
+      "regular_price": "668793",
+      "sale_price": "601914",
+      "price_range": null,
+      "currency_code": "VES",
+      "currency_symbol": "Bs.",
+      "currency_minor_unit": 2,
+      "currency_decimal_separator": ",",
+      "currency_thousand_separator": ".",
+      "currency_prefix": "Bs.",
+      "currency_suffix": ""
+    },
+    "price_html": "<del aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>6.687,93</span></del> <span class=\"screen-reader-text\">El precio original era: Bs.6.687,93.</span><ins aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>6.019,14</span></ins><span class=\"screen-reader-text\">El precio actual es: Bs.6.019,14.</span>",
+    "average_rating": "0",
+    "review_count": 0,
+    "images": [
+      {
+        "id": 28113,
+        "src": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Blister-ARTHEEK.jpg",
+        "thumbnail": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Blister-ARTHEEK-300x300.jpg",
+        "srcset": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Blister-ARTHEEK.jpg 500w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Blister-ARTHEEK-300x300.jpg 300w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Blister-ARTHEEK-150x150.jpg 150w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Blister-ARTHEEK-100x100.jpg 100w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Blister-ARTHEEK-64x64.jpg 64w",
+        "sizes": "(max-width: 500px) 100vw, 500px",
+        "name": "Anestesia Local Articaina al 4% Blister ARTHEEK",
+        "alt": ""
+      }
+    ],
+    "categories": [
+      {
+        "id": 591,
+        "name": "Todos",
+        "slug": "todos",
+        "link": "https://bluedentalvzla.com/categoria-productos/todos/"
+      }
+    ],
+    "tags": [],
+    "brands": [],
+    "attributes": [],
+    "variations": [],
+    "grouped_products": [],
+    "has_options": false,
+    "is_purchasable": true,
+    "is_in_stock": true,
+    "is_on_backorder": false,
+    "low_stock_remaining": null,
+    "stock_availability": {
+      "text": "Disponible",
+      "class": "disponible"
+    },
+    "sold_individually": false,
+    "add_to_cart": {
+      "text": "A\u00f1adir al carrito",
+      "description": "A\u00f1adir al carrito: &ldquo;Anestesia Local Articaina al 4% Blister ARTHEEK&rdquo;",
+      "url": "/wp-json/wc/store/products?page=1&#038;per_page=5&#038;add-to-cart=28111",
+      "single_text": "A\u00f1adir al carrito",
+      "minimum": 1,
+      "maximum": 6,
+      "multiple_of": 1
+    },
+    "extensions": {}
+  },
+  {
+    "id": 28109,
+    "name": "Anestesia Local Articaina al 4% Caja ARTHEEK VIDRIO",
+    "slug": "anestesia-local-articaina-al-4-caja-artheek-vidrio",
+    "parent": 0,
+    "type": "simple",
+    "variation": "",
+    "permalink": "https://bluedentalvzla.com/product/anestesia-local-articaina-al-4-caja-artheek-vidrio/",
+    "sku": "7824",
+    "short_description": "",
+    "description": "",
+    "on_sale": true,
+    "prices": {
+      "price": "2682950",
+      "regular_price": "2981056",
+      "sale_price": "2682950",
+      "price_range": null,
+      "currency_code": "VES",
+      "currency_symbol": "Bs.",
+      "currency_minor_unit": 2,
+      "currency_decimal_separator": ",",
+      "currency_thousand_separator": ".",
+      "currency_prefix": "Bs.",
+      "currency_suffix": ""
+    },
+    "price_html": "<del aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>29.810,56</span></del> <span class=\"screen-reader-text\">El precio original era: Bs.29.810,56.</span><ins aria-hidden=\"true\"><span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">Bs.</span>26.829,50</span></ins><span class=\"screen-reader-text\">El precio actual es: Bs.26.829,50.</span>",
+    "average_rating": "0",
+    "review_count": 0,
+    "images": [
+      {
+        "id": 28110,
+        "src": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Caja-ARTHEEK-VIDRIO.jpg",
+        "thumbnail": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Caja-ARTHEEK-VIDRIO-300x300.jpg",
+        "srcset": "https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Caja-ARTHEEK-VIDRIO.jpg 490w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Caja-ARTHEEK-VIDRIO-300x300.jpg 300w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Caja-ARTHEEK-VIDRIO-150x150.jpg 150w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Caja-ARTHEEK-VIDRIO-100x100.jpg 100w, https://bluedentalvzla.com/wp-content/uploads/2026/03/Anestesia-Local-Articaina-al-4-Caja-ARTHEEK-VIDRIO-64x64.jpg 64w",
+        "sizes": "(max-width: 490px) 100vw, 490px",
+        "name": "Anestesia Local Articaina al 4% Caja ARTHEEK VIDRIO",
+        "alt": ""
+      }
+    ],
+    "categories": [
+      {
+        "id": 591,
+        "name": "Todos",
+        "slug": "todos",
+        "link": "https://bluedentalvzla.com/categoria-productos/todos/"
+      }
+    ],
+    "tags": [],
+    "brands": [],
+    "attributes": [],
+    "variations": [],
+    "grouped_products": [],
+    "has_options": false,
+    "is_purchasable": true,
+    "is_in_stock": true,
+    "is_on_backorder": false,
+    "low_stock_remaining": null,
+    "stock_availability": {
+      "text": "Disponible",
+      "class": "disponible"
+    },
+    "sold_individually": false,
+    "add_to_cart": {
+      "text": "A\u00f1adir al carrito",
+      "description": "A\u00f1adir al carrito: &ldquo;Anestesia Local Articaina al 4% Caja ARTHEEK VIDRIO&rdquo;",
+      "url": "/wp-json/wc/store/products?page=1&#038;per_page=5&#038;add-to-cart=28109",
+      "single_text": "A\u00f1adir al carrito",
+      "minimum": 1,
+      "maximum": 7,
+      "multiple_of": 1
+    },
+    "extensions": {}
+  }
+]

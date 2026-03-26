@@ -367,6 +367,11 @@ def _get_servicio_or_404(session: Session, servicio_id: UUID, especialista_id: U
 def _insumo_to_read(insumo: Insumo) -> InsumoRead:
     data = InsumoRead.model_validate(insumo)
     data.stock_bajo = insumo.stock_actual <= insumo.stock_minimo
+    # Calcular costo por unidad individual (si es paquete)
+    if insumo.unidades_por_paquete and insumo.unidades_por_paquete > 1:
+        data.costo_por_unidad = round(insumo.costo_unitario / insumo.unidades_por_paquete, 4)
+    else:
+        data.costo_por_unidad = insumo.costo_unitario
     return data
 
 
@@ -381,7 +386,12 @@ def _servicio_to_read(session: Session, servicio: Servicio) -> ServicioRead:
     for si in items:
         insumo = session.get(Insumo, si.insumo_id)
         if insumo:
-            costo_linea = si.cantidad_utilizada * insumo.costo_unitario
+            # IMPORTANTE: El costo se basa en el costo POR UNIDAD
+            costo_unit = insumo.costo_unitario
+            if insumo.unidades_por_paquete and insumo.unidades_por_paquete > 1:
+                costo_unit = insumo.costo_unitario / insumo.unidades_por_paquete
+            
+            costo_linea = si.cantidad_utilizada * costo_unit
             costo_total += costo_linea
             insumos_read.append(
                 ServicioInsumoRead(
@@ -389,7 +399,7 @@ def _servicio_to_read(session: Session, servicio: Servicio) -> ServicioRead:
                     insumo_nombre=insumo.nombre,
                     insumo_unidad=insumo.unidad,
                     cantidad_utilizada=si.cantidad_utilizada,
-                    costo_linea=costo_linea,
+                    costo_linea=round(costo_linea, 4),
                 )
             )
 

@@ -19,6 +19,8 @@ SELECT * FROM sys_config.insumos;
 
 SELECT * FROM sys_config.servicios;
 
+SELECT * FROM sys_config.catalogo_insumos;
+
 SELECT * FROM sys_config.servicio_insumos;
 
 SELECT * FROM sys_config.especialistas;
