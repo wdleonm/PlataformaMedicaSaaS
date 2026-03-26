@@ -77,7 +77,7 @@ def _sync_paciente_alerts(session: Session, paciente: Paciente, antecedentes_per
     if medicamentos:
         paciente.medicacion_frecuente = medicamentos
     
-    from datetime import datetime
+    from datetime import datetime, timezone
     paciente.updated_at = datetime.now(timezone.utc)
     
     session.add(paciente)
@@ -280,7 +280,7 @@ def update_historia(
     for field, value in data.model_dump(exclude_unset=True).items():
         setattr(historia, field, value)
 
-    from datetime import datetime
+    from datetime import datetime, timezone
     historia.updated_at = datetime.now(timezone.utc)
     session.add(historia)
     
@@ -313,7 +313,7 @@ def delete_historia(
 ) -> None:
     historia = _get_or_404(session, historia_id, especialista.id)
     historia.activo = False
-    from datetime import datetime
+    from datetime import datetime, timezone
     historia.updated_at = datetime.now(timezone.utc)
     session.add(historia)
     session.commit()

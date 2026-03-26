@@ -496,22 +496,31 @@ function HistoriasContent() {
   );
 
   // ── Carga de secciones desde la API ──────────────────────────────────────
+  const filterSecciones = (seccionesList: any[]) => {
+    const isDental = usuario?.especialidad_principal?.codigo?.startsWith("ODO_");
+    if (isDental) return seccionesList;
+
+    // Si no es dental, eliminamos EXAMEN_FISICO, ODONTOGRAMA, PLAN por solicitud del usuario
+    const excluded = ["EXAMEN_FISICO", "ODONTOGRAMA", "PLAN"];
+    return seccionesList.filter((s) => !excluded.includes(s.codigo));
+  };
+
   const fetchSecciones = async (especialidadId: string) => {
     try {
       setIsLoadingSecciones(true);
       const res = await api.get(`/api/hc-secciones/especialidad/${especialidadId}`);
-      setSecciones(res.data ?? []);
+      setSecciones(filterSecciones(res.data ?? []));
     } catch (err) {
       console.error("Error cargando secciones HC:", err);
       // Fallback: secciones hardcodeadas para no romper el flujo
-      setSecciones([
-        { id: "1", codigo: "CONSULTA",      nombre: "Consulta",      componente_frontend: "ConsultaStep",      orden: 1, obligatoria: true  },
+      setSecciones(filterSecciones([
+        { id: "1", codigo: "CONSULTA",      nombre: "Consulta Inicial", componente_frontend: "ConsultaStep",      orden: 1, obligatoria: true  },
         { id: "2", codigo: "ANTECEDENTES",  nombre: "Antecedentes",  componente_frontend: "AntecedentesStep",  orden: 2, obligatoria: false },
         { id: "3", codigo: "EXAMEN_FISICO", nombre: "Examen Físico", componente_frontend: "ExamenFisicoStep",  orden: 3, obligatoria: false },
         { id: "4", codigo: "ODONTOGRAMA",   nombre: "Odontograma",   componente_frontend: "OdontogramaStep",   orden: 4, obligatoria: false },
-        { id: "5", codigo: "PLAN",          nombre: "Plan",          componente_frontend: "PlanStep",          orden: 5, obligatoria: false },
+        { id: "5", codigo: "PLAN",          nombre: "Plan de Tratamiento", componente_frontend: "PlanStep",    orden: 5, obligatoria: false },
         { id: "6", codigo: "ADJUNTOS",      nombre: "Adjuntos",      componente_frontend: "AdjuntosStep",      orden: 6, obligatoria: false },
-      ]);
+      ]));
     } finally {
       setIsLoadingSecciones(false);
     }
@@ -523,14 +532,14 @@ function HistoriasContent() {
       fetchSecciones(usuario.especialidad_principal.id);
     } else if (usuario && !usuario.especialidad_principal) {
       // usuario sin especialidad: usar fallback hardcodeado
-      setSecciones([
-        { id: "1", codigo: "CONSULTA",      nombre: "Consulta",      componente_frontend: "ConsultaStep",      orden: 1, obligatoria: true  },
+      setSecciones(filterSecciones([
+        { id: "1", codigo: "CONSULTA",      nombre: "Consulta Inicial", componente_frontend: "ConsultaStep",      orden: 1, obligatoria: true  },
         { id: "2", codigo: "ANTECEDENTES",  nombre: "Antecedentes",  componente_frontend: "AntecedentesStep",  orden: 2, obligatoria: false },
         { id: "3", codigo: "EXAMEN_FISICO", nombre: "Examen Físico", componente_frontend: "ExamenFisicoStep",  orden: 3, obligatoria: false },
         { id: "4", codigo: "ODONTOGRAMA",   nombre: "Odontograma",   componente_frontend: "OdontogramaStep",   orden: 4, obligatoria: false },
-        { id: "5", codigo: "PLAN",          nombre: "Plan",          componente_frontend: "PlanStep",          orden: 5, obligatoria: false },
+        { id: "5", codigo: "PLAN",          nombre: "Plan de Tratamiento", componente_frontend: "PlanStep",    orden: 5, obligatoria: false },
         { id: "6", codigo: "ADJUNTOS",      nombre: "Adjuntos",      componente_frontend: "AdjuntosStep",      orden: 6, obligatoria: false },
-      ]);
+      ]));
     }
   }, [usuario?.especialidad_principal?.id]);
 
