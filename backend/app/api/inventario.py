@@ -28,7 +28,7 @@ from sqlmodel import Session, select
 from app.api.dependencies import get_current_especialista
 from app.database import get_session
 from app.models.especialista import Especialista
-from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo
+from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo, InventarioMovimiento
 from app.schemas.insumos_servicios import (
     InsumoCreate, InsumoList, InsumoRead, InsumoUpdate,
     RecetaUpdate, ServicioCreate, ServicioInsumoRead,
@@ -85,6 +85,24 @@ def create_insumo(
     session.add(insumo)
     session.commit()
     session.refresh(insumo)
+    
+    # Registrar Kardex inicial si tiene stock
+    if insumo.stock_actual > 0:
+        costo_unit = insumo.costo_unitario
+        if insumo.unidades_por_paquete and insumo.unidades_por_paquete > 1:
+            costo_unit = insumo.costo_unitario / insumo.unidades_por_paquete
+            
+        mov = InventarioMovimiento(
+            especialista_id=especialista.id,
+            insumo_id=insumo.id,
+            tipo="entrada",
+            cantidad=insumo.stock_actual,
+            costo_unitario_historico=costo_unit,
+            motivo_o_referencia="Inventario inicial / Recién incorporado"
+        )
+        session.add(mov)
+        session.commit()
+        
     return _insumo_to_read(insumo)
 
 
@@ -131,13 +149,60 @@ def update_insumo(
     especialista: Especialista  = Depends(get_current_especialista),
 ) -> InsumoRead:
     insumo = _get_insumo_or_404(session, insumo_id, especialista.id)
+    
+    # Determinar si hay cambio de stock manual
+    old_stock = insumo.stock_actual
+    new_stock = data.stock_actual if data.stock_actual is not None else -1
+    
     for field, value in data.model_dump(exclude_unset=True).items():
         setattr(insumo, field, value)
     insumo.updated_at = datetime.now(timezone.utc)
     session.add(insumo)
+    
+    # Registrar Kardex si hubo cambio de stock
+    if new_stock != -1 and new_stock != old_stock:
+        diff = new_stock - old_stock
+        tipo_mov = "entrada" if diff > 0 else "ajuste"
+        
+        costo_unit = insumo.costo_unitario
+        if insumo.unidades_por_paquete and insumo.unidades_por_paquete > 1:
+            costo_unit = insumo.costo_unitario / insumo.unidades_por_paquete
+            
+        mov = InventarioMovimiento(
+            especialista_id=especialista.id,
+            insumo_id=insumo.id,
+            tipo=tipo_mov,
+            cantidad=abs(diff),
+            costo_unitario_historico=costo_unit,
+            motivo_o_referencia="Reposición manual de stock" if diff > 0 else "Ajuste/Merma manual de stock"
+        )
+        session.add(mov)
+
     session.commit()
     session.refresh(insumo)
     return _insumo_to_read(insumo)
+
+
+@router.get("/api/insumos/{insumo_id}/movimientos")
+def list_movimientos_insumo(
+    insumo_id: UUID,
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=100, ge=1, le=500),
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+):
+    """Lista el historial de movimientos (Kardex) de un insumo específico."""
+    _get_insumo_or_404(session, insumo_id, especialista.id)
+    
+    stmt = select(InventarioMovimiento).where(
+        InventarioMovimiento.especialista_id == especialista.id,
+        InventarioMovimiento.insumo_id == insumo_id
+    ).order_by(InventarioMovimiento.fecha.desc())
+    
+    rows = session.exec(stmt).all()
+    total = len(rows)
+    items = list(rows[skip: skip + limit])
+    return {"total": total, "items": items}
 
 
 @router.delete("/api/insumos/{insumo_id}", status_code=status.HTTP_204_NO_CONTENT)

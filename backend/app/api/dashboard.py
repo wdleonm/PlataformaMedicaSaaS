@@ -233,3 +233,30 @@ def get_financial_config(
         "ultima_sincronizacion": config.bcv_ultima_sincronizacion,
         "sincronizacion_retrasada": retrasada
     }
+
+@router.get("/bcv-historial")
+def get_bcv_historial(
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+):
+    """
+    Retorna los últimos 60 días del historial de tasas del BCV.
+    """
+    from app.models.config_global import BCVTasaHistorial
+    
+    rows = session.exec(
+        select(BCVTasaHistorial)
+        .order_by(BCVTasaHistorial.fecha.desc())
+        .limit(60)
+    ).all()
+    
+    return [
+        {
+            "id": str(r.id),
+            "fecha": r.fecha.isoformat(),
+            "tasa_usd": r.tasa_usd,
+            "tasa_eur": r.tasa_eur,
+            "fuente": r.fuente
+        }
+        for r in rows
+    ]

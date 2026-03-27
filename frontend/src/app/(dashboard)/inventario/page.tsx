@@ -21,7 +21,8 @@ import {
   Minus,
   ExternalLink,
   Copy,
-  Check
+  Check,
+  History
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -127,6 +128,11 @@ export default function InventarioPage() {
   const [isInsumoModalOpen, setIsInsumoModalOpen] = useState(false);
   const [isServicioModalOpen, setIsServicioModalOpen] = useState(false);
   const [isRecetaModalOpen, setIsRecetaModalOpen] = useState(false);
+  const [isKardexModalOpen, setIsKardexModalOpen] = useState(false);
+
+  // Estados Kardex
+  const [kardexItems, setKardexItems] = useState<any[]>([]);
+  const [kardexInsumo, setKardexInsumo] = useState<Insumo | null>(null);
 
   // Estados de Edición
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
@@ -244,6 +250,17 @@ export default function InventarioPage() {
     }
   };
 
+  const handleOpenKardex = async (insumo: Insumo) => {
+    try {
+      setKardexInsumo(insumo);
+      const res = await api.get(`/api/insumos/${insumo.id}/movimientos`);
+      setKardexItems(res.data.items);
+      setIsKardexModalOpen(true);
+    } catch (err) {
+      alert("Error al cargar historial de Kardex");
+    }
+  };
+
   const handleDeleteInsumo = async (id: string) => {
     if (!confirm("¿Desactivar este insumo?")) return;
     try {
@@ -294,6 +311,7 @@ export default function InventarioPage() {
       unidades_por_paquete: unidadesDetectadas,
       stock_actual: 0,
       stock_minimo: 5,
+      cantidad_a_añadir: 0,
     });
     // Limpiar búsqueda para mostrar el formulario
     setCatalogSearch("");
@@ -601,8 +619,9 @@ export default function InventarioPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => handleOpenInsumoModal(insumo)} className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"><Edit2 size={16}/></button>
-                          <button onClick={() => handleDeleteInsumo(insumo.id)} className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"><Trash2 size={16}/></button>
+                          <button onClick={() => handleOpenKardex(insumo)} title="Ver Historial Kardex" className="p-2 hover:bg-emerald-500/10 text-emerald-500 rounded-lg transition-colors"><History size={16}/></button>
+                          <button onClick={() => handleOpenInsumoModal(insumo)} title="Editar" className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"><Edit2 size={16}/></button>
+                          <button onClick={() => handleDeleteInsumo(insumo.id)} title="Eliminar" className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"><Trash2 size={16}/></button>
                         </div>
                       </td>
                     </tr>
@@ -952,7 +971,14 @@ export default function InventarioPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {recetaItems.map((item, idx) => (
+                    {recetaItems.map((item, idx) => {
+                      const selIns = insumos.find(i => i.id === item.insumo_id);
+                      let costoFila = 0;
+                      if (selIns) {
+                         const costoUnidad = selIns.costo_unitario / (selIns.unidades_por_paquete || 1);
+                         costoFila = costoUnidad * (item.cantidad_utilizada || 0);
+                      }
+                      return (
                       <div key={idx} className="flex gap-3 items-end bg-secondary/10 p-3 rounded-xl border border-border/10">
                         <div className="flex-1 space-y-1">
                           <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Insumo</label>
@@ -962,24 +988,27 @@ export default function InventarioPage() {
                             onChange={(e) => updateRecetaItem(idx, "insumo_id", e.target.value)}
                           >
                             <option value="">Seleccione...</option>
-                            {insumos.map(i => (
-                              <option key={i.id} value={i.id}>{i.nombre} ({i.unidad})</option>
-                            ))}
+                            {insumos.map(i => {
+                              const cu = i.costo_unitario / (i.unidades_por_paquete || 1);
+                              return (
+                                <option key={i.id} value={i.id}>{i.nombre} • ${cu.toFixed(2)} c/{i.unidad}</option>
+                              );
+                            })}
                           </select>
                         </div>
                         <div className="w-36">
                           <NumberInput 
-                            label="Cantidad" 
+                            label={`Cant. ($${costoFila.toFixed(2)})`}
                             value={item.cantidad_utilizada} 
                             onChange={(val) => updateRecetaItem(idx, "cantidad_utilizada", val)} 
                             step={0.1}
                           />
                         </div>
-                        <button onClick={() => removeRecetaItem(idx)} className="p-2.5 text-destructive hover:bg-destructive/10 rounded-lg transition-colors">
+                        <button onClick={() => removeRecetaItem(idx)} className="p-2.5 text-destructive hover:bg-destructive/10 rounded-lg transition-colors mb-1">
                           <Trash2 size={16} />
                         </button>
                       </div>
-                    ))}
+                    )})}
                     <button onClick={addRecetaItem} className="w-full py-3 border-2 border-dashed border-border/50 rounded-xl text-muted-foreground text-sm font-semibold hover:border-primary/50 hover:text-primary transition-all">
                       + Agregar otro insumo
                     </button>
@@ -990,6 +1019,58 @@ export default function InventarioPage() {
               <div className="p-6 border-t border-border/30 flex justify-end gap-3 bg-secondary/10">
                 <button onClick={() => setIsRecetaModalOpen(false)} className="px-5 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
                 <button onClick={handleSaveReceta} className="bg-primary text-primary-foreground px-8 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Guardar Receta</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Kardex */}
+      <AnimatePresence>
+        {isKardexModalOpen && kardexInsumo && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsKardexModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl border border-border relative z-10 flex flex-col max-h-[90vh]"
+            >
+              <div className="p-6 border-b border-border/50 flex justify-between items-center bg-secondary/20">
+                <div>
+                  <h2 className="text-xl font-bold flex items-center gap-2">Kardex de Inventario</h2>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{kardexInsumo.nombre} ({kardexInsumo.unidad})</p>
+                </div>
+                <button onClick={() => setIsKardexModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
+              </div>
+              <div className="overflow-y-auto flex-1 p-6 space-y-4">
+                <div className="border border-border/10 rounded-2xl overflow-hidden bg-secondary/20">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-secondary/40 text-[10px] uppercase font-black tracking-widest text-muted-foreground">
+                      <tr>
+                        <th className="p-4">Fecha / Hota</th>
+                        <th className="p-4">Tipo</th>
+                        <th className="p-4">Cantidad</th>
+                        <th className="p-4">Ref / Motivo</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/10">
+                      {kardexItems.length === 0 ? (
+                        <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic">No hay historial registrado.</td></tr>
+                      ) : (
+                        kardexItems.map(k => (
+                          <tr key={k.id} className="hover:bg-secondary/20 transition-colors">
+                            <td className="p-4 font-medium text-[11px] whitespace-nowrap text-muted-foreground">{new Date(k.fecha).toLocaleString()}</td>
+                            <td className="p-4 text-xs font-bold uppercase tracking-widest">
+                              <span className={k.tipo === 'entrada' ? 'text-emerald-500' : k.tipo === 'salida' ? 'text-destructive' : 'text-blue-500'}>
+                                {k.tipo}
+                              </span>
+                            </td>
+                            <td className="p-4 font-bold">{k.cantidad?.toFixed(2)}</td>
+                            <td className="p-4 text-xs">{k.motivo_o_referencia || '-'}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </motion.div>
           </div>

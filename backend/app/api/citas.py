@@ -21,8 +21,9 @@ from app.api.dependencies import get_current_especialista
 from app.database import get_session
 from app.models.especialista import Especialista
 from app.models.finanzas import Cita
-from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo
+from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo, InventarioMovimiento
 from app.models.paciente import Paciente
+from app.models.comunicaciones import ColaMensaje
 from app.schemas.citas import CitaCreate, CitaList, CitaRead, CitaUpdate
 
 router = APIRouter(tags=["citas"])
@@ -117,6 +118,8 @@ def update_cita(
     """
     cita = _get_or_404(session, cita_id, especialista.id)
     update_data = data.model_dump(exclude_unset=True)
+    
+    was_completed = cita.estado == "completada"
 
     # Si se completa la cita y hay servicio asignado, calcular costo de insumos
     if (
@@ -132,6 +135,12 @@ def update_cita(
 
     for field, value in update_data.items():
         setattr(cita, field, value)
+        
+    now_completed = cita.estado == "completada"
+    
+    # ─── Lógica de Deducción de Inventario (Fase 3 & Kardex) ───
+    if now_completed and not was_completed and cita.servicio_id:
+        _descontar_inventario_y_alertar(session, cita.servicio_id, especialista, cita_id)
 
     # ─── Lógica de Abono Automático (Fase 8: Refinamiento) ───
     if (
@@ -220,5 +229,64 @@ def _calcular_costo_servicio(session: Session, servicio_id: UUID) -> float:
     for si in items:
         insumo = session.get(Insumo, si.insumo_id)
         if insumo:
-            total += si.cantidad_utilizada * insumo.costo_unitario
+            costo_unit = insumo.costo_unitario
+            if insumo.unidades_por_paquete and insumo.unidades_por_paquete > 1:
+                costo_unit = insumo.costo_unitario / insumo.unidades_por_paquete
+            total += si.cantidad_utilizada * costo_unit
     return round(total, 4)
+
+
+def _descontar_inventario_y_alertar(session: Session, servicio_id: UUID, especialista: Especialista, cita_id: UUID) -> None:
+    """
+    Descuenta los insumos de la BD según la receta del servicio, 
+    registra el movimiento y encola una alerta si el stock cae por debajo del mínimo.
+    """
+    items = session.exec(
+        select(ServicioInsumo).where(ServicioInsumo.servicio_id == servicio_id)
+    ).all()
+    
+    for si in items:
+        insumo = session.get(Insumo, si.insumo_id)
+        if not insumo or insumo.stock_actual <= 0:
+            continue
+            
+        # Descontar stock
+        insumo.stock_actual = max(0.0, insumo.stock_actual - si.cantidad_utilizada)
+        
+        # Calcular costo real fragmentado (para Kardex)
+        costo_unit = insumo.costo_unitario
+        if insumo.unidades_por_paquete and insumo.unidades_por_paquete > 1:
+            costo_unit = insumo.costo_unitario / insumo.unidades_por_paquete
+            
+        # Registrar Kardex (Movimiento)
+        mov = InventarioMovimiento(
+            especialista_id=especialista.id,
+            insumo_id=insumo.id,
+            tipo="salida",
+            cantidad=si.cantidad_utilizada,
+            costo_unitario_historico=costo_unit,
+            motivo_o_referencia=f"Cita completada ID {str(cita_id)[:8]}..."
+        )
+        session.add(mov)
+        
+        # Alerta de Stock Bajo (vía WhatsApp)
+        if insumo.stock_actual <= insumo.stock_minimo and especialista.telefono:
+            msjs_pendientes = session.exec(
+                select(ColaMensaje).where(
+                    ColaMensaje.destinatario == especialista.telefono,
+                    ColaMensaje.estado == "pendiente",
+                    ColaMensaje.mensaje.like(f"%{insumo.nombre}%")
+                )
+            ).first()
+            
+            # Solo enviar si no hemos encolado ya esa alerta
+            if not msjs_pendientes:
+                alerta_msg = f"⚠️ *Alerta de Stock VitalNexus*\nHola Dr(a). {especialista.apellido},\nEl insumo *{insumo.nombre}* acaba de alcanzar su nivel de stock crítico ({insumo.stock_actual} {insumo.unidad} restantes).\nTe recomendamos reponer el inventario."
+                msg_alerta = ColaMensaje(
+                    especialista_id=especialista.id,
+                    tipo_mensaje="whatsapp",
+                    destinatario=especialista.telefono,
+                    mensaje=alerta_msg
+                )
+                session.add(msg_alerta)
+    session.add(insumo)

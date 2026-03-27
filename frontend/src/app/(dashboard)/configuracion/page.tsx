@@ -16,14 +16,69 @@ import {
   Phone,
   TextIcon,
   MapPin,
-  CheckCircle2
+  CheckCircle2,
+  BadgeDollarSign
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogoUpload } from "@/components/LogoUpload";
 
+const BCVHistorialTab = () => {
+  const [historial, setHistorial] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    api.get("/api/dashboard/bcv-historial").then(res => {
+      setHistorial(res.data);
+      setIsLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setIsLoading(false);
+    });
+  }, []);
+
+  return (
+    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-card/50 backdrop-blur-xl border border-border/10 rounded-[32px] p-8 space-y-6 shadow-2xl">
+      <div>
+         <h2 className="text-xl font-black">Historial de Tasas BCV</h2>
+         <p className="text-sm text-muted-foreground mt-1">Registro de los últimos 60 días de las tasas de cambio de referencia del Banco Central de Venezuela.</p>
+      </div>
+      
+      {isLoading ? (
+        <div className="py-10 text-center text-muted-foreground animate-pulse text-sm font-bold">Cargando historial...</div>
+      ) : (
+        <div className="border border-border/10 rounded-2xl overflow-hidden bg-secondary/20">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-secondary/40 text-[10px] uppercase font-black tracking-widest text-muted-foreground">
+              <tr>
+                <th className="p-4">Fecha (UTC)</th>
+                <th className="p-4">Tasa USD</th>
+                <th className="p-4">Tasa EUR</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/10">
+              {historial.map(row => (
+                <tr key={row.id} className="hover:bg-secondary/20 transition-colors">
+                  <td className="p-4 font-medium">{new Date(row.fecha).toLocaleDateString()}</td>
+                  <td className="p-4 text-emerald-500 font-bold">Bs. {row.tasa_usd.toFixed(2)}</td>
+                  <td className="p-4 text-blue-500 font-bold">Bs. {row.tasa_eur.toFixed(2)}</td>
+                </tr>
+              ))}
+              {historial.length === 0 && (
+                <tr>
+                  <td colSpan={3} className="p-8 text-center text-muted-foreground italic">No hay historial registrado aún.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
 export default function ConfiguracionPage() {
   const { usuario, refreshUser } = useAuth();
-  const [activeTab, setActiveTab] = useState<'perfil' | 'clinica' | 'redes' | 'portal'>('perfil');
+  const [activeTab, setActiveTab] = useState<'perfil' | 'clinica' | 'redes' | 'portal' | 'finanzas'>('perfil');
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
@@ -63,6 +118,7 @@ export default function ConfiguracionPage() {
     { id: 'clinica', label: 'Identidad Clínica', icon: Building2 },
     { id: 'redes', label: 'Redes Sociales', icon: Share2 },
     { id: 'portal', label: 'Portal Público', icon: Globe },
+    { id: 'finanzas', label: 'Tasas BCV', icon: BadgeDollarSign },
   ];
 
   return (
@@ -348,6 +404,8 @@ export default function ConfiguracionPage() {
               </div>
             </motion.div>
           )}
+
+          {activeTab === 'finanzas' && <BCVHistorialTab />}
         </div>
 
         <div className="lg:col-span-4 space-y-6">

@@ -73,3 +73,25 @@ class ServicioInsumo(SQLModel, table=True):
     servicio_id:        UUID  = Field(foreign_key="sys_config.servicios.id", primary_key=True)
     insumo_id:          UUID  = Field(foreign_key="sys_config.insumos.id",   primary_key=True)
     cantidad_utilizada: float = Field(default=1.0, gt=0)
+
+
+# ---------------------------------------------------------------------------
+# 3.3  Inventario Movimiento (Kardex)
+# ---------------------------------------------------------------------------
+
+class InventarioMovimiento(SQLModel, table=True):
+    """
+    Registro histórico de movimientos de inventario (Kardex).
+    Tipos comunes: 'entrada', 'salida', 'ajuste'
+    """
+    __tablename__ = "inventario_movimientos"
+    __table_args__ = {"schema": "sys_config"}
+
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    especialista_id: UUID = Field(foreign_key="sys_config.especialistas.id", index=True)
+    insumo_id: UUID = Field(foreign_key="sys_config.insumos.id", index=True)
+    tipo: str = Field(max_length=20)  # "entrada", "salida", "ajuste"
+    cantidad: float
+    costo_unitario_historico: float = Field(default=0.0)
+    motivo_o_referencia: Optional[str] = Field(default=None)
+    fecha: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
