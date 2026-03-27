@@ -21,6 +21,8 @@ SELECT * FROM sys_config.servicios;
 
 SELECT * FROM sys_config.catalogo_insumos;
 
+--delete from sys_config.insumos;
+
 SELECT * FROM sys_config.servicio_insumos;
 
 SELECT * FROM sys_config.especialistas;
@@ -30,3 +32,5 @@ SELECT * FROM sys_config.especialidades;
 SELECT * from sys_config.hc_secciones;
 
 SELECT * from sys_config.especialidad_hc_secciones;
+
+SELECT * from sys_config.bcv_tasas_historial ;

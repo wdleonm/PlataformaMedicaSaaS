@@ -141,6 +141,7 @@ export default function InventarioPage() {
     unidades_por_paquete: 1,
     stock_actual: 0,
     stock_minimo: 0,
+    cantidad_a_añadir: 0,
   });
 
   // Formulario Servicio
@@ -217,6 +218,7 @@ export default function InventarioPage() {
       unidades_por_paquete: insumo?.unidades_por_paquete || 1,
       stock_actual: insumo?.stock_actual || 0,
       stock_minimo: insumo?.stock_minimo || 0,
+      cantidad_a_añadir: 0,
     });
     setIsInsumoModalOpen(true);
   };
@@ -224,10 +226,16 @@ export default function InventarioPage() {
   const handleSaveInsumo = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload: any = { ...insumoForm };
+      if (modalMode === "edit" && payload.cantidad_a_añadir > 0) {
+        payload.stock_actual = payload.stock_actual + payload.cantidad_a_añadir;
+      }
+      delete payload.cantidad_a_añadir;
+
       if (modalMode === "create") {
-        await api.post("/api/insumos", insumoForm);
+        await api.post("/api/insumos", payload);
       } else {
-        await api.patch(`/api/insumos/${selectedId}`, insumoForm);
+        await api.patch(`/api/insumos/${selectedId}`, payload);
       }
       setIsInsumoModalOpen(false);
       fetchData();
@@ -754,14 +762,45 @@ export default function InventarioPage() {
                       onChange={(val) => setInsumoForm({...insumoForm, unidades_por_paquete: val})} 
                       min={1}
                     />
-                    <NumberInput 
-                      label="Stock Actual (Paquetes)" 
-                      value={insumoForm.stock_actual} 
-                      onChange={(val) => setInsumoForm({...insumoForm, stock_actual: val})} 
-                    />
-                    <div className="col-span-2">
+
+                    <div className="col-span-2 bg-primary/5 border border-primary/20 rounded-xl p-3 flex justify-between items-center shadow-inner">
+                      <span className="text-xs font-bold text-primary flex items-center gap-2">
+                        <Info size={14} /> Costo por unidad calculado:
+                      </span>
+                      <span className="font-black text-lg text-primary">
+                        ${insumoForm.unidades_por_paquete > 0 ? (insumoForm.costo_unitario / insumoForm.unidades_por_paquete).toFixed(2) : "0.00"}
+                      </span>
+                    </div>
+
+                    {modalMode === 'create' ? (
                       <NumberInput 
-                        label="Stock Mínimo Alerta (Paquetes)" 
+                        label="Stock Inicial (Paq)" 
+                        value={insumoForm.stock_actual} 
+                        onChange={(val) => setInsumoForm({...insumoForm, stock_actual: val})} 
+                        min={0}
+                      />
+                    ) : (
+                      <div className="col-span-1 flex gap-2">
+                        <div className="flex-[0.5] space-y-1.5">
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Stock</label>
+                          <div className="w-full bg-secondary/30 border border-border/50 rounded-xl h-[42px] flex items-center justify-center text-sm font-bold text-muted-foreground cursor-not-allowed">
+                            {insumoForm.stock_actual}
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <NumberInput 
+                            label="+ Comprar (Paq)" 
+                            value={insumoForm.cantidad_a_añadir || 0} 
+                            onChange={(val) => setInsumoForm({...insumoForm, cantidad_a_añadir: val})} 
+                            min={0}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="col-span-1">
+                      <NumberInput 
+                        label="Stock Mínimo Alerta" 
                         value={insumoForm.stock_minimo} 
                         onChange={(val) => setInsumoForm({...insumoForm, stock_minimo: val})} 
                       />
