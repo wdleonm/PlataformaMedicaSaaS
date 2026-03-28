@@ -11,7 +11,11 @@ import {
   Loader2, 
   AlertCircle,
   Eye,
-  EyeOff
+  EyeOff,
+  Phone,
+  MapPin,
+  Calendar,
+  Clock
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -41,6 +45,29 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0514] flex items-center justify-center p-6 font-sans relative overflow-hidden">
+      
+      {/* --- CINTILLO SUPERIOR (ADMIN STYLE) --- */}
+      <div className="fixed top-0 w-full z-[60] bg-violet-950/20 backdrop-blur-md border-b border-white/5 py-2 hidden md:block">
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-[10px] text-violet-400/60 font-black uppercase tracking-widest">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Phone className="w-3 h-3 text-violet-500" /> +58 0412-4444621
+            </div>
+            <div className="flex items-center gap-2">
+              <Mail className="w-3 h-3 text-violet-500" /> smartlift1608@gmail.com
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-3 h-3 text-violet-500" /> Valencia, Edo. Carabobo
+            </div>
+            <div className="flex items-center gap-2 border-l border-white/10 pl-6">
+              <Calendar className="w-3 h-3 text-violet-500" /> {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Background Decor */}
       <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-violet-600/20 blur-[150px] rounded-full" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/20 blur-[150px] rounded-full" />
@@ -51,15 +78,15 @@ export default function AdminLoginPage() {
         className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-10">
-          <div className="w-24 h-24 bg-white/5 backdrop-blur-xl rounded-[40px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-violet-500/20 ring-1 ring-white/10 overflow-hidden">
+          <div className="w-28 h-28 bg-white/5 backdrop-blur-xl rounded-[40px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-violet-500/20 ring-1 ring-white/10 overflow-hidden group hover:scale-105 transition-transform duration-500">
             <img 
               src="/img/logo/isotipo.png" 
               alt="VitalNexus Admin" 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover p-2"
             />
           </div>
-          <h1 className="text-4xl font-black text-white mb-2 tracking-tight">Master Admin</h1>
-          <p className="text-violet-400/80 font-bold uppercase tracking-widest text-[10px]">Portal Propietario VitalNexus</p>
+          <h1 className="text-5xl font-black text-white mb-2 tracking-tighter">Master Admin</h1>
+          <p className="text-violet-400 font-bold uppercase tracking-[0.2em] text-[11px] opacity-80">Portal Propietario VitalNexus</p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[40px] border border-white/10 shadow-2xl relative group overflow-hidden">

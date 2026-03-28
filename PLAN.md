@@ -502,5 +502,26 @@ Se ha preparado la infraestructura para el envío de notificaciones vía WhatsAp
 
 ---
 
-*Documento: VitalNexus | Master Plan. Última actualización: 20/03/2026.*
-*Estado: Fases 1–7 y 9 COMPLETADAS ✅ | Fase 8 (Ajustes YCloud pendientes) | Pendiente: Fases 10 y 11.*
+### Fase 12: Marketing Landing Page (Atracción de Especialistas)
+
+**Objetivo:** Transformar la página de inicio en un portal de ventas de alto impacto visual (Basado en el análisis de UroVital), diseñado para convencer a los especialistas de unirse a la plataforma.
+
+#### 12.1 Estética y "Feel" Premium
+- [ ] **Hero Tecnológico**: Fondo `deep-dark` con gradientes cian/azul y un mockup flotante funcional del dashboard de VitalNexus.
+- [ ] **Contadores de Éxito**: Implementar contadores animados de especialistas activos y pacientes atendidos.
+- [ ] **Micro-interacciones**: Añadir efectos de "glow" y resplandor al pasar el cursor por botones y tarjetas.
+
+#### 12.2 Estructura de Conversión
+- [ ] **Sección Beneficios Doctor**: Grilla resaltando Eficiencia, Seguridad RLS y Rentabilidad Automática.
+- [ ] **Timeline de Onboarding**: Paso a paso (01-04) sobre lo fácil que es configurar el consultorio digital.
+- [ ] **Separación de Login**: Mantener el login accesible pero dar prioridad al mensaje de marketing para nuevos usuarios.
+
+#### Criterios de aceptación Fase 12
+- La página `page.tsx` proyecta una imagen de solidez tecnológica y profesionalismo.
+- Los especialistas encuentran una propuesta de valor clara antes de iniciar sesión.
+
+---
+
+*Documento: VitalNexus | Master Plan. Última actualización: 28/03/2026.*
+*Estado: Fases 1–7 y 9 COMPLETADAS ✅ | Fase 8 (Ajustes YCloud pendientes) | Fase 12 (Diseño Nuevo Guardado) | Pendiente: Fases 10, 11 y 12.*
+

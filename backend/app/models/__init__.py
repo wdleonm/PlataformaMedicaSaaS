@@ -16,7 +16,7 @@ from app.models.paciente import Paciente
 from app.models.odontograma import OdontogramaHallazgo, OdontogramaRegistro
 from app.models.historia_clinica import HistoriaClinica
 from app.models.hc_seccion import HCSeccion, EspecialidadHCSeccion
-from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo
+from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo, InventarioMovimiento
 from app.models.finanzas import Cita, Presupuesto, PresupuestoDetalle, Abono
 from app.models.comunicaciones import ColaMensaje
 from app.models.admin import Admin
@@ -35,6 +35,7 @@ __all__ = [
     "Insumo",
     "Servicio",
     "ServicioInsumo",
+    "InventarioMovimiento",
     "Cita",
     "Presupuesto",
     "PresupuestoDetalle",
