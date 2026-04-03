@@ -26,6 +26,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { formatLocalDate } from "@/lib/utils";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -838,7 +839,7 @@ function HistoriasContent() {
                         </div>
                       )}
                     </div>
-                    <div className="font-bold text-lg">{format(new Date(h.fecha_apertura), "dd MMM, yyyy", { locale: es })}</div>
+                    <div className="font-bold text-lg">{format(formatLocalDate(h.fecha_apertura), "dd MMM, yyyy", { locale: es })}</div>
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                       <Clock size={12} /> {format(new Date(h.created_at), "HH:mm")}
                     </div>

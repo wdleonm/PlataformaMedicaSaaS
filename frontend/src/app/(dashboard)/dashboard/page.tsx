@@ -98,6 +98,7 @@ const cardVariants = {
 export default function DashboardHome() {
   const { usuario, token } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [rentabilidad, setRentabilidad] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -109,12 +110,14 @@ export default function DashboardHome() {
       try {
         setLoading(true);
         setError(false);
-        const [statsRes, configRes] = await Promise.all([
+        const [statsRes, configRes, rentRes] = await Promise.all([
           api.get("/api/dashboard/stats"),
-          api.get("/api/dashboard/config")
+          api.get("/api/dashboard/config"),
+          api.get("/api/reportes/rentabilidad-mensual")
         ]);
         setStats(statsRes.data);
         setFinConfig(configRes.data);
+        setRentabilidad(rentRes.data);
       } catch (err) {
         console.error("Dashboard fetch error:", err);
         setError(true);
@@ -477,6 +480,79 @@ export default function DashboardHome() {
           </div>
         </motion.div>
       </div>
+
+      {/* ── Nueva Sección: Rentabilidad de Servicios (Fase 9.1) ────────────── */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.45 }}
+        className="glass-panel rounded-3xl border border-border/20 overflow-hidden"
+      >
+        <div className="flex items-center justify-between p-6 border-b border-border/10 bg-emerald-500/5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-400/10 rounded-xl">
+              <TrendingUp size={18} className="text-emerald-400" />
+            </div>
+            <div>
+              <h2 className="font-bold text-sm">Rentabilidad Detallada por Servicio</h2>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Análisis de Costos Directos + Merma</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] text-muted-foreground font-black uppercase">Utilidad Neta Total (Mes)</p>
+            <p className="text-lg font-black text-emerald-400">{formatCurrency(rentabilidad?.totales?.utilidad_neta || 0)}</p>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-secondary/20 text-muted-foreground uppercase text-[10px] font-black tracking-widest">
+              <tr>
+                <th className="px-6 py-4">Servicio</th>
+                <th className="px-6 py-4 text-center">Cant.</th>
+                <th className="px-6 py-4 text-center">Ingresos</th>
+                <th className="px-6 py-4 text-center">Insumos</th>
+                <th className="px-6 py-4 text-center">Gastos Ind. (Merma)</th>
+                <th className="px-6 py-4 text-center">Utilidad Real</th>
+                <th className="px-6 py-4 text-center">Margen</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/10">
+              {rentabilidad?.servicios?.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground italic">No hay datos de rentabilidad para este periodo. Completa citas para ver el análisis.</td>
+                </tr>
+              ) : (
+                rentabilidad?.servicios?.map((s: any, i: number) => {
+                  const margen = s.ingresos > 0 ? (s.utilidad_neta / s.ingresos) * 100 : 0;
+                  return (
+                    <tr key={i} className="hover:bg-white/5 transition-colors group">
+                      <td className="px-6 py-4 font-bold text-sm">{s.servicio}</td>
+                      <td className="px-6 py-4 text-center font-medium">{s.cantidad}</td>
+                      <td className="px-6 py-4 text-center font-bold text-white">{formatCurrency(s.ingresos)}</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">{formatCurrency(s.costos_insumos)}</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">{formatCurrency(s.costos_merma)}</td>
+                      <td className="px-6 py-4 text-center font-black text-emerald-400">{formatCurrency(s.utilidad_neta)}</td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
+                            <motion.div 
+                              initial={{ width: 0 }} 
+                              animate={{ width: `${Math.min(Math.max(margen, 0), 100)}%` }} 
+                              className={`h-full ${margen > 40 ? 'bg-emerald-500' : 'bg-amber-500'}`} 
+                            />
+                          </div>
+                          <span className="font-bold min-w-[30px]">{Math.round(margen)}%</span>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </motion.section>
 
       {/* ── Accesos Rápidos ─────────────────────────────────────────────────── */}
       <motion.section

@@ -89,6 +89,7 @@ export default function ConfiguracionPage() {
     clinica_nombre: usuario?.clinica_nombre || "",
     clinica_direccion: usuario?.clinica_direccion || "",
     portal_visible: usuario?.portal_visible || false,
+    mostrar_precios_portal: usuario?.mostrar_precios_portal || false,
     slug_url: usuario?.slug_url || "",
     redes_sociales: usuario?.redes_sociales || {
       instagram: "",
@@ -401,6 +402,25 @@ export default function ConfiguracionPage() {
                   )}
                 </div>
                 <p className="text-[10px] text-muted-foreground px-1">Usa un nombre corto y fácil de recordar.</p>
+              </div>
+
+              {/* Fase 9.2: Toggle visibilidad de precios */}
+              <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl border border-border/10 group">
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${formData.mostrar_precios_portal ? "bg-amber-500 text-white" : "bg-muted text-muted-foreground"}`}>
+                    <BadgeDollarSign size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm">Mostrar Precios en el Portal</h3>
+                    <p className="text-[10px] text-muted-foreground">Los pacientes verán el precio de cada servicio al agendar.</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setFormData({...formData, mostrar_precios_portal: !formData.mostrar_precios_portal})}
+                  className={`w-14 h-7 rounded-full transition-all relative ${formData.mostrar_precios_portal ? "bg-amber-500" : "bg-muted"}`}
+                >
+                  <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all ${formData.mostrar_precios_portal ? "right-1" : "left-1"}`} />
+                </button>
               </div>
             </motion.div>
           )}

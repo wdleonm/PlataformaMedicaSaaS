@@ -24,6 +24,7 @@ import {
   MessageCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatLocalDate } from "@/lib/utils";
 
 interface Detalle {
   id?: string;
@@ -447,7 +448,7 @@ export default function FinanzasPage() {
                         <div>
                           <p className="font-bold">{getPacienteNombre(p.paciente_id)}</p>
                           <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
-                            {new Date(p.fecha).toLocaleDateString()}
+                            {formatLocalDate(p.fecha).toLocaleDateString()}
                           </p>
                         </div>
                       </div>

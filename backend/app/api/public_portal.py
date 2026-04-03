@@ -68,7 +68,8 @@ def get_public_profile(slug: str, session: Session = Depends(get_session)):
         "clinica_nombre": especialista.clinica_nombre,
         "clinica_logo_url": especialista.clinica_logo_url,
         "clinica_direccion": especialista.clinica_direccion,
-        "redes_sociales": especialista.redes_sociales
+        "redes_sociales": especialista.redes_sociales,
+        "mostrar_precios_portal": especialista.mostrar_precios_portal
     }
 
 @router.post("/p/{slug}/reserva")

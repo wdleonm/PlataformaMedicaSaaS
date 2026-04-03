@@ -62,6 +62,7 @@ class Especialista(EspecialistaBase, table=True):
     clinica_nombre: Optional[str] = Field(default=None, max_length=200)
     clinica_logo_url: Optional[str] = Field(default=None, max_length=500)
     clinica_direccion: Optional[str] = Field(default=None)
+    mostrar_precios_portal: bool = Field(default=False)  # Fase 9.2: Toggle visibilidad precios en portal público
 
     # Seguridad: Rotación de contraseñas
     exigir_cambio_password: bool = Field(default=False)

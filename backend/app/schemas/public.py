@@ -28,6 +28,7 @@ class PublicSpecialistRead(BaseModel):
     clinica_logo_url: Optional[str] = None
     clinica_direccion: Optional[str] = None
     redes_sociales: Optional[dict] = None
+    mostrar_precios_portal: bool = False
 
 class PublicReservaCreate(BaseModel):
     # Datos del paciente (auto-registro)

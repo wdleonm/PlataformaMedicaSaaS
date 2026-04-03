@@ -358,12 +358,12 @@ En cada respuesta, Cursor debe indicar:
 
 #### 9.1 Módulo de Rentabilidad (Costo vs. Ganancia)
 - [x] Implementar vista en el Dashboard del Especialista que calcule: `Precio del Servicio - Costo Sumado de Insumos = Ganancia Neta`.
-- [ ] Permitir definir "Merma" o costos indirectos por servicio.
-- [ ] Reporte mensual de "Servicios más rentables".
+- [x] Permitir definir "Merma" o costos indirectos por servicio.
+- [x] Reporte mensual de "Servicios más rentables" (Análisis de Rentabilidad Detallada).
 
 #### 9.2 Portal Público de Reserva (Booking)
 - [x] Crear una ruta pública `/p/[slug-especialista]` para que pacientes vean servicios y agenden.
-- [ ] **Configuración de Visibilidad**: Opción para quitar/ocultar los precios de los servicios en el perfil público.
+- [x] **Configuración de Visibilidad**: Opción para quitar/ocultar los precios de los servicios en el perfil público.
 - [x] Integrar con el calendario de citas disponible.
 - [x] Formulario de registro rápido para nuevos pacientes captados desde el portal.
 

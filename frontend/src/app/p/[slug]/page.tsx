@@ -41,6 +41,7 @@ interface PublicSpecialist {
   clinica_nombre: string | null;
   clinica_logo_url: string | null;
   clinica_direccion: string | null;
+  mostrar_precios_portal: boolean;
   redes_sociales: {
     instagram?: string;
     facebook?: string;
@@ -302,6 +303,9 @@ export default function PublicBookingPortal() {
                       <div className={`p-3 rounded-2xl ${selectedService?.id === servicio.id ? "bg-violet-600 text-white" : "bg-white/5 text-violet-400"}`}>
                         <Stethoscope size={20} />
                       </div>
+                      {specialist.mostrar_precios_portal && servicio.precio > 0 && (
+                        <span className="text-lg font-black text-violet-400">${servicio.precio.toFixed(2)}</span>
+                      )}
                     </div>
                     <h3 className="font-bold text-white mb-2">{servicio.nombre}</h3>
                     <div className="flex items-center gap-2 text-xs text-slate-500 font-bold uppercase tracking-widest">

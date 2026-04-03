@@ -16,7 +16,7 @@ from sqlalchemy import text
 from app.database import engine
 from app.api import (
     auth, pacientes, odontograma, historias_clinicas, hc_secciones,
-    inventario, citas, presupuestos, comunicaciones, dashboard,
+    inventario, citas, presupuestos, comunicaciones, dashboard, reportes,
     admin_auth, admin_especialistas, admin_planes, admin_dashboard, admin_config,
     admin_users, public_portal, adjuntos, catalogo_insumos
 )
@@ -75,6 +75,7 @@ app.include_router(citas.router)
 app.include_router(presupuestos.router)
 app.include_router(comunicaciones.router)
 app.include_router(dashboard.router)
+app.include_router(reportes.router)
 app.include_router(adjuntos.router)
 app.include_router(catalogo_insumos.router)
 

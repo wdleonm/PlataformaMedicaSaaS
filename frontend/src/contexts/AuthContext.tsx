@@ -28,6 +28,7 @@ type UsoUsuario = {
   clinica_logo_url: string | null;
   clinica_direccion: string | null;
   portal_visible: boolean;
+  mostrar_precios_portal: boolean;
   exigir_cambio_password: boolean;
   intervalo_cambio_password: number | null;
   forzar_cambio_password_proximo_acceso: boolean;
@@ -97,6 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         clinica_logo_url: data.clinica_logo_url ?? null,
         clinica_direccion: data.clinica_direccion ?? null,
         portal_visible: data.portal_visible ?? false,
+        mostrar_precios_portal: data.mostrar_precios_portal ?? false,
         exigir_cambio_password: data.exigir_cambio_password ?? false,
         intervalo_cambio_password: data.intervalo_cambio_password ?? 90,
         forzar_cambio_password_proximo_acceso: data.forzar_cambio_password_proximo_acceso ?? false,

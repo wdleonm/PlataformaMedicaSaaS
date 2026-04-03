@@ -49,6 +49,7 @@ class Servicio(SQLModel, table=True):
     nombre:          str            = Field(max_length=150)
     codigo:          Optional[str]  = Field(default=None, max_length=40)
     precio:          float          = Field(default=0.0, ge=0)
+    merma_porcentaje: float         = Field(default=0.0, ge=0, le=100)  # Fase 9.1: % de costos indirectos/merma
     activo:          bool           = Field(default=True)
     visible_publico: bool           = Field(default=True)
     duracion_estimada_min: int      = Field(default=30)

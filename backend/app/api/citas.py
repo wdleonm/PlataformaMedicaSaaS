@@ -121,17 +121,23 @@ def update_cita(
     
     was_completed = cita.estado == "completada"
 
-    # Si se completa la cita y hay servicio asignado, calcular costo de insumos
+    # Si se completa la cita y hay servicio asignado, calcular costo de insumos y merma
     if (
         update_data.get("estado") == "completada"
         and cita.servicio_id
         and "costo_insumos" not in update_data
     ):
-        costo = _calcular_costo_servicio(session, cita.servicio_id)
-        update_data["costo_insumos"] = costo
+        costo_ins, merma_pct = _calcular_costo_servicio(session, cita.servicio_id)
+        update_data["costo_insumos"] = costo_ins
+        
+        # Calcular costo de merma (indirectos)
+        costo_merma = round(costo_ins * merma_pct / 100, 4)
+        update_data["costo_merma"] = costo_merma
+        
         monto = update_data.get("monto_cobrado", cita.monto_cobrado)
         if monto is not None:
-            update_data["utilidad_neta"] = round(monto - costo, 4)
+            # Utilidad = Ingreso - Insumos - Merma
+            update_data["utilidad_neta"] = round(monto - costo_ins - costo_merma, 4)
 
     for field, value in update_data.items():
         setattr(cita, field, value)
@@ -220,20 +226,25 @@ def _verificar_servicio(session: Session, servicio_id: UUID, especialista_id: UU
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Servicio no encontrado")
 
 
-def _calcular_costo_servicio(session: Session, servicio_id: UUID) -> float:
-    """Calcula el costo total de insumos de un servicio según su receta."""
+def _calcular_costo_servicio(session: Session, servicio_id: UUID) -> tuple[float, float]:
+    """Calcula el costo total de insumos de un servicio y obtiene su % de merma."""
+    servicio = session.get(Servicio, servicio_id)
+    if not servicio:
+        return 0.0, 0.0
+
     items = session.exec(
         select(ServicioInsumo).where(ServicioInsumo.servicio_id == servicio_id)
     ).all()
-    total = 0.0
+    total_insumos = 0.0
     for si in items:
         insumo = session.get(Insumo, si.insumo_id)
         if insumo:
             costo_unit = insumo.costo_unitario
             if insumo.unidades_por_paquete and insumo.unidades_por_paquete > 1:
                 costo_unit = insumo.costo_unitario / insumo.unidades_por_paquete
-            total += si.cantidad_utilizada * costo_unit
-    return round(total, 4)
+            total_insumos += si.cantidad_utilizada * costo_unit
+            
+    return round(total_insumos, 4), (servicio.merma_porcentaje or 0.0)
 
 
 def _descontar_inventario_y_alertar(session: Session, servicio_id: UUID, especialista: Especialista, cita_id: UUID) -> None:

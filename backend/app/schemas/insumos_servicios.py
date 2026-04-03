@@ -73,6 +73,7 @@ class ServicioCreate(BaseModel):
     nombre:  str
     codigo:  Optional[str]  = None
     precio:  float          = 0.0
+    merma_porcentaje: float = 0.0  # % de costos indirectos
 
     @field_validator("precio")
     @classmethod
@@ -86,6 +87,7 @@ class ServicioUpdate(BaseModel):
     nombre:  Optional[str]   = None
     codigo:  Optional[str]   = None
     precio:  Optional[float] = None
+    merma_porcentaje: Optional[float] = None
     activo:  Optional[bool]  = None
 
 
@@ -105,9 +107,11 @@ class ServicioRead(BaseModel):
     nombre:          str
     codigo:          Optional[str]
     precio:          float
+    merma_porcentaje: float = 0.0
     activo:          bool
     costo_insumos:   float = 0.0     # calculado en el endpoint
-    utilidad_neta:   float = 0.0
+    costo_merma:     float = 0.0     # Fase 9.1: costo_insumos * merma_porcentaje / 100
+    utilidad_neta:   float = 0.0     # precio - costo_insumos - costo_merma
     insumos:         List[ServicioInsumoRead] = []
     created_at:      datetime
     updated_at:      datetime

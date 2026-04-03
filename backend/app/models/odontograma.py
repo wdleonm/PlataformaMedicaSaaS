@@ -8,7 +8,7 @@ Convención FDI:
   Temporales  : 51-55, 61-65, 71-75, 81-85
 Caras         : O (Oclusal), M (Mesial), D (Distal), V (Vestibular), L (Lingual), R (Raíz)
 """
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
 

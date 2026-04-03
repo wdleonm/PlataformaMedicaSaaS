@@ -441,7 +441,7 @@ def _insumo_to_read(insumo: Insumo) -> InsumoRead:
 
 
 def _servicio_to_read(session: Session, servicio: Servicio) -> ServicioRead:
-    """Construye ServicioRead con receta + costo calculado."""
+    """Construye ServicioRead con receta + costo calculado + merma."""
     items = session.exec(
         select(ServicioInsumo).where(ServicioInsumo.servicio_id == servicio.id)
     ).all()
@@ -468,16 +468,24 @@ def _servicio_to_read(session: Session, servicio: Servicio) -> ServicioRead:
                 )
             )
 
+    # Fase 9.1: Calcular merma (costos indirectos) como % del costo de insumos
+    merma_pct = servicio.merma_porcentaje or 0.0
+    costo_merma = round(costo_total * merma_pct / 100, 4)
+    utilidad = round(servicio.precio - costo_total - costo_merma, 4)
+
     return ServicioRead(
         id=servicio.id,
         especialista_id=servicio.especialista_id,
         nombre=servicio.nombre,
         codigo=servicio.codigo,
         precio=servicio.precio,
+        merma_porcentaje=merma_pct,
         activo=servicio.activo,
         costo_insumos=round(costo_total, 4),
-        utilidad_neta=round(servicio.precio - costo_total, 4),
+        costo_merma=costo_merma,
+        utilidad_neta=utilidad,
         insumos=insumos_read,
         created_at=servicio.created_at,
         updated_at=servicio.updated_at,
     )
+

@@ -34,6 +34,7 @@ class Cita(SQLModel, table=True):
     estado:          str             = Field(default="programada", max_length=20)
     monto_cobrado:   Optional[float] = Field(default=None, ge=0)
     costo_insumos:   Optional[float] = Field(default=None, ge=0)
+    costo_merma:     Optional[float] = Field(default=None, ge=0)
     utilidad_neta:   Optional[float] = Field(default=None)
     notas:           Optional[str]   = Field(default=None)
     created_at:      datetime        = Field(default_factory=lambda: datetime.now(timezone.utc))

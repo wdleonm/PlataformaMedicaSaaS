@@ -52,7 +52,9 @@ interface Servicio {
   nombre: string;
   codigo: string | null;
   precio: number;
+  merma_porcentaje: number;
   costo_insumos: number;
+  costo_merma: number;
   utilidad_neta: number;
   insumos: InsumoReceta[];
 }
@@ -155,6 +157,7 @@ export default function InventarioPage() {
     nombre: "",
     codigo: "",
     precio: 0,
+    merma_porcentaje: 0,
   });
 
   // Formulario Receta
@@ -419,6 +422,7 @@ export default function InventarioPage() {
       nombre: servicio?.nombre || "",
       codigo: servicio?.codigo || "",
       precio: servicio?.precio || 0,
+      merma_porcentaje: servicio?.merma_porcentaje || 0,
     });
     setIsServicioModalOpen(true);
   };
@@ -634,8 +638,8 @@ export default function InventarioPage() {
                   <tr>
                     <th className="px-6 py-4">Servicio</th>
                     <th className="px-6 py-4 text-center">Precio</th>
-                    <th className="px-6 py-4 text-center">Costo Insumos</th>
-                    <th className="px-6 py-4 text-center">Utilidad</th>
+                    <th className="px-6 py-4 text-center">Costos (Insumos + Merma)</th>
+                    <th className="px-6 py-4 text-center">Utilidad Neta</th>
                     <th className="px-6 py-4 text-right">Acciones</th>
                   </tr>
                 </thead>
@@ -656,8 +660,13 @@ export default function InventarioPage() {
                       <td className="px-6 py-4 text-center font-bold">
                         ${servicio.precio.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 text-center text-muted-foreground">
-                        ${servicio.costo_insumos.toLocaleString()}
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex flex-col items-center">
+                          <span className="font-semibold text-xs">${(servicio.costo_insumos + (servicio.costo_merma || 0)).toLocaleString()}</span>
+                          <span className="text-[9px] text-muted-foreground uppercase tracking-tighter">
+                            ${servicio.costo_insumos.toLocaleString()} ins. + ${ (servicio.costo_merma || 0).toLocaleString() } merma ({servicio.merma_porcentaje}%)
+                          </span>
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className={`px-2 py-1 rounded-full text-xs font-bold ${servicio.utilidad_neta > 0 ? 'bg-green-500/10 text-green-500' : 'bg-destructive/10 text-destructive'}`}>
@@ -866,6 +875,25 @@ export default function InventarioPage() {
                         step={1} 
                         prefix="$"
                       />
+                   </div>
+                   <div className="grid grid-cols-2 gap-4 items-end">
+                      <NumberInput 
+                        label="Merma / Gastos Ind. (%)" 
+                        value={servicioForm.merma_porcentaje} 
+                        onChange={(val) => setServicioForm({...servicioForm, merma_porcentaje: val})} 
+                        step={1} 
+                        min={0}
+                      />
+                      <div className="bg-secondary/30 border border-border/50 rounded-xl p-3 flex flex-col h-[48px] justify-center">
+                        <span className="text-[8px] font-black uppercase text-muted-foreground leading-none">Utilidad Estimada</span>
+                        <span className="text-xs font-bold text-emerald-500">
+                          {modalMode === 'edit' && selectedId ? (
+                            `$${(servicioForm.precio - (servicios.find(s => s.id === selectedId)?.costo_insumos || 0) - ((servicios.find(s => s.id === selectedId)?.costo_insumos || 0) * servicioForm.merma_porcentaje / 100)).toFixed(2)}`
+                          ) : (
+                            'N/A'
+                          )}
+                        </span>
+                      </div>
                    </div>
                 </div>
                 <div className="flex justify-end gap-2 pt-4 border-t border-border/30">

@@ -34,6 +34,7 @@ class CitaUpdate(BaseModel):
     estado:         Optional[str]     = None
     monto_cobrado:  Optional[float]   = None
     costo_insumos:  Optional[float]   = None
+    costo_merma:    Optional[float]   = None
     utilidad_neta:  Optional[float]   = None
     presupuesto_id: Optional[UUID]    = None
     notas:          Optional[str]     = None
@@ -56,6 +57,7 @@ class CitaRead(BaseModel):
     estado:          str
     monto_cobrado:   Optional[float]
     costo_insumos:   Optional[float]
+    costo_merma:     Optional[float]
     utilidad_neta:   Optional[float]
     presupuesto_id:  Optional[UUID]
     abono_id:        Optional[UUID]
