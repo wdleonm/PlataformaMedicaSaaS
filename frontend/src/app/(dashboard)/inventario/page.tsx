@@ -26,6 +26,16 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const DENTAL_CATEGORIES = [
+  "Cirugía",
+  "Endodoncia", 
+  "Estética", 
+  "Operatoria", 
+  "Periodoncia", 
+  "Prevención", 
+  "Rehabilitación",
+  "Otros"
+];
 interface Insumo {
   id: string;
   nombre: string;
@@ -51,6 +61,8 @@ interface Servicio {
   id: string;
   nombre: string;
   codigo: string | null;
+  categoria: string | null;
+  descripcion: string | null;
   precio: number;
   merma_porcentaje: number;
   costo_insumos: number;
@@ -156,6 +168,8 @@ export default function InventarioPage() {
   const [servicioForm, setServicioForm] = useState({
     nombre: "",
     codigo: "",
+    categoria: "",
+    descripcion: "",
     precio: 0,
     merma_porcentaje: 0,
   });
@@ -395,10 +409,10 @@ export default function InventarioPage() {
   };
 
   // --- Handlers Servicios ---
-  const handleServicioInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleServicioInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
-    if (name === "nombre") {
+    if (name === "nombre" || name === "categoria") {
       // Forzar primera letra Mayúscula
       const capitalized = value.charAt(0).toUpperCase() + value.slice(1);
       setServicioForm(prev => ({ ...prev, [name]: capitalized }));
@@ -421,6 +435,8 @@ export default function InventarioPage() {
     setServicioForm({
       nombre: servicio?.nombre || "",
       codigo: servicio?.codigo || "",
+      categoria: servicio?.categoria || "",
+      descripcion: servicio?.descripcion || "",
       precio: servicio?.precio || 0,
       merma_porcentaje: servicio?.merma_porcentaje || 0,
     });
@@ -653,7 +669,15 @@ export default function InventarioPage() {
                           </div>
                           <div>
                             <p className="font-bold">{servicio.nombre}</p>
-                            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{servicio.codigo || 'S/C'}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{servicio.codigo || 'S/C'}</p>
+                              {servicio.categoria && (
+                                <>
+                                  <span className="text-[10px] text-muted-foreground/30">•</span>
+                                  <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider">{servicio.categoria}</span>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -851,18 +875,46 @@ export default function InventarioPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsServicioModalOpen(false)} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card w-full max-w-sm rounded-2xl shadow-2xl border border-border relative z-10 overflow-hidden"
+              className="bg-card w-full max-w-md rounded-2xl shadow-2xl border border-border relative z-10 overflow-hidden"
             >
               <div className="p-6 border-b border-border/50 bg-secondary/30 flex justify-between items-center">
                 <h2 className="text-xl font-bold flex items-center gap-2"><Stethoscope className="text-primary"/> {modalMode === 'create' ? 'Nuevo Servicio' : 'Editar Servicio'}</h2>
                 <button onClick={() => setIsServicioModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
               </div>
-              <form onSubmit={handleSaveServicio} className="p-6 space-y-6">
+              <form onSubmit={handleSaveServicio} className="p-6 space-y-5">
                 <div className="space-y-4">
-                   <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Nombre del Servicio</label>
-                      <input required name="nombre" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={servicioForm.nombre} onChange={handleServicioInputChange} placeholder="Ej. Limpieza Dental" />
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="col-span-1 space-y-1">
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Nombre</label>
+                          <input required name="nombre" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={servicioForm.nombre} onChange={handleServicioInputChange} placeholder="Ej. Limpieza" />
+                      </div>
+                      <div className="col-span-1 space-y-1">
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Categoría</label>
+                          <select 
+                            name="categoria" 
+                            className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-[42px] focus:ring-2 focus:ring-primary outline-none appearance-none" 
+                            value={servicioForm.categoria} 
+                            onChange={handleServicioInputChange}
+                          >
+                            <option value="">Seleccione...</option>
+                            {DENTAL_CATEGORIES.map(cat => (
+                              <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                          </select>
+                      </div>
                    </div>
+
+                   <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Descripción Breve / Insumos</label>
+                      <textarea 
+                        name="descripcion" 
+                        className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm min-h-[80px] resize-none" 
+                        value={servicioForm.descripcion} 
+                        onChange={handleServicioInputChange} 
+                        placeholder="Detalles del procedimiento e insumos necesarios..." 
+                      />
+                   </div>
+
                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Código (Ej: S0001)</label>

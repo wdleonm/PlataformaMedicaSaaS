@@ -478,6 +478,8 @@ def _servicio_to_read(session: Session, servicio: Servicio) -> ServicioRead:
         especialista_id=servicio.especialista_id,
         nombre=servicio.nombre,
         codigo=servicio.codigo,
+        categoria=servicio.categoria,
+        descripcion=servicio.descripcion,
         precio=servicio.precio,
         merma_porcentaje=merma_pct,
         activo=servicio.activo,

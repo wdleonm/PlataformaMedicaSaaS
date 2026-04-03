@@ -48,6 +48,8 @@ class Servicio(SQLModel, table=True):
     especialista_id: UUID           = Field(foreign_key="sys_config.especialistas.id", index=True)
     nombre:          str            = Field(max_length=150)
     codigo:          Optional[str]  = Field(default=None, max_length=40)
+    categoria:       Optional[str]  = Field(default=None, max_length=100)
+    descripcion:     Optional[str]  = Field(default=None)
     precio:          float          = Field(default=0.0, ge=0)
     merma_porcentaje: float         = Field(default=0.0, ge=0, le=100)  # Fase 9.1: % de costos indirectos/merma
     activo:          bool           = Field(default=True)

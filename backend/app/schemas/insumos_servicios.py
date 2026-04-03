@@ -72,6 +72,8 @@ class InsumoList(BaseModel):
 class ServicioCreate(BaseModel):
     nombre:  str
     codigo:  Optional[str]  = None
+    categoria: Optional[str] = None
+    descripcion: Optional[str] = None
     precio:  float          = 0.0
     merma_porcentaje: float = 0.0  # % de costos indirectos
 
@@ -86,6 +88,8 @@ class ServicioCreate(BaseModel):
 class ServicioUpdate(BaseModel):
     nombre:  Optional[str]   = None
     codigo:  Optional[str]   = None
+    categoria: Optional[str] = None
+    descripcion: Optional[str] = None
     precio:  Optional[float] = None
     merma_porcentaje: Optional[float] = None
     activo:  Optional[bool]  = None
@@ -106,6 +110,8 @@ class ServicioRead(BaseModel):
     especialista_id: UUID
     nombre:          str
     codigo:          Optional[str]
+    categoria:       Optional[str] = None
+    descripcion:     Optional[str] = None
     precio:          float
     merma_porcentaje: float = 0.0
     activo:          bool

@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # JWT
     jwt_secret: str = "change_me_secret_key_min_32_chars"
     jwt_algorithm: str = "HS256"
-    jwt_expire_minutes: int = 60
+    jwt_expire_minutes: int = 480
 
     # Redis (opcional)
     redis_url: Optional[str] = None
