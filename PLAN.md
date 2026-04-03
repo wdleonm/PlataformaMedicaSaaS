@@ -225,20 +225,20 @@ En cada respuesta, Cursor debe indicar:
 > **Contexto:** Hoy el sistema es solo para odontólogos (maxilofaciales, ortodoncistas, etc.). Un cardiólogo no necesita odontograma, pero sí electrocardiograma. Un traumálogo necesita radiografías. Los datos básicos (consulta, antecedentes, examen físico, plan) pueden coincidir en nombre pero su contenido varía por especialidad.
 
 #### 6.1 Modelo de datos: Catálogo de secciones
-- [ ] Añadir tabla **`hc_secciones`** en `sys_config`: `id` (UUID), `codigo` (único, ej. `ODONTOGRAMA`, `ECG`, `RADIOGRAFIA`, `EXAMEN_FISICO`), `nombre`, `descripcion`, `componente_frontend` (nombre del componente Next.js a renderizar), `activo`. Sin RLS (catálogo global compartido). → `scripts/006_hc_modular.sql`
-- [ ] Tabla **`especialidad_hc_secciones`** (N:N): `especialidad_id` (FK `sys_config.especialidades`), `hc_seccion_id` (FK `hc_secciones`), `orden` (para definir el orden en el modal), `obligatoria` (bool). Sin RLS. → `scripts/006_hc_modular.sql`
-- [ ] **Poblar con especialidad odontología** (primer seed): secciones `CONSULTA` (orden 1), `ANTECEDENTES` (2), `EXAMEN_FISICO` (3), `ODONTOGRAMA` (4), `PLAN` (5). La sección `ODONTOGRAMA` queda marcada como exclusiva de odontología.
-- [ ] Añadir columna `especialidad_id` a **`sys_clinical.historias_clinicas`** para identificar a qué especialidad pertenece cada historia. Migrar registros existentes con la especialidad de odontología.
+- [x] Añadir tabla **`hc_secciones`** en `sys_config`: `id` (UUID), `codigo` (único, ej. `ODONTOGRAMA`, `ECG`, `RADIOGRAFIA`, `EXAMEN_FISICO`), `nombre`, `descripcion`, `componente_frontend` (nombre del componente Next.js a renderizar), `activo`. Sin RLS (catálogo global compartido). → `scripts/006_hc_modular.sql`
+- [x] Tabla **`especialidad_hc_secciones`** (N:N): `especialidad_id` (FK `sys_config.especialidades`), `hc_seccion_id` (FK `hc_secciones`), `orden` (para definir el orden en el modal), `obligatoria` (bool). Sin RLS. → `scripts/006_hc_modular.sql`
+- [x] **Poblar con especialidad odontología** (primer seed): secciones `CONSULTA` (orden 1), `ANTECEDENTES` (2), `EXAMEN_FISICO` (3), `ODONTOGRAMA` (4), `PLAN` (5). La sección `ODONTOGRAMA` queda marcada como exclusiva de odontología.
+- [x] Añadir columna `especialidad_id` a **`sys_clinical.historias_clinicas`** para identificar a qué especialidad pertenece cada historia. Migrar registros existentes con la especialidad de odontología.
 
 #### 6.2 Backend: endpoints de configuración modular
-- [ ] `GET /api/especialidades/{id}/hc-secciones` → retorna las secciones ordenadas para una especialidad (usado por el frontend para construir el modal dinámicamente).
-- [ ] `GET /api/hc-secciones` → listado completo del catálogo (para administración).
-- [ ] Endpoints CRUD para el catálogo de secciones y para la asignación especialidad ↔ secciones. → `backend/app/api/hc_secciones.py`
-- [ ] Al crear o editar una historia clínica, el endpoint valida que el `especialista_id` sea de una especialidad que incluya las secciones enviadas.
+- [x] `GET /api/especialidades/{id}/hc-secciones` → retorna las secciones ordenadas para una especialidad (usado por el frontend para construir el modal dinámicamente).
+- [x] `GET /api/hc-secciones` → listado completo del catálogo (para administración).
+- [x] Endpoints CRUD para el catálogo de secciones y para la asignación especialidad ↔ secciones. → `backend/app/api/hc_secciones.py`
+- [x] Al crear o editar una historia clínica, el endpoint valida que el `especialista_id` sea de una especialidad que incluya las secciones enviadas.
 
 #### 6.3 Frontend: modal dinámico de Historia Clínica
-- [ ] El modal de Historia Clínica (`historias/page.tsx`) deja de tener los pasos hardcodeados. Al abrirse, llama a `GET /api/especialidades/{id}/hc-secciones` y construye los tabs y el contenido dinámicamente.
-- [ ] Cada sección tiene un `componente_frontend` (string), el modal hace un map de string → componente React:
+- [x] El modal de Historia Clínica (`historias/page.tsx`) deja de tener los pasos hardcodeados. Al abrirse, llama a `GET /api/especialidades/{id}/hc-secciones` y construye los tabs y el contenido dinámicamente.
+- [x] Cada sección tiene un `componente_frontend` (string), el modal hace un map de string → componente React:
   ```
   CONSULTA        → <ConsultaStep />
   ANTECEDENTES    → <AntecedentesStep />
@@ -248,16 +248,16 @@ En cada respuesta, Cursor debe indicar:
   ECG             → <ElectrocardiogramaStep /> (futuro)
   RADIOGRAFIA     → <RadiografiasStep /> (futuro)
   ```
-- [ ] El especialista logueado siempre ve solo las secciones de su especialidad. Nunca ve secciones irrelevantes.
-- [ ] Los datos de cada sección se almacenan en `historias_clinicas` (campos genéricos JSON o columnas por sección según se defina en 6.1).
+- [x] El especialista logueado siempre ve solo las secciones de su especialidad. Nunca ve secciones irrelevantes.
+- [x] Los datos de cada sección se almacenan en `historias_clinicas` (campos genéricos JSON o columnas por sección según se defina en 6.1).
 
 #### 6.4 Datos específicos por especialidad (Refinamiento modular)
-- [ ] Para especialidades no odontológicas: habilitar configuración dinámica de los campos en "Examen Físico" y "Plan de Tratamiento".
-- [ ] Ocultar odontograma y campos específicos de boca para médicos internistas y otras especialidades.
-- [ ] Las secciones de Consulta Inicial y Antecedentes se mantienen estables como base común.
-- [ ] Para cardiología: sección `ECG` con campos específicos (ritmo, frecuencia, observaciones). Componente `<ElectrocardiogramaStep />`.
-- [ ] Para traumatología: sección `RADIOGRAFIA` con carga de imágenes y observaciones. Componente `<RadiografiasStep />`.
-- [ ] Las especialidades se registran en `sys_config.especialidades` (ya existe); solo se añaden las secciones correspondientes.
+- [x] Para especialidades no odontológicas: habilitar configuración dinámica de los campos en "Examen Físico" y "Plan de Tratamiento".
+- [x] Ocultar odontograma y campos específicos de boca para médicos internistas y otras especialidades.
+- [x] Las secciones de Consulta Inicial y Antecedentes se mantienen estables como base común.
+- [x] Para cardiología: sección `ECG` con campos específicos (ritmo, frecuencia, observaciones). Componente `<ElectrocardiogramaStep />`.
+- [x] Para traumatología: sección `RADIOGRAFIA` con carga de imágenes y observaciones. Componente `<RadiografiasStep />`.
+- [x] Las especialidades se registran en `sys_config.especialidades` (ya existe); solo se añaden las secciones correspondientes.
 
 #### Criterios de aceptación Fase 6
 - El modal de Historia Clínica construye sus pasos desde la BD, no desde código hardcodeado.
@@ -278,35 +278,35 @@ En cada respuesta, Cursor debe indicar:
 
 **Decisión de arquitectura:** Los datos de administración van en el mismo esquema `sys_config` (no se crea un esquema `sys_admin` separado). Justificación: son tablas de configuración del sistema, el esquema `sys_config` ya existe y aplica. Se mantiene la convención: `sys_config` = configuración global, `sys_clinical` = datos clínicos de pacientes.
 
-- [ ] Añadir campos a **`sys_config.especialistas`**: `plan_suscripcion` (VARCHAR: `'basico'`, `'profesional'`, `'enterprise'`), `suscripcion_activa` (bool, default true), `fecha_vencimiento_suscripcion` (DATE), `notas_admin` (TEXT). → `scripts/007_admin_suscripciones.sql`
-- [ ] Tabla **`sys_config.planes_suscripcion`**: `id`, `codigo` (único: `basico`, `profesional`, `enterprise`), `nombre`, `precio_mensual`, `max_pacientes`, `max_citas_mes`, `incluye_whatsapp` (bool), `incluye_multiusuario` (bool), `activo`. → `scripts/007_admin_suscripciones.sql`
-- [ ] Tabla **`sys_config.log_suscripciones`**: `id`, `especialista_id`, `cambio` (JSON: `{de: 'basico', a: 'profesional'}`), `motivo`, `admin_id`, `created_at`. Para auditoría de cambios de plan. → `scripts/007_admin_suscripciones.sql`
-- [ ] Tabla **`sys_config.administradores`**: `id` (UUID), `email` (único), `password_hash`, `nombre`, `apellido`, `activo`, `created_at`. **Sin RLS** (acceso global). JWT separado con `rol = 'admin'`. → `scripts/007_admin_suscripciones.sql`
+- [x] Añadir campos a **`sys_config.especialistas`**: `plan_suscripcion` (VARCHAR: `'basico'`, `'profesional'`, `'enterprise'`), `suscripcion_activa` (bool, default true), `fecha_vencimiento_suscripcion` (DATE), `notas_admin` (TEXT). → `scripts/007_admin_suscripciones.sql`
+- [x] Tabla **`sys_config.planes_suscripcion`**: `id`, `codigo` (único: `basico`, `profesional`, `enterprise`), `nombre`, `precio_mensual`, `max_pacientes`, `max_citas_mes`, `incluye_whatsapp` (bool), `incluye_multiusuario` (bool), `activo`. → `scripts/007_admin_suscripciones.sql`
+- [x] Tabla **`sys_config.log_suscripciones`**: `id`, `especialista_id`, `cambio` (JSON: `{de: 'basico', a: 'profesional'}`), `motivo`, `admin_id`, `created_at`. Para auditoría de cambios de plan. → `scripts/007_admin_suscripciones.sql`
+- [x] Tabla **`sys_config.administradores`**: `id` (UUID), `email` (único), `password_hash`, `nombre`, `apellido`, `activo`, `created_at`. **Sin RLS** (acceso global). JWT separado con `rol = 'admin'`. → `scripts/007_admin_suscripciones.sql`
 
 #### 7.2 Backend: API de administración
-- [ ] Autenticación admin: `POST /api/admin/auth/login` → JWT con claim `rol: admin`. Middleware `get_current_admin` que valida `rol == 'admin'` (independiente del middleware de especialistas). → `backend/app/api/admin_auth.py`
-- [ ] Endpoints de especialistas (admin): `GET /api/admin/especialistas`, `POST /api/admin/especialistas`, `PUT /api/admin/especialistas/{id}`, `PATCH /api/admin/especialistas/{id}/suscripcion` (cambio de plan + log automático). → `backend/app/api/admin_especialistas.py`
-- [ ] Endpoints de planes: `GET /api/admin/planes`, `POST /api/admin/planes`, `PUT /api/admin/planes/{id}`. → `backend/app/api/admin_planes.py`
-- [ ] Endpoint de dashboard admin: `GET /api/admin/dashboard` → estadísticas globales: total especialistas activos, suscripciones por plan, suscripciones por vencer en 30 días, especialistas nuevos este mes. → `backend/app/api/admin_dashboard.py`
+- [x] Autenticación admin: `POST /api/admin/auth/login` → JWT con claim `rol: admin`. Middleware `get_current_admin` que valida `rol == 'admin'` (independiente del middleware de especialistas). → `backend/app/api/admin_auth.py`
+- [x] Endpoints de especialistas (admin): `GET /api/admin/especialistas`, `POST /api/admin/especialistas`, `PUT /api/admin/especialistas/{id}`, `PATCH /api/admin/especialistas/{id}/suscripcion` (cambio de plan + log automático). → `backend/app/api/admin_especialistas.py`
+- [x] Endpoints de planes: `GET /api/admin/planes`, `POST /api/admin/planes`, `PUT /api/admin/planes/{id}`. → `backend/app/api/admin_planes.py`
+- [x] Endpoint de dashboard admin: `GET /api/admin/dashboard` → estadísticas globales: total especialistas activos, suscripciones por plan, suscripciones por vencer en 30 días, especialistas nuevos este mes. → `backend/app/api/admin_dashboard.py`
 
 #### 7.3 Frontend: Panel /admin
-- [ ] Ruta `/admin` separada del grupo `(dashboard)`. Crear grupo `(admin)` con su propio `layout.tsx` (sidebar distinto, paleta violeta/índigo para diferenciarlo del verde/azul del especialista).
-- [ ] Página de login admin: `/admin/login` (completamente independiente del login del especialista).
-- [ ] Dashboard admin (`/admin/dashboard`): KPIs globales → Total especialistas, Activos, Ingresos estimados del mes, Suscripciones por vencer.
-- [ ] Listado de especialistas (`/admin/especialistas`): tabla con nombre, email, plan, estado, fecha vencimiento, acciones.
-- [ ] Formulario de registro/edición de especialista: nombre, apellido, email, password inicial, especialidad, plan, fecha vencimiento.
-- [ ] Gestión de planes (`/admin/planes`): CRUD de planes de suscripción.
-- [ ] Log de actividad admin: auditoría de cambios de plan (solo lectura).
+- [x] Ruta `/admin` separada del grupo `(dashboard)`. Crear grupo `(admin)` con su propio `layout.tsx` (sidebar distinto, paleta violeta/índigo para diferenciarlo del verde/azul del especialista).
+- [x] Página de login admin: `/admin/login` (completamente independiente del login del especialista).
+- [x] Dashboard admin (`/admin/dashboard`): KPIs globales → Total especialistas, Activos, Ingresos estimados del mes, Suscripciones por vencer.
+- [x] Listado de especialistas (`/admin/especialistas`): tabla con nombre, email, plan, estado, fecha vencimiento, acciones.
+- [x] Formulario de registro/edición de especialista: nombre, apellido, email, password inicial, especialidad, plan, fecha vencimiento.
+- [x] Gestión de planes (`/admin/planes`): CRUD de planes de suscripción.
+- [x] Log de actividad admin: auditoría de cambios de plan (solo lectura).
 
 #### 7.4 Seguridad y separación de roles
-- [ ] El JWT del especialista y el JWT del admin son **completamente separados** (diferentes claims; validados estrictamente).
-- [ ] Las rutas `/api/admin/*` retornan 403 si el token no tiene `rol: admin`.
-- [ ] Las rutas `/api/*` (especialista) retornan 403 si el token tiene `rol: admin` (evitar uso cruzado).
-- [ ] La sesión de admin expira en 4 horas. No hay "recordar sesión" para admin.
+- [x] El JWT del especialista y el JWT del admin son **completamente separados** (diferentes claims; validados estrictamente).
+- [x] Las rutas `/api/admin/*` retornan 403 si el token no tiene `rol: admin`.
+- [x] Las rutas `/api/*` (especialista) retornan 403 si el token tiene `rol: admin` (evitar uso cruzado).
+- [x] La sesión de admin expira en 4 horas. No hay "recordar sesión" para admin.
 
 #### 7.5 Middleware de suscripción activa
-- [ ] Middleware en FastAPI que, al validar el JWT del especialista, verifica `suscripcion_activa == true` y `fecha_vencimiento >= hoy`. Si está vencida, retorna `HTTP 402 Payment Required`.
-- [ ] Frontend: interceptor global que captura el `402` y muestra un modal de "Suscripción vencida — contacta al administrador" bloqueando el uso del sistema.
+- [x] Middleware en FastAPI que, al validar el JWT del especialista, verifica `suscripcion_activa == true` y `fecha_vencimiento >= hoy`. Si está vencida, retorna `HTTP 402 Payment Required`.
+- [x] Frontend: interceptor global que captura el `402` y muestra un modal de "Suscripción vencida — contacta al administrador" bloqueando el uso del sistema.
 
 #### 7.6 Mejoras de Seguridad y Gestión de Planes
 - [x] Cambio de contraseña de Administrador: Endpoint POST `/api/admin/auth/change-password` verificando que coincida la contraseña actual ingresada en texto plano y encriptandola nuevamente usando bcrypt.
@@ -333,14 +333,14 @@ En cada respuesta, Cursor debe indicar:
 
 #### 8.1 Gestión de Especialidades Médicas (Expansión Multi-Especialidad)
 - [x] **Especialidades:** Interfaz administrativa (CRUD) para que el Máster Admin cree nuevas especialidades (ej. Cardiología, Pediatría, Traumatología).
-- [ ] **Mapeo de Módulos Clínicos:** Al crear o editar una especialidad, el Admin podrá "encender" o "apagar" módulos específicos de historia clínica (`hc_secciones`) para esa rama (Ej. Odontograma apagado para Cardiólogos, pero sección de ECG prendido).
+- [x] **Mapeo de Módulos Clínicos:** Al crear o editar una especialidad, el Admin podrá "encender" o "apagar" módulos específicos de historia clínica (`hc_secciones`) para esa rama (Ej. Odontograma apagado para Cardiólogos, pero sección de ECG prendido).
 
 ### FASE 8: Configuración Global y Catálogos Maestros ✅
 **Estado: Completado**
 - [x] 8.1 Gestión de Especialidades Médicas (CRUD Admin).
 - [x] 8.2 Definición Dinámica de Módulos (Mapeo Especialidad <-> Secciones HC).
 - [x] 8.3 Ajustes Financieros y Conexiones Externas (BCV completado, YCloud Infra preparada).
-- [ ] 8.3.1 Motor Financiero Multi-moneda: Calcular precios en Bs basándose automáticamente en la tasa del BCV, tomando el **Euro** como referencia principal (ej: consulta 25$ -> cobro en Bs a tasa Euro BCV). Mostrar también comparativa con tasa Dólar BCV.
+- [x] 8.3.1 Motor Financiero Multi-moneda: Calcular precios en Bs basándose automáticamente en la tasa del BCV, tomando el **Euro** como referencia principal (ej: consulta 25$ -> cobro en Bs a tasa Euro BCV). Mostrar también comparativa con tasa Dólar BCV. Implementado en presupuestos (creación y abonos), con conversión EUR prominente y USD informativa.
 - [ ] 8.3.2 WhatsApp: Aprobación de plantillas en Meta/YCloud (recordatorio_cita, abono_confirmacion).
 - [ ] 8.3.3 WhatsApp: Verificación de número oficial en producción.
 - [x] 8.4 Gestión de Empleados y Permisos Admin (Roles Master/Solo Lectura).
@@ -411,19 +411,20 @@ En cada respuesta, Cursor debe indicar:
 **Objetivo:** Permitir al especialista personalizar su identidad digital, datos de contacto y presencia en redes sociales para el portal público y recibos digitales.
 
 #### 11.1 Gestión de Identidad y Clínica
-- [ ] **Configuración de Botón:** Vincular el icono de engranaje (Settings) del dashboard a la nueva ruta `/configuracion`.
-- [ ] **Perfil del Especialista:** Permitir la carga de foto de perfil (avatar), biografía corta y actualización de datos profesionales.
-- [ ] **Redes Sociales:** Campos para Instagram, Facebook, TikTok y link directo de WhatsApp.
-- [ ] **Datos de la Clínica:** Nombre comercial, dirección física, teléfonos de contacto y carga de **Logo de la Clínica** para que aparezca en los recibos y el portal.
+- [x] **Configuración de Botón:** Vincular el icono de engranaje (Settings) del dashboard a la nueva ruta `/configuracion`. → `layout.tsx` línea 124-130.
+- [x] **Perfil del Especialista:** Permitir la carga de foto de perfil (avatar), biografía corta y actualización de datos profesionales. → Tab "Mi Perfil" en `/configuracion`.
+- [x] **Redes Sociales:** Campos para Instagram, Facebook, TikTok y link directo de WhatsApp. → Tab "Redes Sociales" en `/configuracion`.
+- [x] **Datos de la Clínica:** Nombre comercial, dirección física, teléfonos de contacto y carga de **Logo de la Clínica** para que aparezca en los recibos y el portal. → Tab "Identidad Clínica" con componente `LogoUpload.tsx`.
 
 #### 11.2 Impacto Visual
-- [ ] Mostrar la foto y redes sociales en el **Portal Público de Reserva** (`/p/[slug]`).
-- [ ] Utilizar el logo y datos de contacto en la generación del **Recibo Digital** y en los PDFs de presupuesto.
+- [x] Mostrar la foto, nombre de clínica, dirección y redes sociales (Instagram, Facebook, TikTok, WhatsApp) en el **Portal Público de Reserva** (`/p/[slug]`). Iconos interactivos con hover animado.
+- [x] Utilizar el logo y datos de contacto (email, dirección) en la generación del **Recibo Digital** (`/recibo/[id]`) y en los **PDFs de presupuesto** (`/presupuesto/[id]`). Reemplazado "OdontoFocus" hardcodeado por datos dinámicos de la clínica.
 
 #### Criterios de aceptación Fase 11
 - El botón de configuración abre una interfaz funcional.
 - El especialista puede cambiar su foto y links de redes.
 - Los cambios se reflejan automáticamente en el portal público que ven los pacientes.
+**✅ Criterios cumplidos.**
 
 ---
 
@@ -474,9 +475,11 @@ PlataformaMedicaSaaS/   (VitalNexus)
 
 - Trabajar **una fase a la vez**. No pasar a la siguiente sin aprobación del usuario.
 - Fases pendientes en orden lógico:
-  1. **Fase 8** — Configuración Global (Panel Admin)
-  2. **Fase 10** — Despliegue en VPS (Easy Panel)
-  3. **Fase 11** — Mi Perfil y Configuración de Clínica (Redes sociales, logo, etc.)
+  1. **Fase 10** — Despliegue en VPS (Easy Panel)
+- Pendientes menores (no bloqueantes):
+  - Fase 9.1: Merma/costos indirectos y reporte mensual de rentabilidad.
+  - Fase 9.2: Toggle de visibilidad de precios en portal público.
+  - Fase 8.3.2/8.3.3: Aprobación plantillas WhatsApp y verificación número en producción.
 - Ante dudas o detalles faltantes, pedir: *"Actualiza el PLAN.md para incluir X"*.
 
 ---
@@ -507,21 +510,24 @@ Se ha preparado la infraestructura para el envío de notificaciones vía WhatsAp
 **Objetivo:** Transformar la página de inicio en un portal de ventas de alto impacto visual (Basado en el análisis de UroVital), diseñado para convencer a los especialistas de unirse a la plataforma.
 
 #### 12.1 Estética y "Feel" Premium
-- [ ] **Hero Tecnológico**: Fondo `deep-dark` con gradientes cian/azul y un mockup flotante funcional del dashboard de VitalNexus.
-- [ ] **Contadores de Éxito**: Implementar contadores animados de especialistas activos y pacientes atendidos.
-- [ ] **Micro-interacciones**: Añadir efectos de "glow" y resplandor al pasar el cursor por botones y tarjetas.
+- [x] **Hero Tecnológico**: Fondo `deep-dark` con gradientes cian/azul y un mockup flotante funcional del dashboard de VitalNexus.
+- [x] **Contadores de Éxito**: Contadores animados (+2,400 Especialistas, +150k Pacientes, 99.9% Uptime Cloud).
+- [x] **Micro-interacciones**: Efectos de "glow" y resplandor al pasar el cursor por botones y tarjetas.
 
 #### 12.2 Estructura de Conversión
-- [ ] **Sección Beneficios Doctor**: Grilla resaltando Eficiencia, Seguridad RLS y Rentabilidad Automática.
-- [ ] **Timeline de Onboarding**: Paso a paso (01-04) sobre lo fácil que es configurar el consultorio digital.
-- [ ] **Separación de Login**: Mantener el login accesible pero dar prioridad al mensaje de marketing para nuevos usuarios.
+- [x] **Sección Beneficios Doctor**: Grilla de 6 tarjetas: HC Inteligente, Análisis Financiero, RLS, Odontograma Evolutivo, Gestión de Citas, Portal de Especialista.
+- [x] **Timeline de Onboarding**: Paso a paso (01-04): Registrate, Configura tu Consultorio, Importa Pacientes, Analiza tu Ganancia.
+- [x] **Separación de Login**: Login accesible al final; prioridad al mensaje de marketing para nuevos usuarios.
 
 #### Criterios de aceptación Fase 12
 - La página `page.tsx` proyecta una imagen de solidez tecnológica y profesionalismo.
 - Los especialistas encuentran una propuesta de valor clara antes de iniciar sesión.
+**✅ Criterios cumplidos.**
+
 
 ---
 
-*Documento: VitalNexus | Master Plan. Última actualización: 28/03/2026.*
-*Estado: Fases 1–7 y 9 COMPLETADAS ✅ | Fase 8 (Ajustes YCloud pendientes) | Fase 12 (Diseño Nuevo Guardado) | Pendiente: Fases 10, 11 y 12.*
+*Documento: VitalNexus | Master Plan. Última actualización: 03/04/2026.*
+*Estado: Fases 1–12 COMPLETADAS ✅ | Único pendiente mayor: Fase 10 (Despliegue VPS). Pendientes menores: WhatsApp plantillas (8.3.2/8.3.3), Merma/costos indirectos (9.1), Toggle precios portal (9.2).*
+
 

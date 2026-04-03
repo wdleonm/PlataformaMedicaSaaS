@@ -14,7 +14,9 @@ import {
   Info,
   FileText,
   Clock,
-  Briefcase
+  Briefcase,
+  MapPin,
+  Mail
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -33,6 +35,9 @@ interface BudgetData {
   especialista: {
     nombre: string;
     email: string;
+    clinica_nombre: string | null;
+    clinica_logo_url: string | null;
+    clinica_direccion: string | null;
   };
   detalles: Array<{
     id: string;
@@ -81,6 +86,9 @@ export default function PublicBudgetPage() {
     </div>
   );
 
+  const hasLogo = data.especialista.clinica_logo_url && data.especialista.clinica_logo_url.length > 5;
+  const clinicDisplayName = data.especialista.clinica_nombre || `Dr. ${data.especialista.nombre}`;
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans p-4 md:p-8 print:p-0 print:bg-white">
       {/* Botones de Acción (No imprimir) */}
@@ -110,10 +118,16 @@ export default function PublicBudgetPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-violet-600 rounded-xl flex items-center justify-center">
-                  <ShieldCheck className="text-white" size={24} />
-                </div>
-                <span className="text-xl font-black tracking-tighter uppercase font-sans">OdontoFocus</span>
+                {hasLogo ? (
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 backdrop-blur-xl flex items-center justify-center">
+                    <img src={data.especialista.clinica_logo_url!} alt={clinicDisplayName} className="w-full h-full object-contain p-1" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 bg-violet-600 rounded-xl flex items-center justify-center">
+                    <ShieldCheck className="text-white" size={24} />
+                  </div>
+                )}
+                <span className="text-xl font-black tracking-tighter uppercase font-sans">{clinicDisplayName}</span>
               </div>
               <h1 className="text-3xl font-black mb-1">Presupuesto Médico</h1>
               <p className="text-slate-400 font-mono text-xs">Referencia: {data.id.slice(0, 8).toUpperCase()}</p>
@@ -123,10 +137,11 @@ export default function PublicBudgetPage() {
               <p className="text-violet-400 font-black uppercase tracking-widest text-[10px] mb-2 text-right">Estado del Presupuesto</p>
               <div className={`inline-flex items-center gap-2 px-4 py-2 border rounded-full font-bold text-sm uppercase ${
                 data.estado === 'borrador' ? 'bg-amber-500/10 border-amber-500/20 text-amber-500' :
-                data.estado === 'pendiente' ? 'bg-sky-500/10 border-sky-500/20 text-sky-500' :
+                data.estado === 'cancelado' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+                data.estado === 'en_pago' ? 'bg-sky-500/10 border-sky-500/20 text-sky-400' :
                 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
               }`}>
-                {data.estado}
+                {data.estado === 'en_pago' ? 'En Pago' : data.estado}
               </div>
             </div>
           </div>
@@ -227,20 +242,31 @@ export default function PublicBudgetPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-slate-500">
-                    <Briefcase size={20} />
-                  </div>
+                  {hasLogo ? (
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-white shadow-sm border border-slate-200 flex items-center justify-center">
+                      <img src={data.especialista.clinica_logo_url!} alt={clinicDisplayName} className="w-full h-full object-contain p-1.5" />
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-slate-500">
+                      <Briefcase size={20} />
+                    </div>
+                  )}
                   <div>
-                    <p className="font-black text-slate-900 text-sm italic">Dr. {data.especialista.nombre}</p>
-                    <p className="text-xs text-slate-500">{data.especialista.email}</p>
+                    <p className="font-black text-slate-900 text-sm">{clinicDisplayName}</p>
+                    <p className="text-xs text-slate-500 flex items-center gap-1"><Mail size={10} /> {data.especialista.email}</p>
+                    {data.especialista.clinica_direccion && (
+                      <p className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5"><MapPin size={10} /> {data.especialista.clinica_direccion}</p>
+                    )}
                   </div>
                 </div>
             </div>
             <div className="md:text-right text-xs text-slate-400">
               <p>Este presupuesto tiene fines informativos y su validez está sujeta a la fecha indicada.</p>
               <div className="flex items-center md:justify-end gap-2 grayscale mt-4 opacity-50">
-                <ShieldCheck size={14} />
-                <span className="font-black text-slate-600 tracking-tighter uppercase">OdontoFocus Ecosystem</span>
+                <div className="w-5 h-5 overflow-hidden rounded">
+                  <img src="/img/logo/isotipo.png" alt="VitalNexus" className="w-full h-full object-cover" />
+                </div>
+                <span className="font-black text-slate-600 tracking-tighter uppercase">VitalNexus SaaS</span>
               </div>
             </div>
           </div>

@@ -14,7 +14,9 @@ import {
   ShieldCheck,
   ChevronRight,
   TrendingDown,
-  Info
+  Info,
+  MapPin,
+  Mail
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -31,6 +33,9 @@ interface ReceiptData {
   especialista: {
     nombre: string;
     email: string;
+    clinica_nombre: string | null;
+    clinica_logo_url: string | null;
+    clinica_direccion: string | null;
   };
   presupuesto: {
     total: number;
@@ -76,11 +81,14 @@ export default function PublicReceiptPage() {
     </div>
   );
 
+  const hasLogo = data.especialista.clinica_logo_url && data.especialista.clinica_logo_url.length > 5;
+  const clinicDisplayName = data.especialista.clinica_nombre || `Dr. ${data.especialista.nombre}`;
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans p-4 md:p-8 print:p-0 print:bg-white">
       {/* Botones de Acción (No imprimir) */}
       <div className="max-w-3xl mx-auto mb-6 flex justify-between items-center print:hidden">
-        <button className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold text-sm">
+        <button onClick={() => window.history.back()} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold text-sm">
           <ChevronRight className="rotate-180" size={16} /> Volver
         </button>
         <div className="flex gap-2">
@@ -105,10 +113,16 @@ export default function PublicReceiptPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-violet-600 rounded-xl flex items-center justify-center">
-                  <ShieldCheck className="text-white" size={24} />
-                </div>
-                <span className="text-xl font-black tracking-tighter uppercase">OdontoFocus</span>
+                {hasLogo ? (
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 backdrop-blur-xl flex items-center justify-center">
+                    <img src={data.especialista.clinica_logo_url!} alt={clinicDisplayName} className="w-full h-full object-contain p-1" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 bg-violet-600 rounded-xl flex items-center justify-center">
+                    <ShieldCheck className="text-white" size={24} />
+                  </div>
+                )}
+                <span className="text-xl font-black tracking-tighter uppercase">{clinicDisplayName}</span>
               </div>
               <h1 className="text-3xl font-black mb-1">Recibo de Abono</h1>
               <p className="text-slate-400 font-mono text-sm">Ref: {data.id.slice(0, 8).toUpperCase()}</p>
@@ -146,12 +160,21 @@ export default function PublicReceiptPage() {
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Información del Especialista</p>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-slate-100 rounded-2xl text-slate-500">
-                    <ShieldCheck size={20} />
-                  </div>
+                  {hasLogo ? (
+                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center border border-slate-200">
+                      <img src={data.especialista.clinica_logo_url!} alt={clinicDisplayName} className="w-full h-full object-contain p-1.5" />
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-slate-100 rounded-2xl text-slate-500">
+                      <ShieldCheck size={20} />
+                    </div>
+                  )}
                   <div>
                     <p className="font-bold text-lg">Dr. {data.especialista.nombre}</p>
-                    <p className="text-sm text-slate-500">{data.especialista.email}</p>
+                    <p className="text-sm text-slate-500 flex items-center gap-1"><Mail size={12} /> {data.especialista.email}</p>
+                    {data.especialista.clinica_direccion && (
+                      <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5"><MapPin size={10} /> {data.especialista.clinica_direccion}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -178,8 +201,12 @@ export default function PublicReceiptPage() {
                 </div>
               </div>
             </div>
-            {/* Watermark Logo Icon */}
-            <ShieldCheck size={120} className="absolute right-[-20px] bottom-[-20px] text-slate-200/50 rotate-[-15deg]" />
+            {/* Watermark */}
+            {hasLogo ? (
+              <img src={data.especialista.clinica_logo_url!} alt="" className="absolute right-[-10px] bottom-[-10px] w-32 h-32 object-contain opacity-[0.04] rotate-[-15deg]" />
+            ) : (
+              <ShieldCheck size={120} className="absolute right-[-20px] bottom-[-20px] text-slate-200/50 rotate-[-15deg]" />
+            )}
           </div>
 
           {/* Financial Summary */}
@@ -209,7 +236,7 @@ export default function PublicReceiptPage() {
           {data.notas && (
             <div className="bg-amber-50/50 border border-amber-100 rounded-2xl p-6">
               <p className="text-[10px] font-black text-amber-600/60 uppercase tracking-widest mb-2">Observaciones</p>
-              <p className="text-slate-600 text-sm italic italic">"{data.notas}"</p>
+              <p className="text-slate-600 text-sm italic">"{data.notas}"</p>
             </div>
           )}
         </div>
@@ -218,10 +245,10 @@ export default function PublicReceiptPage() {
         <div className="border-t border-slate-100 p-8 md:p-12 text-center bg-slate-50/50">
           <p className="text-slate-400 text-xs mb-4">Este documento es una confirmación digital de pago válida para efectos informativos.</p>
           <div className="flex items-center justify-center gap-2 grayscale hover:grayscale-0 transition-all opacity-50">
-            <div className="w-6 h-6 bg-slate-900 rounded flex items-center justify-center">
-              <ShieldCheck className="text-white" size={14} />
+            <div className="w-6 h-6 bg-slate-900 rounded flex items-center justify-center overflow-hidden">
+              <img src="/img/logo/isotipo.png" alt="VitalNexus" className="w-full h-full object-cover" />
             </div>
-            <span className="font-black text-slate-600 text-sm tracking-tight">OdontoFocus SaaS</span>
+            <span className="font-black text-slate-600 text-sm tracking-tight">VitalNexus SaaS</span>
           </div>
         </div>
       </motion.div>

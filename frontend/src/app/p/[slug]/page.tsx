@@ -15,7 +15,11 @@ import {
   IdCard,
   ChevronLeft,
   Loader2,
-  Info
+  Info,
+  MapPin,
+  Instagram,
+  Facebook,
+  MessageCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -34,7 +38,23 @@ interface PublicSpecialist {
   horario_atencion: any;
   especialidades: string[];
   servicios: PublicService[];
+  clinica_nombre: string | null;
+  clinica_logo_url: string | null;
+  clinica_direccion: string | null;
+  redes_sociales: {
+    instagram?: string;
+    facebook?: string;
+    tiktok?: string;
+    whatsapp?: string;
+  } | null;
 }
+
+// TikTok icon (not in lucide)
+const TikTokIcon = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.76a8.28 8.28 0 0 0 3.76.92V6.24a4.85 4.85 0 0 1-0 .45z"/>
+  </svg>
+);
 
 export default function PublicBookingPortal() {
   const { slug } = useParams();
@@ -79,7 +99,6 @@ export default function PublicBookingPortal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // Validación de Documento (V-12345678, E-..., P-...)
     const dniRegex = /^[VEP]-\d+$/;
     if (!dniRegex.test(formData.documento)) {
       alert("El documento debe tener el formato V-12345678, E-12345678 o P-12345678 (Letra en mayúscula y con guion).");
@@ -87,7 +106,6 @@ export default function PublicBookingPortal() {
       return;
     }
 
-    // Validación de Contacto (al menos uno)
     if (!formData.email && !formData.telefono) {
       alert("Debes proporcionar al menos un medio de contacto (Correo o Teléfono).");
       setSubmitting(false);
@@ -113,6 +131,30 @@ export default function PublicBookingPortal() {
     }
   };
 
+  // Helper: build social links
+  const socialLinks = specialist?.redes_sociales ? [
+    specialist.redes_sociales.instagram && { 
+      icon: <Instagram size={18} />, 
+      href: specialist.redes_sociales.instagram.startsWith('http') ? specialist.redes_sociales.instagram : `https://instagram.com/${specialist.redes_sociales.instagram.replace('@', '')}`,
+      label: "Instagram"
+    },
+    specialist.redes_sociales.facebook && {
+      icon: <Facebook size={18} />,
+      href: specialist.redes_sociales.facebook.startsWith('http') ? specialist.redes_sociales.facebook : `https://facebook.com/${specialist.redes_sociales.facebook}`,
+      label: "Facebook"
+    },
+    specialist.redes_sociales.tiktok && {
+      icon: <TikTokIcon size={18} />,
+      href: specialist.redes_sociales.tiktok.startsWith('http') ? specialist.redes_sociales.tiktok : `https://tiktok.com/@${specialist.redes_sociales.tiktok.replace('@', '')}`,
+      label: "TikTok"
+    },
+    specialist.redes_sociales.whatsapp && {
+      icon: <MessageCircle size={18} />,
+      href: `https://wa.me/${specialist.redes_sociales.whatsapp.replace(/\D/g, '')}`,
+      label: "WhatsApp"
+    }
+  ].filter(Boolean) as { icon: React.ReactNode; href: string; label: string }[] : [];
+
   if (loading) return (
     <div className="min-h-screen bg-[#0a0514] flex flex-col items-center justify-center gap-4">
       <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
@@ -131,6 +173,8 @@ export default function PublicBookingPortal() {
     </div>
   );
 
+  const hasLogo = specialist.clinica_logo_url && specialist.clinica_logo_url.length > 5;
+
   return (
     <div className="min-h-screen bg-[#0a0514] text-slate-200 font-sans selection:bg-violet-500/30">
       {/* Background Decor */}
@@ -146,9 +190,26 @@ export default function PublicBookingPortal() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="w-24 h-24 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-violet-500/20 ring-1 ring-violet-400/50">
-            <span className="text-3xl font-black text-white">{specialist.nombre[0]}{specialist.apellido[0]}</span>
-          </div>
+          {/* Logo o Iniciales */}
+          {hasLogo ? (
+            <div className="w-28 h-28 rounded-[32px] mx-auto mb-6 shadow-2xl shadow-violet-500/20 ring-1 ring-violet-400/30 overflow-hidden bg-white/5 backdrop-blur-xl">
+              <img 
+                src={specialist.clinica_logo_url!} 
+                alt={specialist.clinica_nombre || "Logo"} 
+                className="w-full h-full object-contain p-2"
+              />
+            </div>
+          ) : (
+            <div className="w-24 h-24 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-violet-500/20 ring-1 ring-violet-400/50">
+              <span className="text-3xl font-black text-white">{specialist.nombre[0]}{specialist.apellido[0]}</span>
+            </div>
+          )}
+
+          {/* Clinic Name */}
+          {specialist.clinica_nombre && (
+            <p className="text-violet-400/80 font-black uppercase tracking-[0.4em] text-[9px] mb-3">{specialist.clinica_nombre}</p>
+          )}
+
           <p className="text-violet-400 font-black uppercase tracking-[0.3em] text-[10px] mb-2">Reserva una cita con</p>
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
             Dr. {specialist.nombre} {specialist.apellido}
@@ -160,10 +221,37 @@ export default function PublicBookingPortal() {
               </span>
             ))}
           </div>
+
           {specialist.descripcion_perfil && (
-            <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">
+            <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed mb-6">
               {specialist.descripcion_perfil}
             </p>
+          )}
+
+          {/* Dirección */}
+          {specialist.clinica_direccion && (
+            <div className="flex items-center justify-center gap-2 text-slate-500 text-xs mb-4">
+              <MapPin size={14} className="text-violet-400/60" />
+              <span>{specialist.clinica_direccion}</span>
+            </div>
+          )}
+
+          {/* Redes Sociales */}
+          {socialLinks.length > 0 && (
+            <div className="flex items-center justify-center gap-3 mt-4">
+              {socialLinks.map((link, idx) => (
+                <a
+                  key={idx}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={link.label}
+                  className="p-3 bg-white/5 hover:bg-violet-600/20 border border-white/10 hover:border-violet-500/40 rounded-2xl text-slate-400 hover:text-violet-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-violet-500/10"
+                >
+                  {link.icon}
+                </a>
+              ))}
+            </div>
           )}
         </motion.header>
 
@@ -214,7 +302,6 @@ export default function PublicBookingPortal() {
                       <div className={`p-3 rounded-2xl ${selectedService?.id === servicio.id ? "bg-violet-600 text-white" : "bg-white/5 text-violet-400"}`}>
                         <Stethoscope size={20} />
                       </div>
-                      {/* Precio oculto en portal público */}
                     </div>
                     <h3 className="font-bold text-white mb-2">{servicio.nombre}</h3>
                     <div className="flex items-center gap-2 text-xs text-slate-500 font-bold uppercase tracking-widest">
@@ -289,20 +376,9 @@ export default function PublicBookingPortal() {
                         value={formData.documento}
                         onChange={e => {
                           let val = e.target.value.toUpperCase().replace(/\s/g, '');
-                          
-                          // Si empieza con número, insertar V- automáticamente
-                          if (/^\d/.test(val)) {
-                            val = 'V-' + val;
-                          }
-                          
-                          // Si empieza con letra correcta pero le falta el guion
-                          if (/^[VEP]\d/.test(val)) {
-                            val = val[0] + '-' + val.substring(1);
-                          }
-
-                          // Solo permitir caracteres válidos (Letra, guion, números)
+                          if (/^\d/.test(val)) val = 'V-' + val;
+                          if (/^[VEP]\d/.test(val)) val = val[0] + '-' + val.substring(1);
                           if (val.length > 0 && !/^[VEP-]/.test(val)) return;
-
                           setFormData({...formData, documento: val});
                         }}
                       />
@@ -376,7 +452,6 @@ export default function PublicBookingPortal() {
                       <p className="font-bold text-emerald-400">{selectedService?.nombre}</p>
                     </div>
                   </div>
-                  {/* Precio oculto */}
                 </div>
 
                 <button 
