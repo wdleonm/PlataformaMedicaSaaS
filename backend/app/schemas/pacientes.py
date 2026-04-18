@@ -36,8 +36,8 @@ class PacienteBaseSchema(BaseModel):
 
 class PacienteCreate(PacienteBaseSchema):
     """Schema para crear paciente."""
-
-    pass
+    telefono: str
+    email: EmailStr
 
 
 class PacienteUpdate(BaseModel):

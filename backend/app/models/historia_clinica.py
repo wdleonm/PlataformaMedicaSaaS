@@ -57,6 +57,7 @@ class HistoriaClinica(SQLModel, table=True):
 
     diagnostico:        Optional[str]  = Field(default=None)
     plan_tratamiento:   Optional[str]  = Field(default=None)
+    actividades_realizadas: Optional[str] = Field(default=None)
     notas:              Optional[str]  = Field(default=None)
     
     activo:             bool           = Field(default=True)

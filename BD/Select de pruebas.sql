@@ -34,3 +34,9 @@ SELECT * from sys_config.hc_secciones;
 SELECT * from sys_config.especialidad_hc_secciones;
 
 SELECT * from sys_config.bcv_tasas_historial ;
+
+
+
+ALTER TABLE sys_clinical.historias_clinicas ADD COLUMN actividades_realizadas VARCHAR;
+ALTER TABLE sys_config.insumos ADD COLUMN imagen_url VARCHAR(500);
+

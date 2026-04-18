@@ -47,6 +47,7 @@ interface Insumo {
   stock_actual: number;
   stock_minimo: number;
   stock_bajo: boolean;
+  imagen_url: string | null;
 }
 
 interface InsumoReceta {
@@ -162,6 +163,7 @@ export default function InventarioPage() {
     stock_actual: 0,
     stock_minimo: 0,
     cantidad_a_añadir: 0,
+    imagen_url: "",
   });
 
   // Formulario Servicio
@@ -188,7 +190,8 @@ export default function InventarioPage() {
   const [recipeCatalogSearch, setRecipeCatalogSearch] = useState("");
   const [recipeCatalogResults, setRecipeCatalogResults] = useState<CatalogoInsumo[]>([]);
   const [isSearchingRecipeCatalog, setIsSearchingRecipeCatalog] = useState(false);
-
+  const [openDropdownIdx, setOpenDropdownIdx] = useState<number | null>(null);
+  const [recetaSearch, setRecetaSearch] = useState("");
   const fetchData = async () => {
     try {
       setIsLoading(true);
@@ -242,6 +245,7 @@ export default function InventarioPage() {
       stock_actual: insumo?.stock_actual || 0,
       stock_minimo: insumo?.stock_minimo || 0,
       cantidad_a_añadir: 0,
+      imagen_url: insumo?.imagen_url || "",
     });
     setIsInsumoModalOpen(true);
   };
@@ -329,6 +333,7 @@ export default function InventarioPage() {
       stock_actual: 0,
       stock_minimo: 5,
       cantidad_a_añadir: 0,
+      imagen_url: item.imagen_url || "",
     });
     // Limpiar búsqueda para mostrar el formulario
     setCatalogSearch("");
@@ -610,9 +615,13 @@ export default function InventarioPage() {
                     <tr key={insumo.id} className="table-row-hover bg-card/40 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${insumo.stock_bajo ? 'bg-orange-500/10 text-orange-500' : 'bg-blue-500/10 text-blue-500'}`}>
-                            <FlaskConical size={16} />
-                          </div>
+                          {insumo.imagen_url ? (
+                            <img src={insumo.imagen_url} alt={insumo.nombre} className="w-8 h-8 rounded-lg object-cover border border-border/30" />
+                          ) : (
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${insumo.stock_bajo ? 'bg-orange-500/10 text-orange-500' : 'bg-blue-500/10 text-blue-500'}`}>
+                              <FlaskConical size={16} />
+                            </div>
+                          )}
                           <div>
                             <p className="font-bold">{insumo.nombre}</p>
                             <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{insumo.codigo || 'S/C'} • {insumo.unidad}</p>
@@ -748,21 +757,25 @@ export default function InventarioPage() {
                           initial={{ opacity: 0, y: -10 }} 
                           animate={{ opacity: 1, y: 0 }} 
                           exit={{ opacity: 0, y: -10 }}
-                          className="bg-background border border-border shadow-xl rounded-xl mt-2 max-h-48 overflow-y-auto custom-scrollbar divide-y divide-border/50"
+                          className="bg-card border border-border shadow-2xl rounded-xl mt-2 max-h-60 overflow-y-auto custom-scrollbar p-1 space-y-0.5"
                         >
                           {catalogResults.map(item => (
                             <button 
                               key={item.id} 
                               type="button"
                               onClick={() => handleCloneFromCatalog(item)}
-                              className="w-full p-3 text-left hover:bg-secondary/50 flex items-center justify-between group transition-colors"
+                              className="w-full p-2.5 text-left hover:bg-primary/10 rounded-lg flex items-center justify-between group transition-all"
                             >
                               <div className="flex items-center gap-3 overflow-hidden">
-                                {item.imagen_url && (
-                                  <img src={item.imagen_url} alt={item.nombre} className="w-8 h-8 rounded object-cover border border-border/50" />
+                                {item.imagen_url ? (
+                                  <img src={item.imagen_url} alt={item.nombre} className="w-10 h-10 rounded-lg object-cover border border-border/30 shrink-0" />
+                                ) : (
+                                  <div className="w-10 h-10 rounded-lg bg-secondary/30 flex items-center justify-center shrink-0 border border-border/20">
+                                    <FlaskConical size={16} className="text-muted-foreground" />
+                                  </div>
                                 )}
                                 <div className="overflow-hidden">
-                                  <p className="text-xs font-bold truncate">{item.nombre}</p>
+                                  <p className="text-[13px] font-bold truncate leading-tight">{item.nombre}</p>
                                   <p className="text-[10px] text-muted-foreground uppercase">{item.sku || 'S/SKU'} • ${item.precio_usd}</p>
                                 </div>
                               </div>
@@ -772,8 +785,8 @@ export default function InventarioPage() {
                                     <ExternalLink size={12} />
                                   </a>
                                 )}
-                                <div className="bg-primary/10 text-primary p-1.5 rounded-lg">
-                                  {cloningId === item.id ? <Check size={14} /> : <Copy size={14} />}
+                                <div className={`p-2 rounded-lg transition-all ${cloningId === item.id ? 'bg-success text-success-foreground' : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'}`}>
+                                  {cloningId === item.id ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
                                 </div>
                               </div>
                             </button>
@@ -798,8 +811,38 @@ export default function InventarioPage() {
                       <input name="codigo" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.codigo} onChange={handleInsumoInputChange} placeholder="Vacío para auto-generar" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Unidad</label>
-                      <input required name="unidad" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-[48px]" value={insumoForm.unidad} onChange={handleInsumoInputChange} placeholder="Caja, ML..." />
+                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Unidad de medida</label>
+                      <select required name="unidad" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-[42px]" value={insumoForm.unidad} onChange={(e) => setInsumoForm({...insumoForm, unidad: e.target.value})}>
+                        <optgroup label="Unidades / Piezas">
+                          <option value="unidad">Unidad (und)</option>
+                          <option value="pza">Pieza (pza)</option>
+                          <option value="par">Par</option>
+                        </optgroup>
+                        <optgroup label="Peso">
+                          <option value="gr">Gramos (gr)</option>
+                          <option value="mg">Miligramos (mg)</option>
+                          <option value="kg">Kilogramos (kg)</option>
+                        </optgroup>
+                        <optgroup label="Volumen">
+                          <option value="ml">Mililitros (ml)</option>
+                          <option value="cm3">Centímetros cúbicos (cm³)</option>
+                          <option value="lt">Litros (lt)</option>
+                          <option value="gota">Gotas</option>
+                        </optgroup>
+                        <optgroup label="Longitud">
+                          <option value="cm">Centímetros (cm)</option>
+                          <option value="m">Metros (m)</option>
+                          <option value="pulg">Pulgadas (pulg)</option>
+                        </optgroup>
+                        <optgroup label="Otros">
+                          <option value="sobre">Sobre</option>
+                          <option value="ampolla">Ampolla</option>
+                          <option value="cartucho">Cartucho</option>
+                          <option value="rollo">Rollo</option>
+                          <option value="hoja">Hoja</option>
+                          <option value="tira">Tira</option>
+                        </optgroup>
+                      </select>
                     </div>
                     <NumberInput 
                       label="Costo Unit. (Paquete)" 
@@ -856,6 +899,11 @@ export default function InventarioPage() {
                         value={insumoForm.stock_minimo} 
                         onChange={(val) => setInsumoForm({...insumoForm, stock_minimo: val})} 
                       />
+                    </div>
+
+                    <div className="col-span-2 space-y-1">
+                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">URL de Imagen (Opcional)</label>
+                      <input name="imagen_url" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.imagen_url} onChange={handleInsumoInputChange} placeholder="https://..." />
                     </div>
                   </div>
                   <div className="flex justify-end gap-2 pt-4 border-t border-border/30">
@@ -1015,9 +1063,13 @@ export default function InventarioPage() {
                              className="w-full p-2.5 text-left hover:bg-primary/5 rounded-xl flex items-center justify-between group transition-all"
                            >
                              <div className="flex items-center gap-3 overflow-hidden">
-                               {item.imagen_url && (
-                                 <img src={item.imagen_url} alt={item.nombre} className="w-10 h-10 rounded-lg object-cover border border-border/30" />
-                               )}
+                                {item.imagen_url ? (
+                                  <img src={item.imagen_url} alt={item.nombre} className="w-10 h-10 rounded-lg object-cover border border-border/30 shrink-0" />
+                                ) : (
+                                  <div className="w-10 h-10 rounded-lg bg-secondary/30 flex items-center justify-center shrink-0 border border-border/20">
+                                    <FlaskConical size={16} className="text-muted-foreground" />
+                                  </div>
+                                )}
                                <div className="overflow-hidden">
                                  <p className="text-[13px] font-bold truncate leading-tight">{item.nombre}</p>
                                  <p className="text-[10px] text-muted-foreground uppercase">{item.sku || 'S/SKU'} • ${item.precio_usd}</p>
@@ -1060,25 +1112,80 @@ export default function InventarioPage() {
                       }
                       return (
                       <div key={idx} className="flex gap-3 items-end bg-secondary/10 p-3 rounded-xl border border-border/10">
-                        <div className="flex-1 space-y-1">
+                        <div className="flex-1 space-y-1 relative">
                           <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Insumo</label>
-                          <select 
-                            className="w-full bg-background border border-border/50 rounded-lg p-2 text-sm"
-                            value={item.insumo_id}
-                            onChange={(e) => updateRecetaItem(idx, "insumo_id", e.target.value)}
+                          <div 
+                            className="w-full bg-background border border-border/50 rounded-lg p-2 text-sm flex items-center justify-between cursor-pointer"
+                            onClick={() => {
+                              setOpenDropdownIdx(openDropdownIdx === idx ? null : idx);
+                              setRecetaSearch("");
+                            }}
                           >
-                            <option value="">Seleccione...</option>
-                            {insumos.map(i => {
-                              const cu = i.costo_unitario / (i.unidades_por_paquete || 1);
-                              return (
-                                <option key={i.id} value={i.id}>{i.nombre} • ${cu.toFixed(2)} c/{i.unidad}</option>
-                              );
-                            })}
-                          </select>
+                            {selIns ? (
+                              <div className="flex items-center gap-2 truncate">
+                                {selIns.imagen_url ? (
+                                  <img src={selIns.imagen_url} alt="" className="w-5 h-5 rounded object-cover" />
+                                ) : (
+                                  <FlaskConical size={14} className="text-muted-foreground" />
+                                )}
+                                <span className="truncate font-medium">{selIns.nombre}</span>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground">Seleccione un insumo...</span>
+                            )}
+                            <ChevronRight size={14} className={`text-muted-foreground transition-transform ${openDropdownIdx === idx ? "-rotate-90" : "rotate-90"}`} />
+                          </div>
+
+                          <AnimatePresence>
+                            {openDropdownIdx === idx && (
+                              <motion.div 
+                                initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
+                                className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border shadow-2xl rounded-xl overflow-hidden flex flex-col"
+                              >
+                                <div className="p-2 border-b border-border/50">
+                                  <input 
+                                    autoFocus
+                                    type="text" 
+                                    placeholder="Buscar insumo..." 
+                                    className="w-full bg-secondary/20 rounded p-1.5 text-xs outline-none"
+                                    value={recetaSearch}
+                                    onChange={e => setRecetaSearch(e.target.value)}
+                                  />
+                                </div>
+                                <div className="max-h-48 overflow-y-auto custom-scrollbar p-1">
+                                  {insumos.filter(i => i.nombre.toLowerCase().includes(recetaSearch.toLowerCase())).map(i => {
+                                    const cu = i.costo_unitario / (i.unidades_por_paquete || 1);
+                                    return (
+                                      <button 
+                                        key={i.id}
+                                        onClick={() => {
+                                          updateRecetaItem(idx, "insumo_id", i.id);
+                                          setOpenDropdownIdx(null);
+                                        }}
+                                        className="w-full text-left p-2 hover:bg-primary/10 rounded flex items-center gap-2 transition-colors"
+                                      >
+                                        {i.imagen_url ? (
+                                          <img src={i.imagen_url} alt="" className="w-8 h-8 rounded object-cover border border-border/30 shrink-0" />
+                                        ) : (
+                                          <div className="w-8 h-8 rounded bg-secondary/30 flex items-center justify-center shrink-0">
+                                            <FlaskConical size={12} className="text-muted-foreground" />
+                                          </div>
+                                        )}
+                                        <div className="overflow-hidden">
+                                          <p className="text-xs font-bold truncate">{i.nombre}</p>
+                                          <p className="text-[9px] text-muted-foreground uppercase">{i.codigo || 'S/C'} • ${cu.toFixed(2)} c/{i.unidad}</p>
+                                        </div>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
-                        <div className="w-36">
+                        <div className="w-40">
                           <NumberInput 
-                            label={`Cant. ($${costoFila.toFixed(2)})`}
+                            label={`CANT. en ${selIns ? selIns.unidad : 'und'} ($${costoFila.toFixed(2)})`}
                             value={item.cantidad_utilizada} 
                             onChange={(val) => updateRecetaItem(idx, "cantidad_utilizada", val)} 
                             step={0.1}

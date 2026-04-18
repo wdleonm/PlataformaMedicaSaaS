@@ -46,13 +46,14 @@ const ToothVisual = ({
     const c = state[side];
     const r = state["R"];
     const eff =
-      r && r.hallazgo_nombre.toLowerCase().includes("corona") ? r : c;
+      r && (r.hallazgo_nombre.toLowerCase().includes("corona") || r.hallazgo_codigo === "PROT") ? r : c;
     if (!eff) return "fill-slate-700";
     const cod = eff.hallazgo_codigo;
     const nom = eff.hallazgo_nombre.toLowerCase();
+    if (cod === "EXO_IND") return "fill-slate-700";
     if (cod.startsWith("C") || nom.includes("caries")) return "fill-red-500/80";
-    if (cod === "COR" || nom.includes("corona")) return "fill-amber-400/80";
-    if (cod.startsWith("R") || nom.includes("resina") || nom.includes("amalgama") || cod === "AMAL") return "fill-sky-500/80";
+    if (cod === "COR" || cod === "PROT" || nom.includes("corona") || nom.includes("protesis") || nom.includes("prótesis")) return "fill-amber-400/80";
+    if (cod.startsWith("R") || nom.includes("resina") || nom.includes("amalgama") || cod === "AMAL" || cod === "REST") return "fill-sky-500/80";
     return "fill-sky-500/80";
   };
 
@@ -67,6 +68,7 @@ const ToothVisual = ({
 
   const toothRes = state["R"];
   const isAusente = toothRes?.hallazgo_codigo === "AUS" || toothRes?.hallazgo_nombre?.toLowerCase().includes("ausente");
+  const isExoInd = toothRes?.hallazgo_codigo === "EXO_IND";
   const isEndo = toothRes?.hallazgo_codigo === "ENDO" || toothRes?.hallazgo_codigo === "ENDO_IND" || toothRes?.hallazgo_nombre?.toLowerCase().includes("endodoncia");
   const isSano = toothRes?.hallazgo_codigo === "SANO";
   const endoColor = toothRes?.hallazgo_codigo === "ENDO_IND" ? "stroke-red-500" : "stroke-sky-500";
@@ -88,12 +90,16 @@ const ToothVisual = ({
         {toothRes && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
             {isAusente && (
-              <div className="absolute inset-0 flex items-center justify-center rotate-45">
-                <div className="w-[120%] h-1.5 bg-red-500/70 rounded-full" />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-[120%] h-1.5 bg-sky-500 rounded-full rotate-45 absolute" />
+                <div className="w-[120%] h-1.5 bg-sky-500 rounded-full -rotate-45 absolute" />
               </div>
             )}
-            {toothRes.hallazgo_nombre?.toLowerCase().includes("corona") && (
-              <div className="w-full h-full border-4 border-sky-500/50 rounded-xl" />
+            {isExoInd && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-[120%] h-1.5 bg-red-500 rounded-full rotate-45 absolute" />
+                <div className="w-[120%] h-1.5 bg-red-500 rounded-full -rotate-45 absolute" />
+              </div>
             )}
             {isEndo && (
               <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
@@ -191,7 +197,7 @@ function OdontoEmbed() {
     if (!selectedHallazgo || !pacienteId) return;
     const nom = selectedHallazgo.nombre.toLowerCase();
     const cod = selectedHallazgo.codigo;
-    const full = nom.includes("corona") || nom.includes("ausente") || nom.includes("endodoncia") || nom.includes("sano") || nom.includes("protesis") || cod === "COR" || cod === "AUS" || cod === "ENDO" || cod === "ENDO_IND" || cod === "SANO";
+    const full = nom.includes("corona") || nom.includes("ausente") || nom.includes("endodoncia") || nom.includes("sano") || nom.includes("protesis") || nom.includes("prótesis") || cod === "COR" || cod === "AUS" || cod === "ENDO" || cod === "ENDO_IND" || cod === "SANO" || cod === "EXO_IND" || cod === "PROT";
     try {
       setSaving(true);
       await api.post(`/api/odontograma/registros`, {
@@ -238,9 +244,20 @@ function OdontoEmbed() {
       restauracion: active ? "bg-white/20" : "bg-sky-500/20 text-sky-400",
       estado:       active ? "bg-white/20" : "bg-slate-500/20 text-slate-400",
     };
+    
+    // Auto-reset notes when unselecting PROT
+    const handleSelect = () => {
+      if (active) {
+        setSelectedHallazgo(null);
+        if (h.codigo === "PROT") setNotas("");
+      } else {
+        setSelectedHallazgo(h);
+      }
+    };
+    
     return (
       <button
-        onClick={() => setSelectedHallazgo(active ? null : h)}
+        onClick={handleSelect}
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-bold transition-all ${active ? "scale-105 shadow-md" : ""} ${colors[h.categoria]}`}
       >
         {h.nombre}
@@ -282,20 +299,24 @@ function OdontoEmbed() {
           </div>
 
           {/* Patologías */}
-          <div className="space-y-1">
-            <p className="text-[9px] font-black uppercase text-red-400 tracking-widest">Patologías</p>
-            <div className="flex flex-wrap gap-1.5">
-              {hallazgos.filter(h => h.categoria === "patologia").map(h => <HallazgoBtn key={h.id} h={h} />)}
+          {hallazgos.some(h => h.categoria === "patologia") && (
+            <div className="space-y-1">
+              <p className="text-[9px] font-black uppercase text-red-400 tracking-widest">Patologías</p>
+              <div className="flex flex-wrap gap-1.5">
+                {hallazgos.filter(h => h.categoria === "patologia").map(h => <HallazgoBtn key={h.id} h={h} />)}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Restauraciones */}
-          <div className="space-y-1">
-            <p className="text-[9px] font-black uppercase text-sky-400 tracking-widest">Restauraciones</p>
-            <div className="flex flex-wrap gap-1.5">
-              {hallazgos.filter(h => h.categoria === "restauracion").map(h => <HallazgoBtn key={h.id} h={h} />)}
+          {/* Restauraciones (Compatibilidad) */}
+          {hallazgos.some(h => h.categoria === "restauracion") && (
+            <div className="space-y-1">
+              <p className="text-[9px] font-black uppercase text-sky-400 tracking-widest">Restauraciones</p>
+              <div className="flex flex-wrap gap-1.5">
+                {hallazgos.filter(h => h.categoria === "restauracion").map(h => <HallazgoBtn key={h.id} h={h} />)}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Estados */}
           <div className="space-y-1">
@@ -324,12 +345,28 @@ function OdontoEmbed() {
               initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <div className="bg-primary/15 border border-primary/30 rounded-lg px-3 py-1.5 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shrink-0" />
-                <p className="text-[11px] font-bold text-primary">
-                  Modo activo — toca una cara del diente para aplicar{" "}
-                  <span className="underline italic">{selectedHallazgo.nombre}</span>. Clic de nuevo para deseleccionar.
-                </p>
+              <div className="bg-primary/15 border border-primary/30 rounded-lg px-3 py-1.5 flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shrink-0" />
+                  <p className="text-[11px] font-bold text-primary">
+                    Modo activo — toca una cara del diente para aplicar{" "}
+                    <span className="underline italic">{selectedHallazgo.nombre}</span>. Clic de nuevo para deseleccionar.
+                  </p>
+                </div>
+                {selectedHallazgo.codigo === "PROT" && (
+                  <select 
+                    value={notas} 
+                    onChange={e => setNotas(e.target.value)}
+                    className="bg-slate-700 border border-primary/50 text-white text-[11px] rounded px-2 py-1 outline-none font-bold"
+                  >
+                    <option value="">Seleccionar tipo de prótesis</option>
+                    <option value="Prótesis total">Prótesis total</option>
+                    <option value="Prótesis parcial removible (PPR)">Prótesis parcial removible (PPR)</option>
+                    <option value="Implante">Implante</option>
+                    <option value="Puente fijo">Puente fijo</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                )}
               </div>
             </motion.div>
           )}
@@ -383,7 +420,7 @@ function OdontoEmbed() {
           {[
             { color: "bg-red-500", label: "Patología / Caries" },
             { color: "bg-sky-500", label: "Restauración" },
-            { color: "bg-amber-400", label: "Corona" },
+            { color: "bg-amber-400", label: "Prótesis" },
             { color: "bg-slate-700 border border-slate-500", label: "Sano / Sin registro" },
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">

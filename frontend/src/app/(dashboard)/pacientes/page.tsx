@@ -182,8 +182,8 @@ export default function PacientesPage() {
     setErrorMsg("");
     setInactiveData(null);
     
-    if (!formData.nombre || !formData.apellido) {
-      setErrorMsg("Nombre y Apellido son obligatorios.");
+    if (!formData.nombre || !formData.apellido || !formData.email || !formData.telefono) {
+      setErrorMsg("Nombre, Apellido, Email y Teléfono son obligatorios.");
       setActiveTab("personal");
       return;
     }
@@ -375,6 +375,13 @@ export default function PacientesPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
+                          onClick={() => router.push(`/citas?paciente_id=${paciente.id}`)} 
+                          className="p-2 hover:bg-success/10 text-success rounded-lg transition-colors" 
+                          title="Crear Cita"
+                        >
+                          <Calendar size={16} />
+                        </button>
+                        <button 
                           onClick={() => router.push(`/historias?paciente_id=${paciente.id}`)} 
                           className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors" 
                           title="Ver Historia Clínica"
@@ -499,12 +506,12 @@ export default function PacientesPage() {
                        <input name="lugar_nacimiento" value={formData.lugar_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</label>
-                      <input name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email *</label>
+                      <input name="email" type="email" value={formData.email} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teléfono</label>
-                      <input name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="+58 4xx xxxxxxx" />
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teléfono *</label>
+                      <input name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="+58 4xx xxxxxxx" required />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estado Civil</label>

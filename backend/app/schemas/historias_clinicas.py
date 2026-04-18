@@ -21,6 +21,7 @@ class HistoriaClinicaCreate(BaseModel):
     estudios_complementarios: Optional[dict] = None
     diagnostico:      Optional[str]   = None
     plan_tratamiento: Optional[str]   = None
+    actividades_realizadas: Optional[str] = None
     notas:            Optional[str]   = None
 
 
@@ -36,6 +37,7 @@ class HistoriaClinicaUpdate(BaseModel):
     estudios_complementarios: Optional[dict] = None
     diagnostico:      Optional[str]   = None
     plan_tratamiento: Optional[str]   = None
+    actividades_realizadas: Optional[str] = None
     notas:            Optional[str]   = None
     activo:           Optional[bool]  = None
 
@@ -66,6 +68,7 @@ class HistoriaClinicaRead(BaseModel):
     estudios_complementarios: Optional[dict]
     diagnostico:      Optional[str]
     plan_tratamiento: Optional[str]
+    actividades_realizadas: Optional[str]
     notas:            Optional[str]
     activo:           bool
     created_at:       datetime

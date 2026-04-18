@@ -57,6 +57,7 @@ interface HistoriaClinica {
   estudios_complementarios: any;
   diagnostico: string | null;
   plan_tratamiento: string | null;
+  actividades_realizadas: string | null;
   notas: string | null;
   adjuntos_count: number;
   adjuntos: HistoriaClinicaAdjunto[];
@@ -101,6 +102,7 @@ interface FormDataHistoria {
   };
   diagnostico: string;
   plan_tratamiento: string;
+  actividades_realizadas: string;
   notas: string;
   adjuntos: any[];
 }
@@ -121,6 +123,7 @@ const formDataVacio = (): FormDataHistoria => ({
   estudios_complementarios: { radiografias: [], observaciones: "", laboratorios: "" },
   diagnostico: "",
   plan_tratamiento: "",
+  actividades_realizadas: "",
   notas: "",
   adjuntos: [],
 });
@@ -128,7 +131,7 @@ const formDataVacio = (): FormDataHistoria => ({
 // ─── Secciones del modal (renderers estáticos mapeados por codigo) ────────────
 
 const patologiasDisponibles = ["Alergias", "Cardiovascular", "Respiratorios", "Diabetes", "Sanguíneos", "Cáncer"];
-const personalesDisponibles = ["Cardiovasculares", "Enf. Pulmonar", "Sanguíneos", "Hemorrágicos", "Quirúrgicos", "Hospitalización", "Alergias", "Diabetes", "Convulsión", "Enf. Renal", "Asma"];
+const personalesDisponibles = ["Cardiovasculares", "Enf. Pulmonar", "Sanguíneos", "Hemorrágicos", "Quirúrgicos", "Hospitalización", "Alergias", "Diabetes", "Convulsión", "Enf. Renal", "Asma", "Otros"];
 
 function ConsultaStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
   return (
@@ -205,13 +208,19 @@ function AntecedentesStep({ formData, setFormData }: { formData: FormDataHistori
             </button>
           ))}
         </div>
+        <AnimatePresence>
+          {(formData.antecedentes_personales.patologias.includes("Otros") || formData.antecedentes_personales.especifique) && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="space-y-4 mt-4 overflow-hidden">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase text-muted-foreground">Especifique otros / observaciones</label>
+                <input type="text" value={formData.antecedentes_personales.especifique}
+                  onChange={(e) => setFormData({ ...formData, antecedentes_personales: { ...formData.antecedentes_personales, especifique: e.target.value } })}
+                  className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase text-muted-foreground">Especifique otros / observaciones</label>
-            <input type="text" value={formData.antecedentes_personales.especifique}
-              onChange={(e) => setFormData({ ...formData, antecedentes_personales: { ...formData.antecedentes_personales, especifique: e.target.value } })}
-              className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" />
-          </div>
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase text-muted-foreground">¿Toma algún medicamento?</label>
             <input type="text" value={formData.antecedentes_personales.medicamentos} placeholder="Nombre y dosis..."
@@ -338,6 +347,19 @@ function PlanStep({ formData, setFormData }: { formData: FormDataHistoria; setFo
   );
 }
 
+function ActividadesStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <div className="space-y-2">
+        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Actividades Realizadas / Evolución</label>
+        <textarea rows={8} value={formData.actividades_realizadas} placeholder="Describa el procedimiento, tratamientos aplicados o evolución de hoy..."
+          onChange={(e) => setFormData({ ...formData, actividades_realizadas: e.target.value })}
+          className="w-full bg-background border border-border/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none resize-none" />
+      </div>
+    </motion.div>
+  );
+}
+
 function AdjuntosStep({ historiaId, adjuntos, onUpdate }: { historiaId: string | null, adjuntos: any[], onUpdate: () => void }) {
   const [isUploading, setIsUploading] = useState(false);
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -454,6 +476,8 @@ function renderSeccion(
       return <OdontogramaStep pacienteId={pacienteId} />;
     case "PLAN":
       return <PlanStep formData={formData} setFormData={setFormData} />;
+    case "ACTIVIDADES":
+      return <ActividadesStep formData={formData} setFormData={setFormData} />;
     case "ADJUNTOS":
       return <AdjuntosStep historiaId={historiaId} adjuntos={formData.adjuntos} onUpdate={onUpdateAdjuntos} />;
     default:
@@ -498,7 +522,9 @@ function HistoriasContent() {
 
   // ── Carga de secciones desde la API ──────────────────────────────────────
   const filterSecciones = (seccionesList: any[]) => {
-    const isDental = usuario?.especialidad_principal?.codigo?.startsWith("ODO_");
+    const codigo = usuario?.especialidad_principal?.codigo?.toUpperCase() || "";
+    const nombre = usuario?.especialidad_principal?.nombre?.toLowerCase() || "";
+    const isDental = codigo.startsWith("ODO_") || nombre.includes("ortodoncia") || codigo.includes("ORT");
     if (isDental) return seccionesList;
 
     // Si no es dental, eliminamos EXAMEN_FISICO, ODONTOGRAMA, PLAN por solicitud del usuario
@@ -520,7 +546,8 @@ function HistoriasContent() {
         { id: "3", codigo: "EXAMEN_FISICO", nombre: "Examen Físico", componente_frontend: "ExamenFisicoStep",  orden: 3, obligatoria: false },
         { id: "4", codigo: "ODONTOGRAMA",   nombre: "Odontograma",   componente_frontend: "OdontogramaStep",   orden: 4, obligatoria: false },
         { id: "5", codigo: "PLAN",          nombre: "Plan de Tratamiento", componente_frontend: "PlanStep",    orden: 5, obligatoria: false },
-        { id: "6", codigo: "ADJUNTOS",      nombre: "Adjuntos",      componente_frontend: "AdjuntosStep",      orden: 6, obligatoria: false },
+        { id: "6", codigo: "ACTIVIDADES",   nombre: "Actividades Realizadas", componente_frontend: "ActividadesStep", orden: 6, obligatoria: false },
+        { id: "7", codigo: "ADJUNTOS",      nombre: "Adjuntos",      componente_frontend: "AdjuntosStep",      orden: 7, obligatoria: false },
       ]));
     } finally {
       setIsLoadingSecciones(false);
@@ -539,7 +566,8 @@ function HistoriasContent() {
         { id: "3", codigo: "EXAMEN_FISICO", nombre: "Examen Físico", componente_frontend: "ExamenFisicoStep",  orden: 3, obligatoria: false },
         { id: "4", codigo: "ODONTOGRAMA",   nombre: "Odontograma",   componente_frontend: "OdontogramaStep",   orden: 4, obligatoria: false },
         { id: "5", codigo: "PLAN",          nombre: "Plan de Tratamiento", componente_frontend: "PlanStep",    orden: 5, obligatoria: false },
-        { id: "6", codigo: "ADJUNTOS",      nombre: "Adjuntos",      componente_frontend: "AdjuntosStep",      orden: 6, obligatoria: false },
+        { id: "6", codigo: "ACTIVIDADES",   nombre: "Actividades Realizadas", componente_frontend: "ActividadesStep", orden: 6, obligatoria: false },
+        { id: "7", codigo: "ADJUNTOS",      nombre: "Adjuntos",      componente_frontend: "AdjuntosStep",      orden: 7, obligatoria: false },
       ]));
     }
   }, [usuario?.especialidad_principal?.id]);
@@ -636,6 +664,7 @@ function HistoriasContent() {
       estudios_complementarios: h.estudios_complementarios || { radiografias: [], observaciones: "", laboratorios: "" },
       diagnostico: h.diagnostico || "",
       plan_tratamiento: h.plan_tratamiento || "",
+      actividades_realizadas: (h as any).actividades_realizadas || "",
       notas: h.notas || "",
       adjuntos: h.adjuntos || [],
     });
@@ -779,34 +808,31 @@ function HistoriasContent() {
       )}
 
       {/* Alertas Médicas Banners */}
-      {(paciente?.alergias || paciente?.patologias_cronicas || paciente?.medicacion_frecuente) && (
+      {(historias.length > 0 && (historias[0].antecedentes_personales?.patologias?.length > 0 || historias[0].antecedentes_personales?.especifique || paciente?.alergias || paciente?.medicacion_frecuente)) && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {paciente.alergias && (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3">
-              <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={18} />
-              <div>
-                <p className="text-[10px] font-black uppercase text-red-500/70 tracking-widest">Alergias</p>
-                <p className="text-sm font-bold text-red-600 leading-tight mt-0.5">{paciente.alergias}</p>
-              </div>
+          className="flex flex-wrap gap-2">
+          {paciente?.alergias && (
+            <div className="px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2">
+              <AlertCircle className="text-red-500 shrink-0" size={16} />
+              <span className="text-xs font-bold text-red-600">Alergias: {paciente.alergias}</span>
             </div>
           )}
-          {paciente.patologias_cronicas && (
-            <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-start gap-3">
-              <Activity className="text-amber-500 shrink-0 mt-0.5" size={18} />
-              <div>
-                <p className="text-[10px] font-black uppercase text-amber-500/70 tracking-widest">Patologías Crónicas</p>
-                <p className="text-sm font-bold text-amber-600 leading-tight mt-0.5">{paciente.patologias_cronicas}</p>
-              </div>
+          {historias[0].antecedentes_personales?.patologias?.filter((p:string) => p !== "Otros").map((pat: string) => (
+            <div key={pat} className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-2">
+              <Activity className="text-amber-500 shrink-0" size={16} />
+              <span className="text-xs font-bold text-amber-600">{pat}</span>
+            </div>
+          ))}
+          {historias[0].antecedentes_personales?.especifique && (
+            <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-2">
+              <Activity className="text-amber-500 shrink-0" size={16} />
+              <span className="text-xs font-bold text-amber-600">{historias[0].antecedentes_personales.especifique}</span>
             </div>
           )}
-          {paciente.medicacion_frecuente && (
-            <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-start gap-3">
-              <Stethoscope className="text-blue-500 shrink-0 mt-0.5" size={18} />
-              <div>
-                <p className="text-[10px] font-black uppercase text-blue-500/70 tracking-widest">Medicación Actual</p>
-                <p className="text-sm font-bold text-blue-600 leading-tight mt-0.5">{paciente.medicacion_frecuente}</p>
-              </div>
+          {paciente?.medicacion_frecuente && (
+            <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center gap-2">
+              <Stethoscope className="text-blue-500 shrink-0" size={16} />
+              <span className="text-xs font-bold text-blue-600">Medicación: {paciente.medicacion_frecuente}</span>
             </div>
           )}
         </motion.div>
@@ -867,6 +893,12 @@ function HistoriasContent() {
                       <div>
                         <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Plan de Tratamiento</h4>
                         <p className="text-sm text-foreground/80">{h.plan_tratamiento}</p>
+                      </div>
+                    )}
+                    {h.actividades_realizadas && (
+                      <div>
+                        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Actividades Realizadas</h4>
+                        <p className="text-sm text-foreground/80">{h.actividades_realizadas}</p>
                       </div>
                     )}
                     {h.notas && (
@@ -961,7 +993,7 @@ function HistoriasContent() {
                 </div>
 
                 {/* Tabs de secciones — dinámicos desde API */}
-                <div className="flex items-center px-6 py-3 bg-secondary/10 border-b border-border/20 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex flex-wrap items-center px-6 py-3 bg-secondary/10 border-b border-border/20 gap-2">
                   {isLoadingSecciones ? (
                     <div className="flex items-center gap-2 text-muted-foreground text-xs">
                       <Loader2 size={14} className="animate-spin" /> Cargando secciones...

@@ -17,13 +17,14 @@ api.interceptors.request.use(
   (config) => {
     // Al ejecutarse en el navegador, buscamos el token en localStorage
     if (typeof window !== 'undefined') {
+      const isUrlAdmin = config.url?.includes('/api/admin');
       const token = localStorage.getItem('token');
       const adminToken = localStorage.getItem('admin_token');
       
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      } else if (adminToken) {
+      if (isUrlAdmin && adminToken) {
         config.headers.Authorization = `Bearer ${adminToken}`;
+      } else if (!isUrlAdmin && token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
     }
     return config;
@@ -38,7 +39,12 @@ api.interceptors.response.use(
     if (typeof window !== 'undefined') {
       if (error.response?.status === 401) {
         // Token expirado o inválido
-        window.dispatchEvent(new CustomEvent('session-expired'));
+        const isUrlAdmin = error.config?.url?.includes('/api/admin');
+        if (isUrlAdmin) {
+          window.dispatchEvent(new CustomEvent('admin-session-expired'));
+        } else {
+          window.dispatchEvent(new CustomEvent('session-expired'));
+        }
       } else if (error.response?.status === 403) {
         const detail = error.response?.data?.detail || '';
         if (detail.includes('actualizar tu contraseña') || detail.includes('contraseña para continuar')) {

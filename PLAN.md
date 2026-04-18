@@ -527,7 +527,23 @@ Se ha preparado la infraestructura para el envío de notificaciones vía WhatsAp
 
 ---
 
-*Documento: VitalNexus | Master Plan. Última actualización: 03/04/2026.*
+---
+
+### 📝 Notas de Mantenimiento
+
+#### 🖼️ Actualización de Imágenes del Carrusel (Landing Page)
+Para cambiar las 4 imágenes del carrusel de video en la sección de login:
+1. Dirígete a: `frontend/public/images/landing/`
+2. Sustituye los archivos manteniendo los nombres exactos:
+   - `foto1.png`
+   - `foto2.png`
+   - `foto3.png`
+   - `foto4.png`
+3. No es necesario modificar código; el componente `VideoCarousel.tsx` las detectará automáticamente.
+
+---
+
+*Documento: VitalNexus | Master Plan. Última actualización: 18/04/2026.*
 *Estado: Fases 1–12 COMPLETADAS ✅ | Único pendiente mayor: Fase 10 (Despliegue VPS). Pendientes menores: WhatsApp plantillas (8.3.2/8.3.3), Merma/costos indirectos (9.1), Toggle precios portal (9.2).*
 
 

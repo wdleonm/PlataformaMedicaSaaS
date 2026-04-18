@@ -37,6 +37,14 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    const handleAdminSessionExpired = () => {
+      logoutAdmin();
+    };
+    window.addEventListener("admin-session-expired", handleAdminSessionExpired);
+    return () => window.removeEventListener("admin-session-expired", handleAdminSessionExpired);
+  }, []);
+
   const fetchAdmin = async (currentToken: string) => {
     try {
       const { data } = await api.get("/api/admin/auth/me", {

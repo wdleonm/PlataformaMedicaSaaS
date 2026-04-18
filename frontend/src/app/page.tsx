@@ -27,6 +27,7 @@ import {
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardMockup from "@/components/landing/DashboardMockup";
+import VideoCarousel from "@/components/landing/VideoCarousel";
 
 export default function Home() {
   const { login } = useAuth();
@@ -285,7 +286,7 @@ export default function Home() {
             </div>
             <div className="flex-1 w-full max-w-md bg-gradient-to-br from-primary/10 to-blue-600/10 rounded-[3rem] p-1 border border-white/10 hover:shadow-primary/5 shadow-2xl transition-all">
               <div className="aspect-[4/5] bg-slate-900 rounded-[2.8rem] overflow-hidden relative">
-                 <img src="https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800" alt="Médico usando tablet" className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" />
+                 <img src="/images/doctor_tablet.png" alt="Médico usando tablet digital" className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" />
                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
                  <div className="absolute bottom-8 left-8 right-8">
                     <div className="bg-primary p-4 rounded-2xl flex items-center gap-4 shadow-xl">
@@ -301,88 +302,98 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- LOGIN SECTION --- */}
-        <section id="login-section" className="py-24 px-6 relative border-t border-white/5 bg-black/20">
+        {/* --- LOGIN SECTION — Split Video + Form --- */}
+        <section id="login-section" className="relative border-t border-white/5 bg-black/20 min-h-[80vh] flex items-center">
           <div className="absolute inset-0 bg-primary/5 -z-10 blur-3xl rounded-full max-w-4xl mx-auto translate-y-20"></div>
-          <div className="max-w-md mx-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="glass-panel p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group bg-slate-900/80"
-            >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[50px] bg-primary/30 blur-[40px] pointer-events-none group-hover:bg-primary/50 transition-all" />
+          
+          <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 gap-0 items-stretch min-h-[80vh]">
+            
+            {/* LEFT — Login Form */}
+            <div className="flex items-center justify-center p-8 lg:p-16 relative z-10">
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="glass-panel p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group bg-slate-900/80 w-full max-w-md"
+              >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[50px] bg-primary/30 blur-[40px] pointer-events-none group-hover:bg-primary/50 transition-all" />
 
-              <div className="text-center mb-10 relative z-10">
-                <h2 className="text-3xl font-bold mb-2">Entrar al Sistema</h2>
-                <p className="text-slate-400 text-sm">Gestiona tu clínica desde cualquier lugar</p>
-              </div>
-
-              <form className="space-y-6 relative z-10" onSubmit={handleLogin}>
-                {sessionExpiredMsg && (
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[13px] flex items-center gap-3">
-                    <Clock size={16} /> Tu sesión expiró por inactividad.
-                  </div>
-                )}
-
-                {errorLogin && (
-                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-[13px] text-center">
-                    {errorLogin}
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-300 ml-1">Correo Electrónico</label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
-                    <input 
-                      type="email" 
-                      placeholder="ejemplo@medico.com" 
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      required
-                      className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl py-3 pl-12 pr-4 text-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                    />
-                  </div>
+                <div className="text-center mb-10 relative z-10">
+                  <h2 className="text-3xl font-bold mb-2">Entrar al Sistema</h2>
+                  <p className="text-slate-400 text-sm">Gestiona tu clínica desde cualquier lugar</p>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between ml-1">
-                    <label className="text-sm font-medium text-slate-300">Contraseña</label>
-                    <a href="#" className="text-xs text-primary hover:underline">¿Perdiste tu clave?</a>
+                <form className="space-y-6 relative z-10" onSubmit={handleLogin}>
+                  {sessionExpiredMsg && (
+                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[13px] flex items-center gap-3">
+                      <Clock size={16} /> Tu sesión expiró por inactividad.
+                    </div>
+                  )}
+
+                  {errorLogin && (
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-[13px] text-center">
+                      {errorLogin}
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-300 ml-1">Correo Electrónico</label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+                      <input 
+                        type="email" 
+                        placeholder="ejemplo@medico.com" 
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        required
+                        className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl py-3 pl-12 pr-4 text-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                      />
+                    </div>
                   </div>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
-                    <input 
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••" 
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      required
-                      className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl py-3 pl-12 pr-12 text-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between ml-1">
+                      <label className="text-sm font-medium text-slate-300">Contraseña</label>
+                      <a href="#" className="text-xs text-primary hover:underline">¿Perdiste tu clave?</a>
+                    </div>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+                      <input 
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••" 
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        required
+                        className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl py-3 pl-12 pr-12 text-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
                   </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold rounded-2xl py-4 shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {isLoading ? <Loader2 className="animate-spin" /> : <>Entrar ahora <ArrowRight size={20} /></>}
+                  </button>
+                </form>
+
+                <div className="mt-8 text-center text-sm text-slate-500 relative z-10">
+                  ¿Aún no eres parte? <a href="#" className="text-primary font-bold hover:underline">Registrar Clínica</a>
                 </div>
+              </motion.div>
+            </div>
 
-                <button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-bold rounded-2xl py-4 shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {isLoading ? <Loader2 className="animate-spin" /> : <>Entrar ahora <ArrowRight size={20} /></>}
-                </button>
-              </form>
-
-              <div className="mt-8 text-center text-sm text-slate-500 relative z-10">
-                ¿Aún no eres parte? <a href="#" className="text-primary font-bold hover:underline">Registrar Clínica</a>
-              </div>
-            </motion.div>
+            {/* RIGHT — Video Carousel */}
+            <div className="hidden lg:block relative overflow-hidden">
+              <VideoCarousel />
+            </div>
           </div>
         </section>
       </main>
