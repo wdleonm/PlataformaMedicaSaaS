@@ -4,5 +4,5 @@ for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8001') do taskkill /f /pid %
 echo.
 echo Arrancando Backend de VitalNexus...
 cd backend
-..\.venv\Scripts\python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
+.venv\Scripts\python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
 pause
