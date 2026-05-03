@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { 
   Package, 
@@ -98,6 +98,41 @@ const NumberInput = ({
   min?: number;
   prefix?: string;
 }) => {
+  // Use internal string state so the user can freely type decimals like "0.10"
+  const [displayValue, setDisplayValue] = useState(value === 0 ? '' : String(value));
+  const isFocused = useRef(false);
+
+  // Sync external value changes (e.g. +/- buttons) only when the input is NOT focused
+  useEffect(() => {
+    if (!isFocused.current) {
+      setDisplayValue(value === 0 ? '' : String(value));
+    }
+  }, [value]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    // Allow empty, digits, and one decimal point (for typing "0.", "0.1", etc.)
+    if (raw === '' || /^\d*\.?\d*$/.test(raw)) {
+      setDisplayValue(raw);
+      const parsed = parseFloat(raw);
+      if (!isNaN(parsed)) {
+        onChange(parsed);
+      } else if (raw === '') {
+        onChange(0);
+      }
+    }
+  };
+
+  const handleFocus = () => {
+    isFocused.current = true;
+  };
+
+  const handleBlur = () => {
+    isFocused.current = false;
+    // Clean up display on blur: show the actual numeric value
+    setDisplayValue(value === 0 ? '' : String(value));
+  };
+
   return (
     <div className="space-y-1.5">
       <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">{label}</label>
@@ -112,11 +147,13 @@ const NumberInput = ({
         <div className="flex-1 relative">
           {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold">{prefix}</span>}
           <input 
-            type="number" 
-            step={step}
+            type="text"
+            inputMode="decimal"
             className={`w-full bg-transparent text-center font-bold text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${prefix ? 'pl-6' : ''}`}
-            value={value === 0 ? '' : value}
-            onChange={(e) => onChange(e.target.value === '' ? 0 : Number(e.target.value))}
+            value={displayValue}
+            onChange={handleInputChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
         </div>
         <button 
@@ -803,7 +840,7 @@ export default function InventarioPage() {
                 <form onSubmit={handleSaveInsumo} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2 space-y-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Nombre</label>
+                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Nombre *</label>
                       <input required name="nombre" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.nombre} onChange={handleInsumoInputChange} placeholder="Ej. Guantes de Nitrilo" />
                     </div>
                     <div className="space-y-1">
@@ -906,9 +943,12 @@ export default function InventarioPage() {
                       <input name="imagen_url" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.imagen_url} onChange={handleInsumoInputChange} placeholder="https://..." />
                     </div>
                   </div>
-                  <div className="flex justify-end gap-2 pt-4 border-t border-border/30">
-                    <button type="button" onClick={() => setIsInsumoModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
-                    <button type="submit" className="bg-primary text-primary-foreground px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-primary/20">Guardar Insumo</button>
+                  <div className="flex items-center justify-between pt-4 border-t border-border/30">
+                    <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={() => setIsInsumoModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
+                      <button type="submit" className="bg-primary text-primary-foreground px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-primary/20">Guardar Insumo</button>
+                    </div>
                   </div>
                 </form>
               </div>
@@ -933,7 +973,7 @@ export default function InventarioPage() {
                 <div className="space-y-4">
                    <div className="grid grid-cols-2 gap-4">
                       <div className="col-span-1 space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Nombre</label>
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Nombre *</label>
                           <input required name="nombre" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={servicioForm.nombre} onChange={handleServicioInputChange} placeholder="Ej. Limpieza" />
                       </div>
                       <div className="col-span-1 space-y-1">
@@ -996,9 +1036,12 @@ export default function InventarioPage() {
                       </div>
                    </div>
                 </div>
-                <div className="flex justify-end gap-2 pt-4 border-t border-border/30">
-                  <button type="button" onClick={() => setIsServicioModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
-                  <button type="submit" className="bg-primary text-primary-foreground px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-primary/20">Guardar Servicio</button>
+                <div className="flex items-center justify-between pt-4 border-t border-border/30">
+                  <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setIsServicioModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
+                    <button type="submit" className="bg-primary text-primary-foreground px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-primary/20">Guardar Servicio</button>
+                  </div>
                 </div>
               </form>
             </motion.div>

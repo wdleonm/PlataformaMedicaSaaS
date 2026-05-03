@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Eraser, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
@@ -33,12 +33,14 @@ const ToothVisual = ({
   selectedHallazgo,
   onApply,
   small = false,
+  isCorrectionMode = false,
 }: {
   number: number;
   state: Record<string, EstadoCara>;
   selectedHallazgo: Hallazgo | null;
   onApply: (n: number, side: string) => void;
   small?: boolean;
+  isCorrectionMode?: boolean;
 }) => {
   const isRightSide = [1, 4, 5, 8].includes(Math.floor(number / 10));
 
@@ -61,8 +63,8 @@ const ToothVisual = ({
     <path
       key={key}
       d={d}
-      className={`${color(key)} stroke-slate-600 stroke-[1] transition-all ${selectedHallazgo ? "cursor-pointer hover:fill-primary/40" : "cursor-default"}`}
-      onClick={() => selectedHallazgo && onApply(number, key)}
+      className={`${color(key)} stroke-slate-600 stroke-[1] transition-all ${selectedHallazgo || isCorrectionMode ? "cursor-pointer hover:fill-primary/40" : "cursor-default"}`}
+      onClick={() => (selectedHallazgo || isCorrectionMode) && onApply(number, key)}
     />
   );
 
@@ -125,12 +127,14 @@ const Quadrant = ({
   onApply,
   small,
   border,
+  isCorrectionMode,
 }: {
   teeth: number[];
   state: Record<number, Record<string, EstadoCara>>;
   selectedHallazgo: Hallazgo | null;
   onApply: (n: number, side: string) => void;
   small?: boolean;
+  isCorrectionMode?: boolean;
   border: "right" | "left";
 }) => (
   <div className={`flex gap-1 ${border === "right" ? "border-r-2 border-slate-700 pr-3" : "pl-3"}`}>
@@ -142,6 +146,7 @@ const Quadrant = ({
         selectedHallazgo={selectedHallazgo}
         onApply={onApply}
         small={small}
+        isCorrectionMode={isCorrectionMode}
       />
     ))}
   </div>
@@ -160,6 +165,7 @@ function OdontoEmbed() {
   const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isCorrectionMode, setIsCorrectionMode] = useState(false);
   const [savedMsg, setSavedMsg] = useState("");
 
   // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
@@ -194,7 +200,58 @@ function OdontoEmbed() {
   useEffect(() => { loadOdontograma(); }, [loadOdontograma]);
 
   const applyHallazgo = async (numero: number, cara: string) => {
-    if (!selectedHallazgo || !pacienteId) return;
+    if (!pacienteId) return;
+
+    const currentTooth = odontograma[numero];
+    // Buscamos si ya hay un registro en esta cara o uno general (R)
+    const target = currentTooth ? (currentTooth[cara] || currentTooth["R"]) : null;
+
+    // Toggle: Si vuelves a pulsar el mismo hallazgo que ya tiene el diente, lo borramos
+    const isSameHallazgo = selectedHallazgo && target && target.hallazgo_id === selectedHallazgo.id;
+
+    // Modo Corrección o Toggle
+    if (isCorrectionMode || isSameHallazgo) {
+      if (!target || !target.registro_id) return;
+
+      try {
+        setSaving(true);
+        
+        // 1. Borrado optimista local para respuesta inmediata
+        setOdontograma(prev => {
+          const next = { ...prev };
+          if (next[numero]) {
+            const nextTooth = { ...next[numero] };
+            // Borramos tanto la cara específica como la general para asegurar limpieza visual
+            delete nextTooth[cara];
+            delete nextTooth["R"];
+            
+            if (Object.keys(nextTooth).length === 0) {
+              delete next[numero];
+            } else {
+              next[numero] = nextTooth;
+            }
+          }
+          return next;
+        });
+
+        // 2. Llamada al API
+        await api.delete(`/api/odontograma/registros/${target.registro_id}`, { headers: headers() });
+        setSavedMsg(`✓ Registro removido en diente ${numero}`);
+        setTimeout(() => setSavedMsg(""), 2500);
+        
+        // 3. Recarga completa para asegurar sincronía con el historial
+        await loadOdontograma();
+      } catch (e) {
+        console.error("Error eliminando:", e);
+        alert("No se pudo eliminar el registro.");
+        loadOdontograma(); // Revertir en caso de error
+      } finally {
+        setSaving(false);
+      }
+      return;
+    }
+
+    if (!selectedHallazgo) return;
     const nom = selectedHallazgo.nombre.toLowerCase();
     const cod = selectedHallazgo.codigo;
     const full = nom.includes("corona") || nom.includes("ausente") || nom.includes("endodoncia") || nom.includes("sano") || nom.includes("protesis") || nom.includes("prótesis") || cod === "COR" || cod === "AUS" || cod === "ENDO" || cod === "ENDO_IND" || cod === "SANO" || cod === "EXO_IND" || cod === "PROT";
@@ -252,6 +309,7 @@ function OdontoEmbed() {
         if (h.codigo === "PROT") setNotas("");
       } else {
         setSelectedHallazgo(h);
+        setIsCorrectionMode(false); // Desactivar corrección al elegir un hallazgo
       }
     };
     
@@ -323,6 +381,17 @@ function OdontoEmbed() {
             <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Estados</p>
             <div className="flex flex-wrap gap-1.5">
               {hallazgos.filter(h => h.categoria === "estado").map(h => <HallazgoBtn key={h.id} h={h} />)}
+              
+              {/* Botón de Corrección */}
+              <button
+                onClick={() => {
+                  setIsCorrectionMode(!isCorrectionMode);
+                  if (!isCorrectionMode) setSelectedHallazgo(null);
+                }}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-black transition-all ${isCorrectionMode ? "bg-red-500 border-red-400 text-white shadow-lg scale-105" : "bg-slate-800 border-slate-700 text-slate-400 hover:border-red-500/50 hover:text-red-400"}`}
+              >
+                <Eraser size={14} /> Corregir
+              </button>
             </div>
           </div>
 
@@ -340,20 +409,23 @@ function OdontoEmbed() {
 
         {/* Banner modo registro */}
         <AnimatePresence>
-          {selectedHallazgo && (
+          {(selectedHallazgo || isCorrectionMode) && (
             <motion.div
               initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <div className="bg-primary/15 border border-primary/30 rounded-lg px-3 py-1.5 flex flex-wrap items-center justify-between gap-2">
+              <div className={`${isCorrectionMode ? 'bg-red-500/15 border-red-500/30' : 'bg-primary/15 border-primary/30'} border rounded-lg px-3 py-1.5 flex flex-wrap items-center justify-between gap-2`}>
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shrink-0" />
-                  <p className="text-[11px] font-bold text-primary">
-                    Modo activo — toca una cara del diente para aplicar{" "}
-                    <span className="underline italic">{selectedHallazgo.nombre}</span>. Clic de nuevo para deseleccionar.
+                  <span className={`w-1.5 h-1.5 ${isCorrectionMode ? 'bg-red-500' : 'bg-primary'} rounded-full animate-pulse shrink-0`} />
+                  <p className={`text-[11px] font-bold ${isCorrectionMode ? 'text-red-400' : 'text-primary'}`}>
+                    {isCorrectionMode ? (
+                      "Modo CORRECCIÓN — toca un diente marcado para eliminar su último registro."
+                    ) : (
+                      <>Modo activo — toca una cara del diente para aplicar <span className="underline italic">{selectedHallazgo?.nombre}</span>. Clic de nuevo para deseleccionar.</>
+                    )}
                   </p>
                 </div>
-                {selectedHallazgo.codigo === "PROT" && (
+                {selectedHallazgo?.codigo === "PROT" && (
                   <select 
                     value={notas} 
                     onChange={e => setNotas(e.target.value)}
@@ -389,28 +461,28 @@ function OdontoEmbed() {
 
           {/* Fila 1: Permanentes Superiores */}
           <div className="flex gap-1">
-            <Quadrant teeth={Q.permanentUpperRight} state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="right" />
-            <Quadrant teeth={Q.permanentUpperLeft}  state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="left" />
+            <Quadrant teeth={Q.permanentUpperRight} state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="right" isCorrectionMode={isCorrectionMode} />
+            <Quadrant teeth={Q.permanentUpperLeft}  state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="left" isCorrectionMode={isCorrectionMode} />
           </div>
 
           {/* Fila 2: Temporales Superiores (centrados, más pequeños) */}
           <div className="flex gap-1">
-            <Quadrant teeth={Q.temporaryUpperRight} state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="right" small />
-            <Quadrant teeth={Q.temporaryUpperLeft}  state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="left" small />
+            <Quadrant teeth={Q.temporaryUpperRight} state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="right" small isCorrectionMode={isCorrectionMode} />
+            <Quadrant teeth={Q.temporaryUpperLeft}  state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="left" small isCorrectionMode={isCorrectionMode} />
           </div>
 
           <LineMed />
 
           {/* Fila 3: Temporales Inferiores (centrados, más pequeños) */}
           <div className="flex gap-1">
-            <Quadrant teeth={Q.temporaryLowerRight} state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="right" small />
-            <Quadrant teeth={Q.temporaryLowerLeft}  state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="left" small />
+            <Quadrant teeth={Q.temporaryLowerRight} state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="right" small isCorrectionMode={isCorrectionMode} />
+            <Quadrant teeth={Q.temporaryLowerLeft}  state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="left" small isCorrectionMode={isCorrectionMode} />
           </div>
 
           {/* Fila 4: Permanentes Inferiores */}
           <div className="flex gap-1">
-            <Quadrant teeth={Q.permanentLowerRight} state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="right" />
-            <Quadrant teeth={Q.permanentLowerLeft}  state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="left" />
+            <Quadrant teeth={Q.permanentLowerRight} state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="right" isCorrectionMode={isCorrectionMode} />
+            <Quadrant teeth={Q.permanentLowerLeft}  state={odontograma} selectedHallazgo={selectedHallazgo} onApply={applyHallazgo} border="left" isCorrectionMode={isCorrectionMode} />
           </div>
 
         </div>
@@ -430,6 +502,25 @@ function OdontoEmbed() {
           ))}
         </div>
       </div>
+      {/* ── Notificaciones flotantes ────────────────────────────────────── */}
+      <AnimatePresence>
+        {savedMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-2xl shadow-emerald-500/20 border border-emerald-400/30"
+          >
+            <div className="bg-white/20 p-1.5 rounded-lg">
+              <CheckCircle2 size={20} />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-widest opacity-80 leading-none mb-0.5">Sincronizado</span>
+              <span className="text-sm font-bold">{savedMsg}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

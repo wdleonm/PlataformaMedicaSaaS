@@ -17,7 +17,8 @@ import {
   Mail,
   MapPin,
   Calendar,
-  Clock
+  Clock,
+  Stethoscope
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -55,6 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
     { icon: Users, label: "Especialistas", href: "/admin/especialistas" },
+    { icon: Stethoscope, label: "Especialidades", href: "/admin/especialidades" },
     { icon: CreditCard, label: "Planes SaaS", href: "/admin/planes" },
     { icon: ShieldCheck, label: "Seguridad", href: "/admin/seguridad" },
     { icon: Settings, label: "Configuración", href: "/admin/config" },

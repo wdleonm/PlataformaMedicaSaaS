@@ -19,9 +19,11 @@ import {
   Mail,
   Lock,
   UserPlus,
+  Plus,
   ShieldCheck,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
+  Stethoscope
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -52,6 +54,7 @@ interface Especialista {
   forzar_cambio_password_proximo_acceso: boolean;
   created_at: string;
   plan?: Plan;
+  especialidad_principal_id?: string | null;
 }
 
 export default function AdminEspecialistasPage() {
@@ -76,6 +79,40 @@ export default function AdminEspecialistasPage() {
   const [showPinSetup, setShowPinSetup] = useState(false);
   const [newPin, setNewPin] = useState("");
 
+  // Quick Add Specialty state
+  const [isQuickSpecModalOpen, setIsQuickSpecModalOpen] = useState(false);
+  const [newSpec, setNewSpec] = useState({ nombre: "", codigo: "" });
+  const [isSavingSpec, setIsSavingSpec] = useState(false);
+  const [isQuickCodeManuallyEdited, setIsQuickCodeManuallyEdited] = useState(false);
+
+  // Sugerencia automática de código en Quick Add
+  useEffect(() => {
+    if (isQuickSpecModalOpen && newSpec.nombre && !isQuickCodeManuallyEdited) {
+      const name = newSpec.nombre.trim().toUpperCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      
+      let suggestedCode = "";
+      const isDental = ["ODONTOLOG", "ORTODON", "ENDODON", "MAXILO"].some(k => name.includes(k));
+      const isMedical = name.includes("MEDICINA");
+      
+      if (isDental) {
+        if (name.includes("GENERAL")) suggestedCode = "ODO_GEN";
+        else if (name.includes("MAXILO")) suggestedCode = "ODO_MAX";
+        else if (name.includes("ENDODON")) suggestedCode = "ODO_END";
+        else if (name.includes("ORTODON")) suggestedCode = "ODO_ORT";
+        else suggestedCode = `ODO_${name.substring(0, 3)}`;
+      } else if (isMedical) {
+        const parts = name.split(" ");
+        const suffix = parts.length > 1 ? parts[1].substring(0, 3) : "GEN";
+        suggestedCode = `MED_${suffix}`;
+      } else {
+        suggestedCode = `${name.substring(0, 3)}_${name.length > 3 ? "GEN" : "001"}`;
+      }
+      
+      setNewSpec(prev => ({ ...prev, codigo: suggestedCode }));
+    }
+  }, [newSpec.nombre, isQuickSpecModalOpen, isQuickCodeManuallyEdited]);
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -99,6 +136,15 @@ export default function AdminEspecialistasPage() {
       console.error("Error loading specialties:", err);
     }
     setIsLoading(false);
+  };
+
+  const fetchSpecialties = async () => {
+    try {
+      const { data } = await api.get("/api/admin/config/especialidades");
+      setEspecialidades(data);
+    } catch (err) {
+      console.error("Error loading specialties:", err);
+    }
   };
 
   useEffect(() => {
@@ -272,6 +318,7 @@ export default function AdminEspecialistasPage() {
             <thead>
               <tr className="bg-white/5 border-b border-white/5">
                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Especialista</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Especialidad</th>
                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Plan / Estado</th>
                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Vencimiento</th>
                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Registro</th>
@@ -281,14 +328,14 @@ export default function AdminEspecialistasPage() {
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-20 text-center">
+                  <td colSpan={6} className="px-6 py-20 text-center">
                     <Loader2 className="animate-spin text-violet-500 mx-auto" size={40} />
                     <p className="text-slate-500 mt-4 font-bold uppercase tracking-widest text-xs">Obteniendo registros...</p>
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-20 text-center">
+                  <td colSpan={6} className="px-6 py-20 text-center">
                     <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">No se encontraron especialistas</p>
                   </td>
                 </tr>
@@ -311,6 +358,19 @@ export default function AdminEspecialistasPage() {
                           <p className="text-xs text-slate-500 font-medium lowercase tracking-tight">{esp.email}</p>
                         </div>
                       </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      {(() => {
+                        const espSpec = especialidades.find(e => e.id === esp.especialidad_principal_id);
+                        return espSpec ? (
+                          <div className="flex items-center gap-2">
+                            <Stethoscope size={14} className="text-violet-400 shrink-0" />
+                            <span className="text-xs font-bold text-slate-300 tracking-tight">{espSpec.nombre}</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-600 italic">Sin asignar</span>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-5">
                       <div className="space-y-1.5">
@@ -415,7 +475,7 @@ export default function AdminEspecialistasPage() {
               <form onSubmit={handleSave} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Nombre</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Nombre <span className="text-violet-400">*</span></label>
                     <input 
                       type="text" 
                       required
@@ -425,7 +485,7 @@ export default function AdminEspecialistasPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Apellido</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Apellido <span className="text-violet-400">*</span></label>
                     <input 
                       type="text" 
                       required
@@ -437,7 +497,7 @@ export default function AdminEspecialistasPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Correo Electrónico</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Correo Electrónico <span className="text-violet-400">*</span></label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
                     <input 
@@ -456,7 +516,7 @@ export default function AdminEspecialistasPage() {
                   
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                      {isEditing ? "Resetear Contraseña (opcional)" : "Contraseña Inicial"}
+                      {isEditing ? "Resetear Contraseña (opcional)" : "Contraseña Inicial"} <span className="text-violet-400">*</span>
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
@@ -499,7 +559,16 @@ export default function AdminEspecialistasPage() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Especialidad Principal</label>
+                    <div className="flex justify-between items-center ml-1">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Especialidad Principal</label>
+                      <button 
+                        type="button"
+                        onClick={() => setIsQuickSpecModalOpen(true)}
+                        className="text-[10px] font-black uppercase tracking-widest text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1"
+                      >
+                        <Plus size={10} /> Nueva
+                      </button>
+                    </div>
                     <select 
                       value={currentEsp.especialidad_principal_id || ""}
                       onChange={(e) => setCurrentEsp({...currentEsp, especialidad_principal_id: e.target.value})}
@@ -574,28 +643,26 @@ export default function AdminEspecialistasPage() {
               </form>
 
               {/* Footer Modal */}
-              <div className="p-8 bg-black/20 border-t border-white/5 flex gap-4">
-                <button 
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-4 px-6 rounded-2xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 transition-all outline-none uppercase tracking-widest text-xs"
-                >
-                  Cancelar
-                </button>
-                <button 
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex-[2] py-4 px-6 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white font-black shadow-lg shadow-violet-900/20 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 group tracking-tight"
-                >
-                  {isSaving ? (
-                    <Loader2 className="animate-spin" size={20} />
-                  ) : (
-                    <>
-                      <Save size={20} />
-                      {isEditing ? "Guardar Cambios" : "Completar Registro"}
-                    </>
-                  )}
-                </button>
+              <div className="p-8 bg-black/20 border-t border-white/5 flex items-center justify-between gap-4">
+                <p className="text-[10px] text-slate-500 italic font-medium">
+                  <span className="text-violet-400 font-black not-italic">*</span> Campos obligatorios
+                </p>
+                <div className="flex gap-4">
+                  <button 
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="py-4 px-8 rounded-2xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 transition-all outline-none uppercase tracking-widest text-[10px]"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit"
+                    disabled={isSaving}
+                    className="py-4 px-8 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white font-black shadow-lg shadow-violet-900/20 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 group tracking-tight text-sm min-w-[160px]"
+                  >
+                    {isSaving ? <Loader2 className="animate-spin" size={20} /> : <><Save size={20} /> {isEditing ? "Guardar Cambios" : "Completar Registro"}</>}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -743,6 +810,85 @@ export default function AdminEspecialistasPage() {
                       Guardar
                     </button>
                   </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      {/* Modal Quick Add Specialty */}
+      <AnimatePresence>
+        {isQuickSpecModalOpen && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsQuickSpecModalOpen(false)}
+              className="absolute inset-0 bg-black/90 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm bg-[#1a0f2e] border border-violet-500/30 rounded-[32px] shadow-2xl overflow-hidden p-8"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h4 className="text-xl font-black text-white italic tracking-tight">Agregar Especialidad</h4>
+                  <p className="text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Acceso Rápido</p>
+                </div>
+                <button onClick={() => setIsQuickSpecModalOpen(false)} className="text-slate-500 hover:text-white transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Nombre</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ej. Endodoncia"
+                    value={newSpec.nombre}
+                    onChange={(e) => setNewSpec({...newSpec, nombre: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:ring-2 focus:ring-violet-500/50 outline-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Código</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ej. ODO_END"
+                    value={newSpec.codigo}
+                    onChange={(e) => {
+                      setIsQuickCodeManuallyEdited(true);
+                      setNewSpec({...newSpec, codigo: e.target.value.toUpperCase()});
+                    }}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white font-mono focus:ring-2 focus:ring-violet-500/50 outline-none"
+                  />
+                </div>
+
+                <button 
+                  onClick={async () => {
+                    if(!newSpec.nombre || !newSpec.codigo) return alert("Completa todos los campos");
+                    setIsSavingSpec(true);
+                    try {
+                      const { data } = await api.post("/api/admin/config/especialidades", { ...newSpec, activo: true });
+                      await fetchSpecialties(); // Refrescar lista de especialidades
+                      setCurrentEsp({ ...currentEsp, especialidad_principal_id: data.id }); // Seleccionarla automáticamente
+                      setIsQuickSpecModalOpen(false);
+                      setNewSpec({ nombre: "", codigo: "" });
+                      setIsQuickCodeManuallyEdited(false);
+                    } catch (err: any) {
+                      alert(err.response?.data?.detail || "Error al crear especialidad");
+                    } finally {
+                      setIsSavingSpec(false);
+                    }
+                  }}
+                  disabled={isSavingSpec}
+                  className="w-full py-4 bg-violet-600 hover:bg-violet-500 text-white font-black rounded-2xl shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isSavingSpec ? <Loader2 className="animate-spin" size={18} /> : "Crear Especialidad"}
+                </button>
               </div>
             </motion.div>
           </div>

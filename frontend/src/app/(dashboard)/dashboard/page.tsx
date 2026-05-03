@@ -162,7 +162,7 @@ export default function DashboardHome() {
       href: "/citas",
     },
     {
-      label: "Utilidad (Mes)",
+      label: "Utilidad Neta Real",
       value: formatCurrency(stats?.utilidad_mes ?? 0),
       sub: stats?.utilidad_tendencia !== undefined ? (
         <div className="flex flex-col gap-1">
@@ -498,9 +498,15 @@ export default function DashboardHome() {
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Análisis de Costos Directos + Merma</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-[10px] text-muted-foreground font-black uppercase">Utilidad Neta Total (Mes)</p>
-            <p className="text-lg font-black text-emerald-400">{formatCurrency(rentabilidad?.totales?.utilidad_neta || 0)}</p>
+          <div className="text-right flex items-center gap-6">
+            <div>
+              <p className="text-[10px] text-muted-foreground font-black uppercase">Gastos Fijos (Mes)</p>
+              <p className="text-sm font-bold text-rose-400">-{formatCurrency(rentabilidad?.totales?.gastos_fijos || 0)}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground font-black uppercase">Utilidad Neta Real</p>
+              <p className="text-lg font-black text-emerald-400">{formatCurrency(rentabilidad?.totales?.utilidad_neta_real || 0)}</p>
+            </div>
           </div>
         </div>
 

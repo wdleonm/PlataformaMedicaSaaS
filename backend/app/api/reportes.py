@@ -6,7 +6,7 @@ from sqlmodel import Session, select, func
 from app.database import get_session
 from app.api.dependencies import get_current_especialista
 from app.models.especialista import Especialista
-from app.models.finanzas import Cita
+from app.models.finanzas import Cita, GastoFijo
 from app.models.insumo_servicio import Servicio
 
 router = APIRouter(prefix="/api/reportes", tags=["Reportes"])
@@ -17,27 +17,35 @@ def get_rentabilidad_mensual(
     especialista: Especialista = Depends(get_current_especialista),
 ):
     """
-    Reporte de rentabilidad mensual (Fase 9.1).
-    Analiza ingresos, costos de insumos, merma y utilidad neta.
+    Reporte de rentabilidad mensual mejorado.
+    Analiza ingresos, costos de insumos, merma, GASTOS FIJOS y utilidad neta real.
     """
     eid = especialista.id
     hoy = date.today()
     inicio_mes = hoy.replace(day=1)
     
-    # 1. Totales del mes actual
+    # 1. Totales del mes actual (Servicios)
     stmt_mes = select(
         func.coalesce(func.sum(Cita.monto_cobrado), 0).label("ingresos"),
         func.coalesce(func.sum(Cita.costo_insumos), 0).label("costos_insumos"),
         func.coalesce(func.sum(Cita.costo_merma), 0).label("costos_merma"),
-        func.coalesce(func.sum(Cita.utilidad_neta), 0).label("utilidad_neta")
+        func.coalesce(func.sum(Cita.utilidad_neta), 0).label("utilidad_bruta_servicios")
     ).where(
         Cita.especialista_id == eid,
         Cita.estado == "completada",
         Cita.fecha_hora >= inicio_mes
     )
     res_mes = session.exec(stmt_mes).first()
+
+    # 2. Gastos Fijos del mes
+    stmt_gastos = select(func.coalesce(func.sum(GastoFijo.monto), 0)).where(
+        GastoFijo.especialista_id == eid,
+        GastoFijo.periodo_mes == hoy.month,
+        GastoFijo.periodo_anio == hoy.year
+    )
+    total_gastos_fijos = session.exec(stmt_gastos).first()
     
-    # 2. Desglose por servicio este mes
+    # 3. Desglose por servicio este mes
     stmt_servicios = select(
         Servicio.nombre,
         func.count(Cita.id).label("cantidad"),
@@ -63,6 +71,9 @@ def get_rentabilidad_mensual(
             "utilidad_neta": float(row[5] or 0)
         })
 
+    utilidad_bruta = float(res_mes.utilidad_bruta_servicios)
+    utilidad_real = utilidad_bruta - float(total_gastos_fijos)
+
     return {
         "periodo": {
             "mes": hoy.strftime("%B %Y"),
@@ -73,7 +84,9 @@ def get_rentabilidad_mensual(
             "ingresos": float(res_mes.ingresos),
             "costos_insumos": float(res_mes.costos_insumos),
             "costos_merma": float(res_mes.costos_merma),
-            "utilidad_neta": float(res_mes.utilidad_neta)
+            "utilidad_bruta_servicios": utilidad_bruta,
+            "gastos_fijos": float(total_gastos_fijos),
+            "utilidad_neta_real": utilidad_real
         },
         "servicios": breakdown
     }

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { api } from "@/lib/api";
 import { 
   Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock, User, Stethoscope, 
-  CheckCircle2, XCircle, AlertCircle, Loader2, MoreVertical, Search, Check, X, DollarSign
+  CheckCircle2, XCircle, AlertCircle, Loader2, MoreVertical, Search, Check, X, DollarSign, ChevronDown
 } from "lucide-react";
 import { 
   format, addDays, startOfWeek, addWeeks, subWeeks, isSameDay, isToday, startOfDay, parseISO,
@@ -52,6 +52,30 @@ export default function CalendarPage() {
   const [showNewPatient, setShowNewPatient] = useState(false);
   const [newPatientData, setNewPatientData] = useState({ nombre: "", apellido: "", documento: "", email: "", telefono: "" });
   const [isSavingPatient, setIsSavingPatient] = useState(false);
+
+  // Búsqueda incremental de servicios
+  const [serviceSearch, setServiceSearch] = useState("");
+  const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
+  const serviceDropdownRef = useRef<HTMLDivElement>(null);
+
+  const filteredServiciosForSelect = useMemo(() => {
+    const search = serviceSearch.toLowerCase();
+    return servicios.filter(s => 
+      s.nombre.toLowerCase().includes(search) || 
+      s.precio.toString().includes(search)
+    );
+  }, [servicios, serviceSearch]);
+
+  // Cerrar dropdown de servicios al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (serviceDropdownRef.current && !serviceDropdownRef.current.contains(e.target as Node)) {
+        setIsServiceDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const fetchCalendarData = async () => {
     try {
@@ -106,6 +130,8 @@ export default function CalendarPage() {
     setSelectedCita(null);
     setPatientSearch("");
     setShowNewPatient(false);
+    setServiceSearch("");
+    setIsServiceDropdownOpen(false);
     setFormData({
       paciente_id: "", servicio_id: "", fecha: format(date || new Date(), "yyyy-MM-dd"),
       hora: hour ? `${hour.toString().padStart(2, "0")}:00` : "09:00", duracion_min: 30, presupuesto_id: "", notas: ""
@@ -118,6 +144,9 @@ export default function CalendarPage() {
     const p = pacientes.find(px => px.id === cita.paciente_id);
     setPatientSearch(p ? `${p.nombre} ${p.apellido} - ${p.documento || 'S/D'}` : "");
     setShowNewPatient(false);
+    const serv = servicios.find(s => s.id === cita.servicio_id);
+    setServiceSearch(serv ? serv.nombre : "");
+    setIsServiceDropdownOpen(false);
     const dt = parseISO(cita.fecha_hora);
     setFormData({
       paciente_id: cita.paciente_id, servicio_id: cita.servicio_id || "", fecha: format(dt, "yyyy-MM-dd"),
@@ -286,7 +315,7 @@ export default function CalendarPage() {
                 <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Buscar Paciente</label>
+                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Buscar Paciente *</label>
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                         <input type="text" placeholder="Ej: 123456 o María..." className="w-full pl-10 pr-4 py-2.5 bg-background border border-border/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" value={patientSearch} onChange={(e) => { setPatientSearch(e.target.value); if (formData.paciente_id) setFormData({...formData, paciente_id: "", presupuesto_id: ""}); }} />
@@ -341,17 +370,54 @@ export default function CalendarPage() {
                       )}
                     </div>
 
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5" ref={serviceDropdownRef}>
                       <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Servicio / Tratamiento</label>
-                      <select className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" value={formData.servicio_id} onChange={(e) => setFormData({...formData, servicio_id: e.target.value})}>
-                        <option value="">Sin servicio específico</option>
-                        {servicios.map(s => <option key={s.id} value={s.id}>{s.nombre} - ${s.precio.toLocaleString()}</option>)}
-                      </select>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                        <input 
+                          type="text" 
+                          placeholder="Buscar servicio o dejar vacío..." 
+                          className="w-full pl-9 pr-8 py-2.5 bg-background border border-border/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" 
+                          value={serviceSearch} 
+                          onChange={(e) => { 
+                            setServiceSearch(e.target.value); 
+                            setIsServiceDropdownOpen(true);
+                            if (e.target.value === '') { setFormData({...formData, servicio_id: ''}); }
+                          }}
+                          onFocus={() => setIsServiceDropdownOpen(true)}
+                        />
+                        <ChevronDown size={14} className={`absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-transform ${isServiceDropdownOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                      {isServiceDropdownOpen && (
+                        <div className="mt-1 max-h-48 overflow-y-auto border border-border/30 rounded-xl bg-card shadow-2xl z-[120] custom-scrollbar">
+                          <button 
+                            type="button" 
+                            onClick={() => { setFormData({...formData, servicio_id: ''}); setServiceSearch(''); setIsServiceDropdownOpen(false); }}
+                            className={`w-full text-left px-4 py-2.5 text-sm border-b border-border/5 transition-colors ${!formData.servicio_id ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-secondary/50 text-muted-foreground italic'}`}
+                          >
+                            Sin servicio específico
+                          </button>
+                          {filteredServiciosForSelect.map(s => (
+                            <button 
+                              key={s.id} 
+                              type="button" 
+                              onClick={() => { setFormData({...formData, servicio_id: s.id}); setServiceSearch(s.nombre); setIsServiceDropdownOpen(false); }}
+                              className={`w-full text-left px-4 py-2.5 text-sm flex justify-between items-center border-b border-border/5 last:border-0 transition-colors ${formData.servicio_id === s.id ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/50'}`}
+                            >
+                              <span className="font-bold truncate">{s.nombre}</span>
+                              <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground shrink-0 ml-2">${s.precio.toLocaleString()}</span>
+                            </button>
+                          ))}
+                          {filteredServiciosForSelect.length === 0 && serviceSearch && (
+                            <div className="px-4 py-3 text-sm text-muted-foreground text-center italic">Sin coincidencias</div>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Fecha</label><input type="date" required className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" value={formData.fecha} onChange={(e) => setFormData({...formData, fecha: e.target.value})}/></div>
-                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Hora</label><input type="time" required className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" value={formData.hora} onChange={(e) => setFormData({...formData, hora: e.target.value})}/></div>
+                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Fecha *</label><input type="date" required className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" value={formData.fecha} onChange={(e) => setFormData({...formData, fecha: e.target.value})}/></div>
+                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Hora *</label><input type="time" required className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" value={formData.hora} onChange={(e) => setFormData({...formData, hora: e.target.value})}/></div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -378,8 +444,9 @@ export default function CalendarPage() {
                   </div>
                 </div>
                 <div className="flex justify-between items-center p-6 border-t border-border/10 bg-secondary/5 shrink-0">
-                  {selectedCita && <button type="button" onClick={() => { if(confirm("¿Cancelar cita?")) handleUpdateStatus(selectedCita.id, "cancelada"); }} className="text-destructive hover:bg-destructive/10 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Cancelar Cita</button>}
-                  <div className="flex gap-2 ml-auto">
+                  <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                  <div className="flex items-center gap-2">
+                    {selectedCita && <button type="button" onClick={() => { if(confirm("¿Cancelar cita?")) handleUpdateStatus(selectedCita.id, "cancelada"); }} className="text-destructive hover:bg-destructive/10 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Cancelar Cita</button>}
                     <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-bold hover:bg-secondary rounded-xl transition-colors">Cerrar</button>
                     <button type="submit" disabled={isSaving} className="bg-primary text-primary-foreground px-8 py-2.5 rounded-xl text-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2">{isSaving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}{selectedCita ? 'Actualizar' : 'Agendar'}</button>
                   </div>

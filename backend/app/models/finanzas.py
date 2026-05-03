@@ -123,3 +123,47 @@ class Abono(SQLModel, table=True):
     cita_id:         Optional[UUID] = Field(default=None, foreign_key="sys_clinical.citas.id")
     notas:           Optional[str]  = Field(default=None)
     created_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# ---------------------------------------------------------------------------
+# 3.4d  GastoFijo y CategoriaGasto
+# ---------------------------------------------------------------------------
+
+class CategoriaGasto(SQLModel, table=True):
+    """
+    Catálogo de categorías para gastos fijos (Alquiler, Luz, etc).
+    Si especialista_id es NULL, es una categoría global/estándar.
+    """
+    __tablename__  = "categorias_gastos"
+    __table_args__ = {"schema": "sys_clinical"}
+
+    id:              UUID           = Field(default_factory=uuid4, primary_key=True)
+    especialista_id: Optional[UUID] = Field(default=None, foreign_key="sys_config.especialistas.id", index=True)
+    nombre:          str            = Field(max_length=100)
+    descripcion:     Optional[str]  = Field(default=None)
+    created_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class GastoFijo(SQLModel, table=True):
+    """
+    Gastos operativos mensuales (alquiler, luz, agua, secretaria, internet, etc).
+    Permite calcular la utilidad neta real restando estos costos fijos de la utilidad de servicios.
+    """
+
+    __tablename__  = "gastos_fijos"
+    __table_args__ = {"schema": "sys_clinical"}
+
+    id:              UUID           = Field(default_factory=uuid4, primary_key=True)
+    especialista_id: UUID           = Field(foreign_key="sys_config.especialistas.id", index=True)
+    categoria_id:    UUID           = Field(foreign_key="sys_clinical.categorias_gastos.id")
+    descripcion:     Optional[str]  = Field(default=None)
+    monto:           float          = Field(ge=0)
+    fecha_pago:      date           = Field(default_factory=date.today)
+    periodo_mes:     int            = Field(ge=1, le=12) # Mes del gasto
+    periodo_anio:    int            = Field(ge=2000)     # Año del gasto
+    es_recurrente:   bool           = Field(default=True)
+    created_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at:      datetime       = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    # Relación para obtener el nombre de la categoría fácilmente
+    categoria_rel: Optional[CategoriaGasto] = Relationship()

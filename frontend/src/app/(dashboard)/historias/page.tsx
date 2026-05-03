@@ -16,6 +16,9 @@ import {
   Loader2, 
   AlertCircle,
   Activity,
+  Save,
+  CheckCircle2,
+  XCircle,
   ArrowLeft,
   Edit2,
   X,
@@ -78,8 +81,8 @@ interface FormDataHistoria {
   motivo_consulta: string;
   enfermedad_actual: string;
   antecedentes_familiares: {
-    madre: { viva: boolean; patologias: string[] };
-    padre: { viva: boolean; patologias: string[] };
+    madre: { viva: boolean; patologias: string[]; especifique?: string };
+    padre: { viva: boolean; patologias: string[]; especifique?: string };
   };
   antecedentes_personales: {
     patologias: string[];
@@ -112,8 +115,8 @@ const formDataVacio = (): FormDataHistoria => ({
   motivo_consulta: "",
   enfermedad_actual: "",
   antecedentes_familiares: {
-    madre: { viva: true, patologias: [] },
-    padre: { viva: true, patologias: [] },
+    madre: { viva: true, patologias: [], especifique: "" },
+    padre: { viva: true, patologias: [], especifique: "" },
   },
   antecedentes_personales: { patologias: [], especifique: "", medicamentos: "" },
   examen_clinico: {
@@ -130,7 +133,7 @@ const formDataVacio = (): FormDataHistoria => ({
 
 // ─── Secciones del modal (renderers estáticos mapeados por codigo) ────────────
 
-const patologiasDisponibles = ["Alergias", "Cardiovascular", "Respiratorios", "Diabetes", "Sanguíneos", "Cáncer"];
+const patologiasDisponibles = ["Alergias", "Cardiovascular", "Respiratorios", "Diabetes", "Sanguíneos", "Cáncer", "Otros"];
 const personalesDisponibles = ["Cardiovasculares", "Enf. Pulmonar", "Sanguíneos", "Hemorrágicos", "Quirúrgicos", "Hospitalización", "Alergias", "Diabetes", "Convulsión", "Enf. Renal", "Asma", "Otros"];
 
 function ConsultaStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
@@ -194,6 +197,25 @@ function AntecedentesStep({ formData, setFormData }: { formData: FormDataHistori
                   </button>
                 ))}
               </div>
+              <AnimatePresence>
+                {formData.antecedentes_familiares[parent].patologias.includes("Otros") && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                    <input 
+                      type="text" 
+                      placeholder={`Especifique otros de ${parent}...`}
+                      value={formData.antecedentes_familiares[parent].especifique || ""}
+                      onChange={(e) => setFormData({
+                        ...formData, 
+                        antecedentes_familiares: {
+                          ...formData.antecedentes_familiares,
+                          [parent]: { ...formData.antecedentes_familiares[parent], especifique: e.target.value }
+                        }
+                      })}
+                      className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-primary outline-none mt-2" 
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ))}
         </div>
@@ -524,7 +546,16 @@ function HistoriasContent() {
   const filterSecciones = (seccionesList: any[]) => {
     const codigo = usuario?.especialidad_principal?.codigo?.toUpperCase() || "";
     const nombre = usuario?.especialidad_principal?.nombre?.toLowerCase() || "";
-    const isDental = codigo.startsWith("ODO_") || nombre.includes("ortodoncia") || codigo.includes("ORT");
+    
+    // Identificar si es una especialidad dental (Odontología General, Cirugía Maxilofacial, Endodoncia, Ortodoncia)
+    const isDental = 
+      codigo.startsWith("ODO_") || 
+      codigo.startsWith("ORT") ||
+      nombre.includes("odontolog") || 
+      nombre.includes("ortodoncia") || 
+      nombre.includes("endodoncia") || 
+      nombre.includes("maxilofacial");
+
     if (isDental) return seccionesList;
 
     // Si no es dental, eliminamos EXAMEN_FISICO, ODONTOGRAMA, PLAN por solicitud del usuario
@@ -672,8 +703,8 @@ function HistoriasContent() {
   };
 
   // ── Guardar historia ──────────────────────────────────────────────────────
-  const handleSaveHistoria = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveHistoria = async (e?: React.FormEvent, stayOpen: boolean = false) => {
+    if (e) e.preventDefault();
     if (!pacienteId) return;
     try {
       setIsSaving(true);
@@ -682,12 +713,19 @@ function HistoriasContent() {
         paciente_id: pacienteId,
         especialidad_id: usuario?.especialidad_principal?.id ?? null,
       };
+      
       if (modalMode === "create") {
-        await api.post("/api/historias-clinicas", payload);
+        const res = await api.post("/api/historias-clinicas", payload);
+        const newId = res.data.id;
+        setSelectedHistoriaId(newId);
+        setModalMode("edit"); // Cambiar a modo edición para guardados posteriores
       } else {
         await api.patch(`/api/historias-clinicas/${selectedHistoriaId}`, payload);
       }
-      setIsModalOpen(false);
+      
+      if (!stayOpen) {
+        setIsModalOpen(false);
+      }
       fetchData();
     } catch (error) {
       console.error("Error saving historia:", error);
@@ -1038,29 +1076,39 @@ function HistoriasContent() {
 
                 {/* Footer de navegación */}
                 <div className="p-6 border-t border-border/50 bg-secondary/30 flex justify-between items-center">
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-4">
                     <button type="button"
                       onClick={() => setCurrentStepIdx(Math.max(0, currentStepIdx - 1))}
                       disabled={currentStepIdx === 0 || isSaving}
                       className="px-6 py-2.5 text-sm font-bold bg-secondary hover:bg-secondary/80 rounded-2xl transition-all disabled:opacity-0">
                       Anterior
                     </button>
+                    <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
                   </div>
                   <div className="flex gap-3">
                     <button type="button" onClick={() => setIsModalOpen(false)} disabled={isSaving}
                       className="px-6 py-2.5 text-sm font-medium hover:text-primary transition-colors disabled:opacity-50">
                       Cancelar
                     </button>
+                    
                     {currentStepIdx < totalSecciones - 1 ? (
-                      <button type="button"
-                        onClick={() => setCurrentStepIdx(currentStepIdx + 1)}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold px-8 py-3 rounded-2xl transition-all shadow-lg active:scale-95">
-                        Siguiente
-                      </button>
+                      <>
+                        <button type="button"
+                          onClick={(e) => handleSaveHistoria(e, true)}
+                          disabled={isSaving}
+                          className="bg-secondary hover:bg-secondary/80 text-foreground text-sm font-bold px-6 py-3 rounded-2xl transition-all flex items-center gap-2">
+                          {isSaving ? <Loader2 size={16} className="animate-spin" /> : <><Save size={16} /> Guardar Avance</>}
+                        </button>
+                        <button type="button"
+                          onClick={() => setCurrentStepIdx(currentStepIdx + 1)}
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold px-8 py-3 rounded-2xl transition-all shadow-lg active:scale-95">
+                          Siguiente
+                        </button>
+                      </>
                     ) : (
-                      <button type="submit" disabled={isSaving} onClick={handleSaveHistoria}
+                      <button type="submit" disabled={isSaving} onClick={(e) => handleSaveHistoria(e, false)}
                         className="bg-success hover:bg-success/90 text-success-foreground text-sm font-black px-10 py-3 rounded-2xl flex items-center gap-2 transition-all shadow-xl hover:shadow-success/30 active:scale-95 disabled:opacity-75">
-                        {isSaving ? <><Loader2 size={18} className="animate-spin" /> Guardando</> : "Finalizar y Guardar"}
+                        {isSaving ? <><Loader2 size={18} className="animate-spin" /> Guardando</> : <><Save size={18} /> Finalizar y Guardar</>}
                       </button>
                     )}
                   </div>

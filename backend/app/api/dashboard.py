@@ -5,7 +5,7 @@ from app.database import get_session
 from app.api.dependencies import get_current_especialista
 from app.models.especialista import Especialista
 from app.models.paciente import Paciente
-from app.models.finanzas import Cita, Presupuesto, Abono
+from app.models.finanzas import Cita, Presupuesto, Abono, GastoFijo
 from app.models.insumo_servicio import Insumo
 from app.models.historia_clinica import HistoriaClinica
 
@@ -77,13 +77,24 @@ def get_dashboard_stats(
         .where(Cita.estado == "completada")
     ).first() or 0.0
 
-    # Utilidad Neta: Suma de utilidad_neta de citas completadas este mes
-    utilidad_mes = session.exec(
+    # Utilidad de Servicios: Suma de utilidad_neta de citas completadas este mes
+    utilidad_servicios = session.exec(
         select(func.coalesce(func.sum(Cita.utilidad_neta), 0))
         .where(Cita.especialista_id == eid)
         .where(Cita.fecha_hora >= inicio_mes)
         .where(Cita.estado == "completada")
     ).first() or 0.0
+
+    # Gastos Fijos del mes actual
+    gastos_fijos_mes = session.exec(
+        select(func.coalesce(func.sum(GastoFijo.monto), 0))
+        .where(GastoFijo.especialista_id == eid)
+        .where(GastoFijo.periodo_mes == hoy.month)
+        .where(GastoFijo.periodo_anio == hoy.year)
+    ).first() or 0.0
+
+    # Utilidad Real = Utilidad de Servicios - Gastos Fijos
+    utilidad_mes = float(utilidad_servicios) - float(gastos_fijos_mes)
 
     saldo_pendiente_total = session.exec(
         select(func.coalesce(func.sum(Presupuesto.saldo_pendiente), 0))

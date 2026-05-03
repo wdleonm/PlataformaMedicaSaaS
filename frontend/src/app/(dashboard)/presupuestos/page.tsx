@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
@@ -21,7 +21,8 @@ import {
   Trash2, 
   Edit2,
   Share2,
-  MessageCircle
+  MessageCircle,
+  Stethoscope
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatLocalDate } from "@/lib/utils";
@@ -62,6 +63,29 @@ export default function FinanzasPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("todos");
+
+  // Búsqueda incremental de servicios en presupuesto
+  const [budgetServiceSearch, setBudgetServiceSearch] = useState("");
+  const [isBudgetServiceDropdownOpen, setIsBudgetServiceDropdownOpen] = useState(false);
+  const budgetServiceDropdownRef = useRef<HTMLDivElement>(null);
+
+  const filteredBudgetServicios = useMemo(() => {
+    const search = budgetServiceSearch.toLowerCase();
+    return (servicios || []).filter((s: any) => 
+      s.nombre.toLowerCase().includes(search) || 
+      s.precio.toString().includes(search)
+    );
+  }, [servicios, budgetServiceSearch]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (budgetServiceDropdownRef.current && !budgetServiceDropdownRef.current.contains(e.target as Node)) {
+        setIsBudgetServiceDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Modales
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -696,7 +720,7 @@ export default function FinanzasPage() {
               </div>
               <div className="p-6 overflow-y-auto max-h-[70vh] space-y-6">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Buscar Paciente</label>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Buscar Paciente *</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <input 
@@ -772,20 +796,40 @@ export default function FinanzasPage() {
                   </div>
 
                   {/* Buscador de Servicios */}
-                  <div className="relative">
-                    <select 
-                      className="w-full bg-background border border-border/50 rounded-xl p-2 text-xs"
-                      onChange={(e) => {
-                        const s = servicios.find((sx: any) => sx.id === e.target.value);
-                        if (s) addServicioToBudget(s);
-                        e.target.value = "";
-                      }}
-                    >
-                      <option value="">+ Agregar un servicio...</option>
-                      {servicios?.map((s: any) => (
-                        <option key={s.id} value={s.id}>{s.nombre} (${s.precio})</option>
-                      ))}
-                    </select>
+                  <div className="relative" ref={budgetServiceDropdownRef}>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                      <input 
+                        type="text" 
+                        placeholder="Buscar servicio para agregar..." 
+                        className="w-full pl-9 pr-4 py-2.5 bg-background border border-border/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" 
+                        value={budgetServiceSearch} 
+                        onChange={(e) => { setBudgetServiceSearch(e.target.value); setIsBudgetServiceDropdownOpen(true); }}
+                        onFocus={() => setIsBudgetServiceDropdownOpen(true)}
+                      />
+                    </div>
+                    {isBudgetServiceDropdownOpen && (
+                      <div className="mt-1 max-h-48 overflow-y-auto border border-border/30 rounded-xl bg-card shadow-2xl z-[120] custom-scrollbar">
+                        {filteredBudgetServicios.length === 0 ? (
+                          <div className="px-4 py-3 text-sm text-muted-foreground text-center italic">Sin coincidencias</div>
+                        ) : (
+                          filteredBudgetServicios.map((s: any) => (
+                            <button 
+                              key={s.id} 
+                              type="button"
+                              onClick={() => { addServicioToBudget(s); setBudgetServiceSearch(''); setIsBudgetServiceDropdownOpen(false); }}
+                              className="w-full text-left px-4 py-2.5 text-sm flex justify-between items-center border-b border-border/5 last:border-0 hover:bg-primary/5 transition-colors group"
+                            >
+                              <div className="flex items-center gap-2 overflow-hidden">
+                                <Stethoscope size={14} className="text-muted-foreground shrink-0" />
+                                <span className="font-bold truncate group-hover:text-primary transition-colors">{s.nombre}</span>
+                              </div>
+                              <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground shrink-0 ml-2">${s.precio.toLocaleString()}</span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -849,15 +893,18 @@ export default function FinanzasPage() {
                   />
                 </div>
               </div>
-              <div className="p-6 bg-secondary/30 border-t border-border/10 flex gap-3">
-                <button onClick={() => setIsNewModalOpen(false)} className="flex-1 py-3 px-4 bg-background border border-border/50 hover:bg-secondary rounded-xl font-bold text-sm transition-all">Cancelar</button>
-                <button 
-                  onClick={handleCreateBudget} 
-                  disabled={isSaving || !newBudget.paciente_id || (newBudget.total <= 0 && newBudget.monto_ajustado <= 0)} 
-                  className="flex-1 py-3 px-4 bg-primary text-primary-foreground hover:scale-105 rounded-xl font-black text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
-                > 
-                  {isSaving ? "Guardando..." : newBudget.id ? "Guardar Cambios" : "Emitir Presupuesto"}
-                </button>
+              <div className="p-6 bg-secondary/30 border-t border-border/10 flex items-center justify-between">
+                <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                <div className="flex gap-3">
+                  <button onClick={() => setIsNewModalOpen(false)} className="py-3 px-4 bg-background border border-border/50 hover:bg-secondary rounded-xl font-bold text-sm transition-all">Cancelar</button>
+                  <button 
+                    onClick={handleCreateBudget} 
+                    disabled={isSaving || !newBudget.paciente_id || (newBudget.total <= 0 && newBudget.monto_ajustado <= 0)} 
+                    className="py-3 px-6 bg-primary text-primary-foreground hover:scale-105 rounded-xl font-black text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                  > 
+                    {isSaving ? "Guardando..." : newBudget.id ? "Guardar Cambios" : "Emitir Presupuesto"}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>

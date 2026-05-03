@@ -258,3 +258,35 @@ def create_odontograma_registro(
     session.commit()
     session.refresh(registro)
     return registro
+
+
+@router.delete(
+    "/api/odontograma/registros/{registro_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Eliminar un registro de odontograma (Corrección de errores)",
+)
+def delete_odontograma_registro(
+    registro_id: UUID,
+    session: Session = Depends(get_session),
+    especialista: Especialista = Depends(get_current_especialista),
+):
+    """
+    Elimina un registro específico del odontograma. 
+    Se usa principalmente para corregir errores de digitación o clics accidentales.
+    """
+    registro = session.exec(
+        select(OdontogramaRegistro).where(
+            OdontogramaRegistro.id == registro_id,
+            OdontogramaRegistro.especialista_id == especialista.id,
+        )
+    ).first()
+    
+    if not registro:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Registro no encontrado o no tienes permisos para eliminarlo",
+        )
+    
+    session.delete(registro)
+    session.commit()
+    return None

@@ -20,7 +20,8 @@ import {
   Sun,
   Moon,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  Wallet
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CommandPalette } from "@/components/CommandPalette";
@@ -77,6 +78,7 @@ export default function DashboardLayout({
     { name: "Historias Clínicas", href: "/historias", icon: FileText },
     { name: "Inventario", href: "/inventario", icon: Package },
     { name: "Finanzas", href: "/presupuestos", icon: CreditCard },
+    { name: "Gastos Fijos", href: "/gastos-fijos", icon: Wallet },
     { name: "Comunicaciones", href: "/comunicaciones", icon: MessageSquare },
     { name: "Seguridad", href: "/seguridad", icon: ShieldCheck },
   ];

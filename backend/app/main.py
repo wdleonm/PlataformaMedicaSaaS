@@ -17,8 +17,9 @@ from app.database import engine
 from app.api import (
     auth, pacientes, odontograma, historias_clinicas, hc_secciones,
     inventario, citas, presupuestos, comunicaciones, dashboard, reportes,
+    adjuntos, catalogo_insumos, gastos_fijos,
     admin_auth, admin_especialistas, admin_planes, admin_dashboard, admin_config,
-    admin_users, public_portal, adjuntos, catalogo_insumos
+    admin_users, public_portal
 )
 from app.workers.mensajes_worker import start_scheduler, stop_scheduler
 
@@ -78,6 +79,7 @@ app.include_router(dashboard.router)
 app.include_router(reportes.router)
 app.include_router(adjuntos.router)
 app.include_router(catalogo_insumos.router)
+app.include_router(gastos_fijos.router)
 
 # Routers Admin (Fase 7)
 app.include_router(admin_auth.router)

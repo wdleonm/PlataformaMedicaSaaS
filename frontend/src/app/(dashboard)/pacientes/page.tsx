@@ -35,7 +35,7 @@ export default function PacientesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  
+
   // Estado para Múltiples Acciones (Crear/Editar)
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -62,7 +62,7 @@ export default function PacientesPage() {
     medicacion_frecuente: ""
   });
   const [isSaving, setIsSaving] = useState(false);
-  
+
   // Estado para Eliminar Modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [pacienteToDelete, setPacienteToDelete] = useState<Paciente | null>(null);
@@ -88,7 +88,7 @@ export default function PacientesPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     // Máscara para Documento de Identidad
     if (name === "documento") {
       let cleanVal = value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
@@ -104,7 +104,7 @@ export default function PacientesPage() {
           cleanVal = digits.length > 0 ? `V-${digits}` : "V";
         } else {
           // Otra letra no válida → limpiar
-          cleanVal = ""; 
+          cleanVal = "";
         }
       }
       setFormData((prev) => ({ ...prev, [name]: cleanVal }));
@@ -181,7 +181,7 @@ export default function PacientesPage() {
     e.preventDefault();
     setErrorMsg("");
     setInactiveData(null);
-    
+
     if (!formData.nombre || !formData.apellido || !formData.email || !formData.telefono) {
       setErrorMsg("Nombre, Apellido, Email y Teléfono son obligatorios.");
       setActiveTab("personal");
@@ -209,7 +209,7 @@ export default function PacientesPage() {
     } catch (error: any) {
       console.error("Error saving paciente:", error);
       const detail = error.response?.data?.detail;
-      
+
       if (typeof detail === 'object' && detail.status === 'inactivo') {
         setErrorMsg(detail.message);
         setInactiveData({ id: detail.paciente_id });
@@ -239,7 +239,7 @@ export default function PacientesPage() {
 
   const handleDeletePaciente = async () => {
     if (!pacienteToDelete) return;
-    
+
     try {
       setIsDeleting(true);
       await api.delete(`/api/pacientes/${pacienteToDelete.id}`);
@@ -254,14 +254,14 @@ export default function PacientesPage() {
     }
   };
 
-  const filteredPacientes = pacientes.filter(p => 
+  const filteredPacientes = pacientes.filter(p =>
     `${p.nombre} ${p.apellido}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (p.documento && p.documento.includes(searchTerm))
   );
 
   return (
     <div className="space-y-6">
-      
+
       {/* Header View */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -270,8 +270,8 @@ export default function PacientesPage() {
             Gestiona la información y el registro de tus pacientes.
           </p>
         </div>
-        
-        <button 
+
+        <button
           onClick={handleOpenCreateModal}
           className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 transform transition-all shadow-lg hover:shadow-primary/40 active:scale-95"
         >
@@ -294,7 +294,7 @@ export default function PacientesPage() {
             className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
         </div>
-        
+
         <div className="text-sm font-medium text-muted-foreground">
           Total: <span className="text-foreground">{pacientes.length}</span>
         </div>
@@ -355,10 +355,10 @@ export default function PacientesPage() {
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1 text-muted-foreground text-xs">
                         {paciente.telefono && (
-                          <span className="flex items-center gap-1.5"><Phone size={12}/> {paciente.telefono}</span>
+                          <span className="flex items-center gap-1.5"><Phone size={12} /> {paciente.telefono}</span>
                         )}
                         {paciente.email && (
-                          <span className="flex items-center gap-1.5"><Mail size={12}/> {paciente.email}</span>
+                          <span className="flex items-center gap-1.5"><Mail size={12} /> {paciente.email}</span>
                         )}
                         {!paciente.telefono && !paciente.email && (
                           <span className="italic">Sin contacto</span>
@@ -367,37 +367,37 @@ export default function PacientesPage() {
                     </td>
                     <td className="px-6 py-4 text-muted-foreground">
                       {paciente.documento ? (
-                        <div className="flex items-center gap-1.5 font-medium"><FileText size={14}/> {paciente.documento}</div>
+                        <div className="flex items-center gap-1.5 font-medium"><FileText size={14} /> {paciente.documento}</div>
                       ) : (
                         <span className="italic text-xs">No registrado</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
-                          onClick={() => router.push(`/citas?paciente_id=${paciente.id}`)} 
-                          className="p-2 hover:bg-success/10 text-success rounded-lg transition-colors" 
+                        <button
+                          onClick={() => router.push(`/citas?paciente_id=${paciente.id}`)}
+                          className="p-2 hover:bg-success/10 text-success rounded-lg transition-colors"
                           title="Crear Cita"
                         >
                           <Calendar size={16} />
                         </button>
-                        <button 
-                          onClick={() => router.push(`/historias?paciente_id=${paciente.id}`)} 
-                          className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors" 
+                        <button
+                          onClick={() => router.push(`/historias?paciente_id=${paciente.id}`)}
+                          className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors"
                           title="Ver Historia Clínica"
                         >
                           <FileText size={16} />
                         </button>
-                        <button 
-                          onClick={() => handleOpenEditModal(paciente)} 
-                          className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors" 
+                        <button
+                          onClick={() => handleOpenEditModal(paciente)}
+                          className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"
                           title="Editar paciente"
                         >
                           <Edit2 size={16} />
                         </button>
-                        <button 
-                          onClick={() => handleOpenDeleteModal(paciente)} 
-                          className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors" 
+                        <button
+                          onClick={() => handleOpenDeleteModal(paciente)}
+                          className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"
                           title="Desactivar paciente"
                         >
                           <UserX size={16} />
@@ -416,18 +416,18 @@ export default function PacientesPage() {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 bg-background/80 backdrop-blur-sm"
               onClick={() => setIsModalOpen(false)}
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
             >
               <div className="flex justify-between items-center p-6 border-b border-border/50 bg-secondary/30">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                  <User size={20} className="text-primary"/> {modalMode === "create" ? "Nuevo Paciente" : "Editar Paciente"}
+                  <User size={20} className="text-primary" /> {modalMode === "create" ? "Nuevo Paciente" : "Editar Paciente"}
                 </h2>
                 <button onClick={() => setIsModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1.5 transition-colors">
                   <X size={20} />
@@ -436,19 +436,19 @@ export default function PacientesPage() {
 
               {/* Tabs Navigation */}
               <div className="flex border-b border-border/20 px-6 bg-secondary/10">
-                <button 
+                <button
                   onClick={() => setActiveTab("personal")}
                   className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "personal" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                 >
                   Información Personal
                 </button>
-                <button 
+                <button
                   onClick={() => setActiveTab("emergencia")}
                   className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "emergencia" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                 >
                   Contacto de Emergencia
                 </button>
-                <button 
+                <button
                   onClick={() => setActiveTab("alertas")}
                   className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "alertas" ? "border-destructive text-destructive" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                 >
@@ -457,14 +457,14 @@ export default function PacientesPage() {
               </div>
 
               <form onSubmit={handleSavePaciente} className="p-6 overflow-y-auto custom-scrollbar flex-1">
-                
+
                 {errorMsg && (
                   <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
                     <div className="flex items-center gap-2 mb-2">
-                       <AlertCircle size={16}/> {errorMsg}
+                      <AlertCircle size={16} /> {errorMsg}
                     </div>
                     {inactiveData && (
-                      <button 
+                      <button
                         type="button"
                         onClick={handleReactivate}
                         className="w-full mt-2 bg-primary text-primary-foreground py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-sm"
@@ -502,8 +502,8 @@ export default function PacientesPage() {
                       <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 [color-scheme:dark]" />
                     </div>
                     <div className="space-y-1.5">
-                       <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Lugar Nacimiento</label>
-                       <input name="lugar_nacimiento" value={formData.lugar_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Lugar Nacimiento</label>
+                      <input name="lugar_nacimiento" value={formData.lugar_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email *</label>
@@ -516,10 +516,10 @@ export default function PacientesPage() {
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estado Civil</label>
                       <select name="estado_civil" value={formData.estado_civil} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5">
-                         <option>Soltero/a</option>
-                         <option>Casado/a</option>
-                         <option>Divorciado/a</option>
-                         <option>Viudo/a</option>
+                        <option>Soltero/a</option>
+                        <option>Casado/a</option>
+                        <option>Divorciado/a</option>
+                        <option>Viudo/a</option>
                       </select>
                     </div>
                     <div className="space-y-1.5">
@@ -527,8 +527,8 @@ export default function PacientesPage() {
                       <input name="ocupacion" value={formData.ocupacion} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                     </div>
                     <div className="space-y-1.5 md:col-span-2">
-                       <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dirección de Habitación</label>
-                       <textarea name="direccion" value={formData.direccion} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none" />
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dirección de Habitación</label>
+                      <textarea name="direccion" value={formData.direccion} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none" />
                     </div>
                   </motion.div>
                 ) : activeTab === "emergencia" ? (
@@ -556,18 +556,18 @@ export default function PacientesPage() {
                         <strong>Atención:</strong> Esta información es crítica para la seguridad del paciente durante procedimientos odontológicos.
                       </div>
                     </div>
-                    
+
                     <div className="space-y-4">
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-destructive uppercase tracking-wider">Alergias (Medicamentos, látex, etc.)</label>
                         <textarea name="alergias" value={formData.alergias} onChange={handleInputChange} rows={2} className="w-full bg-background border border-destructive/20 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-destructive outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Penicilina, Lidocaína, Látex..." />
                       </div>
-                      
+
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Patologías Crónicas</label>
                         <textarea name="patologias_cronicas" value={formData.patologias_cronicas} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Hipertensión, Diabetes Tipo II, Asma..." />
                       </div>
-                      
+
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Medicación Frecuente</label>
                         <textarea name="medicacion_frecuente" value={formData.medicacion_frecuente} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Aspirina, Insulina, Enalapril..." />
@@ -576,29 +576,32 @@ export default function PacientesPage() {
                   </motion.div>
                 )}
 
-                <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-border/30">
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-medium hover:bg-secondary rounded-xl transition-colors">
-                    Cancelar
-                  </button>
-                  <button type="submit" disabled={isSaving} className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100">
-                    {isSaving ? <><Loader2 size={16} className="animate-spin"/> Guardando</> : 'Guardar Paciente'}
-                  </button>
+                <div className="flex items-center justify-between pt-6 mt-6 border-t border-border/30">
+                  <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                  <div className="flex gap-3">
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-medium hover:bg-secondary rounded-xl transition-colors">
+                      Cancelar
+                    </button>
+                    <button type="submit" disabled={isSaving} className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100">
+                      {isSaving ? <><Loader2 size={16} className="animate-spin" /> Guardando</> : 'Guardar Paciente'}
+                    </button>
+                  </div>
                 </div>
               </form>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
-    {/* Modal Confirmar Eliminación */}
+      {/* Modal Confirmar Eliminación */}
       <AnimatePresence>
         {isDeleteModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 bg-background/80 backdrop-blur-sm"
               onClick={() => !isDeleting && setIsDeleteModalOpen(false)}
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="bg-card w-full max-w-sm rounded-2xl shadow-xl border border-border relative z-10 overflow-hidden text-center p-6"
             >
@@ -609,21 +612,21 @@ export default function PacientesPage() {
               <p className="text-muted-foreground text-sm mb-6">
                 ¿Estás seguro de desactivar a <strong>{pacienteToDelete?.nombre} {pacienteToDelete?.apellido}</strong>? El registro ya no aparecerá en las listas pero sus fotos e historial clínico se mantendrán protegidos.
               </p>
-              
+
               <div className="flex gap-3 w-full">
-                <button 
-                  onClick={() => setIsDeleteModalOpen(false)} 
+                <button
+                  onClick={() => setIsDeleteModalOpen(false)}
                   disabled={isDeleting}
                   className="flex-1 px-4 py-2.5 bg-secondary hover:bg-secondary/80 text-foreground text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
                 >
                   Regresar
                 </button>
-                <button 
-                  onClick={handleDeletePaciente} 
+                <button
+                  onClick={handleDeletePaciente}
                   disabled={isDeleting}
                   className="flex-1 px-4 py-2.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground text-sm font-semibold rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100 flex items-center justify-center gap-2"
                 >
-                  {isDeleting ? <><Loader2 size={16} className="animate-spin"/> Desactivando</> : 'Confirmar Desactivación'}
+                  {isDeleting ? <><Loader2 size={16} className="animate-spin" /> Desactivando</> : 'Confirmar Desactivación'}
                 </button>
               </div>
             </motion.div>
