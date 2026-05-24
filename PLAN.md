@@ -393,17 +393,17 @@ En cada respuesta, Cursor debe indicar:
 **Objetivo:** Configuración final para Easy Panel en el VPS. Se ejecuta únicamente cuando todas las fases anteriores estén aprobadas y estables.
 
 #### 10.1 Docker Compose para producción
-- [ ] `docker-compose.yml` listo para Easy Panel (postgres, backend, frontend, redis si aplica). Volúmenes para datos; variables desde entorno.
-- [ ] IP VPS 147.93.184.194 documentada para cuando se configure dominio o acceso.
+- [x] `docker-compose.yml` listo para Easy Panel (postgres, backend, frontend, redis si aplica). Volúmenes para datos; variables desde entorno.
+- [x] IP VPS 147.93.184.194 documentada para cuando se configure dominio o acceso.
 
 #### 10.2 Variables y secretos
-- [ ] Todas las variables documentadas. `.env.example` actualizado.
+- [x] Todas las variables documentadas. `.env.example` actualizado.
 
 #### 10.3 Base de datos y SSL
-- [ ] Migraciones aplicadas al desplegar (scripts 001 a 009). SSL vía proxy reverso.
+- [x] Base de datos consolidada para producción: esquema limpio (`schema_production.sql`) y catálogo maestro de semillas (`seed_production.sql`) generados. SSL vía proxy reverso.
 
 #### Criterios de aceptación Fase 10
-- `docker-compose up` levanta todos los servicios. App accesible en producción.
+- `docker-compose up` levanta todos los servicios. App accesible en producción (Listo para ser ejecutado por el usuario en el VPS).
 
 ---
 
@@ -543,7 +543,7 @@ Para cambiar las 4 imágenes del carrusel de video en la sección de login:
 
 ---
 
-*Documento: VitalNexus | Master Plan. Última actualización: 18/04/2026.*
-*Estado: Fases 1–12 COMPLETADAS ✅ | Único pendiente mayor: Fase 10 (Despliegue VPS). Pendientes menores: WhatsApp plantillas (8.3.2/8.3.3), Merma/costos indirectos (9.1), Toggle precios portal (9.2).*
+*Documento: VitalNexus | Master Plan. Última actualización: 24/05/2026.*
+*Estado: Fases 1–12 COMPLETADAS ✅ | Preparativos para Despliegue en VPS (Fase 10) completados. Código y Base de Datos listos para producción.*
 
 

@@ -74,7 +74,7 @@ class YCloudService:
                     f"{YCLOUD_API_BASE}/whatsapp/messages",
                     json=payload,
                     headers={
-                        "X-API-Key":    settings.ycloud_api_key,
+                        "X-API-Key":    key,
                         "Content-Type": "application/json",
                     },
                 )
@@ -92,6 +92,75 @@ class YCloudService:
             return False, error
         except Exception as exc:
             error = f"Error inesperado YCloud: {exc}"
+            logger.exception(error)
+            return False, error
+
+    @staticmethod
+    async def enviar_plantilla(
+        destino: str,
+        plantilla: str,
+        parametros: list,
+        api_key: Optional[str] = None,
+        from_number: Optional[str] = None,
+    ) -> Tuple[bool, Optional[str]]:
+        """
+        Envía un mensaje usando una plantilla registrada de WhatsApp en YCloud.
+
+        Args:
+            destino: Número en formato E.164 sin '+' (ej. '58414XXXXXXX').
+            plantilla: Nombre de la plantilla registrada en Meta/YCloud.
+            parametros: Lista de valores para las variables {{1}}, {{2}}, etc.
+            api_key: (Opcional) API Key para usar.
+            from_number: (Opcional) Número de origen a usar.
+        """
+        key = api_key or settings.ycloud_api_key
+        orig = from_number or settings.ycloud_whatsapp_number
+
+        if not key:
+            msg = "YCLOUD_API_KEY no configurada — plantilla no enviada"
+            logger.warning(msg)
+            return False, msg
+
+        payload = {
+            "to":       f"+{destino}",
+            "type":     "template",
+            "template": {
+                "name":     plantilla,
+                "language": {"code": "es"},
+                "components": [
+                    {
+                        "type":       "body",
+                        "parameters": [{"type": "text", "text": str(p)} for p in parametros],
+                    }
+                ],
+            },
+            "from":     orig,
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+                response = await client.post(
+                    f"{YCLOUD_API_BASE}/whatsapp/messages",
+                    json=payload,
+                    headers={
+                        "X-API-Key":    key,
+                        "Content-Type": "application/json",
+                    },
+                )
+                if response.status_code in (200, 201, 202):
+                    logger.info("YCloud: plantilla %s enviada a +%s", plantilla, destino)
+                    return True, None
+                else:
+                    error = f"HTTP {response.status_code}: {response.text[:300]}"
+                    logger.warning("YCloud error al enviar plantilla: %s", error)
+                    return False, error
+
+        except httpx.TimeoutException:
+            error = "Timeout al contactar YCloud API"
+            logger.error(error)
+            return False, error
+        except Exception as exc:
+            error = f"Error inesperado YCloud al enviar plantilla: {exc}"
             logger.exception(error)
             return False, error
 

@@ -8,6 +8,8 @@ SELECT * FROM sys_clinical.odontograma_registros;
 
 SELECT * FROM sys_clinical.citas;
 
+SELECT * FROM sys_clinical.abonos;
+
 SELECT * FROM sys_clinical.presupuestos;
 
 SELECT * FROM sys_clinical.presupuesto_detalles;
@@ -48,3 +50,17 @@ ALTER TABLE sys_config.insumos ADD COLUMN imagen_url VARCHAR(500);
 -- Todas las secciones (incluyendo ACTIVIDADES) se marcan como OBLIGATORIAS.
 
 
+
+
+TRUNCATE TABLE 
+    sys_clinical.abonos,
+    sys_clinical.presupuesto_detalles,
+    sys_clinical.presupuestos,
+    sys_clinical.citas,
+    sys_clinical.odontograma_registros,
+    sys_clinical.historias_clinicas_adjuntos,
+    sys_clinical.historias_clinicas,
+    sys_clinical.pacientes,
+    sys_clinical.cola_mensajes 
+RESTART IDENTITY CASCADE;
+COMMIT;

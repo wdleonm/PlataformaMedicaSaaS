@@ -161,13 +161,48 @@ async def procesar_cola() -> None:
                 )
             else:
                 # Lógica predeterminada: WhatsApp (YCloud)
-                texto = YCloudService.construir_mensaje(msg.tipo, msg.payload)
-                ok, error = await YCloudService.enviar_mensaje(
-                    destino=msg.destino,
-                    mensaje=texto,
-                    api_key=ycloud_key,
-                    from_number=ycloud_num,
-                )
+                # Si corresponde a una plantilla registrada de WhatsApp, usar enviar_plantilla
+                if msg.tipo == "recordatorio_cita":
+                    parametros = [
+                        msg.payload.get("paciente_nombre", ""),
+                        msg.payload.get("fecha_hora", ""),
+                        msg.payload.get("servicio_nombre", ""),
+                        msg.payload.get("especialista_nombre", ""),
+                    ]
+                    ok, error = await YCloudService.enviar_plantilla(
+                        destino=msg.destino,
+                        plantilla="recordatorio_cita",
+                        parametros=parametros,
+                        api_key=ycloud_key,
+                        from_number=ycloud_num,
+                    )
+                elif msg.tipo == "abono_confirmacion":
+                    # El template espera: {{1}} paciente, {{2}} monto con moneda, {{3}} saldo con moneda, {{4}} fecha, {{5}} url recibo
+                    monto_formateado = f"{msg.payload.get('moneda', '')} {msg.payload.get('monto', '')}".strip()
+                    saldo_formateado = f"{msg.payload.get('moneda', '')} {msg.payload.get('saldo_pendiente', '')}".strip()
+                    parametros = [
+                        msg.payload.get("paciente_nombre", ""),
+                        monto_formateado,
+                        saldo_formateado,
+                        msg.payload.get("fecha", ""),
+                        msg.payload.get("recibo_url", ""),
+                    ]
+                    ok, error = await YCloudService.enviar_plantilla(
+                        destino=msg.destino,
+                        plantilla="abono_confirmacion",
+                        parametros=parametros,
+                        api_key=ycloud_key,
+                        from_number=ycloud_num,
+                    )
+                else:
+                    # Mensaje de texto libre (requiere ventana de chat activa)
+                    texto = YCloudService.construir_mensaje(msg.tipo, msg.payload)
+                    ok, error = await YCloudService.enviar_mensaje(
+                        destino=msg.destino,
+                        mensaje=texto,
+                        api_key=ycloud_key,
+                        from_number=ycloud_num,
+                    )
 
             if ok:
                 msg.estado     = "enviado"
