@@ -156,17 +156,11 @@ def debug_specialists(session: Session = Depends(get_session)):
                 "id": UUID("a908292f-22f3-4e66-975f-a0070ff4ad86"),
                 "nombre": "Daniela",
                 "apellido": "Leon"
-            },
-            "admin@odontofocus.com": {
-                "id": UUID("c0943115-4691-4413-97fa-1efa21723b51"),
-                "nombre": "Especialista",
-                "apellido": "Prueba"
             }
         }
         
         for email, info in emails_to_check.items():
-            stmt = select(Especialista).where(Especialista.email == email)
-            e = session.exec(stmt).first()
+            e = session.get(Especialista, info["id"])
             
             status_action = ""
             if not e:
@@ -189,11 +183,6 @@ def debug_specialists(session: Session = Depends(get_session)):
                     e.clinica_direccion = "IEQ Valencia"
                     e.slug_url = "danielaleon"
                     e.portal_visible = True
-                elif email == "admin@odontofocus.com":
-                    e.nombre = "Williams"
-                    e.apellido = "Principal"
-                    e.slug_url = "admin-principal"
-                    e.portal_visible = True
                 session.add(e)
                 status_action = "creado"
                 
@@ -207,7 +196,8 @@ def debug_specialists(session: Session = Depends(get_session)):
                     )
                     session.add(rel)
             else:
-                # Actualizar contraseña, activo y perfil completo
+                # Actualizar contraseña, activo, email y perfil completo
+                e.email = email
                 e.password_hash = get_password_hash("123456.")
                 e.activo = True
                 e.suscripcion_activa = True
@@ -217,11 +207,6 @@ def debug_specialists(session: Session = Depends(get_session)):
                     e.clinica_nombre = "Odonto Fashion"
                     e.clinica_direccion = "IEQ Valencia"
                     e.slug_url = "danielaleon"
-                    e.portal_visible = True
-                elif email == "admin@odontofocus.com":
-                    e.nombre = "Williams"
-                    e.apellido = "Principal"
-                    e.slug_url = "admin-principal"
                     e.portal_visible = True
                 session.add(e)
                 status_action = "actualizado"
@@ -279,6 +264,9 @@ def seed_services(session: Session = Depends(get_session)):
         # 1. Insertar Insumos
         insumos_inserted = 0
         for ins in data["insumos"]:
+            # Filtrar solo Daniela Leon
+            if UUID(ins["especialista_id"]) != UUID("a908292f-22f3-4e66-975f-a0070ff4ad86"):
+                continue
             # Verificar si existe
             stmt = select(Insumo).where(Insumo.id == UUID(ins["id"]))
             existing = session.exec(stmt).first()
@@ -303,6 +291,9 @@ def seed_services(session: Session = Depends(get_session)):
         # 2. Insertar Servicios
         servicios_inserted = 0
         for ser in data["servicios"]:
+            # Filtrar solo Daniela Leon
+            if UUID(ser["especialista_id"]) != UUID("a908292f-22f3-4e66-975f-a0070ff4ad86"):
+                continue
             stmt = select(Servicio).where(Servicio.id == UUID(ser["id"]))
             existing = session.exec(stmt).first()
             if not existing:
@@ -326,7 +317,11 @@ def seed_services(session: Session = Depends(get_session)):
         
         # 3. Insertar ServicioInsumos
         si_inserted = 0
+        daniela_service_ids = {UUID(s["id"]) for s in data["servicios"] if UUID(s["especialista_id"]) == UUID("a908292f-22f3-4e66-975f-a0070ff4ad86")}
         for si in data["servicio_insumos"]:
+            # Filtrar solo recetas de servicios de Daniela Leon
+            if UUID(si["servicio_id"]) not in daniela_service_ids:
+                continue
             stmt = select(ServicioInsumo).where(
                 ServicioInsumo.servicio_id == UUID(si["servicio_id"])
             ).where(
