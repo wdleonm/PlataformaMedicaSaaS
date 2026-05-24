@@ -155,7 +155,7 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen bg-background text-foreground font-sans">
       {/* Sidebar Desktop */}
-      <aside className="w-72 border-r border-border/30 bg-card p-6 flex flex-col shadow-2xl relative z-40 transition-all shrink-0">
+      <aside className="hidden lg:flex w-72 border-r border-border/30 bg-card p-6 flex-col shadow-2xl relative z-40 transition-all shrink-0">
         <SidebarContent />
       </aside>
 
