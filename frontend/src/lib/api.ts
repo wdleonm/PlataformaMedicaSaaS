@@ -36,12 +36,15 @@ api.interceptors.response.use(
   (error) => {
     if (typeof window !== 'undefined') {
       if (error.response?.status === 401) {
-        // Token expirado o inválido
-        const isUrlAdmin = error.config?.url?.includes('/api/admin');
-        if (isUrlAdmin) {
-          window.dispatchEvent(new CustomEvent('admin-session-expired'));
-        } else {
-          window.dispatchEvent(new CustomEvent('session-expired'));
+        // Token expirado o inválido (no desloguear si es el endpoint de login propiamente)
+        const isUrlLogin = error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/admin/auth/login');
+        if (!isUrlLogin) {
+          const isUrlAdmin = error.config?.url?.includes('/api/admin');
+          if (isUrlAdmin) {
+            window.dispatchEvent(new CustomEvent('admin-session-expired'));
+          } else {
+            window.dispatchEvent(new CustomEvent('session-expired'));
+          }
         }
       } else if (error.response?.status === 403) {
         const detail = error.response?.data?.detail || '';

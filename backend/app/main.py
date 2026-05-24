@@ -32,6 +32,32 @@ from app.workers.mensajes_worker import start_scheduler, stop_scheduler
 async def lifespan(app: FastAPI):
     """Ciclo de vida de la aplicación: startup → yield → shutdown."""
     start_scheduler()  
+    
+    # Reseteo temporal de contraseñas de los especialistas de prueba a '123456.' en producción
+    from sqlmodel import Session
+    from app.models.especialista import Especialista
+    from app.api.auth import get_password_hash
+    try:
+        with Session(engine) as session:
+            # Especialista 1: Daniela Leon
+            daniela = session.query(Especialista).filter(Especialista.email == "danielaaleonr@gmail.com").first()
+            if daniela:
+                daniela.password_hash = get_password_hash("123456.")
+                daniela.activo = True
+                session.add(daniela)
+                
+            # Especialista 2: Admin Odontofocus
+            admin_odo = session.query(Especialista).filter(Especialista.email == "admin@odontofocus.com").first()
+            if admin_odo:
+                admin_odo.password_hash = get_password_hash("123456.")
+                admin_odo.activo = True
+                session.add(admin_odo)
+                
+            session.commit()
+            print("--- Startup: Contraseñas de especialistas de prueba reseteadas a '123456.' ---")
+    except Exception as e:
+        print("--- Startup: Error reseteando contraseñas de especialistas:", e)
+        
     yield
     stop_scheduler()
 
