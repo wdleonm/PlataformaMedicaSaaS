@@ -145,82 +145,216 @@ def debug_specialists(session: Session = Depends(get_session)):
     from app.models.especialista import Especialista, EspecialistaEspecialidad
     from app.models.especialidad import Especialidad
     from uuid import UUID
+    import traceback
     
-    result = []
-    
-    # 1. Buscar si ya existen o crearlos
-    emails_to_check = {
-        "danielaaleonr@gmail.com": {
-            "id": UUID("a908292f-22f3-4e66-975f-a0070ff4ad86"),
-            "nombre": "Daniela",
-            "apellido": "Leon"
-        },
-        "admin@odontofocus.com": {
-            "id": UUID("c0943115-4691-4413-97fa-1efa21723b51"),
-            "nombre": "Especialista",
-            "apellido": "Prueba"
+    try:
+        result = []
+        
+        # 1. Buscar si ya existen o crearlos
+        emails_to_check = {
+            "danielaaleonr@gmail.com": {
+                "id": UUID("a908292f-22f3-4e66-975f-a0070ff4ad86"),
+                "nombre": "Daniela",
+                "apellido": "Leon"
+            },
+            "admin@odontofocus.com": {
+                "id": UUID("c0943115-4691-4413-97fa-1efa21723b51"),
+                "nombre": "Especialista",
+                "apellido": "Prueba"
+            }
         }
-    }
-    
-    for email, info in emails_to_check.items():
-        stmt = select(Especialista).where(Especialista.email == email)
-        e = session.exec(stmt).first()
         
-        status_action = ""
-        if not e:
-            # Crear
-            e = Especialista(
-                id=info["id"],
-                email=email,
-                password_hash=get_password_hash("123456."),
-                nombre=info["nombre"],
-                apellido=info["apellido"],
-                activo=True,
-                suscripcion_activa=True,
-                plan_suscripcion_id=UUID("70cb7e3f-adbb-42da-b76c-8949dcc71134") # Enterprise
-            )
-            session.add(e)
-            status_action = "creado"
+        for email, info in emails_to_check.items():
+            stmt = select(Especialista).where(Especialista.email == email)
+            e = session.exec(stmt).first()
             
-            # Asociar especialidad Odontología General (si existe)
-            stmt_esp = select(Especialidad).where(Especialidad.codigo == "ODO_GEN")
-            esp = session.exec(stmt_esp).first()
-            if esp:
-                rel = EspecialistaEspecialidad(
-                    especialista_id=e.id,
-                    especialidad_id=esp.id
+            status_action = ""
+            if not e:
+                # Crear
+                e = Especialista(
+                    id=info["id"],
+                    email=email,
+                    password_hash=get_password_hash("123456."),
+                    nombre=info["nombre"],
+                    apellido=info["apellido"],
+                    activo=True,
+                    suscripcion_activa=True,
+                    plan_suscripcion_id=UUID("70cb7e3f-adbb-42da-b76c-8949dcc71134") # Enterprise
                 )
-                session.add(rel)
-        else:
-            # Actualizar contraseña y activo
-            e.password_hash = get_password_hash("123456.")
-            e.activo = True
-            e.suscripcion_activa = True
-            session.add(e)
-            status_action = "actualizado"
+                # Rellenar datos reales del perfil
+                if email == "danielaaleonr@gmail.com":
+                    e.nombre = "Daniela A"
+                    e.apellido = "León R"
+                    e.clinica_nombre = "Odonto Fashion"
+                    e.clinica_direccion = "IEQ Valencia"
+                    e.slug_url = "danielaleon"
+                    e.portal_visible = True
+                elif email == "admin@odontofocus.com":
+                    e.nombre = "Williams"
+                    e.apellido = "Principal"
+                    e.slug_url = "admin-principal"
+                    e.portal_visible = True
+                session.add(e)
+                status_action = "creado"
+                
+                # Asociar especialidad Odontología General (si existe)
+                stmt_esp = select(Especialidad).where(Especialidad.codigo == "ODO_GEN")
+                esp = session.exec(stmt_esp).first()
+                if esp:
+                    rel = EspecialistaEspecialidad(
+                        especialista_id=e.id,
+                        especialidad_id=esp.id
+                    )
+                    session.add(rel)
+            else:
+                # Actualizar contraseña, activo y perfil completo
+                e.password_hash = get_password_hash("123456.")
+                e.activo = True
+                e.suscripcion_activa = True
+                if email == "danielaaleonr@gmail.com":
+                    e.nombre = "Daniela A"
+                    e.apellido = "León R"
+                    e.clinica_nombre = "Odonto Fashion"
+                    e.clinica_direccion = "IEQ Valencia"
+                    e.slug_url = "danielaleon"
+                    e.portal_visible = True
+                elif email == "admin@odontofocus.com":
+                    e.nombre = "Williams"
+                    e.apellido = "Principal"
+                    e.slug_url = "admin-principal"
+                    e.portal_visible = True
+                session.add(e)
+                status_action = "actualizado"
+                
+            session.commit()
+            session.refresh(e)
             
+            result.append({
+                "id": str(e.id),
+                "email": e.email,
+                "nombre": e.nombre,
+                "apellido": e.apellido,
+                "activo": e.activo,
+                "suscripcion_activa": e.suscripcion_activa,
+                "action": status_action
+            })
+            
+        all_esp = session.exec(select(Especialista)).all()
+        all_list = [{"id": str(x.id), "email": x.email, "nombre": x.nombre, "activo": x.activo} for x in all_esp]
+            
+        return {
+            "status": "success",
+            "message": "Especialistas de prueba listos con contraseña '123456.'",
+            "data": result,
+            "all_specialists_in_db": all_list
+        }
+    except Exception as ex:
+        import traceback
+        return {
+            "status": "error",
+            "message": str(ex),
+            "traceback": traceback.format_exc()
+        }
+
+
+@router.get("/seed-services")
+def seed_services(session: Session = Depends(get_session)):
+    """Carga los insumos, servicios y recetas del archivo JSON y los inserta en producción."""
+    import json
+    import os
+    try:
+        # Ruta al archivo JSON
+        base_dir = os.path.dirname(os.path.dirname(__file__)) # /backend/app
+        json_path = os.path.join(base_dir, "local_data_dump.json")
+        
+        if not os.path.exists(json_path):
+            return {"status": "error", "message": f"Archivo no encontrado en: {json_path}"}
+            
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        from app.models.insumo_servicio import Insumo, Servicio, ServicioInsumo
+        from uuid import UUID
+        
+        # 1. Insertar Insumos
+        insumos_inserted = 0
+        for ins in data["insumos"]:
+            # Verificar si existe
+            stmt = select(Insumo).where(Insumo.id == UUID(ins["id"]))
+            existing = session.exec(stmt).first()
+            if not existing:
+                new_ins = Insumo(
+                    id=UUID(ins["id"]),
+                    especialista_id=UUID(ins["especialista_id"]),
+                    nombre=ins["nombre"],
+                    codigo=ins["codigo"],
+                    unidad=ins["unidad"],
+                    costo_unitario=ins["costo_unitario"],
+                    unidades_por_paquete=ins["unidades_por_paquete"],
+                    stock_actual=ins["stock_actual"],
+                    stock_minimo=ins["stock_minimo"],
+                    activo=ins["activo"]
+                )
+                session.add(new_ins)
+                insumos_inserted += 1
+                
         session.commit()
-        session.refresh(e)
         
-        result.append({
-            "id": str(e.id),
-            "email": e.email,
-            "nombre": e.nombre,
-            "apellido": e.apellido,
-            "activo": e.activo,
-            "suscripcion_activa": e.suscripcion_activa,
-            "action": status_action
-        })
+        # 2. Insertar Servicios
+        servicios_inserted = 0
+        for ser in data["servicios"]:
+            stmt = select(Servicio).where(Servicio.id == UUID(ser["id"]))
+            existing = session.exec(stmt).first()
+            if not existing:
+                new_ser = Servicio(
+                    id=UUID(ser["id"]),
+                    especialista_id=UUID(ser["especialista_id"]),
+                    nombre=ser["nombre"],
+                    codigo=ser["codigo"],
+                    categoria=ser["categoria"],
+                    descripcion=ser["descripcion"],
+                    precio=ser["precio"],
+                    merma_porcentaje=ser["merma_porcentaje"],
+                    activo=ser["activo"],
+                    visible_publico=ser["visible_publico"],
+                    duracion_estimada_min=ser["duracion_estimada_min"]
+                )
+                session.add(new_ser)
+                servicios_inserted += 1
+                
+        session.commit()
         
-    all_esp = session.exec(select(Especialista)).all()
-    all_list = [{"id": str(x.id), "email": x.email, "nombre": x.nombre, "activo": x.activo} for x in all_esp]
+        # 3. Insertar ServicioInsumos
+        si_inserted = 0
+        for si in data["servicio_insumos"]:
+            stmt = select(ServicioInsumo).where(
+                ServicioInsumo.servicio_id == UUID(si["servicio_id"])
+            ).where(
+                ServicioInsumo.insumo_id == UUID(si["insumo_id"])
+            )
+            existing = session.exec(stmt).first()
+            if not existing:
+                new_si = ServicioInsumo(
+                    servicio_id=UUID(si["servicio_id"]),
+                    insumo_id=UUID(si["insumo_id"]),
+                    cantidad_utilizada=si["cantidad_utilizada"]
+                )
+                session.add(new_si)
+                si_inserted += 1
+                
+        session.commit()
         
-    return {
-        "status": "success",
-        "message": "Especialistas de prueba listos con contraseña '123456.'",
-        "data": result,
-        "all_specialists_in_db": all_list
-    }
+        return {
+            "status": "success",
+            "message": "Datos de insumos y servicios sembrados con éxito",
+            "details": {
+                "insumos_nuevos": insumos_inserted,
+                "servicios_nuevos": servicios_inserted,
+                "servicio_insumos_nuevos": si_inserted
+            }
+        }
+    except Exception as ex:
+        return {"status": "error", "message": str(ex)}
 
 
 @router.get("/me", response_model=EspecialistaRead)

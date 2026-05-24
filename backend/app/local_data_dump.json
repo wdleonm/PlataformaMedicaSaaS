@@ -1,0 +1,1492 @@
+{
+  "insumos": [
+    {
+      "id": "64f21c30-3b5b-4a50-a5ef-90fed332e6b5",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Guantes de Nitrilo Para Examen Sin Polvo Azul x 100",
+      "codigo": "2474",
+      "unidad": "unidad",
+      "costo_unitario": 8.51,
+      "unidades_por_paquete": 100,
+      "stock_actual": 150.0,
+      "stock_minimo": 10.0,
+      "activo": true
+    },
+    {
+      "id": "f42b49f9-b311-4d3c-8f95-ef76d6af7a90",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Campos o Baberos x 50 unid",
+      "codigo": "2640",
+      "unidad": "unidad",
+      "costo_unitario": 8.0,
+      "unidades_por_paquete": 50,
+      "stock_actual": 200.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "f812f1f6-6d68-43b0-b985-c13ef0074313",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Tapaboca Rectangular Azul Doble Liga Caja x 50",
+      "codigo": "595",
+      "unidad": "unidad",
+      "costo_unitario": 4.54,
+      "unidades_por_paquete": 50,
+      "stock_actual": 100.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "761c91db-14d4-402a-9819-4d3f5e74f311",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Guantes de Nitrilo Para Examen Sin Polvo Negro x 100",
+      "codigo": "I-0001",
+      "unidad": "unidad",
+      "costo_unitario": 10.0,
+      "unidades_por_paquete": 100,
+      "stock_actual": 200.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "cfd37f6f-2355-41c0-96d3-19266ed7c26d",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Acido Fluorhidrico 9.5% Bisco 5g",
+      "codigo": "38954",
+      "unidad": "unidad",
+      "costo_unitario": 47.74,
+      "unidades_por_paquete": 1,
+      "stock_actual": 10.0,
+      "stock_minimo": 3.0,
+      "activo": true
+    },
+    {
+      "id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Tapaboca Rectangular Azul Doble Liga Caja x 50",
+      "codigo": "595",
+      "unidad": "unidad",
+      "costo_unitario": 4.54,
+      "unidades_por_paquete": 50,
+      "stock_actual": 50.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "3ad3af5b-e3d0-4210-9f1f-a27bb8811cf5",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Eyectores De Saliva Marca EURONDA x100 und",
+      "codigo": "1649",
+      "unidad": "unidad",
+      "costo_unitario": 8.91,
+      "unidades_por_paquete": 100,
+      "stock_actual": 100.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Campos o Baberos x 50 unid",
+      "codigo": "2640",
+      "unidad": "unidad",
+      "costo_unitario": 7.05,
+      "unidades_por_paquete": 50,
+      "stock_actual": 50.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "9f117309-456b-422c-a43e-c96477436bce",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Kit de Cirugia Campo Abierto/Cerrado",
+      "codigo": "39240",
+      "unidad": "unidad",
+      "costo_unitario": 1.38,
+      "unidades_por_paquete": 1,
+      "stock_actual": 50.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "16a2e0e0-b29a-423f-99a2-d0f38c6e9e93",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Cepillo Para Profilaxis COPA GRANDE x 10",
+      "codigo": "4390",
+      "unidad": "unidad",
+      "costo_unitario": 4.86,
+      "unidades_por_paquete": 10,
+      "stock_actual": 10.0,
+      "stock_minimo": 4.0,
+      "activo": true
+    },
+    {
+      "id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Guantes de Nitrilo Para Examen Sin Polvo Azul x 100",
+      "codigo": "2474",
+      "unidad": "unidad",
+      "costo_unitario": 8.51,
+      "unidades_por_paquete": 100,
+      "stock_actual": 100.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "76177de4-349c-4572-8842-cb2ac35057bf",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Anestesia Lidocaina 2% New Stetic Caja x 50 (EXE)",
+      "codigo": "4140",
+      "unidad": "unidad",
+      "costo_unitario": 34.02,
+      "unidades_por_paquete": 50,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "f9708efa-0d45-4f53-95c3-c6f5ac9c07d9",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Agujas Dentales Caja x 100 Unid",
+      "codigo": "1776",
+      "unidad": "unidad",
+      "costo_unitario": 12.4,
+      "unidades_por_paquete": 100,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "74ee7da5-29f8-427d-9bb4-3ce53635acbd",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Tiras De Acabado EPITEX Starter Kit x5",
+      "codigo": "7811",
+      "unidad": "unidad",
+      "costo_unitario": 239.7,
+      "unidades_por_paquete": 5,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "1567ceb5-cdc7-4250-aeb5-963f7245455c",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Papel articular Prehma red/blue x12 hojas",
+      "codigo": "2628",
+      "unidad": "unidad",
+      "costo_unitario": 1.3,
+      "unidades_por_paquete": 12,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "65b668cd-5bf1-471a-8e6b-411f199cb42b",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Gasas Sin Algodon Paq. x 200",
+      "codigo": "2665",
+      "unidad": "unidad",
+      "costo_unitario": 3.57,
+      "unidades_por_paquete": 200,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "48393a5e-b917-4ee8-bfbf-0694999ed5d4",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Hojas de Bisturi Esterilizadas Und",
+      "codigo": "1665",
+      "unidad": "unidad",
+      "costo_unitario": 0.15,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "82f1ee09-bb2d-4d5f-9b5f-b55e6ae79d65",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Sellante de composite Permaseal Ultradent",
+      "codigo": "166",
+      "unidad": "unidad",
+      "costo_unitario": 41.31,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "ec38c727-a26c-436f-b5d3-e4c59fc5f5de",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Puntas Capilary Tips 0.36mm Ultradent Unid",
+      "codigo": "40012",
+      "unidad": "unidad",
+      "costo_unitario": 2.35,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "6536d0fc-3d88-4fd4-a209-65a02483dc7b",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Cepillo Interdental ECO de 8 Und",
+      "codigo": "2641",
+      "unidad": "unidad",
+      "costo_unitario": 4.78,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "e153533a-532f-4f5d-93b9-ba63f4c494b2",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Puntas De Papel Absorbente Metabiomed",
+      "codigo": "1506",
+      "unidad": "unidad",
+      "costo_unitario": 4.62,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "1ca36073-c7f9-415c-8a75-3f3120fbc1a9",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Gutapercha METABIOMED x 120",
+      "codigo": "1958",
+      "unidad": "unidad",
+      "costo_unitario": 4.62,
+      "unidades_por_paquete": 120,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "52832c41-98da-46b2-8890-721803ba27e4",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Cemento Endodontico KIT Vigodent",
+      "codigo": "846",
+      "unidad": "unidad",
+      "costo_unitario": 14.82,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "9542259b-22e7-4769-b4a3-b1fe43f23841",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Blanqueamiento BOOST Ultradent 40% Con Barrera",
+      "codigo": "40030",
+      "unidad": "unidad",
+      "costo_unitario": 60.35,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "7d16a696-e698-43f1-b237-eaa33c6ef748",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Retractor Clear Luxury #1",
+      "codigo": "185",
+      "unidad": "unidad",
+      "costo_unitario": 2.92,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "ffdfdddc-9a7c-4d3a-a9da-c0f67a64c17a",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Desensibilizante en Gel UltraEz Ultradent 1.48gr",
+      "codigo": "40093",
+      "unidad": "unidad",
+      "costo_unitario": 7.3,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "ea86432b-6802-4250-9170-b2e8ca8318d6",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Material de Rebase Dura Base Hard",
+      "codigo": "13",
+      "unidad": "unidad",
+      "costo_unitario": 117.46,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "dedfd88d-c248-4a0d-987d-c3968b25ce19",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Acrilico Auto Polvo Rosado Claro con fibra Veracryl 100gr",
+      "codigo": "5131",
+      "unidad": "unidad",
+      "costo_unitario": 10.94,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "e90bf8fb-58ca-4584-b17e-bacae4f9b61f",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Eyector endodontico metalico KIT 7pcs DENTPARK",
+      "codigo": "7707",
+      "unidad": "unidad",
+      "costo_unitario": 46.98,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "7ad454c5-85fc-4e64-a959-5f0853090668",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Cubetas de Fluor x 5",
+      "codigo": "1757",
+      "unidad": "unidad",
+      "costo_unitario": 3.24,
+      "unidades_por_paquete": 5,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "53a6aebc-e8fe-4e6d-bfa1-187a5337f092",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Barniz de fluor Enamelast jeringa Ultradent 1.2ml",
+      "codigo": "32",
+      "unidad": "unidad",
+      "costo_unitario": 9.32,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "50ef4369-0028-4c20-8ef8-b74177e59a56",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Algodonera Metalica Peq De Acero Inoxidable",
+      "codigo": "2045",
+      "unidad": "unidad",
+      "costo_unitario": 7.21,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "3edce40b-4599-4dce-a379-8ab4c73c3c73",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Rollos de Algodon Trenzado Iscot x1000",
+      "codigo": "1706",
+      "unidad": "unidad",
+      "costo_unitario": 21.87,
+      "unidades_por_paquete": 1000,
+      "stock_actual": 1000.0,
+      "stock_minimo": 100.0,
+      "activo": true
+    },
+    {
+      "id": "aa494a03-82a6-4ddb-bfd8-b223fefce916",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Acido Fosforico SECURE 12gr",
+      "codigo": "1718",
+      "unidad": "unidad",
+      "costo_unitario": 4.7,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "d221bd0d-52d8-4679-97d2-104712595d67",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Acido Fluorhidrico 9.5% Bisco 5g",
+      "codigo": "38954",
+      "unidad": "gr",
+      "costo_unitario": 47.74,
+      "unidades_por_paquete": 1,
+      "stock_actual": 5.0,
+      "stock_minimo": 2.0,
+      "activo": true
+    },
+    {
+      "id": "281ef82e-cbdb-4bff-bc45-ae0928beec21",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Sutura Nylon KAREMAX Und &#8211; 4-0, C20",
+      "codigo": "40102",
+      "unidad": "cm",
+      "costo_unitario": 1.13,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "1e3d4375-8a51-4f40-8397-d897e7bbd7c6",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Hilo Retractor i-Pak 244cm",
+      "codigo": "38114",
+      "unidad": "cm",
+      "costo_unitario": 17.74,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "0596c7f0-a937-4efd-8a50-093885e46be8",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Hipoclorito De Sodio Secure 1lts 5.25%",
+      "codigo": "833",
+      "unidad": "lt",
+      "costo_unitario": 10.25,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "f175c004-669e-4f28-88c3-0336644be5d9",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Cemento de policarboxilato i-POL 75g",
+      "codigo": "39117",
+      "unidad": "gr",
+      "costo_unitario": 24.22,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "5b119644-ab37-45a5-b0ed-d3aae6d57d00",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Barrera gingival i-DAM 3.5g",
+      "codigo": "39120",
+      "unidad": "gr",
+      "costo_unitario": 14.42,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "ad45ba46-0b13-4202-8f66-a7b1efe00816",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Anestesia Topica en Gel ULTRA CARE 30gr Ultradent",
+      "codigo": "486",
+      "unidad": "gr",
+      "costo_unitario": 25.36,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "ad0dcf5d-0fb6-4d54-bc28-aaf5c2e3572b",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Clorhexidina Al 2% En Gel Jeringa 10cc SECURE",
+      "codigo": "2644",
+      "unidad": "cm3",
+      "costo_unitario": 8.75,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "a8e73f81-bac9-4af9-8435-7eebdbb1b567",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Acido Fluorhidrico Porcelain Etch 9% Ultradent",
+      "codigo": "40009",
+      "unidad": "ml",
+      "costo_unitario": 16.2,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "a382842c-90af-45c5-b865-629f14d15fe1",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Pasta Profilactica Herjos Tutti Fruti 90gr Vigodent",
+      "codigo": "7407",
+      "unidad": "gr",
+      "costo_unitario": 8.1,
+      "unidades_por_paquete": 1,
+      "stock_actual": 90.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "22d9dabe-dd13-4fc5-83fd-b859f894689d",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Adhesivo Magic Bond  5ml Vigodent",
+      "codigo": "7369",
+      "unidad": "unidad",
+      "costo_unitario": 15.8,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "f6b75f92-2796-44ad-9a13-554e69cc0e7f",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Kit De Resinas Nt Premium x 8",
+      "codigo": "7810",
+      "unidad": "unidad",
+      "costo_unitario": 82.22,
+      "unidades_por_paquete": 8,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": false
+    },
+    {
+      "id": "7889965c-9502-4d8f-9b54-ac5b30814205",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Jeringa Carpule Con Aro De Succion Und",
+      "codigo": "6633",
+      "unidad": "unidad",
+      "costo_unitario": 10.75,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": false
+    },
+    {
+      "id": "545a9564-675b-4c61-9447-b22d82f3b7cf",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Caja para Limas Mediana de Colores",
+      "codigo": "7721",
+      "unidad": "unidad",
+      "costo_unitario": 11.26,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": false
+    },
+    {
+      "id": "0f6a44b6-53e7-46e1-bcb6-b1e0819317b2",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Kit De Puntas Doradas Para Encerador x 6 Unids",
+      "codigo": "7578",
+      "unidad": "unidad",
+      "costo_unitario": 16.2,
+      "unidades_por_paquete": 6,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": false
+    },
+    {
+      "id": "73ea126e-1829-4801-98a3-4efd93e01ca6",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Kit de Resinas V-Insignia x5 Vitaldent",
+      "codigo": "40066",
+      "unidad": "unidad",
+      "costo_unitario": 68.85,
+      "unidades_por_paquete": 5,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "5b355366-6a3d-406c-8de8-f2aede9df5d5",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Ionomero en Jeringa Foto i-Liner i-dental 2.5 gr",
+      "codigo": "38103",
+      "unidad": "unidad",
+      "costo_unitario": 25.11,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "59dea0e9-4f6a-4dbf-aa2c-f5878915118a",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Microaplicadores En Bolsa x 100 unids",
+      "codigo": "7570",
+      "unidad": "unidad",
+      "costo_unitario": 3.16,
+      "unidades_por_paquete": 100,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "beb00da2-64ff-479a-a877-f20689cbfaa7",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Banda para elevacion de Margen x24 DENTPARK",
+      "codigo": "7690",
+      "unidad": "unidad",
+      "costo_unitario": 7.29,
+      "unidades_por_paquete": 24,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "16fd8a0e-6a6f-4b31-80ee-08c39a59ad8f",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Kit de Pulido de Resina x12",
+      "codigo": "248",
+      "unidad": "unidad",
+      "costo_unitario": 15.39,
+      "unidades_por_paquete": 12,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "952eabdb-7786-497f-806e-a4b16a8796ec",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Hidroxido De Calcio Fotocurado I-CAL LC I-Dental 2.5gr",
+      "codigo": "1181",
+      "unidad": "unidad",
+      "costo_unitario": 17.42,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "3810abfb-a13c-4676-941d-8a8716acd4b5",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Liner Base de Hidroxido De Calcio Vigodent  24g",
+      "codigo": "12409",
+      "unidad": "unidad",
+      "costo_unitario": 20.98,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "64752d8c-8a2b-4330-9a6c-71aaea46db37",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Cemento Resinoso Fill Magic Dual cement 5g",
+      "codigo": "5925",
+      "unidad": "unidad",
+      "costo_unitario": 33.95,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "4efa5a3e-bfdd-4499-acd0-d07d1716c7a9",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Retractor Blando para Blanqueamiento Und",
+      "codigo": "182",
+      "unidad": "unidad",
+      "costo_unitario": 6.37,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    },
+    {
+      "id": "53896ddc-9fb7-4ebe-a642-caf430178211",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Adhesivo Ambar Plus Universal MDP FGM 3ml",
+      "codigo": "807",
+      "unidad": "ml",
+      "costo_unitario": 49.95,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": false
+    },
+    {
+      "id": "e054cbf5-a424-4c22-ad61-0baa7823f6c6",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Bracket Mesh Base Roth Mini Ortho VIP",
+      "codigo": "1949",
+      "unidad": "unidad",
+      "costo_unitario": 5.1,
+      "unidades_por_paquete": 1,
+      "stock_actual": 0.0,
+      "stock_minimo": 5.0,
+      "activo": true
+    }
+  ],
+  "servicios": [
+    {
+      "id": "53f9a6ec-6cf5-4109-87be-15fc666c067b",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Consulta Sucesiva o Control",
+      "codigo": "S-0002",
+      "categoria": null,
+      "descripcion": null,
+      "precio": 25.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 20
+    },
+    {
+      "id": "c0a7f6e7-7e32-4b0d-ab41-28e2f568afee",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Consulta de Primera Vez",
+      "codigo": "S-0001",
+      "categoria": null,
+      "descripcion": null,
+      "precio": 30.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "79d505cd-0137-42af-b36a-0f82f87ee3ad",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Blanqueamiento Basivo",
+      "codigo": "S-0003",
+      "categoria": null,
+      "descripcion": null,
+      "precio": 60.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "6bb0b406-0acf-4331-abf3-937d3befbdde",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Blanqueamiento Medio",
+      "codigo": "S-0004",
+      "categoria": null,
+      "descripcion": null,
+      "precio": 70.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "43f25e58-2a81-4c60-b330-64b1522da664",
+      "especialista_id": "c0943115-4691-4413-97fa-1efa21723b51",
+      "nombre": "Blanqueamiento Profundo",
+      "codigo": "S-0005",
+      "categoria": null,
+      "descripcion": null,
+      "precio": 80.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "e63d68d4-7884-4e49-821b-f1113fce9eff",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Consulta Sucesiva o Control",
+      "codigo": "S-0002",
+      "categoria": "Prevención",
+      "descripcion": "",
+      "precio": 20.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 20
+    },
+    {
+      "id": "bc7b750e-7387-4ecd-9b7a-219274d940ca",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Consulta de Primera Vez",
+      "codigo": "S-0001",
+      "categoria": "Prevención",
+      "descripcion": "Consulta básica  exploratoria",
+      "precio": 20.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "1550e654-b931-46e3-ac91-c17131f80486",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Exodoncia Simple",
+      "codigo": "S-0005",
+      "categoria": "Cirugía",
+      "descripcion": "Extracción de un diente (no retenido).",
+      "precio": 30.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Tratamiento de Conducto (Uniradicular)",
+      "codigo": "S-0007",
+      "categoria": "Endodoncia",
+      "descripcion": "Curación del nervio en dientes de una sola raíz",
+      "precio": 150.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "1b9b6e80-6026-4be5-9df5-85d6c705c06d",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Blanqueamiento Dental",
+      "codigo": "S-0008",
+      "categoria": "Estética",
+      "descripcion": "Aclaramiento del tono de los dientes",
+      "precio": 100.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "a3a2dc85-0cbb-410e-b60f-730329acfa7c",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Raspado y Alisado",
+      "codigo": "S-0010",
+      "categoria": "Periodoncia",
+      "descripcion": "Eliminación de sarro subgingival (manual).",
+      "precio": 100.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "4671bd1a-2817-49f6-a37f-399df848d752",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Aplicación de Flúor",
+      "codigo": "S-0011",
+      "categoria": "Prevención",
+      "descripcion": "Fortalecimiento del esmalte dental.",
+      "precio": 30.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "7db0f905-5f80-43d0-b6be-4cf28c6c1cfd",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Sellado de fosas y fisuras",
+      "codigo": "S-0006",
+      "categoria": "Prevención",
+      "descripcion": "Protección de molares para evitar caries",
+      "precio": 30.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "96b854c7-02de-49b6-9eb3-6168508c595f",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Profilaxis Simple",
+      "codigo": "S-0003",
+      "categoria": "Prevención",
+      "descripcion": "Limpieza dental con ultrasonido y profilaxis",
+      "precio": 30.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Reparación con Resina mediana",
+      "codigo": "S-0012",
+      "categoria": "Operatoria",
+      "descripcion": "Que involucra dos caras o menos del diente",
+      "precio": 35.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Restauración con Resina pequeña ",
+      "codigo": "S-0004",
+      "categoria": "Operatoria",
+      "descripcion": "Eliminación de caries y reconstrucción estética.",
+      "precio": 25.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Restauración con Resina MOD",
+      "codigo": "S-0013",
+      "categoria": "Operatoria",
+      "descripcion": "Que involucra 3 paredes o posee perdida de un 50% de corona clínica",
+      "precio": 50.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    },
+    {
+      "id": "0308ce6f-55eb-4ee5-82c5-27719ae0c21a",
+      "especialista_id": "a908292f-22f3-4e66-975f-a0070ff4ad86",
+      "nombre": "Prótesis Fija ",
+      "codigo": "S-0009",
+      "categoria": "Rehabilitación",
+      "descripcion": "corona, puente o meryland",
+      "precio": 150.0,
+      "merma_porcentaje": 0.0,
+      "activo": true,
+      "visible_publico": true,
+      "duracion_estimada_min": 30
+    }
+  ],
+  "servicio_insumos": [
+    {
+      "servicio_id": "c0a7f6e7-7e32-4b0d-ab41-28e2f568afee",
+      "insumo_id": "761c91db-14d4-402a-9819-4d3f5e74f311",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "c0a7f6e7-7e32-4b0d-ab41-28e2f568afee",
+      "insumo_id": "f812f1f6-6d68-43b0-b985-c13ef0074313",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "c0a7f6e7-7e32-4b0d-ab41-28e2f568afee",
+      "insumo_id": "f42b49f9-b311-4d3c-8f95-ef76d6af7a90",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "6bb0b406-0acf-4331-abf3-937d3befbdde",
+      "insumo_id": "761c91db-14d4-402a-9819-4d3f5e74f311",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "6bb0b406-0acf-4331-abf3-937d3befbdde",
+      "insumo_id": "f812f1f6-6d68-43b0-b985-c13ef0074313",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "6bb0b406-0acf-4331-abf3-937d3befbdde",
+      "insumo_id": "f42b49f9-b311-4d3c-8f95-ef76d6af7a90",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "43f25e58-2a81-4c60-b330-64b1522da664",
+      "insumo_id": "761c91db-14d4-402a-9819-4d3f5e74f311",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "43f25e58-2a81-4c60-b330-64b1522da664",
+      "insumo_id": "f812f1f6-6d68-43b0-b985-c13ef0074313",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "43f25e58-2a81-4c60-b330-64b1522da664",
+      "insumo_id": "f42b49f9-b311-4d3c-8f95-ef76d6af7a90",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "53f9a6ec-6cf5-4109-87be-15fc666c067b",
+      "insumo_id": "761c91db-14d4-402a-9819-4d3f5e74f311",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "53f9a6ec-6cf5-4109-87be-15fc666c067b",
+      "insumo_id": "f812f1f6-6d68-43b0-b985-c13ef0074313",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "53f9a6ec-6cf5-4109-87be-15fc666c067b",
+      "insumo_id": "f42b49f9-b311-4d3c-8f95-ef76d6af7a90",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "79d505cd-0137-42af-b36a-0f82f87ee3ad",
+      "insumo_id": "f812f1f6-6d68-43b0-b985-c13ef0074313",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "79d505cd-0137-42af-b36a-0f82f87ee3ad",
+      "insumo_id": "761c91db-14d4-402a-9819-4d3f5e74f311",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "79d505cd-0137-42af-b36a-0f82f87ee3ad",
+      "insumo_id": "f42b49f9-b311-4d3c-8f95-ef76d6af7a90",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "79d505cd-0137-42af-b36a-0f82f87ee3ad",
+      "insumo_id": "cfd37f6f-2355-41c0-96d3-19266ed7c26d",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "545a9564-675b-4c61-9447-b22d82f3b7cf",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "0596c7f0-a937-4efd-8a50-093885e46be8",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "e153533a-532f-4f5d-93b9-ba63f4c494b2",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "1ca36073-c7f9-415c-8a75-3f3120fbc1a9",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "52832c41-98da-46b2-8890-721803ba27e4",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "f175c004-669e-4f28-88c3-0336644be5d9",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a2dc29a0-03a9-4860-87b3-50abe968ec3e",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "e63d68d4-7884-4e49-821b-f1113fce9eff",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "e63d68d4-7884-4e49-821b-f1113fce9eff",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "e63d68d4-7884-4e49-821b-f1113fce9eff",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bc7b750e-7387-4ecd-9b7a-219274d940ca",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "bc7b750e-7387-4ecd-9b7a-219274d940ca",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bc7b750e-7387-4ecd-9b7a-219274d940ca",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bc7b750e-7387-4ecd-9b7a-219274d940ca",
+      "insumo_id": "3edce40b-4599-4dce-a379-8ab4c73c3c73",
+      "cantidad_utilizada": 4.0
+    },
+    {
+      "servicio_id": "1550e654-b931-46e3-ac91-c17131f80486",
+      "insumo_id": "76177de4-349c-4572-8842-cb2ac35057bf",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "1550e654-b931-46e3-ac91-c17131f80486",
+      "insumo_id": "f9708efa-0d45-4f53-95c3-c6f5ac9c07d9",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "1550e654-b931-46e3-ac91-c17131f80486",
+      "insumo_id": "65b668cd-5bf1-471a-8e6b-411f199cb42b",
+      "cantidad_utilizada": 10.0
+    },
+    {
+      "servicio_id": "1550e654-b931-46e3-ac91-c17131f80486",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "1550e654-b931-46e3-ac91-c17131f80486",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "1550e654-b931-46e3-ac91-c17131f80486",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3a2dc85-0cbb-410e-b60f-730329acfa7c",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3a2dc85-0cbb-410e-b60f-730329acfa7c",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3a2dc85-0cbb-410e-b60f-730329acfa7c",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "a3a2dc85-0cbb-410e-b60f-730329acfa7c",
+      "insumo_id": "ad0dcf5d-0fb6-4d54-bc28-aaf5c2e3572b",
+      "cantidad_utilizada": 0.5
+    },
+    {
+      "servicio_id": "a3a2dc85-0cbb-410e-b60f-730329acfa7c",
+      "insumo_id": "65b668cd-5bf1-471a-8e6b-411f199cb42b",
+      "cantidad_utilizada": 10.0
+    },
+    {
+      "servicio_id": "0308ce6f-55eb-4ee5-82c5-27719ae0c21a",
+      "insumo_id": "1e3d4375-8a51-4f40-8397-d897e7bbd7c6",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "0308ce6f-55eb-4ee5-82c5-27719ae0c21a",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "96b854c7-02de-49b6-9eb3-6168508c595f",
+      "insumo_id": "a382842c-90af-45c5-b865-629f14d15fe1",
+      "cantidad_utilizada": 0.5
+    },
+    {
+      "servicio_id": "96b854c7-02de-49b6-9eb3-6168508c595f",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "96b854c7-02de-49b6-9eb3-6168508c595f",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "96b854c7-02de-49b6-9eb3-6168508c595f",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "96b854c7-02de-49b6-9eb3-6168508c595f",
+      "insumo_id": "3ad3af5b-e3d0-4210-9f1f-a27bb8811cf5",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "96b854c7-02de-49b6-9eb3-6168508c595f",
+      "insumo_id": "16a2e0e0-b29a-423f-99a2-d0f38c6e9e93",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "7db0f905-5f80-43d0-b6be-4cf28c6c1cfd",
+      "insumo_id": "ec38c727-a26c-436f-b5d3-e4c59fc5f5de",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "7db0f905-5f80-43d0-b6be-4cf28c6c1cfd",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "7db0f905-5f80-43d0-b6be-4cf28c6c1cfd",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "7db0f905-5f80-43d0-b6be-4cf28c6c1cfd",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "7db0f905-5f80-43d0-b6be-4cf28c6c1cfd",
+      "insumo_id": "aa494a03-82a6-4ddb-bfd8-b223fefce916",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "7db0f905-5f80-43d0-b6be-4cf28c6c1cfd",
+      "insumo_id": "3edce40b-4599-4dce-a379-8ab4c73c3c73",
+      "cantidad_utilizada": 4.0
+    },
+    {
+      "servicio_id": "4671bd1a-2817-49f6-a37f-399df848d752",
+      "insumo_id": "7ad454c5-85fc-4e64-a959-5f0853090668",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "4671bd1a-2817-49f6-a37f-399df848d752",
+      "insumo_id": "53a6aebc-e8fe-4e6d-bfa1-187a5337f092",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "aa494a03-82a6-4ddb-bfd8-b223fefce916",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "3edce40b-4599-4dce-a379-8ab4c73c3c73",
+      "cantidad_utilizada": 4.0
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "1567ceb5-cdc7-4250-aeb5-963f7245455c",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "22d9dabe-dd13-4fc5-83fd-b859f894689d",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "73ea126e-1829-4801-98a3-4efd93e01ca6",
+      "cantidad_utilizada": 0.5
+    },
+    {
+      "servicio_id": "4671bd1a-2817-49f6-a37f-399df848d752",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "1567ceb5-cdc7-4250-aeb5-963f7245455c",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "73ea126e-1829-4801-98a3-4efd93e01ca6",
+      "cantidad_utilizada": 0.5
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "5b355366-6a3d-406c-8de8-f2aede9df5d5",
+      "cantidad_utilizada": 0.2
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "59dea0e9-4f6a-4dbf-aa2c-f5878915118a",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "aa494a03-82a6-4ddb-bfd8-b223fefce916",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "beb00da2-64ff-479a-a877-f20689cbfaa7",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "4671bd1a-2817-49f6-a37f-399df848d752",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "4671bd1a-2817-49f6-a37f-399df848d752",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "4671bd1a-2817-49f6-a37f-399df848d752",
+      "insumo_id": "3ad3af5b-e3d0-4210-9f1f-a27bb8811cf5",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "7db0f905-5f80-43d0-b6be-4cf28c6c1cfd",
+      "insumo_id": "82f1ee09-bb2d-4d5f-9b5f-b55e6ae79d65",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "0308ce6f-55eb-4ee5-82c5-27719ae0c21a",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "0308ce6f-55eb-4ee5-82c5-27719ae0c21a",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "1b9b6e80-6026-4be5-9df5-85d6c705c06d",
+      "insumo_id": "9542259b-22e7-4769-b4a3-b1fe43f23841",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "1b9b6e80-6026-4be5-9df5-85d6c705c06d",
+      "insumo_id": "5b119644-ab37-45a5-b0ed-d3aae6d57d00",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "1b9b6e80-6026-4be5-9df5-85d6c705c06d",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "1b9b6e80-6026-4be5-9df5-85d6c705c06d",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "1b9b6e80-6026-4be5-9df5-85d6c705c06d",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "fd7a4b56-672f-4a4e-b267-79509ea7a0bb",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "675cda14-79c6-400f-b694-f8001b6b2db1",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "a8221dfe-7401-4f94-933a-334427c70bef",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "73ea126e-1829-4801-98a3-4efd93e01ca6",
+      "cantidad_utilizada": 0.5
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "59dea0e9-4f6a-4dbf-aa2c-f5878915118a",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "aa494a03-82a6-4ddb-bfd8-b223fefce916",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "5b355366-6a3d-406c-8de8-f2aede9df5d5",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "22d9dabe-dd13-4fc5-83fd-b859f894689d",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "1567ceb5-cdc7-4250-aeb5-963f7245455c",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "16fd8a0e-6a6f-4b31-80ee-08c39a59ad8f",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "beb00da2-64ff-479a-a877-f20689cbfaa7",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bfda5856-5621-4f3c-8585-5f79d5553850",
+      "insumo_id": "59dea0e9-4f6a-4dbf-aa2c-f5878915118a",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "16fd8a0e-6a6f-4b31-80ee-08c39a59ad8f",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "bd0b57c3-b740-4aad-bc06-e0315a5e3a0a",
+      "insumo_id": "22d9dabe-dd13-4fc5-83fd-b859f894689d",
+      "cantidad_utilizada": 0.1
+    },
+    {
+      "servicio_id": "a3a2dc85-0cbb-410e-b60f-730329acfa7c",
+      "insumo_id": "3ad3af5b-e3d0-4210-9f1f-a27bb8811cf5",
+      "cantidad_utilizada": 1.0
+    },
+    {
+      "servicio_id": "a3a2dc85-0cbb-410e-b60f-730329acfa7c",
+      "insumo_id": "76177de4-349c-4572-8842-cb2ac35057bf",
+      "cantidad_utilizada": 2.0
+    },
+    {
+      "servicio_id": "1b9b6e80-6026-4be5-9df5-85d6c705c06d",
+      "insumo_id": "53a6aebc-e8fe-4e6d-bfa1-187a5337f092",
+      "cantidad_utilizada": 0.5
+    },
+    {
+      "servicio_id": "a3eceebb-af20-4adb-b552-1e1a425972e2",
+      "insumo_id": "3810abfb-a13c-4676-941d-8a8716acd4b5",
+      "cantidad_utilizada": 1.0
+    }
+  ]
+}
