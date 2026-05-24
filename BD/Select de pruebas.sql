@@ -18,6 +18,8 @@ SELECT * FROM sys_clinical.categorias_gastos;
 
 SELECT * FROM sys_config.administradores;
 
+SELECT * FROM sys_config.especialistas;
+
 SELECT * FROM sys_config.insumos;
 
 SELECT * FROM sys_config.servicios;
@@ -27,6 +29,8 @@ SELECT * FROM sys_config.catalogo_insumos;
 --delete from sys_config.insumos;
 
 SELECT * FROM sys_config.servicio_insumos;
+
+SELECT * FROM sys_config.servicio_insumos where servicio_id in (select id from sys_config.servicios) ;
 
 SELECT * FROM sys_config.especialistas;
 

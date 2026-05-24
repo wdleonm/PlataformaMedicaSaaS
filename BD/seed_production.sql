@@ -82,3 +82,19 @@ INSERT INTO sys_config.especialidad_hc_secciones (especialidad_id, hc_seccion_id
 
 -- Administradores registrados
 INSERT INTO sys_config.administradores (id, email, password_hash, nombre, apellido, activo) VALUES ('499abe1f-fac0-4b48-9559-ce826898ef0e', 'smartlift1608@gmail.com', '$2b$12$avhqoyJlV8INY/FcQZf7sO5TgABeTuO/mOLFB6MrMJOcRIY0VOKU.', 'William', 'Leon', TRUE) ON CONFLICT (email) DO NOTHING;
+
+
+
+-- 1. Insertar especialistas en la BD del VPS
+INSERT INTO sys_config.especialistas (id, email, password_hash, nombre, apellido, activo, plan_suscripcion_id, suscripcion_activa) 
+VALUES 
+('a908292f-22f3-4e66-975f-a0070ff4ad86', 'danielaaleonr@gmail.com', '$2b$12$mbpXfzgBCNEc3zjP33nwHue5SGrFfOT3X2ONoKzMFjZbBYZCsBRWm', 'Daniela', 'Leon', TRUE, '70cb7e3f-adbb-42da-b76c-8949dcc71134', TRUE),
+('c0943115-4691-4413-97fa-1efa21723b51', 'admin@odontofocus.com', '$2b$12$mbpXfzgBCNEc3zjP33nwHue5SGrFfOT3X2ONoKzMFjZbBYZCsBRWm', 'Especialista', 'Prueba', TRUE, '70cb7e3f-adbb-42da-b76c-8949dcc71134', TRUE)
+ON CONFLICT (email) DO NOTHING;
+
+-- 2. Asociarles la especialidad de Odontología General
+INSERT INTO sys_config.especialista_especialidades (especialista_id, especialidad_id)
+VALUES 
+('a908292f-22f3-4e66-975f-a0070ff4ad86', '8f5c9b60-0725-4cd4-bbcc-6c5ffc04e258'),
+('c0943115-4691-4413-97fa-1efa21723b51', '8f5c9b60-0725-4cd4-bbcc-6c5ffc04e258')
+ON CONFLICT DO NOTHING;
