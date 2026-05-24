@@ -77,7 +77,7 @@ export default function AdminConfigPage() {
         api.get("/api/admin/config/especialidades"),
         api.get("/api/admin/config/hallazgos"),
         api.get("/api/admin/config/global"),
-        api.get("/api/admin/users")
+        api.get("/api/admin/users/")
       ]);
       setEspecialidades(respEsp.data);
       setHallazgos(respHal.data);
@@ -183,7 +183,7 @@ export default function AdminConfigPage() {
         if (isEditing) {
           await api.patch(`/api/admin/users/${currentEntity.id}`, currentEntity);
         } else {
-          await api.post("/api/admin/users", currentEntity);
+          await api.post("/api/admin/users/", currentEntity);
         }
       }
       setIsModalOpen(false);

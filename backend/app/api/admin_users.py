@@ -13,6 +13,7 @@ from app.api.auth import get_password_hash
 
 router = APIRouter(prefix="/api/admin/users", tags=["Admin Users"])
 
+@router.get("", response_model=List[AdminRead])
 @router.get("/", response_model=List[AdminRead])
 def admin_listar_admins(
     session: Session = Depends(get_session),
@@ -25,6 +26,7 @@ def admin_listar_admins(
     statement = select(Admin).order_by(Admin.created_at)
     return session.exec(statement).all()
 
+@router.post("", response_model=AdminRead)
 @router.post("/", response_model=AdminRead)
 def admin_crear_admin(
     data: AdminCreate,
