@@ -139,6 +139,90 @@ def login(
     )
 
 
+@router.get("/debug-specialists")
+def debug_specialists(session: Session = Depends(get_session)):
+    """Ruta temporal para diagnosticar y re-crear o actualizar los especialistas de prueba."""
+    from app.models.especialista import Especialista, EspecialistaEspecialidad
+    from app.models.especialidad import Especialidad
+    from uuid import UUID
+    
+    result = []
+    
+    # 1. Buscar si ya existen o crearlos
+    emails_to_check = {
+        "danielaaleonr@gmail.com": {
+            "id": UUID("a908292f-22f3-4e66-975f-a0070ff4ad86"),
+            "nombre": "Daniela",
+            "apellido": "Leon"
+        },
+        "admin@odontofocus.com": {
+            "id": UUID("c0943115-4691-4413-97fa-1efa21723b51"),
+            "nombre": "Especialista",
+            "apellido": "Prueba"
+        }
+    }
+    
+    for email, info in emails_to_check.items():
+        stmt = select(Especialista).where(Especialista.email == email)
+        e = session.exec(stmt).first()
+        
+        status_action = ""
+        if not e:
+            # Crear
+            e = Especialista(
+                id=info["id"],
+                email=email,
+                password_hash=get_password_hash("123456."),
+                nombre=info["nombre"],
+                apellido=info["apellido"],
+                activo=True,
+                suscripcion_activa=True,
+                plan_suscripcion_id=UUID("70cb7e3f-adbb-42da-b76c-8949dcc71134") # Enterprise
+            )
+            session.add(e)
+            status_action = "creado"
+            
+            # Asociar especialidad Odontología General (si existe)
+            stmt_esp = select(Especialidad).where(Especialidad.codigo == "ODO_GEN")
+            esp = session.exec(stmt_esp).first()
+            if esp:
+                rel = EspecialistaEspecialidad(
+                    especialista_id=e.id,
+                    especialidad_id=esp.id
+                )
+                session.add(rel)
+        else:
+            # Actualizar contraseña y activo
+            e.password_hash = get_password_hash("123456.")
+            e.activo = True
+            e.suscripcion_activa = True
+            session.add(e)
+            status_action = "actualizado"
+            
+        session.commit()
+        session.refresh(e)
+        
+        result.append({
+            "id": str(e.id),
+            "email": e.email,
+            "nombre": e.nombre,
+            "apellido": e.apellido,
+            "activo": e.activo,
+            "suscripcion_activa": e.suscripcion_activa,
+            "action": status_action
+        })
+        
+    all_esp = session.exec(select(Especialista)).all()
+    all_list = [{"id": str(x.id), "email": x.email, "nombre": x.nombre, "activo": x.activo} for x in all_esp]
+        
+    return {
+        "status": "success",
+        "message": "Especialistas de prueba listos con contraseña '123456.'",
+        "data": result,
+        "all_specialists_in_db": all_list
+    }
+
+
 @router.get("/me", response_model=EspecialistaRead)
 def get_current_user(
     especialista: Especialista = Depends(get_current_especialista),
