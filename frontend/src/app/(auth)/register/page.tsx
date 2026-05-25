@@ -63,8 +63,8 @@ export default function RegisterPage() {
 
   // Cargar especialidades disponibles
   useEffect(() => {
-    api.get("/api/admin/config/especialidades")
-      .then(r => setEspecialidades(r.data.filter((e: any) => e.activo)))
+    api.get("/api/auth/especialidades")
+      .then(r => setEspecialidades(r.data))
       .catch(() => setEspecialidades([]))
       .finally(() => setLoadingEsp(false));
   }, []);

@@ -123,6 +123,11 @@ def register(
     
     return especialista
 
+@router.get("/especialidades")
+def get_especialidades(session: Session = Depends(get_session)):
+    """Listar especialidades disponibles para el registro público."""
+    statement = select(Especialidad).where(Especialidad.activo == True).order_by(Especialidad.nombre)
+    return session.exec(statement).all()
 
 
 @router.post("/login", response_model=Token)
