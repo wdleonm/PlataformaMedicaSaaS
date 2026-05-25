@@ -81,10 +81,16 @@ allowed_origins = [
     "http://127.0.0.1:3001",
     "http://localhost:3001",
     "https://analytics-vitalnexus-frontend.rojo7o.easypanel.host",
+    # Dominio propio
+    "https://vitalnexusmed.com",
+    "https://www.vitalnexusmed.com",
+    "http://vitalnexusmed.com",
+    "http://www.vitalnexusmed.com",
 ]
 env_origins = os.getenv("ALLOWED_ORIGINS")
 if env_origins:
     allowed_origins.extend([o.strip() for o in env_origins.split(",") if o.strip()])
+
 
 app.add_middleware(
     CORSMiddleware,
