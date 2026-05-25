@@ -445,7 +445,7 @@ export default function Home() {
                 </form>
 
                 <div className="mt-8 text-center text-sm text-slate-500 relative z-10">
-                  ¿Aún no eres parte? <Link href="/register" className="text-primary font-bold hover:underline">Registrar Clínica (30 días Gratis)</Link>
+                  ¿Aún no eres parte? <Link href="/register" className="text-primary font-bold hover:underline">Registrar Especialista (30 días Gratis)</Link>
                 </div>
               </motion.div>
             </div>
