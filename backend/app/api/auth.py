@@ -60,7 +60,10 @@ def register(
     data: EspecialistaRegister,
     session: Session = Depends(get_session),
 ):
-    """Registro de nuevo especialista."""
+    """Registro de nuevo especialista. Asigna automáticamente Plan Profesional con 30 días de trial."""
+    from datetime import date, timedelta
+    from app.models.suscripcion import PlanSuscripcion
+
     # Verificar si el email ya existe
     statement = select(Especialista).where(Especialista.email == data.email)
     existing = session.exec(statement).first()
@@ -70,12 +73,20 @@ def register(
             detail="Email ya registrado",
         )
 
-    # Crear especialista
+    # Buscar el plan trial (Plan Profesional)
+    plan_trial = session.exec(
+        select(PlanSuscripcion).where(PlanSuscripcion.codigo == "profesional")
+    ).first()
+
+    # Crear especialista con el plan trial asignado
     especialista = Especialista(
         email=data.email,
         password_hash=get_password_hash(data.password),
         nombre=data.nombre,
         apellido=data.apellido,
+        plan_suscripcion_id=plan_trial.id if plan_trial else None,
+        suscripcion_activa=True,
+        fecha_vencimiento_suscripcion=date.today() + timedelta(days=30),
     )
     session.add(especialista)
     session.commit()
@@ -100,6 +111,7 @@ def register(
     especialista = session.exec(statement).first()
     
     return especialista
+
 
 
 @router.post("/login", response_model=Token)
