@@ -24,3 +24,8 @@ build/
 .vscode/
 .idea/
 *.iml
+
+# Bases de datos y respaldos
+*.sql
+*.backup
+*.bak
