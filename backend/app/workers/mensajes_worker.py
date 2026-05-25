@@ -52,35 +52,35 @@ def start_scheduler() -> None:
         replace_existing=True,
     )
     # Job 3: Sincronizar tasas BCV (Específicamente en la tarde cuando el BCV actualiza)
-    # Intento 1: 17:35 (5:35pm)
+    # Intento 1: 18:15 VET (22:15 UTC)
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
-        hour=17,
-        minute=35,
+        hour=22,
+        minute=15,
         id="sincronizar_bcv_tarde_1",
         replace_existing=True,
     )
-    # Intento 2: 18:05 (6:05pm) por si hubo retrasos en la web del BCV
+    # Intento 2: 18:45 VET (22:45 UTC) por si hubo retrasos en la web del BCV
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
-        hour=18,
-        minute=5,
+        hour=22,
+        minute=45,
         id="sincronizar_bcv_tarde_2",
         replace_existing=True,
     )
-    # Intento 3: 09:00 (9:00am) para asegurar que iniciamos el día con la tasa correcta
+    # Intento 3: 08:00 VET (12:00 UTC) para asegurar que iniciamos el día con la tasa correcta
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
-        hour=9,
+        hour=12,
         minute=0,
-        id="sincronizar_bcv_mañana",
+        id="sincronizar_bcv_manana",
         replace_existing=True,
     )
     scheduler.start()
-    logger.info("Worker: iniciado (mensajes 2min, recordatorios 1h, sync_bcv cron 9am/5:35pm/6:05pm)")
+    logger.info("Worker: iniciado (mensajes 2min, recordatorios 1h, sync_bcv cron 8am/6:15pm/6:45pm VET)")
 
 
 async def sincronizar_tasas_bcv() -> None:
