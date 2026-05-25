@@ -42,6 +42,8 @@ SELECT * from sys_config.especialidad_hc_secciones;
 
 SELECT * from sys_config.bcv_tasas_historial ;
 
+SELECT * from sys_config.planes_suscripcion   ;
+
 
 
 ALTER TABLE sys_clinical.historias_clinicas ADD COLUMN actividades_realizadas VARCHAR;

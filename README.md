@@ -84,8 +84,17 @@ PlataformaMedicaSaaS/
 ├── frontend/           # Next.js 14 Application (TypeScript)
 ├── docker/             # Docker configuration and orchestration
 ├── scripts/            # Database migrations and helper scripts
-└── MEJORAS_Y_CORRECCIONES.md  # Change log and milestones
+├── VITALNEXUS_FUNCIONALIDADES.md  # Documentación detallada de todas las funcionalidades y módulos
+├── VITALNEXUS_NOTEBOOKLM_PACK.md  # Pack para NotebookLM (Personas, FAQ, Guión de demo)
+└── MEJORAS_Y_CORRECCIONES.md      # Change log and milestones
 ```
+
+---
+
+## 📚 Documentación Comercial y Demos
+Si buscas información sobre las funcionalidades de la plataforma para presentaciones, demos o marketing, consulta:
+- [Documentación Completa de Funcionalidades](./VITALNEXUS_FUNCIONALIDADES.md)
+- [Pack Complementario para NotebookLM](./VITALNEXUS_NOTEBOOKLM_PACK.md)
 
 ---
 
