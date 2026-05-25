@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   User, 
   Lock, 
@@ -15,19 +15,21 @@ import {
   Clock,
   Zap,
   BarChart3,
-  CheckCircle2,
   Calendar,
   ClipboardList,
   Users,
   Globe,
   Phone,
   Mail,
-  MapPin
+  MapPin,
+  X,
+  Play
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardMockup from "@/components/landing/DashboardMockup";
 import VideoCarousel from "@/components/landing/VideoCarousel";
+import Link from "next/link";
 
 export default function Home() {
   const { login } = useAuth();
@@ -38,6 +40,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorLogin, setErrorLogin] = useState("");
   const [sessionExpiredMsg, setSessionExpiredMsg] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   useEffect(() => {
     const expired = sessionStorage.getItem("session_expired");
@@ -72,6 +75,62 @@ export default function Home() {
   return (
     <div className="relative min-h-screen bg-[#020617] text-slate-50 selection:bg-primary/30 selection:text-primary overflow-x-hidden font-sans">
       
+      {/* MODAL DE DEMO */}
+      <AnimatePresence>
+        {isDemoModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setIsDemoModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+              animate={{ opacity: 1, scale: 1, y: 0 }} 
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-4xl bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col"
+            >
+              <button 
+                onClick={() => setIsDemoModalOpen(false)}
+                className="absolute top-4 right-4 z-20 w-10 h-10 bg-black/50 hover:bg-black/80 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="aspect-video bg-black relative flex items-center justify-center group">
+                {/* Aquí puedes reemplazar esto con un iframe real de YouTube/Vimeo */}
+                <img src="/images/doctor_tablet.png" alt="Demo Preview" className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
+                
+                <div className="relative z-10 flex flex-col items-center gap-4">
+                  <div className="w-20 h-20 bg-primary/20 hover:bg-primary/40 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer transition-all hover:scale-110 border border-primary/30 group-hover:border-primary/60 shadow-[0_0_30px_rgba(var(--primary),0.3)]">
+                    <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
+                  </div>
+                  <p className="text-white font-medium text-sm tracking-wide">Reproducir Video Demo</p>
+                </div>
+              </div>
+
+              <div className="p-6 md:p-8 bg-gradient-to-br from-slate-900 to-slate-950 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <h3 className="text-2xl font-black text-white mb-2">¿Listo para evolucionar tu clínica?</h3>
+                  <p className="text-slate-400 text-sm max-w-lg">
+                    No pierdas más tiempo en tareas manuales. Comienza hoy mismo con todas las funcionalidades activas y sin necesidad de tarjeta de crédito.
+                  </p>
+                </div>
+                <Link 
+                  href="/register"
+                  className="shrink-0 w-full md:w-auto px-8 py-4 bg-primary hover:bg-primary/90 rounded-2xl font-bold text-white text-base shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2"
+                >
+                  Probar 30 días Gratis <ArrowRight size={18} />
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* GLOW DE FONDO AMBIENTAL */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/10 blur-[120px] rounded-full -z-10 pointer-events-none" />
 
@@ -121,7 +180,7 @@ export default function Home() {
 
       <main className="relative z-10">
         
-        {/* --- HERO SECTION --- (Optimizado para evitar espacio vacío) */}
+        {/* --- HERO SECTION --- */}
         <section className="pt-28 pb-16 px-6 max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center min-h-[90vh]">
           
           <motion.div 
@@ -149,20 +208,21 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10 w-full sm:w-auto">
-              <button 
-                onClick={() => document.getElementById('login-section')?.scrollIntoView({ behavior: 'smooth' })}
+              <Link 
+                href="/register"
                 className="px-8 py-3.5 bg-primary hover:bg-primary/90 rounded-2xl font-bold text-base shadow-lg shadow-primary/25 transition-all active:scale-95 flex items-center justify-center gap-2"
               >
-                Comenzar ahora <ArrowRight size={18} />
-              </button>
+                Comenzar gratis <ArrowRight size={18} />
+              </Link>
               <button 
+                onClick={() => setIsDemoModalOpen(true)}
                 className="px-8 py-3.5 bg-white/5 hover:bg-white/10 rounded-2xl font-bold text-base border border-white/10 transition-all active:scale-95 flex items-center justify-center gap-2"
               >
                 Ver Demo <Zap size={18} className="text-primary" />
               </button>
             </div>
 
-            {/* METRICAS DE IMPACTO (Rellena el espacio vacío y da confianza) */}
+            {/* METRICAS DE IMPACTO */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 pt-8 border-t border-white/5 w-full">
               <div className="space-y-1">
                 <div className="text-2xl font-bold text-white flex items-center gap-2">
@@ -385,7 +445,7 @@ export default function Home() {
                 </form>
 
                 <div className="mt-8 text-center text-sm text-slate-500 relative z-10">
-                  ¿Aún no eres parte? <a href="#" className="text-primary font-bold hover:underline">Registrar Clínica</a>
+                  ¿Aún no eres parte? <Link href="/register" className="text-primary font-bold hover:underline">Registrar Clínica (30 días Gratis)</Link>
                 </div>
               </motion.div>
             </div>

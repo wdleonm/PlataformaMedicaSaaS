@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import shutil
 from uuid import uuid4
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, BackgroundTasks
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 from jose import jwt
@@ -26,6 +26,7 @@ from app.schemas.auth import (
     EspecialistaUpdate
 )
 from app.api.dependencies import get_current_especialista
+from app.core.email import send_new_registration_email
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -58,6 +59,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 @router.post("/register", response_model=EspecialistaRead, status_code=status.HTTP_201_CREATED)
 def register(
     data: EspecialistaRegister,
+    background_tasks: BackgroundTasks,
     session: Session = Depends(get_session),
 ):
     """Registro de nuevo especialista. Asigna automáticamente Plan Profesional con 30 días de trial."""
@@ -109,6 +111,15 @@ def register(
     # Recargar especialista con especialidades
     statement = select(Especialista).options(selectinload(Especialista.especialidades)).where(Especialista.id == especialista.id)
     especialista = session.exec(statement).first()
+    
+    # Enviar correo de notificación a los administradores
+    background_tasks.add_task(
+        send_new_registration_email,
+        nombre=especialista.nombre,
+        apellido=especialista.apellido,
+        email=especialista.email,
+        telefono=getattr(especialista, 'telefono', '') or ''
+    )
     
     return especialista
 
