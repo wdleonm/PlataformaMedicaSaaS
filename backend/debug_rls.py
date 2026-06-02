@@ -15,7 +15,7 @@ def debug_api_logic():
         
         # Simular RLS (esto es lo que hace el backend)
         try:
-            session.exec(text(f"SET LOCAL app.especialista_id = '{especialista_id}'"))
+            session.exec(text("SELECT set_config('app.especialista_id', :id, true)"), {"id": str(especialista_id)})
             print("RLS context set.")
         except Exception as e:
             print(f"Error setting RLS context: {e}")

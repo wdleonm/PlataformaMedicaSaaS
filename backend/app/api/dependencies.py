@@ -62,8 +62,8 @@ def get_current_especialista(
         )
 
     # Ejecutar SET LOCAL para activar RLS en esta sesión
-    # Usar la conexión de la sesión actual
-    session.exec(text(f"SET LOCAL app.especialista_id = '{especialista_id}'"))
+    # Usar la conexión de la sesión actual (parametrizado con set_config para evitar inyección SQL)
+    session.exec(text("SELECT set_config('app.especialista_id', :id, true)"), {"id": str(especialista_id)})
 
     # Obtener especialista con especialidades (RLS filtrará automáticamente)
     statement = select(Especialista).options(selectinload(Especialista.especialidades)).where(Especialista.id == especialista_id)
