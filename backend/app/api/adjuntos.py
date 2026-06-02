@@ -18,7 +18,7 @@ UPLOAD_DIR = "uploads"
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
-ALLOWED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".gif", ".txt"}
+ALLOWED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".gif"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 @router.post("/historia/{historia_id}", status_code=status.HTTP_201_CREATED)
@@ -41,7 +41,7 @@ async def subir_adjunto(
     if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Extensión de archivo '{ext}' no permitida. Solo se permiten archivos PDF, TXT o imágenes (PNG, JPG, JPEG, GIF)."
+            detail=f"Extensión de archivo '{ext}' no permitida. Solo se permiten archivos PDF o imágenes (PNG, JPG, JPEG, GIF)."
         )
 
     # Validar tamaño del archivo (máximo 10 MB)

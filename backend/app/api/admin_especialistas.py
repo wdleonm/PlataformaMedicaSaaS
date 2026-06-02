@@ -139,7 +139,7 @@ def admin_actualizar_especialista(
     if "especialidad_principal_id" in update_data:
         new_spec_id = update_data.pop("especialidad_principal_id")
         # Eliminar anteriores (para simplificar a 1 principal)
-        session.exec(
+        session.execute(
             text("DELETE FROM sys_config.especialista_especialidades WHERE especialista_id = :id"),
             {"id": especialista.id}
         )
@@ -263,28 +263,28 @@ def admin_eliminar_especialista(
 
         # 1. Pagos y Detalles (Nivel más bajo)
         params = {"especialista_id": especialista_id}
-        session.exec(text("DELETE FROM sys_clinical.abonos WHERE especialista_id = :especialista_id"), params)
-        session.exec(text("DELETE FROM sys_clinical.presupuesto_detalles WHERE presupuesto_id IN (SELECT id FROM sys_clinical.presupuestos WHERE especialista_id = :especialista_id)"), params)
+        session.execute(text("DELETE FROM sys_clinical.abonos WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_clinical.presupuesto_detalles WHERE presupuesto_id IN (SELECT id FROM sys_clinical.presupuestos WHERE especialista_id = :especialista_id)"), params)
         
         # 2. Citas y Presupuestos
-        session.exec(text("DELETE FROM sys_clinical.citas WHERE especialista_id = :especialista_id"), params)
-        session.exec(text("DELETE FROM sys_clinical.presupuestos WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_clinical.citas WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_clinical.presupuestos WHERE especialista_id = :especialista_id"), params)
         
         # 3. Historias Clínicas (Adjuntos primero, luego la historia)
-        session.exec(text("DELETE FROM sys_clinical.historias_clinicas_adjuntos WHERE historia_id IN (SELECT id FROM sys_clinical.historias_clinicas WHERE especialista_id = :especialista_id)"), params)
-        session.exec(text("DELETE FROM sys_clinical.historias_clinicas WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_clinical.historias_clinicas_adjuntos WHERE historia_id IN (SELECT id FROM sys_clinical.historias_clinicas WHERE especialista_id = :especialista_id)"), params)
+        session.execute(text("DELETE FROM sys_clinical.historias_clinicas WHERE especialista_id = :especialista_id"), params)
         
         # 4. Pacientes
-        session.exec(text("DELETE FROM sys_clinical.pacientes WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_clinical.pacientes WHERE especialista_id = :especialista_id"), params)
         
         # 5. Servicios e Insumos (Relación receta primero, luego los catálogos)
-        session.exec(text("DELETE FROM sys_config.servicio_insumos WHERE servicio_id IN (SELECT id FROM sys_config.servicios WHERE especialista_id = :especialista_id)"), params)
-        session.exec(text("DELETE FROM sys_config.servicios WHERE especialista_id = :especialista_id"), params)
-        session.exec(text("DELETE FROM sys_config.insumos WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_config.servicio_insumos WHERE servicio_id IN (SELECT id FROM sys_config.servicios WHERE especialista_id = :especialista_id)"), params)
+        session.execute(text("DELETE FROM sys_config.servicios WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_config.insumos WHERE especialista_id = :especialista_id"), params)
         
         # 6. Relaciones de Especialidad y Transaccionales de Configuración
-        session.exec(text("DELETE FROM sys_config.especialista_especialidades WHERE especialista_id = :especialista_id"), params)
-        session.exec(text("DELETE FROM sys_config.log_suscripciones WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_config.especialista_especialidades WHERE especialista_id = :especialista_id"), params)
+        session.execute(text("DELETE FROM sys_config.log_suscripciones WHERE especialista_id = :especialista_id"), params)
         
         # 7. Finalmente el Especialista
         session.delete(especialista)
