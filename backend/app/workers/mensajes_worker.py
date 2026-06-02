@@ -52,49 +52,69 @@ def start_scheduler() -> None:
         replace_existing=True,
     )
     # Job 3: Sincronizar tasas BCV (Específicamente en la tarde cuando el BCV actualiza)
-    # Intento 1: 18:15 VET (22:15 UTC)
+    # Intento 1: 18:30 VET (22:30 UTC)
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
         hour=22,
-        minute=15,
+        minute=30,
         id="sincronizar_bcv_tarde_1",
         replace_existing=True,
     )
-    # Intento 2: 18:45 VET (22:45 UTC) por si hubo retrasos en la web del BCV
+    # Intento 2: 19:00 VET (23:00 UTC) por si hubo retrasos en la web del BCV
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
-        hour=22,
-        minute=45,
+        hour=23,
+        minute=0,
         id="sincronizar_bcv_tarde_2",
         replace_existing=True,
     )
-    # Intento 3: 08:00 VET (12:00 UTC) para asegurar que iniciamos el día con la tasa correcta
+    # Intento 3: 06:00 VET (10:00 UTC) para asegurar que iniciamos el día con la tasa correcta si falló la tarde anterior
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
-        hour=12,
+        hour=10,
         minute=0,
         id="sincronizar_bcv_manana",
         replace_existing=True,
     )
     scheduler.start()
-    logger.info("Worker: iniciado (mensajes 2min, recordatorios 1h, sync_bcv cron 8am/6:15pm/6:45pm VET)")
+    logger.info("Worker: iniciado (mensajes 2min, recordatorios 1h, sync_bcv cron 6:00am/6:30pm/7:00pm VET)")
 
 
 async def sincronizar_tasas_bcv() -> None:
     """
     Sincroniza las tasas USD y EUR desde el BCV.
     Usa el servicio centralizado para historial y limpieza.
+    Evita realizar ejecuciones duplicadas si ya se logró una sincronización efectiva para el ciclo actual.
     """
     from app.services.bcv_service import BCVService
     from app.models.config_global import ConfiguracionGlobal
+
+    # Usar hora de Venezuela para validar efectividad del ciclo
+    VE_TZ = timezone(timedelta(hours=-4))
+    ahora_ve = datetime.now(VE_TZ)
 
     with Session(engine) as session:
         config = session.exec(select(ConfiguracionGlobal)).first()
         if not config or not config.bcv_modo_automatico:
             return
+
+        # Validar si ya se cuenta con una tasa efectiva para el ciclo actual:
+        # - En la mañana (antes de las 12:00 PM): es efectiva si se sincronizó desde la tarde de ayer (16:00 VET).
+        # - En la tarde (después de las 12:00 PM): es efectiva si ya se sincronizó en la tarde de hoy (16:00 VET).
+        if ahora_ve.hour < 12:
+            limite_ciclo = (ahora_ve - timedelta(days=1)).replace(hour=16, minute=0, second=0, microsecond=0)
+        else:
+            limite_ciclo = ahora_ve.replace(hour=16, minute=0, second=0, microsecond=0)
+
+        ult_sync = config.bcv_ultima_sincronizacion
+        if ult_sync:
+            # config.bcv_ultima_sincronizacion se guarda sin tzinfo representando hora local de Venezuela
+            if ult_sync >= limite_ciclo.replace(tzinfo=None):
+                logger.info("Worker: Sincronización del ciclo actual ya está al día (última: %s). Omitiendo intento.", ult_sync)
+                return
 
         logger.info("Worker: Iniciando sincronización de tasas BCV...")
         # Lógica centralizada en el servicio
