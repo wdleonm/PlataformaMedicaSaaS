@@ -29,3 +29,8 @@ build/
 *.sql
 *.backup
 *.bak
+
+# Archivos de prueba y volcados locales
+hash_password.py
+test_bcv.py
+vps_hallazgos.json
