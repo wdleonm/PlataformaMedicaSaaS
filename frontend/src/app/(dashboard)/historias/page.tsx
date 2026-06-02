@@ -100,6 +100,7 @@ interface FormDataHistoria {
   };
   estudios_complementarios: {
     radiografias: string[];
+    otro_radiografia?: string;
     observaciones: string;
     laboratorios: string;
   };
@@ -123,7 +124,7 @@ const formDataVacio = (): FormDataHistoria => ({
     encias: "", carrillos: "", paladar_duro: "", lengua: "",
     paladar_blando: "", piso_boca: "", observaciones: "",
   },
-  estudios_complementarios: { radiografias: [], observaciones: "", laboratorios: "" },
+  estudios_complementarios: { radiografias: [], otro_radiografia: "", observaciones: "", laboratorios: "" },
   diagnostico: "",
   plan_tratamiento: "",
   actividades_realizadas: "",
@@ -338,18 +339,50 @@ function PlanStep({ formData, setFormData }: { formData: FormDataHistoria; setFo
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase text-muted-foreground">Estudios Radiográficos</label>
             <div className="flex flex-wrap gap-2">
-              {["Panorámica", "Periapical", "Interproximal", "Oclusal"].map((r) => (
+              {["Panorámica", "Periapical", "Interproximal", "Oclusal", "Tomografía", "Otro"].map((r) => (
                 <button key={r} type="button"
                   onClick={() => {
                     const current = formData.estudios_complementarios.radiografias as string[];
                     const next = current.includes(r) ? current.filter((x) => x !== r) : [...current, r];
-                    setFormData({ ...formData, estudios_complementarios: { ...formData.estudios_complementarios, radiografias: next } });
+                    const updatedOtro = r === "Otro" && current.includes("Otro") ? "" : formData.estudios_complementarios.otro_radiografia || "";
+                    setFormData({
+                      ...formData,
+                      estudios_complementarios: {
+                        ...formData.estudios_complementarios,
+                        radiografias: next,
+                        otro_radiografia: updatedOtro
+                      }
+                    });
                   }}
                   className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${(formData.estudios_complementarios.radiografias as string[]).includes(r) ? "bg-primary text-primary-foreground" : "bg-background hover:bg-secondary border border-border/20"}`}>
                   {r}
                 </button>
               ))}
             </div>
+            <AnimatePresence>
+              {(formData.estudios_complementarios.radiografias as string[]).includes("Otro") && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden mt-2"
+                >
+                  <input
+                    type="text"
+                    placeholder="Especifique otro estudio..."
+                    value={formData.estudios_complementarios.otro_radiografia || ""}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      estudios_complementarios: {
+                        ...formData.estudios_complementarios,
+                        otro_radiografia: e.target.value
+                      }
+                    })}
+                    className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-primary outline-none"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase text-muted-foreground">Exámenes de Laboratorio</label>
@@ -692,7 +725,12 @@ function HistoriasContent() {
       antecedentes_familiares: h.antecedentes_familiares || { madre: { viva: true, patologias: [] }, padre: { viva: true, patologias: [] } },
       antecedentes_personales: h.antecedentes_personales || { patologias: [], especifique: "", medicamentos: "" },
       examen_clinico: h.examen_clinico || { encias: "", carrillos: "", paladar_duro: "", lengua: "", paladar_blando: "", piso_boca: "", observaciones: "" },
-      estudios_complementarios: h.estudios_complementarios || { radiografias: [], observaciones: "", laboratorios: "" },
+      estudios_complementarios: h.estudios_complementarios ? {
+        radiografias: h.estudios_complementarios.radiografias || [],
+        otro_radiografia: h.estudios_complementarios.otro_radiografia || "",
+        observaciones: h.estudios_complementarios.observaciones || "",
+        laboratorios: h.estudios_complementarios.laboratorios || "",
+      } : { radiografias: [], otro_radiografia: "", observaciones: "", laboratorios: "" },
       diagnostico: h.diagnostico || "",
       plan_tratamiento: h.plan_tratamiento || "",
       actividades_realizadas: (h as any).actividades_realizadas || "",
@@ -746,7 +784,12 @@ function HistoriasContent() {
       antecedentes_familiares: last.antecedentes_familiares || formDataVacio().antecedentes_familiares,
       antecedentes_personales: last.antecedentes_personales || formDataVacio().antecedentes_personales,
       examen_clinico: last.examen_clinico || formDataVacio().examen_clinico,
-      estudios_complementarios: last.estudios_complementarios || formDataVacio().estudios_complementarios,
+      estudios_complementarios: last.estudios_complementarios ? {
+        radiografias: last.estudios_complementarios.radiografias || [],
+        otro_radiografia: last.estudios_complementarios.otro_radiografia || "",
+        observaciones: last.estudios_complementarios.observaciones || "",
+        laboratorios: last.estudios_complementarios.laboratorios || "",
+      } : formDataVacio().estudios_complementarios,
       diagnostico: last.diagnostico || "",
       plan_tratamiento: last.plan_tratamiento || "",
       notas: last.notas || "",
