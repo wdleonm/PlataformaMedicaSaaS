@@ -181,6 +181,9 @@ export default function InventarioPage() {
   const [isServicioModalOpen, setIsServicioModalOpen] = useState(false);
   const [isRecetaModalOpen, setIsRecetaModalOpen] = useState(false);
   const [isKardexModalOpen, setIsKardexModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [serviceToDeleteId, setServiceToDeleteId] = useState<string | null>(null);
+  const [serviceToDeleteName, setServiceToDeleteName] = useState<string | null>(null);
 
   // Estados Kardex
   const [kardexItems, setKardexItems] = useState<any[]>([]);
@@ -326,6 +329,25 @@ export default function InventarioPage() {
       fetchData();
     } catch (error) {
       alert("Error al eliminar");
+    }
+  };
+
+  const handleDeleteServicio = (servicio: Servicio) => {
+    setServiceToDeleteId(servicio.id);
+    setServiceToDeleteName(servicio.nombre);
+    setIsDeleteModalOpen(true);
+  };
+
+  const executeDeleteServicio = async () => {
+    if (!serviceToDeleteId) return;
+    try {
+      await api.delete(`/api/servicios/${serviceToDeleteId}`);
+      setIsDeleteModalOpen(false);
+      setServiceToDeleteId(null);
+      setServiceToDeleteName(null);
+      fetchData();
+    } catch (error) {
+      alert("Error al eliminar el servicio");
     }
   };
 
@@ -747,6 +769,7 @@ export default function InventarioPage() {
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={() => handleOpenReceta(servicio)} className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors" title="Receta de insumos"><Settings2 size={16}/></button>
                           <button onClick={() => handleOpenServicioModal(servicio)} className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"><Edit2 size={16}/></button>
+                          <button onClick={() => handleDeleteServicio(servicio)} className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors" title="Eliminar"><Trash2 size={16}/></button>
                         </div>
                       </td>
                     </tr>
@@ -1301,6 +1324,60 @@ export default function InventarioPage() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Confirmar Eliminación de Servicio */}
+      <AnimatePresence>
+        {isDeleteModalOpen && serviceToDeleteId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm" 
+              onClick={() => setIsDeleteModalOpen(false)} 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-card w-full max-w-md rounded-2xl shadow-2xl border border-border relative z-10 overflow-hidden p-6 space-y-5"
+            >
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-destructive/10 text-destructive rounded-xl shrink-0">
+                  <AlertCircle size={24} />
+                </div>
+                <div className="space-y-1.5">
+                  <h3 className="text-lg font-bold text-foreground">¿Eliminar este servicio?</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Estás a punto de eliminar el servicio <strong className="text-foreground">{serviceToDeleteName}</strong>. 
+                    Esta acción eliminará también todos los insumos relacionados a su receta.
+                  </p>
+                  <p className="text-xs text-destructive font-semibold flex items-center gap-1">
+                    ⚠️ Esta acción no se puede deshacer y se perderán las configuraciones.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-2">
+                <button 
+                  type="button" 
+                  onClick={() => setIsDeleteModalOpen(false)} 
+                  className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="button" 
+                  onClick={executeDeleteServicio} 
+                  className="bg-destructive text-destructive-foreground px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-destructive/20 hover:bg-destructive/90 transition-colors"
+                >
+                  Sí, eliminar todo
+                </button>
               </div>
             </motion.div>
           </div>

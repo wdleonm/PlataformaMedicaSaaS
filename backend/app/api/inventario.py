@@ -323,6 +323,15 @@ def delete_servicio(
     especialista: Especialista  = Depends(get_current_especialista),
 ) -> None:
     servicio = _get_servicio_or_404(session, servicio_id, especialista.id)
+    
+    # 1. Eliminar en cascada las relaciones con insumos (ServicioInsumo / receta)
+    relacionados = session.exec(
+        select(ServicioInsumo).where(ServicioInsumo.servicio_id == servicio.id)
+    ).all()
+    for item in relacionados:
+        session.delete(item)
+        
+    # 2. Desactivar lógicamente el servicio para no romper la integridad de citas/presupuestos históricos
     servicio.activo     = False
     servicio.updated_at = datetime.now(timezone.utc)
     session.add(servicio)

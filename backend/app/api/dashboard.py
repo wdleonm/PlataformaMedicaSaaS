@@ -234,7 +234,12 @@ def get_financial_config(
     # Alerta de desincronización (si han pasado más de 24 horas)
     retrasada = False
     if config.bcv_ultima_sincronizacion:
-        retrasada = (datetime.now(timezone.utc) - config.bcv_ultima_sincronizacion) > timedelta(hours=24)
+        ultima_sync = config.bcv_ultima_sincronizacion
+        if ultima_sync.tzinfo is not None:
+            ahora = datetime.now(timezone.utc)
+        else:
+            ahora = datetime.now()
+        retrasada = (ahora - ultima_sync) > timedelta(hours=24)
     
     return {
         "moneda_nombre": config.moneda_nombre,
