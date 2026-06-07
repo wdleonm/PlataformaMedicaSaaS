@@ -111,9 +111,11 @@ async def sincronizar_tasas_bcv() -> None:
 
         ult_sync = config.bcv_ultima_sincronizacion
         if ult_sync:
-            # config.bcv_ultima_sincronizacion se guarda sin tzinfo representando hora local de Venezuela
-            if ult_sync >= limite_ciclo.replace(tzinfo=None):
-                logger.info("Worker: Sincronización del ciclo actual ya está al día (última: %s). Omitiendo intento.", ult_sync)
+            # En PostgreSQL ult_sync viene con zona horaria (aware), pero en desarrollo/SQLite puede venir sin ella (naive).
+            # Para comparar de forma segura, normalizamos ambos a la zona horaria de Venezuela.
+            ult_sync_ve = ult_sync.astimezone(VE_TZ) if ult_sync.tzinfo else ult_sync.replace(tzinfo=VE_TZ)
+            if ult_sync_ve >= limite_ciclo:
+                logger.info("Worker: Sincronización del ciclo actual ya está al día (última: %s). Omitiendo intento.", ult_sync_ve)
                 return
 
         logger.info("Worker: Iniciando sincronización de tasas BCV...")
