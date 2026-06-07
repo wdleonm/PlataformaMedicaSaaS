@@ -41,8 +41,10 @@ export default function Home() {
   const [errorLogin, setErrorLogin] = useState("");
   const [sessionExpiredMsg, setSessionExpiredMsg] = useState(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const expired = sessionStorage.getItem("session_expired");
     if (expired) {
       setSessionExpiredMsg(true);
@@ -94,7 +96,7 @@ export default function Home() {
             >
               <button 
                 onClick={() => setIsDemoModalOpen(false)}
-                className="absolute top-4 right-4 z-20 w-10 h-10 bg-zinc-950/80 hover:bg-zinc-900 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-cyan-500/20 transition-all"
+                className="absolute top-4 right-4 z-20 w-10 h-10 bg-zinc-950/80 hover:bg-zinc-900 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-cyan-500/20 transition-all !min-h-0 !min-w-0"
               >
                 <X size={20} />
               </button>
@@ -149,7 +151,7 @@ export default function Home() {
               <MapPin className="w-3.5 h-3.5 text-cyan-400" /> Valencia, Edo. Carabobo 
             </div>
             <div className="flex items-center gap-2 cursor-default border-l border-cyan-500/20 pl-6">
-              <Calendar className="w-3.5 h-3.5 text-cyan-400" /> {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              <Calendar className="w-3.5 h-3.5 text-cyan-400" /> {mounted ? new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : ""}
             </div>
           </div>
         </div>
@@ -184,7 +186,7 @@ export default function Home() {
         <section className="pt-32 md:pt-40 pb-16 px-6 max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center min-h-[90vh]">
           
           <motion.div 
-            initial={{ opacity: 0, x: -30 }}
+            initial={false}
             animate={{ opacity: 1, x: 0 }}
             className="flex flex-col items-center lg:items-start text-center lg:text-left"
           >
@@ -247,7 +249,7 @@ export default function Home() {
 
           {/* MOCKUP ELEVADO PARA VISIBILIDAD INMEDIATA */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 30 }}
+            initial={false}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
             className="w-full relative lg:translate-x-12"
@@ -499,7 +501,7 @@ export default function Home() {
             {/* LEFT — Login Form */}
             <div className="flex items-center justify-center p-8 lg:p-16 relative z-10">
               <motion.div 
-                initial={{ opacity: 0, y: 30 }}
+                initial={false}
                 whileInView={{ opacity: 1, y: 0 }}
                 className="p-10 rounded-2xl border border-cyan-500/10 shadow-2xl relative overflow-hidden group bg-zinc-950/75 backdrop-blur-xl w-full max-w-md"
               >

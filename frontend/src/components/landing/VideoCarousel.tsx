@@ -136,6 +136,7 @@ export default function VideoCarousel() {
           <button
             key={idx}
             onClick={() => goTo(idx)}
+            className="!min-h-0 !min-w-0"
             style={{
               width: "32px",
               height: "6px",
