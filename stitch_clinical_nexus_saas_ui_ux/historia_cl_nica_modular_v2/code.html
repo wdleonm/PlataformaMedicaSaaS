@@ -1,0 +1,305 @@
+<!DOCTYPE html><html class="dark" lang="es"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#e89337",
+                      "outline-variant": "#3d494c",
+                      "primary": "#4cd7f6",
+                      "on-tertiary": "#4b2800",
+                      "tertiary": "#ffb873",
+                      "on-secondary-fixed-variant": "#3f465c",
+                      "surface-container-high": "#1b2b3f",
+                      "secondary": "#bec6e0",
+                      "on-secondary-container": "#adb4ce",
+                      "on-primary-fixed-variant": "#004e5c",
+                      "tertiary-fixed-dim": "#ffb873",
+                      "on-primary": "#003640",
+                      "error-container": "#93000a",
+                      "secondary-container": "#3f465c",
+                      "surface-container-highest": "#26364a",
+                      "secondary-fixed-dim": "#bec6e0",
+                      "secondary-fixed": "#dae2fd",
+                      "primary-container": "#06b6d4",
+                      "on-tertiary-fixed": "#2d1600",
+                      "surface-container-low": "#0b1c30",
+                      "surface-container": "#102034",
+                      "on-surface": "#d3e4fe",
+                      "on-error-container": "#ffdad6",
+                      "on-error": "#690005",
+                      "on-background": "#d3e4fe",
+                      "on-secondary-fixed": "#131b2e",
+                      "background": "#031427",
+                      "surface-variant": "#26364a",
+                      "surface-container-lowest": "#000f21",
+                      "outline": "#869397",
+                      "tertiary-fixed": "#ffdcbf",
+                      "surface": "#031427",
+                      "inverse-surface": "#d3e4fe",
+                      "surface-bright": "#2a3a4f",
+                      "surface-tint": "#4cd7f6",
+                      "primary-fixed": "#acedff",
+                      "on-surface-variant": "#bcc9cd",
+                      "inverse-primary": "#00687a",
+                      "on-primary-container": "#00424f",
+                      "primary-fixed-dim": "#4cd7f6",
+                      "on-tertiary-fixed-variant": "#6a3b00",
+                      "on-secondary": "#283044",
+                      "on-primary-fixed": "#001f26",
+                      "surface-dim": "#031427",
+                      "on-tertiary-container": "#5b3200",
+                      "inverse-on-surface": "#213145",
+                      "error": "#ffb4ab"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "lg": "24px",
+                      "gutter": "24px",
+                      "margin": "24px",
+                      "xl": "32px",
+                      "3xl": "64px",
+                      "2xl": "48px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Geist"],
+                      "label-sm": ["Geist"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Geist"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #031427;
+            color: #d3e4fe;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(16, 32, 52, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(76, 215, 246, 0.1);
+        }
+        .cyan-glow-pulse {
+            animation: pulse-cyan 3s infinite ease-in-out;
+        }
+        @keyframes pulse-cyan {
+            0%, 100% { box-shadow: 0 0 10px rgba(76, 215, 246, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(76, 215, 246, 0.3); }
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3d494c; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-body-md text-body-md">
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center px-lg w-full sticky top-0 z-50 bg-surface dark:bg-surface border-b border-outline-variant/30 h-16 shadow-sm">
+<div class="flex items-center gap-md">
+<div class="h-8 w-auto flex items-center">https://lh3.googleusercontent.com/aida/AP1WRLu4ghZK-5WiN80kqfKePjXF04X_cQN8Dn8euljjimZ2SKD0Ncex7ARKEh63KHiL8gy7kf-4Kv8JtAvM3TL4GRg2fKrGpefErhW8rLOJ5hXXTNVzowaljPfymnDJH-O9dUcY2GRz3XIk3ugCGB0U43drnceEmF4mypBk4PKwN6tGCRIAjEHdcU60PU99-wIpq96zYXkj39_TNn5RrWTPtPoevf608atbhJtoSRKPp309H3KxjxDSj3wePpg</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-primary cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-container/20 flex items-center justify-center border border-primary/30 overflow-hidden">
+<img alt="User Avatar" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-2nOExr_amG-zPx7YS8BJze4cmwYukBi6oGog5HFjiovgiD14HLgp5H3_7t5axE5LI4XH4nbxdNMA3vudkSUSZDUs8Wz-DTfLU1bZx3qfhMEkwppX-Bmxx9FcJSZgCqwSrFCsYMBW1mi4yUBTXjQQJdhdI1HLKn6PLzRfirCIxoXjtTpIijaZZx8BlHmvKNiLARIXQGL-rMx6QjhVbx5Fv1zFpeYrVwJLU7FLXe3Pji357_6lwW-DPM44kPltypygn0d-Ofw2YWMk">
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto px-md py-md space-y-md">
+<!-- Critical Medical Alerts -->
+<section class="space-y-sm">
+<div class="flex items-center gap-sm px-xs mb-xs">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<h2 class="font-label-md text-label-md text-error uppercase tracking-wider">Alertas Críticas</h2>
+</div>
+<div class="glass-panel p-md rounded-xl border-l-4 border-error cyan-glow-pulse">
+<div class="flex justify-between items-start mb-xs">
+<span class="font-headline-md text-headline-md text-on-surface">Alergia Grave</span>
+<span class="text-error font-label-md text-label-md">ACTIVO</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Penicilina y derivados de sulfonamidas. Riesgo de shock anafiláctico.</p>
+</div>
+<div class="glass-panel p-md rounded-xl border-l-4 border-tertiary">
+<div class="flex justify-between items-start mb-xs">
+<span class="font-headline-md text-headline-md text-on-surface">Insuficiencia Renal</span>
+<span class="text-tertiary font-label-md text-label-md">OBSERVACIÓN</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">CrCl 45ml/min. Ajuste de dosis farmacológica requerido.</p>
+</div>
+</section>
+<!-- Patient Profile Summary -->
+<section class="glass-panel p-lg rounded-xl flex flex-col items-center text-center space-y-md relative overflow-hidden">
+<div class="absolute top-0 right-0 p-sm">
+<span class="material-symbols-outlined text-primary/40 text-[48px] rotate-12">clinical_notes</span>
+</div>
+<div class="w-24 h-24 rounded-full border-2 border-primary p-1 bg-surface-container-low shadow-lg">
+<img alt="Elena Smith" class="rounded-full w-full h-full object-cover" data-alt="A professional medical portrait of a middle-aged woman named Elena Smith with a calm expression. She is in a softly lit, high-end clinical environment with a dark navy and cyan lighting scheme. The image has a clean, sharp focus and a sophisticated, modern corporate aesthetic that aligns with a high-stakes healthcare interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjTULG6tG3SHqnZYHtrXBjIftW4WTTVmDqiZBKb8s0YlvAhXoorS8lgCUlv0PHKDDL366f0QkzdSoX_T_oiTsVCYiLYMvuy8U-2s8_BfJqsalIUIrCqiT-NCEY44-yA33CyZKMAiiUeGZybethtbqaDrcKLpTcMHc1Nw3ocTO7QcT5IuQkqSJLdf8Fh2aWanSy-GH4QUtT3ugD4j7ZbJ0Q4A5W133flVsiaAJWxFmYd1f0yDFduJq76Gkdj3wmY3povqQDyQGgZfH6">
+</div>
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Elena Smith</h1>
+<p class="text-primary font-label-md text-label-md">ID: VN-992-03-EL</p>
+</div>
+<div class="grid grid-cols-3 w-full gap-sm">
+<div class="bg-surface-container-high/40 p-sm rounded-lg border border-outline-variant/10">
+<p class="text-on-surface-variant font-label-sm text-label-sm">Edad</p>
+<p class="text-on-surface font-headline-md text-headline-md">42</p>
+</div>
+<div class="bg-surface-container-high/40 p-sm rounded-lg border border-outline-variant/10">
+<p class="text-on-surface-variant font-label-sm text-label-sm">Sangre</p>
+<p class="text-on-surface font-headline-md text-headline-md">A+</p>
+</div>
+<div class="bg-surface-container-high/40 p-sm rounded-lg border border-outline-variant/10">
+<p class="text-on-surface-variant font-label-sm text-label-sm">Peso</p>
+<p class="text-on-surface font-headline-md text-headline-md">64kg</p>
+</div>
+</div>
+</section>
+<!-- Evolution Timeline -->
+<section class="space-y-md">
+<div class="flex items-center justify-between px-xs">
+<h3 class="font-headline-md text-headline-md text-on-surface">Línea de Evolución</h3>
+<button class="text-primary flex items-center gap-xs font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                    Filtrar
+                </button>
+</div>
+<div class="relative pl-lg space-y-lg before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-0 before:w-[2px] before:bg-outline-variant/30">
+<!-- Timeline Item 1 -->
+<div class="relative">
+<div class="absolute -left-[29px] top-1 h-5 w-5 rounded-full bg-primary border-4 border-background z-10"></div>
+<div class="glass-panel p-md rounded-xl space-y-sm">
+<div class="flex justify-between items-center">
+<span class="text-primary font-label-md text-label-md">Hoy, 14:20</span>
+<span class="bg-secondary-container/30 text-secondary-fixed text-[10px] px-2 py-0.5 rounded-full font-bold">CONTROL</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface leading-tight">Revisión Post-Operatoria</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Paciente presenta evolución favorable. Cicatrización limpia, sin signos de inflamación. Se mantiene tratamiento con analgésicos suaves. Próxima revisión en 7 días.</p>
+<div class="pt-sm flex items-center gap-sm">
+<img alt="Dr. Marcos" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2uxz2Aix9U3PEFHLNqC8HalzrkQ6SRrNYeYLIzgr-FFgOjmftYP2oHVuZw8ijR-VY62Ob-4a8kKiCcmAyW-DKP3BNyo5kN-jGHl3yJxMMl-8Xhpz05l9rByknpe_8W5dCF9B4NpITFHa3KDZevuT9S0pGmAK_ALNZiE7jQJDyjjmO8YuQtSNkB6Q0-oyQNOxUPl3fjW6bvylPwB-8N-Q8FIGtfk24db134Cog9a6F4mNfzUlp_fA1mTytax6AVA2se0GGXZRS07hB">
+<span class="text-on-surface-variant font-label-sm text-label-sm italic">Dr. Marcos Varela - Cirugía General</span>
+</div>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative">
+<div class="absolute -left-[29px] top-1 h-5 w-5 rounded-full bg-outline-variant border-4 border-background z-10"></div>
+<div class="glass-panel p-md rounded-xl space-y-sm opacity-90">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md text-label-md">15 Abr 2024</span>
+<span class="bg-error-container/30 text-error text-[10px] px-2 py-0.5 rounded-full font-bold">URGENCIAS</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface leading-tight">Intervención de Apendicitis</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ingreso por dolor abdominal agudo. Cuadro de apendicitis grado II. Cirugía laparoscópica sin complicaciones mayores.</p>
+<div class="flex gap-sm py-xs">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-primary">image</span>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Timeline Item 3 -->
+<div class="relative">
+<div class="absolute -left-[29px] top-1 h-5 w-5 rounded-full bg-outline-variant border-4 border-background z-10"></div>
+<div class="glass-panel p-md rounded-xl space-y-sm opacity-80">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md text-label-md">02 Feb 2024</span>
+<span class="bg-primary-container/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">LAB</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface leading-tight">Analítica de Sangre Completa</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Valores de hemoglobina dentro de rangos normales. Leve deficiencia de Vitamina D3 detectada.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Export Action -->
+<section class="pt-lg pb-3xl">
+<button class="w-full bg-primary text-on-primary h-14 rounded-xl flex items-center justify-center gap-md font-headline-md text-headline-md shadow-[0_4px_20px_rgba(76,215,246,0.3)] active:scale-95 duration-200 transition-all">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+                Export Full History
+            </button>
+<p class="text-center text-on-surface-variant font-label-sm text-label-sm mt-md px-lg">
+                El documento exportado estará cifrado y protegido por contraseña para cumplir con la normativa HIPAA/GDPR.
+            </p>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="fixed bottom-0 left-0 right-0 h-16 bg-surface-container-lowest border-t border-outline-variant/20 flex items-center justify-around px-md z-50 md:hidden">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-label-md">Dashboard</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">clinical_notes</span>
+<span class="text-[10px] font-label-md">Records</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[10px] font-label-md">Agenda</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-label-md">Patients</span>
+</button>
+</nav>
+<script>
+        // Simple micro-interaction for cards
+        document.querySelectorAll('.glass-panel').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.add('scale-[0.98]');
+                setTimeout(() => {
+                    card.classList.remove('scale-[0.98]');
+                }, 150);
+            });
+        });
+    </script>
+
+
+
+
+</body></html>
