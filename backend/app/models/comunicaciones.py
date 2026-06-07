@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from uuid import UUID, uuid4
 
 from sqlmodel import SQLModel, Field
-from sqlalchemy import Column
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
 
 
@@ -53,7 +53,13 @@ class ColaMensaje(SQLModel, table=True):
     ultimo_error:     Optional[str]  = Field(default=None)
 
     # Referencias trazables
-    abono_id:         Optional[UUID] = Field(default=None, foreign_key="sys_clinical.abonos.id")
+    abono_id:         Optional[UUID] = Field(
+                                          default=None,
+                                          sa_column=Column(
+                                              ForeignKey("sys_clinical.abonos.id", ondelete="CASCADE"),
+                                              nullable=True
+                                          )
+                                      )
     cita_id:          Optional[UUID] = Field(default=None, foreign_key="sys_clinical.citas.id")
 
     # Timestamps

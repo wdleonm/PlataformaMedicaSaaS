@@ -11,7 +11,7 @@
 
 ### 2. Fase de Construction
 - [x] Implementación de Código de la Aplicación (Fases 1–12 completas)
-- [ ] Pruebas Unitarias e Integración (Porcentaje de cobertura actual: [0%])
+- [x] Pruebas Unitarias e Integración (23 pruebas aprobadas con éxito en rama metodologia_dlc)
 - [x] Definición de Infraestructura como Código (IaC) (Docker y Docker Compose listos)
 
 ### 3. Fase de Operations
