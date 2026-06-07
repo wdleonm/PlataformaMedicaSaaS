@@ -170,12 +170,12 @@ export default function Home() {
             <a href="#beneficios" className="text-xs font-bold uppercase tracking-wider text-[#bcc9cd] hover:text-white transition-colors hidden md:block">Beneficios</a>
             <a href="#precios" className="text-xs font-bold uppercase tracking-wider text-[#bcc9cd] hover:text-white transition-colors hidden md:block">Precios</a>
             <a href="#como-funciona" className="text-xs font-bold uppercase tracking-wider text-[#bcc9cd] hover:text-white transition-colors hidden md:block">Cómo funciona</a>
-            <button 
-              onClick={() => document.getElementById('login-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-4 py-2 rounded-lg bg-transparent border border-cyan-500/30 hover:border-cyan-400/50 hover:bg-cyan-500/5 text-cyan-400 text-xs font-bold uppercase tracking-wider transition-all"
+            <a 
+              href="#login-section"
+              className="px-4 py-2 rounded-lg bg-transparent border border-cyan-500/30 hover:border-cyan-400/50 hover:bg-cyan-500/5 text-cyan-400 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center"
             >
               Iniciar Sesión
-            </button>
+            </a>
           </div>
         </div>
       </nav>
