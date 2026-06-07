@@ -92,6 +92,8 @@ export default function FinanzasPage() {
   const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [budgetToDeleteId, setBudgetToDeleteId] = useState<string | null>(null);
   const [selectedPresupuesto, setSelectedPresupuesto] = useState<Presupuesto | null>(null);
   const [montoAbono, setMontoAbono] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
@@ -311,10 +313,17 @@ export default function FinanzasPage() {
     }
   };
 
-  const handleDeleteBudget = async (id: string) => {
-    if (!window.confirm("¿Está seguro de que desea anular este presupuesto? Esta acción no se puede deshacer y el saldo pendiente dejará de contar en sus estadísticas.")) return;
+  const handleDeleteBudget = (id: string) => {
+    setBudgetToDeleteId(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDeleteBudget = async () => {
+    if (!budgetToDeleteId) return;
     try {
-      await api.delete(`/api/presupuestos/${id}`);
+      await api.delete(`/api/presupuestos/${budgetToDeleteId}`);
+      setIsDeleteModalOpen(false);
+      setBudgetToDeleteId(null);
       fetchData();
     } catch (error) {
       console.error("Error cancelling budget:", error);
@@ -905,6 +914,64 @@ export default function FinanzasPage() {
                     {isSaving ? "Guardando..." : newBudget.id ? "Guardar Cambios" : "Emitir Presupuesto"}
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Confirmar Eliminación */}
+      <AnimatePresence>
+        {isDeleteModalOpen && budgetToDeleteId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => { setIsDeleteModalOpen(false); setBudgetToDeleteId(null); }} 
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm" 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+              animate={{ opacity: 1, scale: 1, y: 0 }} 
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-md bg-card border border-border/50 rounded-3xl shadow-2xl overflow-hidden z-10"
+            >
+              <div className="p-6 border-b border-border/10 flex justify-between items-center bg-secondary/30">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-red-500/10 rounded-xl text-red-500">
+                    <AlertCircle size={20} />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-black tracking-tight">Anular Presupuesto</h2>
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Confirmación requerida</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => { setIsDeleteModalOpen(false); setBudgetToDeleteId(null); }} 
+                  className="p-2 hover:bg-background rounded-full transition-colors text-muted-foreground"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  ¿Está seguro de que desea anular este presupuesto? Esta acción no se puede deshacer y el saldo pendiente dejará de contar en sus estadísticas.
+                </p>
+              </div>
+              <div className="p-6 bg-secondary/30 border-t border-border/10 flex gap-3">
+                <button 
+                  onClick={() => { setIsDeleteModalOpen(false); setBudgetToDeleteId(null); }} 
+                  className="flex-1 py-3 px-4 bg-background border border-border/50 hover:bg-secondary rounded-xl font-bold text-sm transition-all"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={handleConfirmDeleteBudget} 
+                  className="flex-1 py-3 px-6 bg-red-500 text-white hover:scale-105 rounded-xl font-black text-sm transition-all shadow-lg shadow-red-500/20"
+                >
+                  Anular Presupuesto
+                </button>
               </div>
             </motion.div>
           </div>
