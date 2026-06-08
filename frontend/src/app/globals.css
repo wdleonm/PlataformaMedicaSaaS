@@ -4,67 +4,111 @@
 
 @layer base {
   :root {
-    /* MODO CLARO "CLINICAL TECH" - Inspirado en Stripe / Modmed.com */
-    --background: 210 40% 98.5%;      /* Slate 50 (#f8fafc) - Higiene y orden */
-    --foreground: 222 47% 11%;         /* Slate 900 - Lectura nítida */
+    /* MODO CLARO "CLINICAL CLEAN" */
+    --background: 210 40% 98%;      /* #f8fafc */
+    --foreground: 222 47% 11%;      /* #0f172a */
 
-    --card: 0 0% 100%;                 /* Blanco puro para cards - Estéril */
+    --card: 0 0% 100%;              /* #ffffff */
     --card-foreground: 222 47% 11%;
     
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* AZUL CIELO MÉDICO (SKY 600) - Amable y profesional */
-    --primary: 199 89% 38%;            /* #0284c7 - Más balanceado y serio */
+    --primary: 192 91% 36%;         /* #0891b2 Cyan 600 */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 95%;          /* Slate 100 para fondos de tabla */
+    --secondary: 210 40% 96%;
     --secondary-foreground: 215 25% 27%;
 
-    --muted: 210 40% 94%;              /* Gris suave para estados neutros */
-    --muted-foreground: 215 16% 35%;   /* Contraste mejorado para lectura densa */
+    --muted: 210 40% 94%;
+    --muted-foreground: 215 16% 35%;
 
-    --accent: 199 89% 94%;             /* Sky 50 para hover effects */
+    --accent: 199 89% 94%;
     --accent-foreground: 199 89% 38%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 32% 91%;             /* Slate 200 - Líneas finas */
+    --border: 214 32% 91%;          /* #e2e8f0 */
     --input: 214 32% 91%;
-    --ring: 199 89% 48%;
+    --ring: 192 91% 36%;
 
-    --radius: 0.85rem;                 /* Bordes suaves pero precisos */
+    --radius: 0.25rem; /* Stitch Standard */
     
     --success: 142 76% 36%;
     --warning: 38 92% 50%;
+
+    /* STITCH TOKENS (Light Mode Colors) */
+    --surface: #ffffff;
+    --surface-dim: #f8fafc;
+    --surface-bright: #ffffff;
+    --surface-container-lowest: #ffffff;
+    --surface-container-low: #f8fafc;
+    --surface-container: #f1f5f9;
+    --surface-container-high: #e2e8f0;
+    --surface-container-highest: #cbd5e1;
+    --on-surface: #0f172a;
+    --on-surface-variant: #475569;
+    --inverse-surface: #020617;
+    --inverse-on-surface: #f8fafc;
+    --outline: #94a3b8;
+    --outline-variant: #cbd5e1;
+    --surface-tint: #0891b2;
+    --primary-container: #cffafe;
+    --on-primary-container: #164e63;
+    --on-primary: #ffffff;
+    --error: #ef4444;
+    --on-error: #ffffff;
   }
 
-  /* MODO OSCURO "DARK CLINICAL" - Mantiene la misma jerarquía pero invertida */
   .dark {
-    --background: 222 47% 11%;         /* Slate 900 */
-    --foreground: 210 40% 98%;
+    /* MODO OSCURO "DEEP DARK & CYAN GLOW" */
+    --background: 222 47% 11%;         /* #020617 Slate 950 */
+    --foreground: 216 90% 91%;         /* #d3e4fe */
 
-    --card: 217 33% 14%;               /* Slate 800 - Elevación profunda */
-    --card-foreground: 210 40% 98%;
+    --card: 211 86% 8%;                /* #031427 */
+    --card-foreground: 216 90% 91%;
 
-    --popover: 217 33% 12%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 211 86% 8%;
+    --popover-foreground: 216 90% 91%;
 
-    --primary: 199 89% 48%;            /* Sky 500 para mayor brillo en fondo oscuro */
-    --primary-foreground: 222 47% 11%;
+    --primary: 191 90% 63%;            /* #4cd7f6 Cyan 400 */
+    --primary-foreground: 191 100% 12%; /* #003640 */
 
-    --secondary: 215 25% 22%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 226 36% 82%;          /* #bec6e0 */
+    --secondary-foreground: 222 26% 21%;
 
     --muted: 214 32% 18%;
-    --muted-foreground: 215 20% 70%;
+    --muted-foreground: 195 15% 77%;   /* #bcc9cd */
 
-    --accent: 217 33% 20%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 211 86% 8%;
+    --accent-foreground: 216 90% 91%;
 
-    --border: 215 25% 27% / 0.4;
-    --input: 215 25% 27% / 0.4;
+    --border: 191 90% 63% / 0.2;       /* Cyan 500 / 20% */
+    --input: 191 90% 63% / 0.2;
+    --ring: 191 90% 63%;
+
+    /* STITCH TOKENS (Dark Mode Exact from DESIGN.md) */
+    --surface: #031427;
+    --surface-dim: #031427;
+    --surface-bright: #2a3a4f;
+    --surface-container-lowest: #000f21;
+    --surface-container-low: #0b1c30;
+    --surface-container: #102034;
+    --surface-container-high: #1b2b3f;
+    --surface-container-highest: #26364a;
+    --on-surface: #d3e4fe;
+    --on-surface-variant: #bcc9cd;
+    --inverse-surface: #d3e4fe;
+    --inverse-on-surface: #213145;
+    --outline: #869397;
+    --outline-variant: #3d494c;
+    --surface-tint: #4cd7f6;
+    --primary-container: #06b6d4;
+    --on-primary-container: #00424f;
+    --on-primary: #003640;
+    --error: #ffb4ab;
+    --on-error: #690005;
   }
 }
 
@@ -77,7 +121,12 @@
   }
   
   /* Altura touch-friendly 44px según estándar Stripe */
-  input, button, select, textarea {
+  input, select, textarea {
+    @apply min-h-[44px] transition-all duration-200;
+    background-color: var(--surface-container-lowest) !important;
+    color: var(--on-surface) !important;
+  }
+  button {
     @apply min-h-[44px] transition-all duration-200;
   }
 
@@ -88,29 +137,33 @@
 
 /* Glassmorphism Refinado para Clinical Tech */
 .glass-panel {
-  @apply bg-white dark:bg-card border border-slate-200/50 dark:border-white/5 shadow-sm transition-all duration-300;
+  @apply bg-white dark:bg-[#102034]/70 backdrop-blur-[12px] border border-slate-200/50 dark:border-[#4cd7f6]/10 transition-all duration-300;
 }
 
 :root:not(.dark) .glass-panel {
   @apply shadow-[0_4px_20px_rgb(0,0,0,0.03)] border-slate-200/40;
 }
 
-.table-row-hover {
-  @apply hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer;
+.cyan-glow {
+  @apply dark:shadow-[0_0_20px_-5px_rgba(76,215,246,0.2)];
 }
 
-/* Scrollbar minimalista Stripe-style */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
+.table-row-hover {
+  @apply hover:bg-slate-50 dark:hover:bg-[#1b2b3f] transition-colors cursor-pointer;
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-transparent;
+
+/* Scrollbar minimalista Stitch */
+::-webkit-scrollbar {
+  width: 6px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-primary/50 transition-colors;
+::-webkit-scrollbar-track {
+  @apply bg-transparent dark:bg-[#031427];
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-[#26364a] rounded-full hover:bg-primary/50 transition-colors;
 }
 
 /* Efecto de foco en inputs más amable */
 input:focus, select:focus, textarea:focus {
-  @apply border-primary ring-4 ring-primary/10 outline-none;
+  @apply border-primary ring-2 ring-primary/10 dark:ring-primary/20 outline-none;
 }

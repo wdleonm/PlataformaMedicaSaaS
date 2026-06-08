@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
@@ -37,18 +38,18 @@ const BCVHistorialTab = () => {
   }, []);
 
   return (
-    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-card/50 backdrop-blur-xl border border-border/10 rounded-[32px] p-8 space-y-6 shadow-2xl">
+    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-surface-container-low/50 backdrop-blur-xl border border-outline-variant/10 rounded-[32px] p-8 space-y-6 shadow-2xl">
       <div>
          <h2 className="text-xl font-black">Historial de Tasas BCV</h2>
-         <p className="text-sm text-muted-foreground mt-1">Registro de los últimos 60 días de las tasas de cambio de referencia del Banco Central de Venezuela.</p>
+         <p className="text-sm text-on-surface-variant mt-1">Registro de los últimos 60 días de las tasas de cambio de referencia del Banco Central de Venezuela.</p>
       </div>
       
       {isLoading ? (
-        <div className="py-10 text-center text-muted-foreground animate-pulse text-sm font-bold">Cargando historial...</div>
+        <div className="py-10 text-center text-on-surface-variant animate-pulse text-sm font-bold">Cargando historial...</div>
       ) : (
-        <div className="border border-border/10 rounded-2xl overflow-hidden bg-secondary/20">
+        <div className="border border-outline-variant/10 rounded-2xl overflow-hidden bg-surface-container-highest/20">
           <table className="w-full text-left text-sm">
-            <thead className="bg-secondary/40 text-[10px] uppercase font-black tracking-widest text-muted-foreground">
+            <thead className="bg-surface-container-highest/40 text-[10px] uppercase font-black tracking-widest text-on-surface-variant">
               <tr>
                 <th className="p-4">Fecha (UTC)</th>
                 <th className="p-4">Tasa USD</th>
@@ -57,7 +58,7 @@ const BCVHistorialTab = () => {
             </thead>
             <tbody className="divide-y divide-border/10">
               {historial.map(row => (
-                <tr key={row.id} className="hover:bg-secondary/20 transition-colors">
+                <tr key={row.id} className="hover:bg-surface-container-highest/20 transition-colors">
                   <td className="p-4 font-medium">{new Date(row.fecha).toLocaleDateString()}</td>
                   <td className="p-4 text-emerald-500 font-bold">Bs. {row.tasa_usd.toFixed(2)}</td>
                   <td className="p-4 text-blue-500 font-bold">Bs. {row.tasa_eur.toFixed(2)}</td>
@@ -65,7 +66,7 @@ const BCVHistorialTab = () => {
               ))}
               {historial.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="p-8 text-center text-muted-foreground italic">No hay historial registrado aún.</td>
+                  <td colSpan={3} className="p-8 text-center text-on-surface-variant italic">No hay historial registrado aún.</td>
                 </tr>
               )}
             </tbody>
@@ -108,7 +109,7 @@ export default function ConfiguracionPage() {
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
       console.error("Error saving config:", error);
-      alert("No se pudo guardar la configuración");
+      toast.error("No se pudo guardar la configuración");
     } finally {
       setIsSaving(false);
     }
@@ -129,13 +130,13 @@ export default function ConfiguracionPage() {
           <h1 className="text-4xl font-black tracking-tighter bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
             Configuración Profesional
           </h1>
-          <p className="text-muted-foreground mt-2 font-medium">Gestiona tu identidad digital y presencia de marca.</p>
+          <p className="text-on-surface-variant mt-2 font-medium">Gestiona tu identidad digital y presencia de marca.</p>
         </div>
         
         <button 
           onClick={handleSave}
           disabled={isSaving}
-          className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-black uppercase tracking-widest text-xs shadow-xl hover:bg-primary/90 active:bg-primary/80 transition-all disabled:opacity-50 border border-primary/20"
         >
           {isSaving ? (
             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -151,7 +152,7 @@ export default function ConfiguracionPage() {
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            exit={{ opacity: 0, scale: 0.9 }}
             className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center gap-3 text-emerald-500"
           >
             <CheckCircle2 size={20} />
@@ -160,7 +161,7 @@ export default function ConfiguracionPage() {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-wrap gap-2 p-1 bg-secondary/30 rounded-2xl border border-border/10 w-fit">
+      <div className="flex flex-wrap gap-2 p-1 bg-surface-container-highest/30 rounded-2xl border border-outline-variant/10 w-fit">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -168,7 +169,7 @@ export default function ConfiguracionPage() {
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all relative ${
               activeTab === tab.id 
                 ? "text-primary-foreground" 
-                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                : "text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface"
             }`}
           >
             {activeTab === tab.id && (
@@ -190,31 +191,31 @@ export default function ConfiguracionPage() {
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-card/50 backdrop-blur-xl border border-border/10 rounded-[32px] p-8 space-y-6 shadow-2xl"
+              className="bg-surface-container-low/50 backdrop-blur-xl border border-outline-variant/10 rounded-[32px] p-8 space-y-6 shadow-2xl"
             >
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Nombre</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Nombre</label>
                   <input 
                     type="text" 
                     value={formData.nombre}
                     onChange={(e) => setFormData({...formData, nombre: e.target.value})}
-                    className="w-full bg-secondary/50 border border-border/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Apellido</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Apellido</label>
                   <input 
                     type="text" 
                     value={formData.apellido}
                     onChange={(e) => setFormData({...formData, apellido: e.target.value})}
-                    className="w-full bg-secondary/50 border border-border/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1 flex items-center gap-2">
                   <TextIcon size={12} /> Biografía Profesional
                 </label>
                 <textarea 
@@ -222,9 +223,9 @@ export default function ConfiguracionPage() {
                   value={formData.descripcion_perfil}
                   onChange={(e) => setFormData({...formData, descripcion_perfil: e.target.value})}
                   placeholder="Describe tu trayectoria, especialidades y enfoque clínico..."
-                  className="w-full bg-secondary/50 border border-border/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none resize-none"
+                  className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none resize-none"
                 />
-                <p className="text-[10px] text-muted-foreground italic px-1">Este texto aparecerá en tu perfil público para que los pacientes te conozcan.</p>
+                <p className="text-[10px] text-on-surface-variant italic px-1">Este texto aparecerá en tu perfil público para que los pacientes te conozcan.</p>
               </div>
             </motion.div>
           )}
@@ -233,22 +234,22 @@ export default function ConfiguracionPage() {
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-card/50 backdrop-blur-xl border border-border/10 rounded-[32px] p-8 space-y-8 shadow-2xl"
+              className="bg-surface-container-low/50 backdrop-blur-xl border border-outline-variant/10 rounded-[32px] p-8 space-y-8 shadow-2xl"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Nombre Comercial de la Clínica</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Nombre Comercial de la Clínica</label>
                     <input 
                       type="text" 
                       value={formData.clinica_nombre}
                       onChange={(e) => setFormData({...formData, clinica_nombre: e.target.value})}
                       placeholder="Ej: Clínica Dental Smile"
-                      className="w-full bg-secondary/50 border border-border/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1 flex items-center gap-2">
                       <MapPin size={12} /> Dirección Física
                     </label>
                     <textarea 
@@ -256,18 +257,18 @@ export default function ConfiguracionPage() {
                       value={formData.clinica_direccion}
                       onChange={(e) => setFormData({...formData, clinica_direccion: e.target.value})}
                       placeholder="Calle, Edificio, Consultorio..."
-                      className="w-full bg-secondary/50 border border-border/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none resize-none"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none resize-none"
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Logo de la Clínica</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Logo de la Clínica</label>
                   <LogoUpload 
                     currentLogo={usuario?.clinica_logo_url} 
                     onUploadSuccess={(url) => refreshUser()} 
                   />
-                  <p className="text-[10px] text-center text-muted-foreground mt-2">El logo se usará en presupuestos y recibos digitales.</p>
+                  <p className="text-[10px] text-center text-on-surface-variant mt-2">El logo se usará en presupuestos y recibos digitales.</p>
                 </div>
               </div>
             </motion.div>
@@ -277,15 +278,15 @@ export default function ConfiguracionPage() {
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-card/50 backdrop-blur-xl border border-border/10 rounded-[32px] p-8 space-y-6 shadow-2xl"
+              className="bg-surface-container-low/50 backdrop-blur-xl border border-outline-variant/10 rounded-[32px] p-8 space-y-6 shadow-2xl"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1 flex items-center gap-2">
                     <Instagram size={14} className="text-pink-500" /> Instagram
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">@</span>
                     <input 
                       type="text" 
                       value={formData.redes_sociales.instagram}
@@ -294,13 +295,13 @@ export default function ConfiguracionPage() {
                         redes_sociales: {...formData.redes_sociales, instagram: e.target.value}
                       })}
                       placeholder="usuario"
-                      className="w-full bg-secondary/50 border border-border/10 rounded-2xl pl-8 pr-4 py-3 text-sm focus:ring-2 ring-pink-500/20 transition-all outline-none"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl pl-8 pr-4 py-3 text-sm focus:ring-2 ring-pink-500/20 transition-all outline-none"
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1 flex items-center gap-2">
                     <Phone size={14} className="text-emerald-500" /> WhatsApp Business
                   </label>
                   <input 
@@ -311,12 +312,12 @@ export default function ConfiguracionPage() {
                       redes_sociales: {...formData.redes_sociales, whatsapp: e.target.value}
                     })}
                     placeholder="+584120000000"
-                    className="w-full bg-secondary/50 border border-border/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-emerald-500/20 transition-all outline-none"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-emerald-500/20 transition-all outline-none"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1 flex items-center gap-2">
                     <Facebook size={14} className="text-blue-600" /> Facebook
                   </label>
                   <input 
@@ -327,16 +328,16 @@ export default function ConfiguracionPage() {
                       redes_sociales: {...formData.redes_sociales, facebook: e.target.value}
                     })}
                     placeholder="Enlace a tu página o perfil"
-                    className="w-full bg-secondary/50 border border-border/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-blue-600/20 transition-all outline-none"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-blue-600/20 transition-all outline-none"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1 flex items-center gap-2">
                     <TextIcon size={14} className="text-black dark:text-white" /> TikTok
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">@</span>
                     <input 
                       type="text" 
                       value={formData.redes_sociales.tiktok}
@@ -345,7 +346,7 @@ export default function ConfiguracionPage() {
                         redes_sociales: {...formData.redes_sociales, tiktok: e.target.value}
                       })}
                       placeholder="usuario"
-                      className="w-full bg-secondary/50 border border-border/10 rounded-2xl pl-8 pr-4 py-3 text-sm focus:ring-2 ring-foreground/20 transition-all outline-none"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl pl-8 pr-4 py-3 text-sm focus:ring-2 ring-foreground/20 transition-all outline-none"
                     />
                   </div>
                 </div>
@@ -357,16 +358,16 @@ export default function ConfiguracionPage() {
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-card/50 backdrop-blur-xl border border-border/10 rounded-[32px] p-8 space-y-6 shadow-2xl"
+              className="bg-surface-container-low/50 backdrop-blur-xl border border-outline-variant/10 rounded-[32px] p-8 space-y-6 shadow-2xl"
             >
-              <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl border border-border/10 group">
+              <div className="flex items-center justify-between p-4 bg-surface-container-highest/30 rounded-2xl border border-outline-variant/10 group">
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${formData.portal_visible ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${formData.portal_visible ? "bg-emerald-500 text-white" : "bg-muted text-on-surface-variant"}`}>
                     <Globe size={24} />
                   </div>
                   <div>
                     <h3 className="font-bold text-sm">Visibilidad en el Portal Público</h3>
-                    <p className="text-[10px] text-muted-foreground">Permitir que pacientes te encuentren y agenden online.</p>
+                    <p className="text-[10px] text-on-surface-variant">Permitir que pacientes te encuentren y agenden online.</p>
                   </div>
                 </div>
                 <button 
@@ -378,41 +379,41 @@ export default function ConfiguracionPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">URL de tu Perfil Público</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">URL de tu Perfil Público</label>
                 <div className="flex gap-2">
-                  <div className="flex-1 bg-secondary/50 border border-border/10 rounded-2xl px-4 py-3 text-sm text-muted-foreground flex items-center gap-1 font-mono">
+                  <div className="flex-1 bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm text-on-surface-variant flex items-center gap-1 font-mono">
                     vitalnexus.com/p/
                     <input 
                       type="text" 
                       value={formData.slug_url}
                       onChange={(e) => setFormData({...formData, slug_url: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
                       placeholder="tu-nombre"
-                      className="bg-transparent border-none outline-none text-foreground font-bold w-full"
+                      className="bg-transparent border-none outline-none text-on-surface font-bold w-full"
                     />
                   </div>
                   {formData.slug_url && (
                     <a 
                       href={`/p/${formData.slug_url}`} 
                       target="_blank"
-                      className="p-3 bg-secondary hover:bg-primary hover:text-white rounded-2xl transition-all"
+                      className="p-3 bg-surface-container-highest hover:bg-primary hover:text-white rounded-2xl transition-all"
                       title="Ver portal"
                     >
                       <ExternalLink size={20} />
                     </a>
                   )}
                 </div>
-                <p className="text-[10px] text-muted-foreground px-1">Usa un nombre corto y fácil de recordar.</p>
+                <p className="text-[10px] text-on-surface-variant px-1">Usa un nombre corto y fácil de recordar.</p>
               </div>
 
               {/* Fase 9.2: Toggle visibilidad de precios */}
-              <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl border border-border/10 group">
+              <div className="flex items-center justify-between p-4 bg-surface-container-highest/30 rounded-2xl border border-outline-variant/10 group">
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${formData.mostrar_precios_portal ? "bg-amber-500 text-white" : "bg-muted text-muted-foreground"}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${formData.mostrar_precios_portal ? "bg-amber-500 text-white" : "bg-muted text-on-surface-variant"}`}>
                     <BadgeDollarSign size={24} />
                   </div>
                   <div>
                     <h3 className="font-bold text-sm">Mostrar Precios en el Portal</h3>
-                    <p className="text-[10px] text-muted-foreground">Los pacientes verán el precio de cada servicio al agendar.</p>
+                    <p className="text-[10px] text-on-surface-variant">Los pacientes verán el precio de cada servicio al agendar.</p>
                   </div>
                 </div>
                 <button 

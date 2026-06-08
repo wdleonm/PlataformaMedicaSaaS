@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
@@ -248,7 +249,7 @@ export default function PacientesPage() {
       fetchPacientes();
     } catch (error) {
       console.error("Error deleting paciente:", error);
-      alert("No se pudo eliminar el paciente. Puede que tenga registros asociados.");
+      toast.error("No se pudo eliminar el paciente. Puede que tenga registros asociados.");
     } finally {
       setIsDeleting(false);
     }
@@ -265,8 +266,8 @@ export default function PacientesPage() {
       {/* Header View */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Pacientes</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold tracking-tight text-on-surface">Pacientes</h1>
+          <p className="text-on-surface-variant mt-1">
             Gestiona la información y el registro de tus pacientes.
           </p>
         </div>
@@ -283,7 +284,7 @@ export default function PacientesPage() {
       {/* Toolbar / Search */}
       <div className="glass-panel p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-96 group/search">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within/search:text-primary transition-colors">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant group-focus-within/search:text-primary transition-colors">
             <Search size={18} />
           </div>
           <input
@@ -291,12 +292,12 @@ export default function PacientesPage() {
             placeholder="Buscar por nombre o documento..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-surface/50 border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
         </div>
 
-        <div className="text-sm font-medium text-muted-foreground">
-          Total: <span className="text-foreground">{pacientes.length}</span>
+        <div className="text-sm font-medium text-on-surface-variant">
+          Total: <span className="text-on-surface">{pacientes.length}</span>
         </div>
       </div>
 
@@ -304,7 +305,7 @@ export default function PacientesPage() {
       <div className="glass-panel rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs uppercase bg-secondary/50 text-muted-foreground">
+            <thead className="text-xs uppercase bg-surface-container-highest/50 text-on-surface-variant">
               <tr>
                 <th className="px-6 py-4 font-semibold">Paciente</th>
                 <th className="px-6 py-4 font-semibold">Contacto</th>
@@ -315,37 +316,37 @@ export default function PacientesPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground bg-card/30">
+                  <td colSpan={4} className="px-6 py-12 text-center text-on-surface-variant bg-surface-container-low/30">
                     <Loader2 size={32} className="mx-auto animate-spin mb-4 text-primary" />
                     Cargando pacientes...
                   </td>
                 </tr>
               ) : filteredPacientes.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground bg-card/30">
+                  <td colSpan={4} className="px-6 py-12 text-center text-on-surface-variant bg-surface-container-low/30">
                     <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-4 border border-border/10">
-                        <User size={32} className="text-muted-foreground/30" />
+                      <div className="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center mb-4 border border-outline-variant/10">
+                        <User size={32} className="text-on-surface-variant/30" />
                       </div>
-                      <p className="text-lg font-bold text-foreground">No hay pacientes</p>
+                      <p className="text-lg font-bold text-on-surface">No hay pacientes</p>
                       <p className="text-xs">No se encontraron registros activos o que coincidan con la búsqueda.</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 filteredPacientes.map((paciente) => (
-                  <tr key={paciente.id} className="border-b border-border/10 table-row-hover bg-card/40 transition-colors group">
+                  <tr key={paciente.id} className="border-b border-outline-variant/10 table-row-hover bg-surface-container-low/40 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
                           {paciente.nombre[0]}{paciente.apellido[0]}
                         </div>
                         <div>
-                          <div className="font-semibold text-foreground text-sm">
+                          <div className="font-semibold text-on-surface text-sm">
                             {paciente.nombre} {paciente.apellido}
                           </div>
                           {paciente.fecha_nacimiento && (
-                            <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                            <div className="text-xs text-on-surface-variant flex items-center gap-1 mt-0.5">
                               <Calendar size={12} /> {paciente.fecha_nacimiento}
                             </div>
                           )}
@@ -353,7 +354,7 @@ export default function PacientesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex flex-col gap-1 text-muted-foreground text-xs">
+                      <div className="flex flex-col gap-1 text-on-surface-variant text-xs">
                         {paciente.telefono && (
                           <span className="flex items-center gap-1.5"><Phone size={12} /> {paciente.telefono}</span>
                         )}
@@ -365,7 +366,7 @@ export default function PacientesPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-muted-foreground">
+                    <td className="px-6 py-4 text-on-surface-variant">
                       {paciente.documento ? (
                         <div className="flex items-center gap-1.5 font-medium"><FileText size={14} /> {paciente.documento}</div>
                       ) : (
@@ -397,7 +398,7 @@ export default function PacientesPage() {
                         </button>
                         <button
                           onClick={() => handleOpenDeleteModal(paciente)}
-                          className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"
+                          className="p-2 hover:bg-error/10 text-error rounded-lg transition-colors"
                           title="Desactivar paciente"
                         >
                           <UserX size={16} />
@@ -418,39 +419,39 @@ export default function PacientesPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]"
               onClick={() => setIsModalOpen(false)}
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="glass-panel w-full max-w-2xl rounded-[2.5rem] border-none shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="flex justify-between items-center p-6 border-b border-border/50 bg-secondary/30">
+              <div className="flex justify-between items-center p-6 border-b border-outline-variant/50 bg-surface-container-highest/30">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <User size={20} className="text-primary" /> {modalMode === "create" ? "Nuevo Paciente" : "Editar Paciente"}
                 </h2>
-                <button onClick={() => setIsModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1.5 transition-colors">
+                <button onClick={() => setIsModalOpen(false)} className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1.5 transition-colors">
                   <X size={20} />
                 </button>
               </div>
 
               {/* Tabs Navigation */}
-              <div className="flex border-b border-border/20 px-6 bg-secondary/10">
+              <div className="flex border-b border-outline-variant/50 px-6 bg-surface-container-highest/10">
                 <button
                   onClick={() => setActiveTab("personal")}
-                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "personal" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "personal" ? "border-primary text-primary" : "border-transparent text-on-surface-variant hover:text-on-surface"}`}
                 >
                   Información Personal
                 </button>
                 <button
                   onClick={() => setActiveTab("emergencia")}
-                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "emergencia" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "emergencia" ? "border-primary text-primary" : "border-transparent text-on-surface-variant hover:text-on-surface"}`}
                 >
                   Contacto de Emergencia
                 </button>
                 <button
                   onClick={() => setActiveTab("alertas")}
-                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "alertas" ? "border-destructive text-destructive" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === "alertas" ? "border-destructive text-error" : "border-transparent text-on-surface-variant hover:text-on-surface"}`}
                 >
                   Alertas Médicas
                 </button>
@@ -459,7 +460,7 @@ export default function PacientesPage() {
               <form onSubmit={handleSavePaciente} className="p-6 overflow-y-auto custom-scrollbar flex-1">
 
                 {errorMsg && (
-                  <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
+                  <div className="mb-6 p-4 rounded-xl bg-error/10 border border-destructive/20 text-error text-sm font-medium">
                     <div className="flex items-center gap-2 mb-2">
                       <AlertCircle size={16} /> {errorMsg}
                     </div>
@@ -467,7 +468,7 @@ export default function PacientesPage() {
                       <button
                         type="button"
                         onClick={handleReactivate}
-                        className="w-full mt-2 bg-primary text-primary-foreground py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-sm"
+                        className="w-full mt-2 bg-primary text-primary-foreground py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-sm border border-primary/20"
                       >
                         <RotateCcw size={14} /> Reactivar el registro existente
                       </button>
@@ -478,44 +479,44 @@ export default function PacientesPage() {
                 {activeTab === "personal" ? (
                   <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nombre *</label>
-                      <input name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Nombre *</label>
+                      <input name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Apellido *</label>
-                      <input name="apellido" value={formData.apellido} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Apellido *</label>
+                      <input name="apellido" value={formData.apellido} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Cédula / Pasaporte</label>
-                      <input name="documento" value={formData.documento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="V-12345678" />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Cédula / Pasaporte</label>
+                      <input name="documento" value={formData.documento} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="V-12345678" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sexo</label>
-                      <select name="sexo" value={formData.sexo} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5">
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Sexo</label>
+                      <select name="sexo" value={formData.sexo} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5">
                         <option value="M">Masculino</option>
                         <option value="F">Femenino</option>
                         <option value="Otro">Otro</option>
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Fecha Nacimiento</label>
-                      <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 [color-scheme:dark]" />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Fecha Nacimiento</label>
+                      <input type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 [color-scheme:dark]" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Lugar Nacimiento</label>
-                      <input name="lugar_nacimiento" value={formData.lugar_nacimiento} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Lugar Nacimiento</label>
+                      <input name="lugar_nacimiento" value={formData.lugar_nacimiento} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email *</label>
-                      <input name="email" type="email" value={formData.email} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Email *</label>
+                      <input name="email" type="email" value={formData.email} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teléfono *</label>
-                      <input name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="+58 4xx xxxxxxx" required />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Teléfono *</label>
+                      <input name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="+58 4xx xxxxxxx" required />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estado Civil</label>
-                      <select name="estado_civil" value={formData.estado_civil} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5">
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Estado Civil</label>
+                      <select name="estado_civil" value={formData.estado_civil} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5">
                         <option>Soltero/a</option>
                         <option>Casado/a</option>
                         <option>Divorciado/a</option>
@@ -523,63 +524,63 @@ export default function PacientesPage() {
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ocupación</label>
-                      <input name="ocupacion" value={formData.ocupacion} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Ocupación</label>
+                      <input name="ocupacion" value={formData.ocupacion} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                     </div>
                     <div className="space-y-1.5 md:col-span-2">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dirección de Habitación</label>
-                      <textarea name="direccion" value={formData.direccion} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none" />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Dirección de Habitación</label>
+                      <textarea name="direccion" value={formData.direccion} onChange={handleInputChange} rows={2} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none" />
                     </div>
                   </motion.div>
                 ) : activeTab === "emergencia" ? (
                   <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nombres Completos</label>
-                      <input name="contacto_emergencia_nombre" value={formData.contacto_emergencia_nombre} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Nombres Completos</label>
+                      <input name="contacto_emergencia_nombre" value={formData.contacto_emergencia_nombre} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teléfono de Contacto</label>
-                        <input name="contacto_emergencia_telefono" value={formData.contacto_emergencia_telefono} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
+                        <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Teléfono de Contacto</label>
+                        <input name="contacto_emergencia_telefono" value={formData.contacto_emergencia_telefono} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Parentesco / Relación</label>
-                        <input name="contacto_emergencia_parentesco" value={formData.contacto_emergencia_parentesco} onChange={handleInputChange} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="Ej. Madre, Esposo..." />
+                        <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Parentesco / Relación</label>
+                        <input name="contacto_emergencia_parentesco" value={formData.contacto_emergencia_parentesco} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" placeholder="Ej. Madre, Esposo..." />
                       </div>
                     </div>
                   </motion.div>
                 ) : (
                   <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                    <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-2xl flex items-start gap-3">
-                      <AlertCircle className="text-destructive shrink-0 mt-0.5" size={18} />
-                      <div className="text-xs text-destructive/80 leading-relaxed">
-                        <strong>Atención:</strong> Esta información es crítica para la seguridad del paciente durante procedimientos odontológicos.
+                    <div className="p-4 bg-error/10 border border-destructive/20 rounded-2xl flex items-start gap-3">
+                      <AlertCircle className="text-error shrink-0 mt-0.5" size={18} />
+                      <div className="text-xs text-on-surface leading-relaxed">
+                        <strong className="text-error">Atención:</strong> Esta información es crítica para la seguridad del paciente durante procedimientos odontológicos.
                       </div>
                     </div>
 
                     <div className="space-y-4">
                       <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-destructive uppercase tracking-wider">Alergias (Medicamentos, látex, etc.)</label>
-                        <textarea name="alergias" value={formData.alergias} onChange={handleInputChange} rows={2} className="w-full bg-background border border-destructive/20 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-destructive outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Penicilina, Lidocaína, Látex..." />
+                        <label className="text-xs font-bold text-error uppercase tracking-wider">Alergias (Medicamentos, látex, etc.)</label>
+                        <textarea name="alergias" value={formData.alergias} onChange={handleInputChange} rows={2} className="w-full bg-surface border border-destructive/20 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-destructive outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Penicilina, Lidocaína, Látex..." />
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Patologías Crónicas</label>
-                        <textarea name="patologias_cronicas" value={formData.patologias_cronicas} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Hipertensión, Diabetes Tipo II, Asma..." />
+                        <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Patologías Crónicas</label>
+                        <textarea name="patologias_cronicas" value={formData.patologias_cronicas} onChange={handleInputChange} rows={2} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Hipertensión, Diabetes Tipo II, Asma..." />
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Medicación Frecuente</label>
-                        <textarea name="medicacion_frecuente" value={formData.medicacion_frecuente} onChange={handleInputChange} rows={2} className="w-full bg-background border border-border/50 text-foreground text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Aspirina, Insulina, Enalapril..." />
+                        <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Medicación Frecuente</label>
+                        <textarea name="medicacion_frecuente" value={formData.medicacion_frecuente} onChange={handleInputChange} rows={2} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5 resize-none shadow-sm" placeholder="Ej. Aspirina, Insulina, Enalapril..." />
                       </div>
                     </div>
                   </motion.div>
                 )}
 
-                <div className="flex items-center justify-between pt-6 mt-6 border-t border-border/30">
-                  <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                <div className="flex items-center justify-between pt-6 mt-6 border-t border-outline-variant/30">
+                  <p className="text-[11px] text-on-surface-variant italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
                   <div className="flex gap-3">
-                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-medium hover:bg-secondary rounded-xl transition-colors">
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-medium hover:bg-surface-container-highest rounded-xl transition-colors">
                       Cancelar
                     </button>
                     <button type="submit" disabled={isSaving} className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100">
@@ -598,18 +599,18 @@ export default function PacientesPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]"
               onClick={() => !isDeleting && setIsDeleteModalOpen(false)}
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-card w-full max-w-sm rounded-2xl shadow-xl border border-border relative z-10 overflow-hidden text-center p-6"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-surface-container-low w-full max-w-sm rounded-2xl shadow-xl border border-outline-variant relative z-10 overflow-hidden text-center p-6"
             >
-              <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4 text-destructive">
+              <div className="w-16 h-16 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4 text-error">
                 <AlertCircle size={32} />
               </div>
               <h2 className="text-xl font-bold mb-2">Desactivar Paciente</h2>
-              <p className="text-muted-foreground text-sm mb-6">
+              <p className="text-on-surface-variant text-sm mb-6">
                 ¿Estás seguro de desactivar a <strong>{pacienteToDelete?.nombre} {pacienteToDelete?.apellido}</strong>? El registro ya no aparecerá en las listas pero sus fotos e historial clínico se mantendrán protegidos.
               </p>
 
@@ -617,14 +618,14 @@ export default function PacientesPage() {
                 <button
                   onClick={() => setIsDeleteModalOpen(false)}
                   disabled={isDeleting}
-                  className="flex-1 px-4 py-2.5 bg-secondary hover:bg-secondary/80 text-foreground text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2.5 bg-surface-container-highest hover:bg-surface-container-highest/80 text-on-surface text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
                 >
                   Regresar
                 </button>
                 <button
                   onClick={handleDeletePaciente}
                   disabled={isDeleting}
-                  className="flex-1 px-4 py-2.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground text-sm font-semibold rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100 flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 bg-error hover:bg-error/90 text-error-foreground text-sm font-semibold rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-75 disabled:active:scale-100 flex items-center justify-center gap-2"
                 >
                   {isDeleting ? <><Loader2 size={16} className="animate-spin" /> Desactivando</> : 'Confirmar Desactivación'}
                 </button>

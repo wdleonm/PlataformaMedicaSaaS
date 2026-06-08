@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { 
@@ -101,7 +102,7 @@ export default function AdminConfigPage() {
       const { data } = await api.post("/api/admin/config/global/sync-bcv");
       setConfig(data);
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Error al sincronizar con BCV");
+      toast.error(err.response?.data?.detail || "Error al sincronizar con BCV");
     } finally {
       setIsSyncing(false);
     }
@@ -113,9 +114,9 @@ export default function AdminConfigPage() {
     try {
       const { data } = await api.patch("/api/admin/config/global", config);
       setConfig(data);
-      alert("Configuración guardada con éxito");
+      toast.success("Configuración guardada con éxito");
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Error al guardar");
+      toast.error(err.response?.data?.detail || "Error al guardar");
     } finally {
       setIsSaving(false);
     }
@@ -189,7 +190,7 @@ export default function AdminConfigPage() {
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Error al guardar");
+      toast.error(err.response?.data?.detail || "Error al guardar");
     } finally {
       setIsSaving(false);
     }
@@ -212,8 +213,8 @@ export default function AdminConfigPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-black text-white tracking-tight">Configuración Global</h1>
-        <p className="text-slate-400 mt-1 font-medium italic underline decoration-slate-500/30">Control maestro de catálogos y parámetros del sistema SaaS.</p>
+        <h1 className="text-3xl font-black text-on-surface tracking-tight">Configuración Global</h1>
+        <p className="text-on-surface-variant mt-1 font-medium italic underline decoration-slate-500/30">Control maestro de catálogos y parámetros del sistema SaaS.</p>
       </div>
 
       {/* Tabs Selector */}
@@ -256,8 +257,8 @@ export default function AdminConfigPage() {
                   <Stethoscope className="text-violet-500" size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white italic">Ramas Médicas</h2>
-                  <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Registradas en el ecosistema</p>
+                  <h2 className="text-xl font-black text-on-surface italic">Ramas Médicas</h2>
+                  <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">Registradas en el ecosistema</p>
                 </div>
               </div>
               <button 
@@ -275,14 +276,14 @@ export default function AdminConfigPage() {
                 </div>
               ) : especialidades.length === 0 ? (
                 <div className="col-span-full py-20 text-center">
-                  <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">No hay especialidades registradas</p>
+                  <p className="text-on-surface-variant font-bold uppercase tracking-widest text-xs">No hay especialidades registradas</p>
                 </div>
               ) : (
                 especialidades.map((esp) => (
                   <motion.div 
                     key={esp.id}
                     layoutId={esp.id}
-                    className="p-6 bg-white/5 border border-white/10 rounded-3xl group hover:border-violet-500/30 transition-all flex flex-col justify-between"
+                    className="p-6 glass-panel rounded-[2.5rem] border-none group hover:border-violet-500/30 transition-all flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-4">
@@ -298,8 +299,8 @@ export default function AdminConfigPage() {
                           <Edit size={16} />
                         </button>
                       </div>
-                      <h3 className="text-lg font-black text-white group-hover:text-violet-400 transition-colors">{esp.nombre}</h3>
-                      <p className="text-xs font-mono text-slate-500 font-bold uppercase tracking-tighter mt-1">{esp.codigo}</p>
+                      <h3 className="text-lg font-black text-on-surface group-hover:text-violet-400 transition-colors">{esp.nombre}</h3>
+                      <p className="text-xs font-mono text-on-surface-variant font-bold uppercase tracking-tighter mt-1">{esp.codigo}</p>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-1">
                       {['CONSULTA', 'ANTECEDENTES', 'EXAMEN_FISICO', 'PLAN'].map(sec => (
@@ -313,7 +314,7 @@ export default function AdminConfigPage() {
                         </span>
                       )}
                     </div>
-                    <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
+                    <div className="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between">
                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">ID: {esp.id.slice(0,8)}...</span>
                       <ChevronRight className="text-slate-700 group-hover:translate-x-1 transition-transform" size={16} />
                     </div>
@@ -339,8 +340,8 @@ export default function AdminConfigPage() {
                   <Dna className="text-violet-500" size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white italic">Catálogo de Hallazgos</h2>
-                  <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Iconografía y patologías del odontograma</p>
+                  <h2 className="text-xl font-black text-on-surface italic">Catálogo de Hallazgos</h2>
+                  <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">Iconografía y patologías del odontograma</p>
                 </div>
               </div>
               <button 
@@ -351,10 +352,10 @@ export default function AdminConfigPage() {
               </button>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-[40px] overflow-hidden">
+            <div className="bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] overflow-hidden">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-white/5 border-b border-white/5">
+                  <tr className="bg-surface-container-highest/50 border-b border-outline-variant/20">
                     <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Orden/Ref</th>
                     <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Hallazgo</th>
                     <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Categoría</th>
@@ -372,7 +373,7 @@ export default function AdminConfigPage() {
                   ) : hallazgos.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-10 text-center">
-                        <p className="text-slate-500 font-bold text-xs uppercase tracking-widest">Catálogo vacío</p>
+                        <p className="text-on-surface-variant font-bold text-xs uppercase tracking-widest">Catálogo vacío</p>
                       </td>
                     </tr>
                   ) : (
@@ -381,11 +382,11 @@ export default function AdminConfigPage() {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <span className="text-xs font-mono font-bold text-slate-600">#{hal.orden}</span>
-                            <span className="text-xs font-mono font-bold text-white bg-white/5 px-2 py-1 rounded-lg border border-white/5">{hal.codigo}</span>
+                            <span className="text-xs font-mono font-bold text-on-surface bg-surface-container-highest/50 px-2 py-1 rounded-lg border border-outline-variant/20">{hal.codigo}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="font-black text-white text-sm uppercase tracking-tight group-hover:text-violet-400 transition-colors">{hal.nombre}</p>
+                          <p className="font-black text-on-surface text-sm uppercase tracking-tight group-hover:text-violet-400 transition-colors">{hal.nombre}</p>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border ${
@@ -397,14 +398,14 @@ export default function AdminConfigPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="text-xs text-slate-500 font-medium italic leading-none">{hal.descripcion_visual || "N/A"}</p>
+                          <p className="text-xs text-on-surface-variant font-medium italic leading-none">{hal.descripcion_visual || "N/A"}</p>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                              <div className={`w-2 h-2 rounded-full ${hal.activo ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-500 opacity-50'}`} />
                             <button 
                               onClick={() => handleOpenEditHal(hal)}
-                              className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-500 hover:text-white transition-all"
+                              className="p-2.5 bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl text-on-surface-variant hover:text-on-surface transition-all"
                             >
                               <Edit size={16} />
                             </button>
@@ -428,15 +429,15 @@ export default function AdminConfigPage() {
             exit={{ opacity: 0, y: -10 }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-8"
           >
-            <div className="p-8 bg-white/5 border border-white/10 rounded-[40px] space-y-8">
+            <div className="p-8 bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] space-y-8">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
                   <div className="p-3 bg-violet-600/10 rounded-2xl border border-violet-500/20">
                     <Coins className="text-violet-500" size={24} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black text-white italic">Finanzas y Moneda</h2>
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Base impositiva y contable</p>
+                    <h2 className="text-xl font-black text-on-surface italic">Finanzas y Moneda</h2>
+                    <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">Base impositiva y contable</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
@@ -449,9 +450,9 @@ export default function AdminConfigPage() {
                     Sincronizar BCV ahora
                   </button>
                   {config?.bcv_ultima_sincronizacion && (
-                    <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/5 rounded-lg">
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest/50 border border-outline-variant/20 rounded-lg">
                       <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-                      <p className="text-[9px] text-slate-400 font-black uppercase tracking-tighter">
+                      <p className="text-[9px] text-on-surface-variant font-black uppercase tracking-tighter">
                           Sincronizado: {new Date(config.bcv_ultima_sincronizacion).toLocaleString('es-VE')}
                       </p>
                     </div>
@@ -467,7 +468,7 @@ export default function AdminConfigPage() {
                       type="text" 
                       value={config?.moneda_simbolo || ""} 
                       onChange={(e) => setConfig(config ? {...config, moneda_simbolo: e.target.value} : null)}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-black" 
+                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface font-black" 
                     />
                   </div>
                   <div className="space-y-2">
@@ -476,12 +477,12 @@ export default function AdminConfigPage() {
                       type="number" 
                       value={config?.iva_porcentaje || 0} 
                       onChange={(e) => setConfig(config ? {...config, iva_porcentaje: parseFloat(e.target.value)} : null)}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-black" 
+                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface font-black" 
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-6 rounded-3xl border border-white/5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-surface-container-highest/50 p-6 rounded-3xl border border-outline-variant/20">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400 ml-1 flex items-center gap-2">
                         <Globe size={12} /> Tasa EUR (Referencia Principal Bs)
@@ -492,16 +493,16 @@ export default function AdminConfigPage() {
                         onChange={(e) => setConfig(config ? {...config, tasa_eur: parseFloat(e.target.value)} : null)}
                         className="w-full bg-indigo-600/10 border border-indigo-500/30 rounded-2xl p-4 text-white font-black text-xl focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all" 
                       />
-                      <p className="text-[9px] text-slate-500 font-bold italic ml-1">Esta tasa se usará para convertir montos de $ a Bs automáticamente.</p>
+                      <p className="text-[9px] text-on-surface-variant font-bold italic ml-1">Esta tasa se usará para convertir montos de $ a Bs automáticamente.</p>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Tasa USD (Informativa)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Tasa USD (Informativa)</label>
                       <input 
                         type="number" step="0.0001"
                         value={config?.tasa_usd || 0} 
                         onChange={(e) => setConfig(config ? {...config, tasa_usd: parseFloat(e.target.value)} : null)}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-slate-400 font-black text-xl focus:ring-2 focus:ring-white/20 outline-none transition-all" 
+                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface-variant font-black text-xl focus:ring-2 focus:ring-white/20 outline-none transition-all" 
                       />
                     </div>
                 </div>
@@ -511,20 +512,20 @@ export default function AdminConfigPage() {
                     <CheckCircle2 size={14} className="text-indigo-400" />
                   </div>
                   <p className="text-xs text-indigo-300 font-bold leading-relaxed">
-                    Motor Financiero: Los precios base en Dólares ($) se multiplicarán por la <span className="text-white italic underline">Tasa Euro</span> para determinar el cobro final en Bolívares (Bs.). La tasa USD se mantiene como referencia comparativa.
+                    Motor Financiero: Los precios base en Dólares ($) se multiplicarán por la <span className="text-on-surface italic underline">Tasa Euro</span> para determinar el cobro final en Bolívares (Bs.). La tasa USD se mantiene como referencia comparativa.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="p-8 bg-white/5 border border-white/10 rounded-[40px] space-y-8">
+            <div className="p-8 bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] space-y-8">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-violet-600/10 rounded-2xl border border-violet-500/20">
                   <ShieldCheck className="text-violet-500" size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white italic">Llaves de API (Seguridad)</h2>
-                  <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Conexiones a servicios externos</p>
+                  <h2 className="text-xl font-black text-on-surface italic">Llaves de API (Seguridad)</h2>
+                  <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">Conexiones a servicios externos</p>
                 </div>
               </div>
 
@@ -535,7 +536,7 @@ export default function AdminConfigPage() {
                     type="password" 
                     placeholder="Escriba nueva key para actualizar..."
                     onChange={(e) => setConfig(config ? {...config, ycloud_api_key: e.target.value} : null)}
-                    className="w-full bg-black/20 border border-white/5 rounded-2xl p-4 text-violet-500 font-mono tracking-widest" 
+                    className="w-full bg-black/20 border border-outline-variant/20 rounded-2xl p-4 text-violet-500 font-mono tracking-widest" 
                   />
                 </div>
                 <div className="p-4 bg-violet-600/5 border border-violet-500/20 rounded-2xl flex items-center gap-4">
@@ -549,7 +550,7 @@ export default function AdminConfigPage() {
                     placeholder="Ej: 584141234567 (sin +)"
                     value={config?.ycloud_whatsapp_number || ""}
                     onChange={(e) => setConfig(config ? {...config, ycloud_whatsapp_number: e.target.value} : null)}
-                    className="w-full bg-black/20 border border-white/5 rounded-2xl p-4 text-violet-400 font-mono" 
+                    className="w-full bg-black/20 border border-outline-variant/20 rounded-2xl p-4 text-violet-400 font-mono" 
                   />
                 </div>
               </div>
@@ -583,8 +584,8 @@ export default function AdminConfigPage() {
                   <ShieldCheck className="text-indigo-500" size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white italic">Usuarios con Acceso Master</h2>
-                  <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Personal administrativo de la plataforma SaaS</p>
+                  <h2 className="text-xl font-black text-on-surface italic">Usuarios con Acceso Master</h2>
+                  <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">Personal administrativo de la plataforma SaaS</p>
                 </div>
               </div>
               <button 
@@ -602,13 +603,13 @@ export default function AdminConfigPage() {
                 </div>
               ) : admins.length === 0 ? (
                 <div className="col-span-full py-20 text-center">
-                  <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">No hay administradores registrados</p>
+                  <p className="text-on-surface-variant font-bold uppercase tracking-widest text-xs">No hay administradores registrados</p>
                 </div>
               ) : (
                 admins.map((admin) => (
                   <motion.div 
                     key={admin.id}
-                    className="p-6 bg-white/5 border border-white/10 rounded-3xl group hover:border-indigo-500/30 transition-all flex flex-col justify-between relative overflow-hidden"
+                    className="p-6 glass-panel rounded-[2.5rem] border-none group hover:border-indigo-500/30 transition-all flex flex-col justify-between relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full -mr-8 -mt-8" />
                     <div className="relative z-10">
@@ -625,13 +626,13 @@ export default function AdminConfigPage() {
                           <Edit size={16} />
                         </button>
                       </div>
-                      <h3 className="text-lg font-black text-white group-hover:text-indigo-400 transition-colors uppercase tracking-tight">
+                      <h3 className="text-lg font-black text-on-surface group-hover:text-indigo-400 transition-colors uppercase tracking-tight">
                         {admin.nombre} {admin.apellido}
                       </h3>
-                      <p className="text-xs text-slate-500 font-bold mt-1">{admin.email}</p>
+                      <p className="text-xs text-on-surface-variant font-bold mt-1">{admin.email}</p>
                     </div>
                     
-                    <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between relative z-10">
+                    <div className="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between relative z-10">
                        <span className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${admin.activo ? 'text-emerald-500' : 'text-red-500'}`}>
                          <div className={`w-1.5 h-1.5 rounded-full ${admin.activo ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
                          {admin.activo ? 'Activado' : 'Inactivo'}
@@ -660,18 +661,18 @@ export default function AdminConfigPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0f0a1a] border border-white/10 rounded-[40px] shadow-2xl overflow-hidden"
+              className="relative w-full max-w-xl bg-[#0f0a1a] border border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden"
             >
-               <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
+               <div className="p-8 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-highest/50">
                 <div>
-                  <h3 className="text-2xl font-black text-white italic tracking-tight uppercase">
+                  <h3 className="text-2xl font-black text-on-surface italic tracking-tight uppercase">
                     {isEditing ? `Editar ${modalType}` : `Nuevo ${modalType}`}
                   </h3>
                   <p className="text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Actualización de Estructura Maestra</p>
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 hover:bg-white/5 rounded-full text-slate-500 transition-colors"
+                  className="p-2 hover:bg-surface-container-highest/50 rounded-full text-on-surface-variant transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -681,25 +682,25 @@ export default function AdminConfigPage() {
                 {modalType === "especialidad" ? (
                   <>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Nombre de la Especialidad</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Nombre de la Especialidad</label>
                       <input 
                         type="text" 
                         required
                         value={currentEntity.nombre || ""}
                         onChange={(e) => setCurrentEntity({...currentEntity, nombre: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-violet-500/50 outline-none"
+                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
                         placeholder="Ej: Odontología, Cardiología..."
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Código Único (Ref)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Código Único (Ref)</label>
                       <input 
                         type="text" 
                         required
                         disabled={isEditing}
                         value={currentEntity.codigo || ""}
                         onChange={(e) => setCurrentEntity({...currentEntity, codigo: e.target.value.toUpperCase().replace(/\s/g, '_')})}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-violet-500/50 outline-none uppercase font-mono disabled:opacity-50"
+                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none uppercase font-mono disabled:opacity-50"
                         placeholder="ODO_GEN"
                       />
                     </div>
@@ -708,31 +709,31 @@ export default function AdminConfigPage() {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Nombre</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Nombre</label>
                         <input 
                           type="text" required
                           value={currentEntity.nombre || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, nombre: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Código</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Código</label>
                         <input 
                           type="text" required disabled={isEditing}
                           value={currentEntity.codigo || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, codigo: e.target.value.toUpperCase()})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-mono outline-none disabled:opacity-50"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm font-mono outline-none disabled:opacity-50"
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Categoría</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Categoría</label>
                         <select 
                           value={currentEntity.categoria || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, categoria: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none appearance-none"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none appearance-none"
                         >
                           <option value="patologia">Patología</option>
                           <option value="restauracion">Restauración</option>
@@ -740,22 +741,22 @@ export default function AdminConfigPage() {
                         </select>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Orden Visual</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Orden Visual</label>
                         <input 
                           type="number" required
                           value={currentEntity.orden || 0}
                           onChange={(e) => setCurrentEntity({...currentEntity, orden: parseInt(e.target.value)})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Descripción Visual (CSS/Color)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Descripción Visual (CSS/Color)</label>
                       <input 
                         type="text"
                         value={currentEntity.descripcion_visual || ""}
                         onChange={(e) => setCurrentEntity({...currentEntity, descripcion_visual: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm italic outline-none"
+                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm italic outline-none"
                         placeholder="Ej: Mancha roja, Área azul..."
                       />
                     </div>
@@ -764,51 +765,51 @@ export default function AdminConfigPage() {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Nombre</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Nombre</label>
                         <input 
                           type="text" required
                           value={currentEntity.nombre || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, nombre: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Apellido</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Apellido</label>
                         <input 
                           type="text" required
                           value={currentEntity.apellido || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, apellido: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Correo Electrónico</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Correo Electrónico</label>
                         <input 
                           type="email" required
                           value={currentEntity.email || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, email: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Contraseña</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Contraseña</label>
                         <input 
                           type="password" 
                           placeholder={isEditing ? "Dejar en blanco para no cambiar" : "Mínimo 8 caracteres"}
                           required={!isEditing}
                           value={currentEntity.password || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, password: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Nivel de Acceso (Rol)</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Nivel de Acceso (Rol)</label>
                         <select 
                           value={currentEntity.rol || "master"}
                           onChange={(e) => setCurrentEntity({...currentEntity, rol: e.target.value})}
-                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none appearance-none"
+                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none appearance-none"
                         >
                           <option value="master">Master Admin (Acceso Total)</option>
                           <option value="solo_lectura">Solo Lectura (Soporte)</option>
@@ -818,25 +819,25 @@ export default function AdminConfigPage() {
                   </>
                 ) : null}
 
-                <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
+                <div className="flex items-center gap-4 p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/30">
                   <input 
                     type="checkbox" 
                     id="entity_activo"
                     checked={currentEntity.activo}
                     onChange={(e) => setCurrentEntity({...currentEntity, activo: e.target.checked})}
-                    className="w-5 h-5 rounded border-white/20 bg-white/10 text-violet-600 focus:ring-violet-500"
+                    className="w-5 h-5 rounded border-white/20 bg-surface-container-highest text-violet-600 focus:ring-violet-500"
                   />
-                  <label htmlFor="entity_activo" className="text-sm font-bold text-white cursor-pointer select-none tracking-tight">
+                  <label htmlFor="entity_activo" className="text-sm font-bold text-on-surface cursor-pointer select-none tracking-tight">
                     Elemento Activo
                   </label>
                 </div>
               </form>
 
-              <div className="p-8 bg-black/20 border-t border-white/5 flex gap-4">
+              <div className="p-8 bg-black/20 border-t border-outline-variant/20 flex gap-4">
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-4 px-6 rounded-2xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 transition-all text-xs uppercase tracking-widest"
+                  className="flex-1 py-4 px-6 rounded-2xl border border-outline-variant/30 text-on-surface-variant font-bold hover:bg-surface-container-highest/50 transition-all text-xs uppercase tracking-widest"
                 >
                   Cancelar
                 </button>

@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
@@ -243,7 +244,7 @@ function OdontoEmbed() {
         await loadOdontograma();
       } catch (e) {
         console.error("Error eliminando:", e);
-        alert("No se pudo eliminar el registro.");
+        toast.error("No se pudo eliminar el registro.");
         loadOdontograma(); // Revertir en caso de error
       } finally {
         setSaving(false);
@@ -271,7 +272,7 @@ function OdontoEmbed() {
       await loadOdontograma();
     } catch (e) {
       console.error("Error registrando:", e);
-      alert("No se pudo registrar el hallazgo.");
+      toast.error("No se pudo registrar el hallazgo.");
     } finally {
       setSaving(false);
     }

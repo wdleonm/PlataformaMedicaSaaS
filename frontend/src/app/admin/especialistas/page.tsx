@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { 
@@ -193,7 +194,7 @@ export default function AdminEspecialistasPage() {
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Error al guardar especialista");
+      toast.error(err.response?.data?.detail || "Error al guardar especialista");
     } finally {
       setIsSaving(false);
     }
@@ -204,7 +205,7 @@ export default function AdminEspecialistasPage() {
       await api.patch(`/api/admin/especialistas/${esp.id}`, { activo: !esp.activo });
       fetchData();
     } catch (err) {
-      alert("Error al actualizar estado");
+      toast.error("Error al actualizar estado");
     }
   };
 
@@ -216,7 +217,7 @@ export default function AdminEspecialistasPage() {
       setDependencyCheck(data);
       setIsDeleteModalOpen(true);
     } catch (err) {
-      alert("Error al verificar dependencias del especialista");
+      toast.error("Error al verificar dependencias del especialista");
     } finally {
       setIsLoading(false);
     }
@@ -225,7 +226,7 @@ export default function AdminEspecialistasPage() {
   const handleConfirmDelete = async (cascade: boolean = false) => {
     if (!deleteTarget) return;
     if (cascade && !adminPin) {
-      alert("Debes ingresar el PIN de seguridad para eliminaciones en cascada");
+      toast.success("Debes ingresar el PIN de seguridad para eliminaciones en cascada");
       return;
     }
     setIsDeleting(true);
@@ -235,7 +236,7 @@ export default function AdminEspecialistasPage() {
       setAdminPin("");
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Error al eliminar especialista");
+      toast.error(err.response?.data?.detail || "Error al eliminar especialista");
     } finally {
       setIsDeleting(false);
     }
@@ -243,16 +244,16 @@ export default function AdminEspecialistasPage() {
 
   const handleSetPin = async () => {
     if (!newPin || newPin.length < 4) {
-       alert("El PIN debe tener al menos 4 caracteres");
+       toast.success("El PIN debe tener al menos 4 caracteres");
        return;
     }
     try {
       await api.post(`/api/admin/especialistas/config/set-pin?pin=${newPin}`);
-      alert("PIN de seguridad configurado exitosamente");
+      toast.success("PIN de seguridad configurado exitosamente");
       setShowPinSetup(false);
       setNewPin("");
     } catch (err) {
-      alert("Error al configurar el PIN");
+      toast.error("Error al configurar el PIN");
     }
   };
 
@@ -265,8 +266,8 @@ export default function AdminEspecialistasPage() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Gestión de Especialistas</h1>
-          <p className="text-slate-400 mt-1 font-medium italic underline decoration-violet-500/30">Control de acceso y suscripciones Master.</p>
+          <h1 className="text-3xl font-black text-on-surface tracking-tight">Gestión de Especialistas</h1>
+          <p className="text-on-surface-variant mt-1 font-medium italic underline decoration-violet-500/30">Control de acceso y suscripciones Master.</p>
         </div>
         <button 
           onClick={handleOpenCreate}
@@ -282,8 +283,8 @@ export default function AdminEspecialistasPage() {
             <ShieldCheck size={20} />
           </div>
           <div>
-            <p className="text-xs font-black text-white uppercase tracking-widest">Seguridad Master</p>
-            <p className="text-[10px] text-slate-500 font-medium">El PIN de seguridad protege eliminaciones irreversibles.</p>
+            <p className="text-xs font-black text-on-surface uppercase tracking-widest">Seguridad Master</p>
+            <p className="text-[10px] text-on-surface-variant font-medium">El PIN de seguridad protege eliminaciones irreversibles.</p>
           </div>
         </div>
         <button 
@@ -297,26 +298,26 @@ export default function AdminEspecialistasPage() {
       {/* Filters & Search */}
       <div className="flex gap-4">
         <div className="flex-1 relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-violet-400 transition-colors" size={20} />
           <input 
             type="text" 
             placeholder="Buscar por nombre o correo electrónico..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:ring-2 focus:ring-violet-500/40 outline-none transition-all placeholder:text-slate-600 font-medium"
+            className="w-full glass-panel rounded-[2.5rem] border-none py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-violet-500/40 outline-none transition-all placeholder:text-slate-600 font-medium"
           />
         </div>
-        <button className="bg-white/5 border border-white/10 p-4 rounded-2xl text-slate-400 hover:text-white transition-colors">
+        <button className="bg-surface-container-highest/50 border border-outline-variant/30 p-4 rounded-2xl text-on-surface-variant hover:text-on-surface transition-colors">
           <Filter size={20} />
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-white/5 border border-white/10 rounded-[40px] overflow-hidden">
+      <div className="bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-white/5 border-b border-white/5">
+              <tr className="bg-surface-container-highest/50 border-b border-outline-variant/20">
                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Especialista</th>
                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Especialidad</th>
                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Plan / Estado</th>
@@ -330,13 +331,13 @@ export default function AdminEspecialistasPage() {
                 <tr>
                   <td colSpan={6} className="px-6 py-20 text-center">
                     <Loader2 className="animate-spin text-violet-500 mx-auto" size={40} />
-                    <p className="text-slate-500 mt-4 font-bold uppercase tracking-widest text-xs">Obteniendo registros...</p>
+                    <p className="text-on-surface-variant mt-4 font-bold uppercase tracking-widest text-xs">Obteniendo registros...</p>
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-20 text-center">
-                    <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">No se encontraron especialistas</p>
+                    <p className="text-on-surface-variant font-bold uppercase tracking-widest text-xs">No se encontraron especialistas</p>
                   </td>
                 </tr>
               ) : (
@@ -354,8 +355,8 @@ export default function AdminEspecialistasPage() {
                           {esp.nombre[0]}{esp.apellido[0]}
                         </div>
                         <div>
-                          <p className="font-black text-white text-sm group-hover:text-violet-400 transition-colors uppercase tracking-tight">{esp.nombre} {esp.apellido}</p>
-                          <p className="text-xs text-slate-500 font-medium lowercase tracking-tight">{esp.email}</p>
+                          <p className="font-black text-on-surface text-sm group-hover:text-violet-400 transition-colors uppercase tracking-tight">{esp.nombre} {esp.apellido}</p>
+                          <p className="text-xs text-on-surface-variant font-medium lowercase tracking-tight">{esp.email}</p>
                         </div>
                       </div>
                     </td>
@@ -365,7 +366,7 @@ export default function AdminEspecialistasPage() {
                         return espSpec ? (
                           <div className="flex items-center gap-2">
                             <Stethoscope size={14} className="text-violet-400 shrink-0" />
-                            <span className="text-xs font-bold text-slate-300 tracking-tight">{espSpec.nombre}</span>
+                            <span className="text-xs font-bold text-on-surface tracking-tight">{espSpec.nombre}</span>
                           </div>
                         ) : (
                           <span className="text-xs text-slate-600 italic">Sin asignar</span>
@@ -375,8 +376,8 @@ export default function AdminEspecialistasPage() {
                     <td className="px-6 py-5">
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                          <CreditCard size={14} className="text-slate-500" />
-                          <span className="text-xs font-bold text-slate-300 uppercase tracking-tighter">
+                          <CreditCard size={14} className="text-on-surface-variant" />
+                          <span className="text-xs font-bold text-on-surface uppercase tracking-tighter">
                             {esp.plan?.nombre || "Sin Plan"}
                           </span>
                         </div>
@@ -389,7 +390,7 @@ export default function AdminEspecialistasPage() {
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <div className="flex items-center gap-2 text-slate-400">
+                      <div className="flex items-center gap-2 text-on-surface-variant">
                         <Calendar size={14} />
                         <span className="text-xs font-medium">
                           {esp.fecha_vencimiento_suscripcion 
@@ -398,7 +399,7 @@ export default function AdminEspecialistasPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-slate-500 text-xs font-mono font-bold uppercase tracking-widest">
+                    <td className="px-6 py-5 text-on-surface-variant text-xs font-mono font-bold uppercase tracking-widest">
                       {format(new Date(esp.created_at), "dd/MM/yy")}
                     </td>
                     <td className="px-6 py-5 text-right">
@@ -416,7 +417,7 @@ export default function AdminEspecialistasPage() {
                         </button>
                         <button 
                           onClick={() => handleOpenEdit(esp)}
-                          className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                          className="p-2.5 bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all"
                           title="Editar Especialista"
                         >
                           <Edit size={18} />
@@ -453,19 +454,19 @@ export default function AdminEspecialistasPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#130b22] border border-white/10 rounded-[40px] shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl bg-[#130b22] border border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden"
             >
               {/* Header Modal */}
-              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
+              <div className="p-8 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-highest/50">
                 <div>
-                  <h3 className="text-2xl font-black text-white italic tracking-tight">
+                  <h3 className="text-2xl font-black text-on-surface italic tracking-tight">
                     {isEditing ? `Editar: ${currentEsp.nombre}` : "Registrar Nuevo Especialista"}
                   </h3>
                   <p className="text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Configuración Master de Acceso</p>
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 hover:bg-white/5 rounded-full text-slate-500 transition-colors"
+                  className="p-2 hover:bg-surface-container-highest/50 rounded-full text-on-surface-variant transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -475,29 +476,29 @@ export default function AdminEspecialistasPage() {
               <form onSubmit={handleSave} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Nombre <span className="text-violet-400">*</span></label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Nombre <span className="text-violet-400">*</span></label>
                     <input 
                       type="text" 
                       required
                       value={currentEsp.nombre || ""}
                       onChange={(e) => setCurrentEsp({...currentEsp, nombre: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-violet-500/50 outline-none"
+                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Apellido <span className="text-violet-400">*</span></label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Apellido <span className="text-violet-400">*</span></label>
                     <input 
                       type="text" 
                       required
                       value={currentEsp.apellido || ""}
                       onChange={(e) => setCurrentEsp({...currentEsp, apellido: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-violet-500/50 outline-none"
+                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Correo Electrónico <span className="text-violet-400">*</span></label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Correo Electrónico <span className="text-violet-400">*</span></label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
                     <input 
@@ -506,16 +507,16 @@ export default function AdminEspecialistasPage() {
                       disabled={isEditing}
                       value={currentEsp.email || ""}
                       onChange={(e) => setCurrentEsp({...currentEsp, email: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pl-12 text-white focus:ring-2 focus:ring-violet-500/50 outline-none disabled:opacity-50"
+                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 pl-12 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none disabled:opacity-50"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4 p-6 bg-slate-900/40 rounded-[32px] border border-white/5">
+                <div className="space-y-4 p-6 bg-slate-900/40 rounded-[32px] border border-outline-variant/20">
                   <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400/80 ml-1">Seguridad de Acceso</h4>
                   
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">
                       {isEditing ? "Resetear Contraseña (opcional)" : "Contraseña Inicial"} <span className="text-violet-400">*</span>
                     </label>
                     <div className="relative">
@@ -526,7 +527,7 @@ export default function AdminEspecialistasPage() {
                         placeholder={isEditing ? "Ingresa nueva clave para resetear..." : "••••••••"}
                         value={currentEsp.password || ""}
                         onChange={(e) => setCurrentEsp({...currentEsp, password: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pl-12 text-white focus:ring-2 focus:ring-violet-500/50 outline-none"
+                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 pl-12 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
                       />
                     </div>
                   </div>
@@ -547,20 +548,20 @@ export default function AdminEspecialistasPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Plan de Suscripción</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Plan de Suscripción</label>
                     <select 
                       value={currentEsp.plan_suscripcion_id || ""}
                       onChange={(e) => setCurrentEsp({...currentEsp, plan_suscripcion_id: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-violet-500/50 outline-none appearance-none"
+                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none appearance-none"
                     >
                       {planes.map(p => (
-                        <option key={p.id} value={p.id} className="bg-[#130b22] text-white">{p.nombre}</option>
+                        <option key={p.id} value={p.id} className="bg-[#130b22] text-on-surface">{p.nombre}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center ml-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Especialidad Principal</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Especialidad Principal</label>
                       <button 
                         type="button"
                         onClick={() => setIsQuickSpecModalOpen(true)}
@@ -572,45 +573,45 @@ export default function AdminEspecialistasPage() {
                     <select 
                       value={currentEsp.especialidad_principal_id || ""}
                       onChange={(e) => setCurrentEsp({...currentEsp, especialidad_principal_id: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-violet-500/50 outline-none appearance-none disabled:opacity-50"
+                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none appearance-none disabled:opacity-50"
                     >
                       <option value="" className="bg-[#130b22]">Seleccionar Especialidad...</option>
                       {especialidades.map(e => (
-                        <option key={e.id} value={e.id} className="bg-[#130b22] text-white">{e.nombre}</option>
+                        <option key={e.id} value={e.id} className="bg-[#130b22] text-on-surface">{e.nombre}</option>
                       ))}
                     </select>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                   <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
+                   <div className="flex items-center gap-4 p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/30">
                     <input 
                       type="checkbox" 
                       id="suscrip_activa"
                       checked={currentEsp.suscripcion_activa}
                       onChange={(e) => setCurrentEsp({...currentEsp, suscripcion_activa: e.target.checked})}
-                      className="w-5 h-5 rounded border-white/20 bg-white/10 text-violet-600 focus:ring-violet-500"
+                      className="w-5 h-5 rounded border-white/20 bg-surface-container-highest text-violet-600 focus:ring-violet-500"
                     />
-                    <label htmlFor="suscrip_activa" className="text-sm font-bold text-white cursor-pointer select-none tracking-tight">
+                    <label htmlFor="suscrip_activa" className="text-sm font-bold text-on-surface cursor-pointer select-none tracking-tight">
                       Suscripción Activa
                     </label>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
+                  <div className="flex items-center gap-4 p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/30">
                     <input 
                       type="checkbox" 
                       id="acc_activo"
                       checked={currentEsp.activo}
                       onChange={(e) => setCurrentEsp({...currentEsp, activo: e.target.checked})}
-                      className="w-5 h-5 rounded border-white/20 bg-white/10 text-violet-600 focus:ring-violet-500"
+                      className="w-5 h-5 rounded border-white/20 bg-surface-container-highest text-violet-600 focus:ring-violet-500"
                     />
-                    <label htmlFor="acc_activo" className="text-sm font-bold text-white cursor-pointer select-none tracking-tight">
+                    <label htmlFor="acc_activo" className="text-sm font-bold text-on-surface cursor-pointer select-none tracking-tight">
                       Acceso a Plataforma
                     </label>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                  <div className="flex flex-col gap-3 p-5 bg-white/5 rounded-[24px] border border-white/10">
+                  <div className="flex flex-col gap-3 p-5 bg-surface-container-highest/50 rounded-[24px] border border-outline-variant/30">
                     <div className="flex items-center gap-4">
                       <input 
                         type="checkbox" 
@@ -619,17 +620,17 @@ export default function AdminEspecialistasPage() {
                         onChange={(e) => setCurrentEsp({...currentEsp, exigir_cambio_password: e.target.checked})}
                         className="w-5 h-5 rounded border-violet-500/20 bg-violet-500/10 text-violet-500 focus:ring-violet-500"
                       />
-                      <label htmlFor="exigir_pw" className="text-sm font-black text-slate-300 cursor-pointer select-none tracking-tight">
+                      <label htmlFor="exigir_pw" className="text-sm font-black text-on-surface cursor-pointer select-none tracking-tight">
                         Rotación periódica de clave
                       </label>
                     </div>
                     {currentEsp.exigir_cambio_password && (
                       <div className="mt-2 space-y-2 animate-fade-in">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Frecuencia sugerida (días)</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Frecuencia sugerida (días)</label>
                         <select 
                           value={currentEsp.intervalo_cambio_password || 90}
                           onChange={(e) => setCurrentEsp({...currentEsp, intervalo_cambio_password: parseInt(e.target.value)})}
-                          className="w-full bg-[#0a0514]/40 border border-white/20 rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-violet-500/40 outline-none"
+                          className="w-full bg-background/40 border border-white/20 rounded-xl p-3 text-on-surface text-sm focus:ring-2 focus:ring-violet-500/40 outline-none"
                         >
                           <option value={60} className="bg-[#130b22]">60 Días (Cada 2 meses)</option>
                           <option value={90} className="bg-[#130b22]">90 Días (Cada 3 meses)</option>
@@ -643,15 +644,15 @@ export default function AdminEspecialistasPage() {
               </form>
 
               {/* Footer Modal */}
-              <div className="p-8 bg-black/20 border-t border-white/5 flex items-center justify-between gap-4">
-                <p className="text-[10px] text-slate-500 italic font-medium">
+              <div className="p-8 bg-black/20 border-t border-outline-variant/20 flex items-center justify-between gap-4">
+                <p className="text-[10px] text-on-surface-variant italic font-medium">
                   <span className="text-violet-400 font-black not-italic">*</span> Campos obligatorios
                 </p>
                 <div className="flex gap-4">
                   <button 
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="py-4 px-8 rounded-2xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 transition-all outline-none uppercase tracking-widest text-[10px]"
+                    className="py-4 px-8 rounded-2xl border border-outline-variant/30 text-on-surface-variant font-bold hover:bg-surface-container-highest/50 transition-all outline-none uppercase tracking-widest text-[10px]"
                   >
                     Cancelar
                   </button>
@@ -678,8 +679,8 @@ export default function AdminEspecialistasPage() {
               className="absolute inset-0 bg-black/90 backdrop-blur-md"
             />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-lg bg-[#0a0514] border border-red-500/20 rounded-[40px] shadow-2xl overflow-hidden p-8"
+              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="relative w-full max-w-lg bg-background border border-red-500/20 rounded-[40px] shadow-2xl overflow-hidden p-8"
             >
               <div className="flex flex-col items-center text-center gap-6">
                 <div className="w-20 h-20 rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 animate-pulse">
@@ -687,8 +688,8 @@ export default function AdminEspecialistasPage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-white italic tracking-tight">¿Eliminar Especialista?</h3>
-                  <p className="text-slate-400 text-sm font-medium">Estás a punto de eliminar a <span className="text-white font-bold">{deleteTarget.nombre} {deleteTarget.apellido}</span></p>
+                  <h3 className="text-2xl font-black text-on-surface italic tracking-tight">¿Eliminar Especialista?</h3>
+                  <p className="text-on-surface-variant text-sm font-medium">Estás a punto de eliminar a <span className="text-on-surface font-bold">{deleteTarget.nombre} {deleteTarget.apellido}</span></p>
                 </div>
 
                 {/* Resumen de Dependencias */}
@@ -705,8 +706,8 @@ export default function AdminEspecialistasPage() {
                       { label: "Servicios", val: dependencyCheck.servicios },
                       { label: "Insumos", val: dependencyCheck.insumos },
                     ].map(d => (
-                      <div key={d.label} className="bg-black/40 border border-white/5 p-3 rounded-2xl flex justify-between items-center">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase">{d.label}</span>
+                      <div key={d.label} className="bg-black/40 border border-outline-variant/20 p-3 rounded-2xl flex justify-between items-center">
+                        <span className="text-[10px] font-bold text-on-surface-variant uppercase">{d.label}</span>
                         <span className={`text-sm font-black ${d.val > 0 ? 'text-red-400' : 'text-slate-600'}`}>{d.val}</span>
                       </div>
                     ))}
@@ -757,7 +758,7 @@ export default function AdminEspecialistasPage() {
                   <button 
                     onClick={() => setIsDeleteModalOpen(false)}
                     disabled={isDeleting}
-                    className="w-full py-4 bg-white/5 hover:bg-white/10 text-slate-400 font-bold rounded-2xl transition-all uppercase tracking-widest text-xs"
+                    className="w-full py-4 bg-surface-container-highest/50 hover:bg-surface-container-highest text-on-surface-variant font-bold rounded-2xl transition-all uppercase tracking-widest text-xs"
                   >
                     Cancelar y Volver
                   </button>
@@ -778,28 +779,28 @@ export default function AdminEspecialistasPage() {
               className="absolute inset-0 bg-black/80 backdrop-blur-md"
             />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-[#130b22] border border-white/10 rounded-[40px] shadow-2xl overflow-hidden p-8"
+              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="relative w-full max-w-sm bg-[#130b22] border border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden p-8"
             >
               <div className="flex flex-col items-center text-center gap-6">
                  <div className="w-20 h-20 rounded-3xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
                     <ShieldCheck size={40} />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xl font-black text-white italic tracking-tight">PIN de Seguridad</h3>
-                    <p className="text-slate-400 text-xs font-medium">Este PIN será necesario para autorizar eliminaciones masivas o de datos reales.</p>
+                    <h3 className="text-xl font-black text-on-surface italic tracking-tight">PIN de Seguridad</h3>
+                    <p className="text-on-surface-variant text-xs font-medium">Este PIN será necesario para autorizar eliminaciones masivas o de datos reales.</p>
                   </div>
                   <input 
                     type="password"
                     placeholder="Nuevo PIN (min. 4 carac.)"
                     value={newPin}
                     onChange={(e) => setNewPin(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-center text-lg tracking-[0.5em] focus:ring-2 focus:ring-violet-500/50 outline-none"
+                    className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-center text-lg tracking-[0.5em] focus:ring-2 focus:ring-violet-500/50 outline-none"
                   />
                   <div className="grid grid-cols-2 w-full gap-3">
                     <button 
                       onClick={() => setShowPinSetup(false)}
-                      className="py-3 bg-white/5 text-slate-400 font-bold rounded-xl text-xs uppercase tracking-widest"
+                      className="py-3 bg-surface-container-highest/50 text-on-surface-variant font-bold rounded-xl text-xs uppercase tracking-widest"
                     >
                       Cerrar
                     </button>
@@ -834,27 +835,27 @@ export default function AdminEspecialistasPage() {
             >
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h4 className="text-xl font-black text-white italic tracking-tight">Agregar Especialidad</h4>
+                  <h4 className="text-xl font-black text-on-surface italic tracking-tight">Agregar Especialidad</h4>
                   <p className="text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Acceso Rápido</p>
                 </div>
-                <button onClick={() => setIsQuickSpecModalOpen(false)} className="text-slate-500 hover:text-white transition-colors">
+                <button onClick={() => setIsQuickSpecModalOpen(false)} className="text-on-surface-variant hover:text-on-surface transition-colors">
                   <X size={20} />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Nombre</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Nombre</label>
                   <input 
                     type="text" 
                     placeholder="Ej. Endodoncia"
                     value={newSpec.nombre}
                     onChange={(e) => setNewSpec({...newSpec, nombre: e.target.value})}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:ring-2 focus:ring-violet-500/50 outline-none"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Código</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Código</label>
                   <input 
                     type="text" 
                     placeholder="Ej. ODO_END"
@@ -863,13 +864,13 @@ export default function AdminEspecialistasPage() {
                       setIsQuickCodeManuallyEdited(true);
                       setNewSpec({...newSpec, codigo: e.target.value.toUpperCase()});
                     }}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white font-mono focus:ring-2 focus:ring-violet-500/50 outline-none"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl p-3 text-on-surface font-mono focus:ring-2 focus:ring-violet-500/50 outline-none"
                   />
                 </div>
 
                 <button 
                   onClick={async () => {
-                    if(!newSpec.nombre || !newSpec.codigo) return alert("Completa todos los campos");
+                    if(!newSpec.nombre || !newSpec.codigo) return toast.success("Completa todos los campos");
                     setIsSavingSpec(true);
                     try {
                       const { data } = await api.post("/api/admin/config/especialidades", { ...newSpec, activo: true });
@@ -879,7 +880,7 @@ export default function AdminEspecialistasPage() {
                       setNewSpec({ nombre: "", codigo: "" });
                       setIsQuickCodeManuallyEdited(false);
                     } catch (err: any) {
-                      alert(err.response?.data?.detail || "Error al crear especialidad");
+                      toast.error(err.response?.data?.detail || "Error al crear especialidad");
                     } finally {
                       setIsSavingSpec(false);
                     }

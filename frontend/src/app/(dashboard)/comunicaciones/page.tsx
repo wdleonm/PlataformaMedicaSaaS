@@ -18,7 +18,7 @@ export default function ComunicacionesPage() {
         <h1 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white">
           Comunicaciones Inteligentes
         </h1>
-        <p className="text-lg text-muted-foreground font-medium italic">
+        <p className="text-lg text-on-surface-variant font-medium italic">
           &ldquo;Conectando especialistas con sus pacientes a través de tecnología de vanguardia.&rdquo;
         </p>
       </div>
@@ -27,17 +27,17 @@ export default function ComunicacionesPage() {
         <div className="glass-panel p-6 rounded-[1.5rem] space-y-3 border-none bg-white/50 dark:bg-slate-800/40">
           <Clock className="text-primary mx-auto" size={32} />
           <h3 className="font-bold">Recordatorios</h3>
-          <p className="text-xs text-muted-foreground">Automatización de citas por WhatsApp para reducir inasistencias.</p>
+          <p className="text-xs text-on-surface-variant">Automatización de citas por WhatsApp para reducir inasistencias.</p>
         </div>
         <div className="glass-panel p-6 rounded-[1.5rem] space-y-3 border-none bg-white/50 dark:bg-slate-800/40 border-primary/20 ring-1 ring-primary/10">
           <Zap className="text-amber-500 mx-auto" size={32} />
           <h3 className="font-bold">Próximamente</h3>
-          <p className="text-xs text-muted-foreground">Estamos puliendo los últimos detalles de la integración con YCloud.</p>
+          <p className="text-xs text-on-surface-variant">Estamos puliendo los últimos detalles de la integración con YCloud.</p>
         </div>
         <div className="glass-panel p-6 rounded-[1.5rem] space-y-3 border-none bg-white/50 dark:bg-slate-800/40">
           <ShieldCheck className="text-green-500 mx-auto" size={32} />
           <h3 className="font-bold">Seguridad</h3>
-          <p className="text-xs text-muted-foreground">Mensajería encriptada y cumplimiento de normativas de salud.</p>
+          <p className="text-xs text-on-surface-variant">Mensajería encriptada y cumplimiento de normativas de salud.</p>
         </div>
       </div>
 

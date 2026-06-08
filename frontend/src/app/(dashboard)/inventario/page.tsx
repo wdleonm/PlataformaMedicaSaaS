@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { 
@@ -135,17 +136,17 @@ const NumberInput = ({
 
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">{label}</label>
-      <div className="flex items-center gap-1 bg-background border border-border/50 rounded-xl p-1 shadow-sm focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">{label}</label>
+      <div className="flex items-center gap-1 bg-surface border border-outline-variant/50 rounded-xl p-1 shadow-sm focus-within:ring-2 focus-within:ring-primary/20 transition-all">
         <button 
           type="button"
           onClick={() => onChange(Math.max(min, value - step))}
-          className="w-10 h-10 flex items-center justify-center hover:bg-secondary rounded-lg text-muted-foreground transition-colors active:scale-90"
+          className="w-10 h-10 flex items-center justify-center hover:bg-surface-container-highest rounded-lg text-on-surface-variant transition-colors active:scale-90"
         >
           <Minus size={16} />
         </button>
         <div className="flex-1 relative">
-          {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold">{prefix}</span>}
+          {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm font-bold">{prefix}</span>}
           <input 
             type="text"
             inputMode="decimal"
@@ -159,7 +160,7 @@ const NumberInput = ({
         <button 
           type="button"
           onClick={() => onChange(value + step)}
-          className="w-10 h-10 flex items-center justify-center hover:bg-secondary rounded-lg text-primary transition-colors active:scale-90"
+          className="w-10 h-10 flex items-center justify-center hover:bg-surface-container-highest rounded-lg text-primary transition-colors active:scale-90"
         >
           <Plus size={16} />
         </button>
@@ -307,7 +308,7 @@ export default function InventarioPage() {
       setIsInsumoModalOpen(false);
       fetchData();
     } catch (error: any) {
-      alert(error.response?.data?.detail || "Error al guardar el insumo");
+      toast.error(error.response?.data?.detail || "Error al guardar el insumo");
     }
   };
 
@@ -318,7 +319,7 @@ export default function InventarioPage() {
       setKardexItems(res.data.items);
       setIsKardexModalOpen(true);
     } catch (err) {
-      alert("Error al cargar historial de Kardex");
+      toast.error("Error al cargar historial de Kardex");
     }
   };
 
@@ -328,7 +329,7 @@ export default function InventarioPage() {
       await api.delete(`/api/insumos/${id}`);
       fetchData();
     } catch (error) {
-      alert("Error al eliminar");
+      toast.error("Error al eliminar");
     }
   };
 
@@ -347,7 +348,7 @@ export default function InventarioPage() {
       setServiceToDeleteName(null);
       fetchData();
     } catch (error) {
-      alert("Error al eliminar el servicio");
+      toast.error("Error al eliminar el servicio");
     }
   };
 
@@ -466,7 +467,7 @@ export default function InventarioPage() {
     } catch (error: any) {
       console.error("Error cloning to recipe:", error);
       const msg = error.response?.data?.detail || "Error al procesar el insumo.";
-      alert(msg);
+      toast.success(msg);
     } finally {
       setCloningId(null);
     }
@@ -518,7 +519,7 @@ export default function InventarioPage() {
       setIsServicioModalOpen(false);
       fetchData();
     } catch (error: any) {
-      alert(error.response?.data?.detail || "Error al guardar el servicio");
+      toast.error(error.response?.data?.detail || "Error al guardar el servicio");
     }
   };
 
@@ -555,7 +556,7 @@ export default function InventarioPage() {
       setIsRecetaModalOpen(false);
       fetchData();
     } catch (error) {
-      alert("Error al guardar la receta");
+      toast.error("Error al guardar la receta");
     }
   };
 
@@ -574,16 +575,16 @@ export default function InventarioPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Inventario y Servicios</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-on-surface-variant mt-1 text-sm">
             Control de insumos, stock y rentabilidad de servicios médicos.
           </p>
         </div>
         
-        <div className="flex gap-2 bg-secondary/50 p-1 rounded-2xl border border-border/10">
+        <div className="flex gap-2 bg-surface-container-highest/50 p-1 rounded-2xl border border-outline-variant/10">
           <button 
             onClick={() => setActiveTab("insumos")}
             className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-              activeTab === "insumos" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-secondary"
+              activeTab === "insumos" ? "bg-primary/20 text-primary border border-primary shadow-[0_0_15px_rgba(77,158,170,0.2)]" : "bg-surface text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest border border-outline-variant/30"
             }`}
           >
             Insumos
@@ -591,7 +592,7 @@ export default function InventarioPage() {
           <button 
             onClick={() => setActiveTab("servicios")}
             className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-              activeTab === "servicios" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-secondary"
+              activeTab === "servicios" ? "bg-primary/20 text-primary border border-primary shadow-[0_0_15px_rgba(77,158,170,0.2)]" : "bg-surface text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest border border-outline-variant/30"
             }`}
           >
             Servicios
@@ -602,48 +603,48 @@ export default function InventarioPage() {
       {/* Grid Resumen Insumos (Solo si estamos en tab insumos) */}
       {activeTab === "insumos" && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="glass-panel p-5 rounded-2xl flex items-center gap-4 border border-border/30">
+          <div className="glass-panel p-5 rounded-2xl flex items-center gap-4 border border-outline-variant/30">
             <div className="p-3 bg-blue-500/10 text-blue-500 rounded-xl">
               <Package size={24} />
             </div>
             <div>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Total Insumos</p>
+              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Total Insumos</p>
               <p className="text-2xl font-bold">{insumos.length}</p>
             </div>
           </div>
-          <div className="glass-panel p-5 rounded-2xl flex items-center gap-4 border border-border/30">
+          <div className="glass-panel p-5 rounded-2xl flex items-center gap-4 border border-outline-variant/30">
             <div className="p-3 bg-orange-500/10 text-orange-500 rounded-xl">
               <TrendingDown size={24} />
             </div>
             <div>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Stock Bajo</p>
+              <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Stock Bajo</p>
               <p className="text-2xl font-bold text-orange-500">{insumos.filter(i => i.stock_bajo).length}</p>
             </div>
           </div>
-          <div className="glass-panel p-5 rounded-2xl flex items-center justify-center border-dashed border-2 border-border/50 hover:border-primary/50 transition-colors cursor-pointer group" onClick={() => handleOpenInsumoModal()}>
-             <Plus className="text-muted-foreground group-hover:text-primary transition-colors mr-2" />
-             <span className="font-semibold text-muted-foreground group-hover:text-primary">Agregar Insumo</span>
+          <div className="glass-panel p-5 rounded-2xl flex items-center justify-center border-dashed border-2 border-outline-variant/50 hover:border-primary/50 transition-colors cursor-pointer group" onClick={() => handleOpenInsumoModal()}>
+             <Plus className="text-on-surface-variant group-hover:text-primary transition-colors mr-2" />
+             <span className="font-semibold text-on-surface-variant group-hover:text-primary">Agregar Insumo</span>
           </div>
         </div>
       )}
 
       {/* Toolbar */}
-      <div className="glass-panel p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between border border-border/30">
+      <div className="glass-panel p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between border border-outline-variant/30">
         <div className="relative w-full md:w-96 group/search">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within/search:text-primary transition-colors" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within/search:text-primary transition-colors" size={18} />
           <input
             type="text"
             placeholder={`Buscar ${activeTab}...`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-surface/50 border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
           />
         </div>
         
         {activeTab === "servicios" && (
           <button 
            onClick={() => handleOpenServicioModal()}
-           className="bg-primary text-primary-foreground px-4 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-all text-sm"
+           className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-semibold flex items-center gap-2 hover:bg-primary/90 transition-all text-sm border border-primary/20"
           >
             <Plus size={18} /> Nuevo Servicio
           </button>
@@ -651,17 +652,17 @@ export default function InventarioPage() {
       </div>
 
       {/* Table Section */}
-      <div className="glass-panel rounded-2xl overflow-hidden border border-border/30 shadow-sm">
+      <div className="glass-panel rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center gap-4">
             <Loader2 className="animate-spin text-primary" size={40} />
-            <p className="text-muted-foreground text-sm">Actualizando inventario...</p>
+            <p className="text-on-surface-variant text-sm">Actualizando inventario...</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             {activeTab === "insumos" ? (
               <table className="w-full text-left text-sm">
-                <thead className="bg-secondary/20 text-muted-foreground uppercase text-xs font-bold">
+                <thead className="bg-surface-container-highest/20 text-on-surface-variant uppercase text-xs font-bold">
                   <tr>
                     <th className="px-6 py-4">Insumo</th>
                     <th className="px-6 py-4 text-center">Stock / Min</th>
@@ -671,11 +672,11 @@ export default function InventarioPage() {
                 </thead>
                 <tbody className="divide-y divide-border/10">
                   {filteredInsumos.map(insumo => (
-                    <tr key={insumo.id} className="table-row-hover bg-card/40 transition-colors group">
+                    <tr key={insumo.id} className="table-row-hover bg-surface-container-low/40 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {insumo.imagen_url ? (
-                            <img src={insumo.imagen_url} alt={insumo.nombre} className="w-8 h-8 rounded-lg object-cover border border-border/30" />
+                            <img src={insumo.imagen_url} alt={insumo.nombre} className="w-8 h-8 rounded-lg object-cover border border-outline-variant/30" />
                           ) : (
                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${insumo.stock_bajo ? 'bg-orange-500/10 text-orange-500' : 'bg-blue-500/10 text-blue-500'}`}>
                               <FlaskConical size={16} />
@@ -683,16 +684,16 @@ export default function InventarioPage() {
                           )}
                           <div>
                             <p className="font-bold">{insumo.nombre}</p>
-                            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{insumo.codigo || 'S/C'} • {insumo.unidad}</p>
+                            <p className="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">{insumo.codigo || 'S/C'} • {insumo.unidad}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <div className="flex flex-col items-center">
-                          <span className={`font-bold ${insumo.stock_bajo ? 'text-orange-500' : 'text-foreground'}`}>
+                          <span className={`font-bold ${insumo.stock_bajo ? 'text-orange-500' : 'text-on-surface'}`}>
                             {insumo.stock_actual}
                           </span>
-                          <span className="text-[10px] text-muted-foreground">min: {insumo.stock_minimo}</span>
+                          <span className="text-[10px] text-on-surface-variant">min: {insumo.stock_minimo}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -709,7 +710,7 @@ export default function InventarioPage() {
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={() => handleOpenKardex(insumo)} title="Ver Historial Kardex" className="p-2 hover:bg-emerald-500/10 text-emerald-500 rounded-lg transition-colors"><History size={16}/></button>
                           <button onClick={() => handleOpenInsumoModal(insumo)} title="Editar" className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"><Edit2 size={16}/></button>
-                          <button onClick={() => handleDeleteInsumo(insumo.id)} title="Eliminar" className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"><Trash2 size={16}/></button>
+                          <button onClick={() => handleDeleteInsumo(insumo.id)} title="Eliminar" className="p-2 hover:bg-error/10 text-error rounded-lg transition-colors"><Trash2 size={16}/></button>
                         </div>
                       </td>
                     </tr>
@@ -718,7 +719,7 @@ export default function InventarioPage() {
               </table>
             ) : (
               <table className="w-full text-left text-sm">
-                <thead className="bg-secondary/20 text-muted-foreground uppercase text-xs font-bold">
+                <thead className="bg-surface-container-highest/20 text-on-surface-variant uppercase text-xs font-bold">
                   <tr>
                     <th className="px-6 py-4">Servicio</th>
                     <th className="px-6 py-4 text-center">Precio</th>
@@ -729,7 +730,7 @@ export default function InventarioPage() {
                 </thead>
                 <tbody className="divide-y divide-border/10">
                   {filteredServicios.map(servicio => (
-                    <tr key={servicio.id} className="table-row-hover bg-card/40 transition-colors group">
+                    <tr key={servicio.id} className="table-row-hover bg-surface-container-low/40 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
@@ -738,10 +739,10 @@ export default function InventarioPage() {
                           <div>
                             <p className="font-bold">{servicio.nombre}</p>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{servicio.codigo || 'S/C'}</p>
+                              <p className="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">{servicio.codigo || 'S/C'}</p>
                               {servicio.categoria && (
                                 <>
-                                  <span className="text-[10px] text-muted-foreground/30">•</span>
+                                  <span className="text-[10px] text-on-surface-variant/30">•</span>
                                   <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider">{servicio.categoria}</span>
                                 </>
                               )}
@@ -755,13 +756,13 @@ export default function InventarioPage() {
                       <td className="px-6 py-4 text-center">
                         <div className="flex flex-col items-center">
                           <span className="font-semibold text-xs">${(servicio.costo_insumos + (servicio.costo_merma || 0)).toLocaleString()}</span>
-                          <span className="text-[9px] text-muted-foreground uppercase tracking-tighter">
+                          <span className="text-[9px] text-on-surface-variant uppercase tracking-tighter">
                             ${servicio.costo_insumos.toLocaleString()} ins. + ${ (servicio.costo_merma || 0).toLocaleString() } merma ({servicio.merma_porcentaje}%)
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${servicio.utilidad_neta > 0 ? 'bg-green-500/10 text-green-500' : 'bg-destructive/10 text-destructive'}`}>
+                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${servicio.utilidad_neta > 0 ? 'bg-green-500/10 text-green-500' : 'bg-error/10 text-error'}`}>
                            ${servicio.utilidad_neta.toLocaleString()}
                         </span>
                       </td>
@@ -769,7 +770,7 @@ export default function InventarioPage() {
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={() => handleOpenReceta(servicio)} className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors" title="Receta de insumos"><Settings2 size={16}/></button>
                           <button onClick={() => handleOpenServicioModal(servicio)} className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors"><Edit2 size={16}/></button>
-                          <button onClick={() => handleDeleteServicio(servicio)} className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors" title="Eliminar"><Trash2 size={16}/></button>
+                          <button onClick={() => handleDeleteServicio(servicio)} className="p-2 hover:bg-error/10 text-error rounded-lg transition-colors" title="Eliminar"><Trash2 size={16}/></button>
                         </div>
                       </td>
                     </tr>
@@ -785,18 +786,18 @@ export default function InventarioPage() {
       <AnimatePresence>
         {isInsumoModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsInsumoModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card w-full max-w-md rounded-2xl shadow-2xl border border-border relative z-10 overflow-hidden max-h-[90vh] flex flex-col"
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" onClick={() => setIsInsumoModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="glass-panel w-full max-w-md rounded-[2.5rem] border-none shadow-2xl relative z-10 overflow-hidden max-h-[90vh] flex flex-col"
             >
-              <div className="p-6 border-b border-border/50 bg-secondary/30 flex justify-between items-center shrink-0">
+              <div className="p-6 border-b border-outline-variant/50 bg-surface-container-highest/30 flex justify-between items-center shrink-0">
                 <h2 className="text-xl font-bold flex items-center gap-2"><FlaskConical className="text-primary"/> {modalMode === 'create' ? 'Nuevo Insumo' : 'Editar Insumo'}</h2>
-                <button onClick={() => setIsInsumoModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
+                <button onClick={() => setIsInsumoModalOpen(false)} className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1"><X size={20}/></button>
               </div>
               <div className="p-6 space-y-4 overflow-y-auto custom-scrollbar">
                 {/* Buscador de Catálogo BlueDental */}
                 {modalMode === 'create' && (
-                  <div className="space-y-2 pb-4 border-b border-border/30">
+                  <div className="space-y-2 pb-4 border-b border-outline-variant/30">
                     <label className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
                       <Search size={12} /> Buscar en Catálogo BlueDental (Sincronizado)
                     </label>
@@ -817,7 +818,7 @@ export default function InventarioPage() {
                           initial={{ opacity: 0, y: -10 }} 
                           animate={{ opacity: 1, y: 0 }} 
                           exit={{ opacity: 0, y: -10 }}
-                          className="bg-card border border-border shadow-2xl rounded-xl mt-2 max-h-60 overflow-y-auto custom-scrollbar p-1 space-y-0.5"
+                          className="bg-surface-container-low border border-outline-variant shadow-2xl rounded-xl mt-2 max-h-60 overflow-y-auto custom-scrollbar p-1 space-y-0.5"
                         >
                           {catalogResults.map(item => (
                             <button 
@@ -828,15 +829,15 @@ export default function InventarioPage() {
                             >
                               <div className="flex items-center gap-3 overflow-hidden">
                                 {item.imagen_url ? (
-                                  <img src={item.imagen_url} alt={item.nombre} className="w-10 h-10 rounded-lg object-cover border border-border/30 shrink-0" />
+                                  <img src={item.imagen_url} alt={item.nombre} className="w-10 h-10 rounded-lg object-cover border border-outline-variant/30 shrink-0" />
                                 ) : (
-                                  <div className="w-10 h-10 rounded-lg bg-secondary/30 flex items-center justify-center shrink-0 border border-border/20">
-                                    <FlaskConical size={16} className="text-muted-foreground" />
+                                  <div className="w-10 h-10 rounded-lg bg-surface-container-highest/30 flex items-center justify-center shrink-0 border border-outline-variant/20">
+                                    <FlaskConical size={16} className="text-on-surface-variant" />
                                   </div>
                                 )}
                                 <div className="overflow-hidden">
                                   <p className="text-[13px] font-bold truncate leading-tight">{item.nombre}</p>
-                                  <p className="text-[10px] text-muted-foreground uppercase">{item.sku || 'S/SKU'} • ${item.precio_usd}</p>
+                                  <p className="text-[10px] text-on-surface-variant uppercase">{item.sku || 'S/SKU'} • ${item.precio_usd}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 shrink-0">
@@ -855,7 +856,7 @@ export default function InventarioPage() {
                       )}
                     </AnimatePresence>
                     {catalogSearch.length >= 3 && catalogResults.length === 0 && !isSearchingCatalog && (
-                      <p className="text-[10px] text-muted-foreground italic text-center">No se encontraron productos en el catálogo maestro.</p>
+                      <p className="text-[10px] text-on-surface-variant italic text-center">No se encontraron productos en el catálogo maestro.</p>
                     )}
                   </div>
                 )}
@@ -863,16 +864,16 @@ export default function InventarioPage() {
                 <form onSubmit={handleSaveInsumo} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2 space-y-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Nombre *</label>
-                      <input required name="nombre" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.nombre} onChange={handleInsumoInputChange} placeholder="Ej. Guantes de Nitrilo" />
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Nombre *</label>
+                      <input required name="nombre" className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm" value={insumoForm.nombre} onChange={handleInsumoInputChange} placeholder="Ej. Guantes de Nitrilo" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Código (Ej: I0001)</label>
-                      <input name="codigo" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.codigo} onChange={handleInsumoInputChange} placeholder="Vacío para auto-generar" />
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Código (Ej: I0001)</label>
+                      <input name="codigo" className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm" value={insumoForm.codigo} onChange={handleInsumoInputChange} placeholder="Vacío para auto-generar" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Unidad de medida</label>
-                      <select required name="unidad" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-[42px]" value={insumoForm.unidad} onChange={(e) => setInsumoForm({...insumoForm, unidad: e.target.value})}>
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Unidad de medida</label>
+                      <select required name="unidad" className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm h-[42px]" value={insumoForm.unidad} onChange={(e) => setInsumoForm({...insumoForm, unidad: e.target.value})}>
                         <optgroup label="Unidades / Piezas">
                           <option value="unidad">Unidad (und)</option>
                           <option value="pza">Pieza (pza)</option>
@@ -937,8 +938,8 @@ export default function InventarioPage() {
                     ) : (
                       <div className="col-span-1 flex gap-2">
                         <div className="flex-[0.5] space-y-1.5">
-                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Stock</label>
-                          <div className="w-full bg-secondary/30 border border-border/50 rounded-xl h-[42px] flex items-center justify-center text-sm font-bold text-muted-foreground cursor-not-allowed">
+                          <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Stock</label>
+                          <div className="w-full bg-surface-container-highest/30 border border-outline-variant/50 rounded-xl h-[42px] flex items-center justify-center text-sm font-bold text-on-surface-variant cursor-not-allowed">
                             {insumoForm.stock_actual}
                           </div>
                         </div>
@@ -962,15 +963,15 @@ export default function InventarioPage() {
                     </div>
 
                     <div className="col-span-2 space-y-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">URL de Imagen (Opcional)</label>
-                      <input name="imagen_url" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={insumoForm.imagen_url} onChange={handleInsumoInputChange} placeholder="https://..." />
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">URL de Imagen (Opcional)</label>
+                      <input name="imagen_url" className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm" value={insumoForm.imagen_url} onChange={handleInsumoInputChange} placeholder="https://..." />
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-border/30">
-                    <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                  <div className="flex items-center justify-between pt-4 border-t border-outline-variant/30">
+                    <p className="text-[11px] text-on-surface-variant italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
                     <div className="flex gap-2">
-                      <button type="button" onClick={() => setIsInsumoModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
-                      <button type="submit" className="bg-primary text-primary-foreground px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-primary/20">Guardar Insumo</button>
+                      <button type="button" onClick={() => setIsInsumoModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-surface-container-highest rounded-xl transition-colors">Cancelar</button>
+                      <button type="submit" className="bg-primary text-primary-foreground px-6 py-2 rounded-lg text-sm font-bold border border-primary/20">Guardar Insumo</button>
                     </div>
                   </div>
                 </form>
@@ -984,26 +985,26 @@ export default function InventarioPage() {
       <AnimatePresence>
         {isServicioModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsServicioModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card w-full max-w-md rounded-2xl shadow-2xl border border-border relative z-10 overflow-hidden"
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" onClick={() => setIsServicioModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="glass-panel w-full max-w-md rounded-[2.5rem] border-none shadow-2xl relative z-10 overflow-hidden"
             >
-              <div className="p-6 border-b border-border/50 bg-secondary/30 flex justify-between items-center">
+              <div className="p-6 border-b border-outline-variant/50 bg-surface-container-highest/30 flex justify-between items-center">
                 <h2 className="text-xl font-bold flex items-center gap-2"><Stethoscope className="text-primary"/> {modalMode === 'create' ? 'Nuevo Servicio' : 'Editar Servicio'}</h2>
-                <button onClick={() => setIsServicioModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
+                <button onClick={() => setIsServicioModalOpen(false)} className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1"><X size={20}/></button>
               </div>
               <form onSubmit={handleSaveServicio} className="p-6 space-y-5">
                 <div className="space-y-4">
                    <div className="grid grid-cols-2 gap-4">
                       <div className="col-span-1 space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Nombre *</label>
-                          <input required name="nombre" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm" value={servicioForm.nombre} onChange={handleServicioInputChange} placeholder="Ej. Limpieza" />
+                          <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Nombre *</label>
+                          <input required name="nombre" className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm" value={servicioForm.nombre} onChange={handleServicioInputChange} placeholder="Ej. Limpieza" />
                       </div>
                       <div className="col-span-1 space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Categoría</label>
+                          <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Categoría</label>
                           <select 
                             name="categoria" 
-                            className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-[42px] focus:ring-2 focus:ring-primary outline-none appearance-none" 
+                            className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm h-[42px] focus:ring-2 focus:ring-primary outline-none appearance-none" 
                             value={servicioForm.categoria} 
                             onChange={handleServicioInputChange}
                           >
@@ -1016,10 +1017,10 @@ export default function InventarioPage() {
                    </div>
 
                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Descripción Breve / Insumos</label>
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Descripción Breve / Insumos</label>
                       <textarea 
                         name="descripcion" 
-                        className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm min-h-[80px] resize-none" 
+                        className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm min-h-[80px] resize-none" 
                         value={servicioForm.descripcion} 
                         onChange={handleServicioInputChange} 
                         placeholder="Detalles del procedimiento e insumos necesarios..." 
@@ -1028,8 +1029,8 @@ export default function InventarioPage() {
 
                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Código (Ej: S0001)</label>
-                        <input name="codigo" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-[48px]" value={servicioForm.codigo} onChange={handleServicioInputChange} placeholder="Vacío para auto-generar" />
+                        <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Código (Ej: S0001)</label>
+                        <input name="codigo" className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm h-[48px]" value={servicioForm.codigo} onChange={handleServicioInputChange} placeholder="Vacío para auto-generar" />
                       </div>
                       <NumberInput 
                         label="Precio" 
@@ -1047,8 +1048,8 @@ export default function InventarioPage() {
                         step={1} 
                         min={0}
                       />
-                      <div className="bg-secondary/30 border border-border/50 rounded-xl p-3 flex flex-col h-[48px] justify-center">
-                        <span className="text-[8px] font-black uppercase text-muted-foreground leading-none">Utilidad Estimada</span>
+                      <div className="bg-surface-container-highest/30 border border-outline-variant/50 rounded-xl p-3 flex flex-col h-[48px] justify-center">
+                        <span className="text-[8px] font-black uppercase text-on-surface-variant leading-none">Utilidad Estimada</span>
                         <span className="text-xs font-bold text-emerald-500">
                           {modalMode === 'edit' && selectedId ? (
                             `$${(servicioForm.precio - (servicios.find(s => s.id === selectedId)?.costo_insumos || 0) - ((servicios.find(s => s.id === selectedId)?.costo_insumos || 0) * servicioForm.merma_porcentaje / 100)).toFixed(2)}`
@@ -1059,11 +1060,11 @@ export default function InventarioPage() {
                       </div>
                    </div>
                 </div>
-                <div className="flex items-center justify-between pt-4 border-t border-border/30">
-                  <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                <div className="flex items-center justify-between pt-4 border-t border-outline-variant/30">
+                  <p className="text-[11px] text-on-surface-variant italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
                   <div className="flex gap-2">
-                    <button type="button" onClick={() => setIsServicioModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
-                    <button type="submit" className="bg-primary text-primary-foreground px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-primary/20">Guardar Servicio</button>
+                    <button type="button" onClick={() => setIsServicioModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-surface-container-highest rounded-xl transition-colors">Cancelar</button>
+                    <button type="submit" className="bg-primary text-primary-foreground px-6 py-2 rounded-lg text-sm font-bold border border-primary/20">Guardar Servicio</button>
                   </div>
                 </div>
               </form>
@@ -1076,16 +1077,16 @@ export default function InventarioPage() {
       <AnimatePresence>
         {isRecetaModalOpen && selectedServicio && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsRecetaModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" onClick={() => setIsRecetaModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="glass-panel w-full max-w-2xl rounded-[2.5rem] border-none shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="p-6 border-b border-border/50 bg-secondary/30 flex justify-between items-center">
+              <div className="p-6 border-b border-outline-variant/50 bg-surface-container-highest/30 flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold flex items-center gap-2">Configurar Receta</h2>
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{selectedServicio.nombre}</p>
+                  <p className="text-xs text-on-surface-variant font-medium uppercase tracking-widest">{selectedServicio.nombre}</p>
                 </div>
-                <button onClick={() => setIsRecetaModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
+                <button onClick={() => setIsRecetaModalOpen(false)} className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1"><X size={20}/></button>
               </div>
               
               <div className="p-6 overflow-y-auto flex-1 space-y-4">
@@ -1118,7 +1119,7 @@ export default function InventarioPage() {
                          initial={{ opacity: 0, scale: 0.98 }} 
                          animate={{ opacity: 1, scale: 1 }} 
                          exit={{ opacity: 0, scale: 0.98 }}
-                         className="bg-card border border-border shadow-2xl rounded-2xl p-2 max-h-60 overflow-y-auto custom-scrollbar space-y-1"
+                         className="bg-surface-container-low border border-outline-variant shadow-2xl rounded-2xl p-2 max-h-60 overflow-y-auto custom-scrollbar space-y-1"
                        >
                          {recipeCatalogResults.map(item => (
                            <button 
@@ -1130,15 +1131,15 @@ export default function InventarioPage() {
                            >
                              <div className="flex items-center gap-3 overflow-hidden">
                                 {item.imagen_url ? (
-                                  <img src={item.imagen_url} alt={item.nombre} className="w-10 h-10 rounded-lg object-cover border border-border/30 shrink-0" />
+                                  <img src={item.imagen_url} alt={item.nombre} className="w-10 h-10 rounded-lg object-cover border border-outline-variant/30 shrink-0" />
                                 ) : (
-                                  <div className="w-10 h-10 rounded-lg bg-secondary/30 flex items-center justify-center shrink-0 border border-border/20">
-                                    <FlaskConical size={16} className="text-muted-foreground" />
+                                  <div className="w-10 h-10 rounded-lg bg-surface-container-highest/30 flex items-center justify-center shrink-0 border border-outline-variant/20">
+                                    <FlaskConical size={16} className="text-on-surface-variant" />
                                   </div>
                                 )}
                                <div className="overflow-hidden">
                                  <p className="text-[13px] font-bold truncate leading-tight">{item.nombre}</p>
-                                 <p className="text-[10px] text-muted-foreground uppercase">{item.sku || 'S/SKU'} • ${item.precio_usd}</p>
+                                 <p className="text-[10px] text-on-surface-variant uppercase">{item.sku || 'S/SKU'} • ${item.precio_usd}</p>
                                </div>
                              </div>
                              <div className="flex items-center gap-2 shrink-0">
@@ -1156,15 +1157,15 @@ export default function InventarioPage() {
                 <div className="h-4" /> {/* Spacer */}
 
                 <div className="flex items-center justify-between">
-                   <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Insumos de esta Receta</h3>
+                   <h3 className="text-xs font-black text-on-surface-variant uppercase tracking-widest pl-1">Insumos de esta Receta</h3>
                    <button onClick={addRecetaItem} className="text-[11px] font-bold text-primary flex items-center gap-1 hover:underline">
                      <Plus size={14} /> Fila Manual
                    </button>
                 </div>
 
                 {recetaItems.length === 0 ? (
-                  <div className="text-center py-10 border-2 border-dashed border-border/50 rounded-2xl">
-                    <p className="text-muted-foreground text-sm mb-4">No hay insumos en esta receta.</p>
+                  <div className="text-center py-10 border-2 border-dashed border-outline-variant/50 rounded-2xl">
+                    <p className="text-on-surface-variant text-sm mb-4">No hay insumos en esta receta.</p>
                     <button onClick={addRecetaItem} className="text-primary font-bold text-sm hover:underline">+ Agregar Insumo</button>
                   </div>
                 ) : (
@@ -1177,11 +1178,11 @@ export default function InventarioPage() {
                          costoFila = costoUnidad * (item.cantidad_utilizada || 0);
                       }
                       return (
-                      <div key={idx} className="flex gap-3 items-end bg-secondary/10 p-3 rounded-xl border border-border/10">
+                      <div key={idx} className="flex gap-3 items-end bg-surface-container-highest/10 p-3 rounded-xl border border-outline-variant/10">
                         <div className="flex-1 space-y-1 relative">
-                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Insumo</label>
+                          <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Insumo</label>
                           <div 
-                            className="w-full bg-background border border-border/50 rounded-lg p-2 text-sm flex items-center justify-between cursor-pointer"
+                            className="w-full bg-surface border border-outline-variant/50 rounded-lg p-2 text-sm flex items-center justify-between cursor-pointer"
                             onClick={() => {
                               setOpenDropdownIdx(openDropdownIdx === idx ? null : idx);
                               setRecetaSearch("");
@@ -1192,28 +1193,28 @@ export default function InventarioPage() {
                                 {selIns.imagen_url ? (
                                   <img src={selIns.imagen_url} alt="" className="w-5 h-5 rounded object-cover" />
                                 ) : (
-                                  <FlaskConical size={14} className="text-muted-foreground" />
+                                  <FlaskConical size={14} className="text-on-surface-variant" />
                                 )}
                                 <span className="truncate font-medium">{selIns.nombre}</span>
                               </div>
                             ) : (
-                              <span className="text-muted-foreground">Seleccione un insumo...</span>
+                              <span className="text-on-surface-variant">Seleccione un insumo...</span>
                             )}
-                            <ChevronRight size={14} className={`text-muted-foreground transition-transform ${openDropdownIdx === idx ? "-rotate-90" : "rotate-90"}`} />
+                            <ChevronRight size={14} className={`text-on-surface-variant transition-transform ${openDropdownIdx === idx ? "-rotate-90" : "rotate-90"}`} />
                           </div>
 
                           <AnimatePresence>
                             {openDropdownIdx === idx && (
                               <motion.div 
                                 initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-                                className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border shadow-2xl rounded-xl overflow-hidden flex flex-col"
+                                className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface-container-low border border-outline-variant shadow-2xl rounded-xl overflow-hidden flex flex-col"
                               >
-                                <div className="p-2 border-b border-border/50">
+                                <div className="p-2 border-b border-outline-variant/50">
                                   <input 
                                     autoFocus
                                     type="text" 
                                     placeholder="Buscar insumo..." 
-                                    className="w-full bg-secondary/20 rounded p-1.5 text-xs outline-none"
+                                    className="w-full bg-surface-container-highest/20 rounded p-1.5 text-xs outline-none"
                                     value={recetaSearch}
                                     onChange={e => setRecetaSearch(e.target.value)}
                                   />
@@ -1231,15 +1232,15 @@ export default function InventarioPage() {
                                         className="w-full text-left p-2 hover:bg-primary/10 rounded flex items-center gap-2 transition-colors"
                                       >
                                         {i.imagen_url ? (
-                                          <img src={i.imagen_url} alt="" className="w-8 h-8 rounded object-cover border border-border/30 shrink-0" />
+                                          <img src={i.imagen_url} alt="" className="w-8 h-8 rounded object-cover border border-outline-variant/30 shrink-0" />
                                         ) : (
-                                          <div className="w-8 h-8 rounded bg-secondary/30 flex items-center justify-center shrink-0">
-                                            <FlaskConical size={12} className="text-muted-foreground" />
+                                          <div className="w-8 h-8 rounded bg-surface-container-highest/30 flex items-center justify-center shrink-0">
+                                            <FlaskConical size={12} className="text-on-surface-variant" />
                                           </div>
                                         )}
                                         <div className="overflow-hidden">
                                           <p className="text-xs font-bold truncate">{i.nombre}</p>
-                                          <p className="text-[9px] text-muted-foreground uppercase">{i.codigo || 'S/C'} • ${cu.toFixed(2)} c/{i.unidad}</p>
+                                          <p className="text-[9px] text-on-surface-variant uppercase">{i.codigo || 'S/C'} • ${cu.toFixed(2)} c/{i.unidad}</p>
                                         </div>
                                       </button>
                                     );
@@ -1257,21 +1258,21 @@ export default function InventarioPage() {
                             step={0.1}
                           />
                         </div>
-                        <button onClick={() => removeRecetaItem(idx)} className="p-2.5 text-destructive hover:bg-destructive/10 rounded-lg transition-colors mb-1">
+                        <button onClick={() => removeRecetaItem(idx)} className="p-2.5 text-error hover:bg-error/10 rounded-lg transition-colors mb-1">
                           <Trash2 size={16} />
                         </button>
                       </div>
                     )})}
-                    <button onClick={addRecetaItem} className="w-full py-3 border-2 border-dashed border-border/50 rounded-xl text-muted-foreground text-sm font-semibold hover:border-primary/50 hover:text-primary transition-all">
+                    <button onClick={addRecetaItem} className="w-full py-3 border-2 border-dashed border-outline-variant/50 rounded-xl text-on-surface-variant text-sm font-semibold hover:border-primary/50 hover:text-primary transition-all">
                       + Agregar otro insumo
                     </button>
                   </div>
                 )}
               </div>
 
-              <div className="p-6 border-t border-border/30 flex justify-end gap-3 bg-secondary/10">
-                <button onClick={() => setIsRecetaModalOpen(false)} className="px-5 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
-                <button onClick={handleSaveReceta} className="bg-primary text-primary-foreground px-8 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Guardar Receta</button>
+              <div className="p-6 border-t border-outline-variant/30 flex justify-end gap-3 bg-surface-container-highest/10">
+                <button onClick={() => setIsRecetaModalOpen(false)} className="px-5 py-2 text-sm font-semibold hover:bg-surface-container-highest rounded-xl transition-colors">Cancelar</button>
+                <button onClick={handleSaveReceta} className="bg-primary text-primary-foreground px-8 py-2.5 rounded-lg text-sm font-bold hover:bg-primary/90 active:bg-primary/80 transition-all border border-primary/20">Guardar Receta</button>
               </div>
             </motion.div>
           </div>
@@ -1282,21 +1283,21 @@ export default function InventarioPage() {
       <AnimatePresence>
         {isKardexModalOpen && kardexInsumo && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsKardexModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl border border-border relative z-10 flex flex-col max-h-[90vh]"
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" onClick={() => setIsKardexModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="glass-panel w-full max-w-2xl rounded-[2.5rem] border-none shadow-2xl relative z-10 flex flex-col max-h-[90vh]"
             >
-              <div className="p-6 border-b border-border/50 flex justify-between items-center bg-secondary/20">
+              <div className="p-6 border-b border-outline-variant/50 flex justify-between items-center bg-surface-container-highest/20">
                 <div>
                   <h2 className="text-xl font-bold flex items-center gap-2">Kardex de Inventario</h2>
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{kardexInsumo.nombre} ({kardexInsumo.unidad})</p>
+                  <p className="text-xs text-on-surface-variant font-medium uppercase tracking-widest">{kardexInsumo.nombre} ({kardexInsumo.unidad})</p>
                 </div>
-                <button onClick={() => setIsKardexModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
+                <button onClick={() => setIsKardexModalOpen(false)} className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1"><X size={20}/></button>
               </div>
               <div className="overflow-y-auto flex-1 p-6 space-y-4">
-                <div className="border border-border/10 rounded-2xl overflow-hidden bg-secondary/20">
+                <div className="border border-outline-variant/10 rounded-2xl overflow-hidden bg-surface-container-highest/20">
                   <table className="w-full text-left text-sm">
-                    <thead className="bg-secondary/40 text-[10px] uppercase font-black tracking-widest text-muted-foreground">
+                    <thead className="bg-surface-container-highest/40 text-[10px] uppercase font-black tracking-widest text-on-surface-variant">
                       <tr>
                         <th className="p-4">Fecha / Hota</th>
                         <th className="p-4">Tipo</th>
@@ -1306,13 +1307,13 @@ export default function InventarioPage() {
                     </thead>
                     <tbody className="divide-y divide-border/10">
                       {kardexItems.length === 0 ? (
-                        <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic">No hay historial registrado.</td></tr>
+                        <tr><td colSpan={4} className="p-8 text-center text-on-surface-variant italic">No hay historial registrado.</td></tr>
                       ) : (
                         kardexItems.map(k => (
-                          <tr key={k.id} className="hover:bg-secondary/20 transition-colors">
-                            <td className="p-4 font-medium text-[11px] whitespace-nowrap text-muted-foreground">{new Date(k.fecha).toLocaleString()}</td>
+                          <tr key={k.id} className="hover:bg-surface-container-highest/20 transition-colors">
+                            <td className="p-4 font-medium text-[11px] whitespace-nowrap text-on-surface-variant">{new Date(k.fecha).toLocaleString()}</td>
                             <td className="p-4 text-xs font-bold uppercase tracking-widest">
-                              <span className={k.tipo === 'entrada' ? 'text-emerald-500' : k.tipo === 'salida' ? 'text-destructive' : 'text-blue-500'}>
+                              <span className={k.tipo === 'entrada' ? 'text-emerald-500' : k.tipo === 'salida' ? 'text-error' : 'text-blue-500'}>
                                 {k.tipo}
                               </span>
                             </td>
@@ -1338,26 +1339,26 @@ export default function InventarioPage() {
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }} 
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm" 
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" 
               onClick={() => setIsDeleteModalOpen(false)} 
             />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }} 
+              initial={{ opacity: 0, scale: 0.9 }} 
               animate={{ opacity: 1, scale: 1 }} 
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card w-full max-w-md rounded-2xl shadow-2xl border border-border relative z-10 overflow-hidden p-6 space-y-5"
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="glass-panel w-full max-w-md rounded-[2.5rem] border-none shadow-2xl relative z-10 overflow-hidden p-6 space-y-5"
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-destructive/10 text-destructive rounded-xl shrink-0">
+                <div className="p-3 bg-error/10 text-error rounded-xl shrink-0">
                   <AlertCircle size={24} />
                 </div>
                 <div className="space-y-1.5">
-                  <h3 className="text-lg font-bold text-foreground">¿Eliminar este servicio?</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Estás a punto de eliminar el servicio <strong className="text-foreground">{serviceToDeleteName}</strong>. 
+                  <h3 className="text-lg font-bold text-on-surface">¿Eliminar este servicio?</h3>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">
+                    Estás a punto de eliminar el servicio <strong className="text-on-surface">{serviceToDeleteName}</strong>. 
                     Esta acción eliminará también todos los insumos relacionados a su receta.
                   </p>
-                  <p className="text-xs text-destructive font-semibold flex items-center gap-1">
+                  <p className="text-xs text-error font-semibold flex items-center gap-1">
                     ⚠️ Esta acción no se puede deshacer y se perderán las configuraciones.
                   </p>
                 </div>
@@ -1367,14 +1368,14 @@ export default function InventarioPage() {
                 <button 
                   type="button" 
                   onClick={() => setIsDeleteModalOpen(false)} 
-                  className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors"
+                  className="px-4 py-2 text-sm font-semibold hover:bg-surface-container-highest rounded-xl transition-colors"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="button" 
                   onClick={executeDeleteServicio} 
-                  className="bg-destructive text-destructive-foreground px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-destructive/20 hover:bg-destructive/90 transition-colors"
+                  className="bg-error text-error-foreground px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-destructive/20 hover:bg-error/90 transition-colors"
                 >
                   Sí, eliminar todo
                 </button>

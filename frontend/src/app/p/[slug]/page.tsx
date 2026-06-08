@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
@@ -102,13 +103,13 @@ export default function PublicBookingPortal() {
     setSubmitting(true);
     const dniRegex = /^[VEP]-\d+$/;
     if (!dniRegex.test(formData.documento)) {
-      alert("El documento debe tener el formato V-12345678, E-12345678 o P-12345678 (Letra en mayúscula y con guion).");
+      toast.success("El documento debe tener el formato V-12345678, E-12345678 o P-12345678 (Letra en mayúscula y con guion).");
       setSubmitting(false);
       return;
     }
 
     if (!formData.email && !formData.telefono) {
-      alert("Debes proporcionar al menos un medio de contacto (Correo o Teléfono).");
+      toast.success("Debes proporcionar al menos un medio de contacto (Correo o Teléfono).");
       setSubmitting(false);
       return;
     }
@@ -126,7 +127,7 @@ export default function PublicBookingPortal() {
       });
       setStep(3);
     } catch {
-      alert("Error al agendar la cita. Por favor verifique los datos o intente más tarde.");
+      toast.error("Error al agendar la cita. Por favor verifique los datos o intente más tarde.");
     } finally {
       setSubmitting(false);
     }
@@ -157,31 +158,31 @@ export default function PublicBookingPortal() {
   ].filter(Boolean) as { icon: React.ReactNode; href: string; label: string }[] : [];
 
   if (loading) return (
-    <div className="min-h-screen bg-[#0a0514] flex flex-col items-center justify-center gap-4">
-      <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
-      <p className="text-violet-400 font-medium animate-pulse tracking-widest uppercase text-xs">Cargando Portal...</p>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 dark">
+      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <p className="text-primary font-label-md animate-pulse tracking-widest uppercase text-xs">Cargando Portal...</p>
     </div>
   );
 
   if (error || !specialist) return (
-    <div className="min-h-screen bg-[#0a0514] flex flex-col items-center justify-center p-6 text-center">
-      <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center mb-6 border border-red-500/20">
-        <Info className="text-red-400" size={40} />
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center dark">
+      <div className="w-20 h-20 bg-error-container rounded-3xl flex items-center justify-center mb-6 border border-error/20">
+        <Info className="text-error" size={40} />
       </div>
-      <h1 className="text-2xl font-black text-white mb-2">Portal no disponible</h1>
-      <p className="text-slate-400 max-w-sm mb-8">El enlace que has seguido no es válido o el doctor ha desactivado su portal de reservas.</p>
-      <button onClick={() => window.history.back()} className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl transition-all font-bold">Volver atrás</button>
+      <h1 className="text-2xl font-headline-md text-on-surface mb-2">Portal no disponible</h1>
+      <p className="text-on-surface-variant max-w-sm mb-8 font-body-sm">El enlace que has seguido no es válido o el especialista ha desactivado su portal de reservas.</p>
+      <button onClick={() => window.history.back()} className="px-6 py-3 bg-surface-container-highest hover:bg-surface-container-high text-on-surface rounded-2xl transition-all font-label-md">Volver atrás</button>
     </div>
   );
 
   const hasLogo = specialist.clinica_logo_url && specialist.clinica_logo_url.length > 5;
 
   return (
-    <div className="min-h-screen bg-[#0a0514] text-slate-200 font-sans selection:bg-violet-500/30">
-      {/* Background Decor */}
+    <div className="min-h-screen bg-background text-on-surface font-sans selection:bg-primary/30 dark">
+      {/* Background Decor (Cyan Glow) */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-violet-600/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full" />
+        <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full" />
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-12 relative z-10">
@@ -193,7 +194,7 @@ export default function PublicBookingPortal() {
         >
           {/* Logo o Iniciales */}
           {hasLogo ? (
-            <div className="w-28 h-28 rounded-[32px] mx-auto mb-6 shadow-2xl shadow-violet-500/20 ring-1 ring-violet-400/30 overflow-hidden bg-white/5 backdrop-blur-xl">
+            <div className="w-28 h-28 rounded-[32px] mx-auto mb-6 shadow-2xl shadow-primary/20 ring-1 ring-primary/30 overflow-hidden bg-surface-container-low backdrop-blur-xl">
               <img 
                 src={specialist.clinica_logo_url!} 
                 alt={specialist.clinica_nombre || "Logo"} 
@@ -201,38 +202,38 @@ export default function PublicBookingPortal() {
               />
             </div>
           ) : (
-            <div className="w-24 h-24 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-violet-500/20 ring-1 ring-violet-400/50">
-              <span className="text-3xl font-black text-white">{specialist.nombre[0]}{specialist.apellido[0]}</span>
+            <div className="w-24 h-24 bg-gradient-to-br from-primary to-blue-600 rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-primary/20 ring-1 ring-primary/50">
+              <span className="text-3xl font-headline-lg text-on-primary">{specialist.nombre[0]}{specialist.apellido[0]}</span>
             </div>
           )}
 
           {/* Clinic Name */}
           {specialist.clinica_nombre && (
-            <p className="text-violet-400/80 font-black uppercase tracking-[0.4em] text-[9px] mb-3">{specialist.clinica_nombre}</p>
+            <p className="text-primary/80 font-black uppercase tracking-[0.4em] text-[9px] mb-3">{specialist.clinica_nombre}</p>
           )}
 
-          <p className="text-violet-400 font-black uppercase tracking-[0.3em] text-[10px] mb-2">Reserva una cita con</p>
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
+          <p className="text-primary font-black uppercase tracking-[0.3em] text-[10px] mb-2">Reserva una cita con</p>
+          <h1 className="text-4xl md:text-5xl font-headline-lg text-on-surface tracking-tight mb-4">
             Dr. {specialist.nombre} {specialist.apellido}
           </h1>
           <div className="flex flex-wrap justify-center gap-2 mb-6">
             {specialist.especialidades.map(esp => (
-              <span key={esp} className="px-4 py-1.5 bg-violet-500/10 border border-violet-500/20 rounded-full text-violet-400 text-xs font-bold uppercase tracking-wider">
+              <span key={esp} className="px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-primary text-xs font-label-md uppercase tracking-wider">
                 {esp}
               </span>
             ))}
           </div>
 
           {specialist.descripcion_perfil && (
-            <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed mb-6">
+            <p className="text-on-surface-variant max-w-xl mx-auto text-sm font-body-sm leading-relaxed mb-6">
               {specialist.descripcion_perfil}
             </p>
           )}
 
           {/* Dirección */}
           {specialist.clinica_direccion && (
-            <div className="flex items-center justify-center gap-2 text-slate-500 text-xs mb-4">
-              <MapPin size={14} className="text-violet-400/60" />
+            <div className="flex items-center justify-center gap-2 text-on-surface-variant text-xs font-label-md mb-4">
+              <MapPin size={14} className="text-primary/60" />
               <span>{specialist.clinica_direccion}</span>
             </div>
           )}
@@ -247,7 +248,7 @@ export default function PublicBookingPortal() {
                   target="_blank"
                   rel="noopener noreferrer"
                   title={link.label}
-                  className="p-3 bg-white/5 hover:bg-violet-600/20 border border-white/10 hover:border-violet-500/40 rounded-2xl text-slate-400 hover:text-violet-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-violet-500/10"
+                  className="p-3 bg-surface-container-low hover:bg-primary/20 border border-outline-variant/20 hover:border-primary/40 rounded-2xl text-on-surface-variant hover:text-primary transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/10"
                 >
                   {link.icon}
                 </a>
@@ -260,12 +261,12 @@ export default function PublicBookingPortal() {
         <div className="flex items-center justify-center gap-4 mb-12">
           {[1, 2, 3].map(num => (
             <div key={num} className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
-                step >= num ? "bg-violet-600 text-white shadow-lg shadow-violet-500/20" : "bg-white/5 text-slate-500"
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-label-md transition-all ${
+                step >= num ? "bg-primary text-on-primary shadow-lg shadow-primary/20" : "bg-surface-container-highest text-on-surface-variant"
               }`}>
                 {step > num ? <CheckCircle2 size={16} /> : num}
               </div>
-              {num < 3 && <div className={`w-12 h-0.5 rounded-full ${step > num ? "bg-violet-600" : "bg-white/5"}`} />}
+              {num < 3 && <div className={`w-12 h-0.5 rounded-full ${step > num ? "bg-primary" : "bg-surface-container-highest"}`} />}
             </div>
           ))}
         </div>
@@ -281,8 +282,8 @@ export default function PublicBookingPortal() {
               className="space-y-6"
             >
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-black text-white">¿Qué servicio necesitas?</h2>
-                <p className="text-slate-400 text-sm">Selecciona una de las opciones disponibles arriba.</p>
+                <h2 className="text-2xl font-headline-md text-on-surface">¿Qué servicio necesitas?</h2>
+                <p className="text-on-surface-variant text-sm font-body-sm mt-1">Selecciona una de las opciones disponibles arriba.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -293,22 +294,22 @@ export default function PublicBookingPortal() {
                       setSelectedService(servicio);
                       handleNext();
                     }}
-                    className={`group p-6 rounded-3xl border transition-all text-left relative overflow-hidden ${
+                    className={`group p-6 rounded-3xl border transition-all text-left relative overflow-hidden glass-panel ${
                       selectedService?.id === servicio.id 
-                        ? "bg-violet-600/10 border-violet-500 shadow-xl shadow-violet-500/5" 
-                        : "bg-white/5 border-white/10 hover:border-violet-500/50 hover:bg-white/10"
+                        ? "bg-primary/10 border-primary shadow-xl shadow-primary/5" 
+                        : "bg-surface-container-low border-outline-variant/30 hover:border-primary/50 hover:bg-surface-container"
                     }`}
                   >
                     <div className="flex justify-between items-start mb-4">
-                      <div className={`p-3 rounded-2xl ${selectedService?.id === servicio.id ? "bg-violet-600 text-white" : "bg-white/5 text-violet-400"}`}>
+                      <div className={`p-3 rounded-2xl ${selectedService?.id === servicio.id ? "bg-primary text-on-primary" : "bg-surface-container-highest text-primary"}`}>
                         <Stethoscope size={20} />
                       </div>
                       {specialist.mostrar_precios_portal && servicio.precio > 0 && (
-                        <span className="text-lg font-black text-violet-400">${servicio.precio.toFixed(2)}</span>
+                        <span className="text-lg font-headline-md text-primary">${servicio.precio.toFixed(2)}</span>
                       )}
                     </div>
-                    <h3 className="font-bold text-white mb-2">{servicio.nombre}</h3>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 font-bold uppercase tracking-widest">
+                    <h3 className="font-label-md text-on-surface mb-2">{servicio.nombre}</h3>
+                    <div className="flex items-center gap-2 text-xs text-on-surface-variant font-label-md uppercase tracking-widest">
                       <Clock size={14} />
                       {servicio.duracion_estimada_min} MINUTOS
                     </div>
@@ -325,19 +326,19 @@ export default function PublicBookingPortal() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
             >
-              <form onSubmit={handleSubmit} className="glass-panel p-8 md:p-12 rounded-[40px] border border-white/10 shadow-2xl space-y-8">
+              <form onSubmit={handleSubmit} className="glass-panel p-8 md:p-12 rounded-[40px] border border-outline-variant/20 shadow-2xl space-y-8 bg-surface-container-low">
                 <div className="flex items-center gap-4 mb-4">
-                  <button type="button" onClick={handleBack} className="p-2 hover:bg-white/10 rounded-xl transition-all">
-                    <ChevronLeft size={20} />
+                  <button type="button" onClick={handleBack} className="p-2 hover:bg-surface-container-highest rounded-xl transition-all">
+                    <ChevronLeft size={20} className="text-on-surface" />
                   </button>
-                  <h2 className="text-2xl font-black text-white">Información de la Cita</h2>
+                  <h2 className="text-2xl font-headline-md text-on-surface">Información de la Cita</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Nombre</label>
+                    <label className="text-[10px] font-label-md uppercase tracking-widest text-primary/60 ml-1">Nombre</label>
                     <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={18} />
                       <input 
                         required
                         className="booking-input"
@@ -352,9 +353,9 @@ export default function PublicBookingPortal() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Apellido</label>
+                    <label className="text-[10px] font-label-md uppercase tracking-widest text-primary/60 ml-1">Apellido</label>
                     <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={18} />
                       <input 
                         required
                         className="booking-input"
@@ -369,9 +370,9 @@ export default function PublicBookingPortal() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Documento de Identidad</label>
+                    <label className="text-[10px] font-label-md uppercase tracking-widest text-primary/60 ml-1">Documento de Identidad</label>
                     <div className="relative">
-                      <IdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                      <IdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={18} />
                       <input 
                         required
                         className="booking-input"
@@ -389,9 +390,9 @@ export default function PublicBookingPortal() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Teléfono</label>
+                    <label className="text-[10px] font-label-md uppercase tracking-widest text-primary/60 ml-1">Teléfono</label>
                     <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={18} />
                       <input 
                         className="booking-input"
                         placeholder="+58 412 1234567"
@@ -401,9 +402,9 @@ export default function PublicBookingPortal() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Correo Electrónico</label>
+                    <label className="text-[10px] font-label-md uppercase tracking-widest text-primary/60 ml-1">Correo Electrónico</label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={18} />
                       <input 
                         type="email"
                         className="booking-input"
@@ -414,22 +415,22 @@ export default function PublicBookingPortal() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Fecha</label>
+                    <label className="text-[10px] font-label-md uppercase tracking-widest text-primary/60 ml-1">Fecha</label>
                     <input 
                       type="date"
                       required
                       min={new Date().toISOString().split("T")[0]}
-                      className="booking-input block w-full"
+                      className="booking-input block w-full [color-scheme:dark]"
                       value={formData.fecha}
                       onChange={e => setFormData({...formData, fecha: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Hora</label>
+                    <label className="text-[10px] font-label-md uppercase tracking-widest text-primary/60 ml-1">Hora</label>
                     <input 
                       type="time"
                       required
-                      className="booking-input block w-full"
+                      className="booking-input block w-full [color-scheme:dark]"
                       value={formData.hora}
                       onChange={e => setFormData({...formData, hora: e.target.value})}
                     />
@@ -437,7 +438,7 @@ export default function PublicBookingPortal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-violet-400/60 ml-1">Notas adicionales (opcional)</label>
+                  <label className="text-[10px] font-label-md uppercase tracking-widest text-primary/60 ml-1">Notas adicionales (opcional)</label>
                   <textarea 
                     className="booking-input min-h-[100px] resize-none pt-4"
                     placeholder="Cuéntanos el motivo de tu consulta..."
@@ -446,14 +447,14 @@ export default function PublicBookingPortal() {
                   />
                 </div>
 
-                <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 rounded-2xl flex items-center justify-between">
+                <div className="bg-success/5 border border-success/20 p-6 rounded-2xl flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="p-2.5 bg-emerald-500/20 rounded-xl text-emerald-400">
+                    <div className="p-2.5 bg-success/20 rounded-xl text-success">
                       <CheckCircle2 size={24} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-emerald-400/60 uppercase tracking-widest">Servicio seleccionado</p>
-                      <p className="font-bold text-emerald-400">{selectedService?.nombre}</p>
+                      <p className="text-xs font-label-md text-success/60 uppercase tracking-widest">Servicio seleccionado</p>
+                      <p className="font-headline-md text-success">{selectedService?.nombre}</p>
                     </div>
                   </div>
                 </div>
@@ -461,7 +462,7 @@ export default function PublicBookingPortal() {
                 <button 
                   type="submit" 
                   disabled={submitting}
-                  className="w-full h-16 bg-gradient-to-r from-violet-600 to-indigo-600 hover:tracking-widest hover:scale-[1.01] transition-all text-white font-black rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-violet-500/20 disabled:opacity-50"
+                  className="w-full h-16 bg-primary hover:tracking-widest hover:scale-[1.01] transition-all text-on-primary font-headline-md rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-primary/20 disabled:opacity-50"
                 >
                   {submitting ? <Loader2 className="animate-spin" /> : <>Confirmar Cita <ArrowRight size={20} /></>}
                 </button>
@@ -474,18 +475,18 @@ export default function PublicBookingPortal() {
               key="step3"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-20 bg-white/5 backdrop-blur-3xl rounded-[60px] border border-white/10 shadow-3xl"
+              className="text-center py-20 bg-surface-container-low backdrop-blur-3xl rounded-[60px] border border-outline-variant/20 shadow-3xl glass-panel"
             >
-              <div className="w-24 h-24 bg-emerald-500/20 rounded-[32px] flex items-center justify-center mx-auto mb-8 text-emerald-400">
+              <div className="w-24 h-24 bg-success/20 rounded-[32px] flex items-center justify-center mx-auto mb-8 text-success">
                 <CheckCircle2 size={48} />
               </div>
-              <h2 className="text-4xl font-black text-white mb-4 tracking-tight">¡Cita Agendada!</h2>
-              <p className="text-slate-400 max-w-sm mx-auto mb-12">
+              <h2 className="text-4xl font-headline-lg text-on-surface mb-4 tracking-tight">¡Cita Agendada!</h2>
+              <p className="text-on-surface-variant max-w-sm mx-auto mb-12 font-body-md">
                 Su registro se ha completado. El Dr. {specialist.nombre} recibirá una notificación y confirmará su cita pronto.
               </p>
               <button 
                 onClick={() => setStep(1)}
-                className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white rounded-2xl transition-all font-bold"
+                className="px-8 py-4 bg-surface-container-highest hover:bg-surface-container text-on-surface rounded-2xl transition-all font-label-md"
               >
                 Volver al inicio
               </button>
@@ -495,16 +496,16 @@ export default function PublicBookingPortal() {
 
         {/* Footer */}
         <footer className="mt-20 text-center grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-          <p className="text-[10px] uppercase font-black tracking-[0.5em] text-violet-400 mb-2">Powered by</p>
+          <p className="text-[10px] uppercase font-label-md tracking-[0.5em] text-primary mb-2">Powered by</p>
           <div className="flex items-center justify-center gap-2">
-            <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
+            <div className="w-8 h-8 bg-surface-container-highest rounded-lg flex items-center justify-center overflow-hidden">
               <img 
                 src="/img/logo/isotipo.png" 
                 alt="VitalNexus" 
                 className="w-full h-full object-cover"
               />
             </div>
-            <span className="font-black text-white text-sm tracking-tighter">VitalNexus SaaS</span>
+            <span className="font-headline-md text-on-surface text-sm tracking-tighter">VitalNexus SaaS</span>
           </div>
         </footer>
       </div>
@@ -512,22 +513,18 @@ export default function PublicBookingPortal() {
       <style jsx global>{`
         .booking-input {
           width: 100%;
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: var(--surface-container-highest);
+          border: 1px solid var(--outline-variant);
           border-radius: 1rem;
           padding: 1rem 1rem 1rem 3rem;
-          color: white;
+          color: var(--on-surface);
           outline: none;
           transition: all 0.3s ease;
         }
         .booking-input:focus {
-          border-color: #8b5cf6;
-          background: rgba(139, 92, 246, 0.05);
-          box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
-        }
-        .glass-panel {
-          background: rgba(255, 255, 255, 0.02);
-          backdrop-filter: blur(20px);
+          border-color: var(--primary);
+          background: rgba(76, 215, 246, 0.05); /* Cyan tint */
+          box-shadow: 0 0 20px rgba(76, 215, 246, 0.1);
         }
         input[type="date"]::-webkit-calendar-picker-indicator,
         input[type="time"]::-webkit-calendar-picker-indicator {

@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect, useMemo, useRef } from "react";
 import { api } from "@/lib/api";
 import { 
@@ -167,7 +168,7 @@ export default function CalendarPage() {
       setIsModalOpen(false);
       fetchCalendarData();
     } catch (error) {
-      alert("Error al guardar la cita.");
+      toast.error("Error al guardar la cita.");
     } finally {
       setIsSaving(false);
     }
@@ -188,8 +189,8 @@ export default function CalendarPage() {
       case "programada": return "bg-blue-500/10 text-blue-500 border-blue-500/30";
       case "confirmada": return "bg-purple-500/10 text-purple-500 border-purple-500/30";
       case "completada": return "bg-green-500/10 text-green-500 border-green-500/30";
-      case "cancelada": return "bg-destructive/10 text-destructive border-destructive/30";
-      default: return "bg-secondary text-secondary-foreground";
+      case "cancelada": return "bg-error/10 text-error border-destructive/30";
+      default: return "bg-surface-container-highest text-secondary-foreground";
     }
   };
 
@@ -198,44 +199,44 @@ export default function CalendarPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Agenda Médica</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Gestiona tus citas y pacientes para hoy.</p>
+          <p className="text-on-surface-variant mt-1 text-sm">Gestiona tus citas y pacientes para hoy.</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex bg-secondary/50 p-1 rounded-xl border border-border/10">
-            <button onClick={() => setView("day")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${view === "day" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground"}`}>Día</button>
-            <button onClick={() => setView("week")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${view === "week" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground"}`}>Semana</button>
-            <button onClick={() => setView("month")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${view === "month" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground"}`}>Mes</button>
+          <div className="flex bg-surface-container-highest/50 p-1 rounded-xl border border-outline-variant/10">
+            <button onClick={() => setView("day")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${view === "day" ? "bg-primary text-primary-foreground shadow-sm" : "text-on-surface-variant"}`}>Día</button>
+            <button onClick={() => setView("week")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${view === "week" ? "bg-primary text-primary-foreground shadow-sm" : "text-on-surface-variant"}`}>Semana</button>
+            <button onClick={() => setView("month")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${view === "month" ? "bg-primary text-primary-foreground shadow-sm" : "text-on-surface-variant"}`}>Mes</button>
           </div>
-          <button onClick={() => handleOpenCreate()} className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
+          <button onClick={() => handleOpenCreate()} className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-primary/90 active:bg-primary/80 transition-all border border-primary/20">
             <Plus size={18} /> Nueva Cita
           </button>
         </div>
       </div>
 
-      <div className="flex justify-between items-center glass-panel p-4 rounded-2xl border border-border/30">
+      <div className="flex justify-between items-center glass-panel p-4 rounded-2xl border border-outline-variant/30">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
-            <button onClick={() => setCurrentDate(view === "month" ? startOfMonth(addDays(startOfMonth(currentDate), -1)) : view === "week" ? subWeeks(currentDate, 1) : addDays(currentDate, -1))} className="p-2 hover:bg-secondary rounded-lg transition-colors text-muted-foreground"><ChevronLeft size={20} /></button>
-            <button onClick={() => setCurrentDate(new Date())} className="px-4 py-2 text-sm font-bold hover:bg-secondary rounded-lg transition-colors">Hoy</button>
-            <button onClick={() => setCurrentDate(view === "month" ? addDays(endOfMonth(currentDate), 1) : view === "week" ? addWeeks(currentDate, 1) : addDays(currentDate, 1))} className="p-2 hover:bg-secondary rounded-lg transition-colors text-muted-foreground"><ChevronRight size={20} /></button>
+            <button onClick={() => setCurrentDate(view === "month" ? startOfMonth(addDays(startOfMonth(currentDate), -1)) : view === "week" ? subWeeks(currentDate, 1) : addDays(currentDate, -1))} className="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant"><ChevronLeft size={20} /></button>
+            <button onClick={() => setCurrentDate(new Date())} className="px-4 py-2 text-sm font-bold hover:bg-surface-container-highest rounded-lg transition-colors">Hoy</button>
+            <button onClick={() => setCurrentDate(view === "month" ? addDays(endOfMonth(currentDate), 1) : view === "week" ? addWeeks(currentDate, 1) : addDays(currentDate, 1))} className="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant"><ChevronRight size={20} /></button>
           </div>
           <h2 className="text-xl font-bold capitalize">{format(currentDate, view === "month" ? "MMMM yyyy" : view === "week" ? "MMMM yyyy" : "EEEE, d 'de' MMMM", { locale: es })}</h2>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto glass-panel rounded-3xl border border-border/30 shadow-sm relative custom-scrollbar">
-        {isLoading && <div className="absolute inset-0 z-50 bg-background/50 backdrop-blur-[2px] flex items-center justify-center"><Loader2 className="animate-spin text-primary" size={40} /></div>}
+      <div className="flex-1 overflow-auto glass-panel rounded-3xl border border-outline-variant/30 shadow-sm relative custom-scrollbar">
+        {isLoading && <div className="absolute inset-0 z-50 bg-background/50 backdrop-blur-[3px] flex items-center justify-center"><Loader2 className="animate-spin text-primary" size={40} /></div>}
         
         {view === "month" ? (
           <div className="min-w-[800px] h-full flex flex-col">
             <div className="flex-1 grid grid-cols-7 grid-rows-5 gap-px bg-border/20">
               {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map(d => (
-                <div key={d} className="bg-card/80 p-2 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground sticky top-0">{d}</div>
+                <div key={d} className="bg-surface-container-low/80 p-2 text-center text-xs font-bold uppercase tracking-widest text-on-surface-variant sticky top-0">{d}</div>
               ))}
               {days.map(day => {
                 const dayCitas = citas.filter(c => isSameDay(parseISO(c.fecha_hora), day));
                 return (
-                  <div key={day.toString()} className={`bg-background min-h-[100px] p-2 hover:bg-secondary/10 transition-colors relative group/cell ${!isSameMonth(day, currentDate) ? 'opacity-50' : ''}`} onClick={() => handleOpenCreate(day)}>
+                  <div key={day.toString()} className={`bg-surface min-h-[100px] p-2 hover:bg-surface-container-highest/10 transition-colors relative group/cell ${!isSameMonth(day, currentDate) ? 'opacity-50' : ''}`} onClick={() => handleOpenCreate(day)}>
                     <div className={`text-right text-xs font-bold mb-1 ${isToday(day) ? 'text-primary' : ''}`}>{format(day, "d")}</div>
                     <div className="space-y-1">
                       {dayCitas.slice(0, 4).map(cita => {
@@ -246,7 +247,7 @@ export default function CalendarPage() {
                           </div>
                         );
                       })}
-                      {dayCitas.length > 4 && <div className="text-[9px] text-muted-foreground text-center">+{dayCitas.length - 4} más</div>}
+                      {dayCitas.length > 4 && <div className="text-[9px] text-on-surface-variant text-center">+{dayCitas.length - 4} más</div>}
                     </div>
                   </div>
                 );
@@ -255,24 +256,24 @@ export default function CalendarPage() {
           </div>
         ) : (
           <div className="min-w-[800px] h-full flex flex-col">
-            <div className="flex border-b border-border/10 sticky top-0 bg-card/80 backdrop-blur-xl z-20">
-              <div className="w-20 border-r border-border/10"></div>
+            <div className="flex border-b border-outline-variant/10 sticky top-0 bg-surface-container-low/80 backdrop-blur-xl z-20">
+              <div className="w-20 border-r border-outline-variant/10"></div>
               {days.map(day => (
-                <div key={day.toString()} className={`flex-1 p-4 text-center border-r border-border/10 last:border-0 ${isToday(day) ? 'bg-primary/5' : ''}`}>
-                  <p className={`text-xs font-bold uppercase tracking-widest ${isToday(day) ? 'text-primary' : 'text-muted-foreground'}`}>{format(day, "eee", { locale: es })}</p>
+                <div key={day.toString()} className={`flex-1 p-4 text-center border-r border-outline-variant/10 last:border-0 ${isToday(day) ? 'bg-primary/5' : ''}`}>
+                  <p className={`text-xs font-bold uppercase tracking-widest ${isToday(day) ? 'text-primary' : 'text-on-surface-variant'}`}>{format(day, "eee", { locale: es })}</p>
                   <div className={`mt-1 inline-flex items-center justify-center w-10 h-10 rounded-full text-lg font-black ${isToday(day) ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' : ''}`}>{format(day, "d")}</div>
                 </div>
               ))}
             </div>
             <div className="flex-1 relative">
               {HOURS.map(hour => (
-                <div key={hour} className="flex border-b border-border/10 group/row" style={{ minHeight: '80px' }}>
-                  <div className="w-20 p-2 text-right border-r border-border/10 text-[10px] font-bold text-muted-foreground opacity-50 group-hover/row:opacity-100 transition-opacity">{hour.toString().padStart(2, "0")}:00</div>
+                <div key={hour} className="flex border-b border-outline-variant/10 group/row" style={{ minHeight: '80px' }}>
+                  <div className="w-20 p-2 text-right border-r border-outline-variant/10 text-[10px] font-bold text-on-surface-variant opacity-50 group-hover/row:opacity-100 transition-opacity">{hour.toString().padStart(2, "0")}:00</div>
                   {days.map(day => {
                     const dayCitas = citas.filter(c => isSameDay(parseISO(c.fecha_hora), day) && parseISO(c.fecha_hora).getHours() === hour);
                     return (
-                      <div key={`${day}-${hour}`} className="flex-1 border-r border-border/5 p-1 relative hover:bg-secondary/20 transition-colors cursor-pointer group/cell" onClick={() => handleOpenCreate(day, hour)}>
-                        <Plus size={16} className="absolute top-2 right-2 text-muted-foreground opacity-0 group-hover/cell:opacity-100 transition-opacity" />
+                      <div key={`${day}-${hour}`} className="flex-1 border-r border-outline-variant/5 p-1 relative hover:bg-surface-container-highest/20 transition-colors cursor-pointer group/cell" onClick={() => handleOpenCreate(day, hour)}>
+                        <Plus size={16} className="absolute top-2 right-2 text-on-surface-variant opacity-0 group-hover/cell:opacity-100 transition-opacity" />
                         {dayCitas.map(cita => {
                           const paciente = pacientes.find(p => p.id === cita.paciente_id);
                           const servicio = servicios.find(s => s.id === cita.servicio_id);
@@ -304,35 +305,35 @@ export default function CalendarPage() {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-card w-full max-w-lg max-h-[90vh] rounded-3xl shadow-2xl border border-border relative z-10 overflow-hidden flex flex-col">
-              <div className="p-6 border-b border-border/50 bg-secondary/30 flex justify-between items-center shrink-0">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" onClick={() => setIsModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="glass-panel w-full max-w-lg rounded-[2.5rem] border-none shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+              <div className="p-6 border-b border-outline-variant/50 bg-surface-container-highest/30 flex justify-between items-center shrink-0">
                 <h2 className="text-xl font-bold flex items-center gap-2"><CalendarIcon className="text-primary"/> {selectedCita ? "Editar Cita" : "Nueva Cita"}</h2>
-                <button onClick={() => setIsModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1.5"><X size={20}/></button>
+                <button onClick={() => setIsModalOpen(false)} className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1.5"><X size={20}/></button>
               </div>
 
               <form onSubmit={handleSaveCita} className="flex-1 overflow-hidden flex flex-col">
                 <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Buscar Paciente *</label>
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Buscar Paciente *</label>
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                        <input type="text" placeholder="Ej: 123456 o María..." className="w-full pl-10 pr-4 py-2.5 bg-background border border-border/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" value={patientSearch} onChange={(e) => { setPatientSearch(e.target.value); if (formData.paciente_id) setFormData({...formData, paciente_id: "", presupuesto_id: ""}); }} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={16} />
+                        <input type="text" placeholder="Ej: 123456 o María..." className="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" value={patientSearch} onChange={(e) => { setPatientSearch(e.target.value); if (formData.paciente_id) setFormData({...formData, paciente_id: "", presupuesto_id: ""}); }} />
                       </div>
                       
                       {patientSearch && !formData.paciente_id && !showNewPatient && (
-                        <div className="mt-2 max-h-40 overflow-y-auto border border-border/30 rounded-xl bg-background shadow-xl z-[120]">
+                        <div className="mt-2 max-h-40 overflow-y-auto border border-outline-variant/30 rounded-xl bg-surface shadow-xl z-[120]">
                           {filteredPatientsForSelect.length === 0 ? (
-                            <div className="px-4 py-3 text-sm text-muted-foreground text-center flex flex-col items-center">
+                            <div className="px-4 py-3 text-sm text-on-surface-variant text-center flex flex-col items-center">
                               <span className="italic mb-2">No se encontraron pacientes</span>
                               <button type="button" onClick={() => setShowNewPatient(true)} className="text-primary font-bold bg-primary/10 px-4 py-1.5 rounded-lg">+ Registrar Nuevo Paciente</button>
                             </div>
                           ) : (
                             filteredPatientsForSelect.map(p => (
-                              <button key={p.id} type="button" onClick={() => { setFormData({...formData, paciente_id: p.id}); setPatientSearch(`${p.nombre} ${p.apellido} - ${p.documento || 'S/D'}`); }} className="w-full text-left px-4 py-2.5 hover:bg-primary/5 text-sm flex justify-between items-center group border-b border-border/5 last:border-0">
+                              <button key={p.id} type="button" onClick={() => { setFormData({...formData, paciente_id: p.id}); setPatientSearch(`${p.nombre} ${p.apellido} - ${p.documento || 'S/D'}`); }} className="w-full text-left px-4 py-2.5 hover:bg-primary/5 text-sm flex justify-between items-center group border-b border-outline-variant/5 last:border-0">
                                 <span className="font-bold group-hover:text-primary transition-colors">{p.nombre} {p.apellido}</span>
-                                <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground uppercase">{p.documento || 'S/D'}</span>
+                                <span className="text-[10px] bg-surface-container-highest px-2 py-0.5 rounded text-on-surface-variant uppercase">{p.documento || 'S/D'}</span>
                               </button>
                             ))
                           )}
@@ -343,17 +344,17 @@ export default function CalendarPage() {
                         <div className="mt-4 p-4 border border-primary/30 rounded-xl bg-primary/5 space-y-3">
                           <div className="flex justify-between items-center">
                             <h4 className="text-xs font-bold text-primary uppercase">Registro Rápido de Paciente</h4>
-                            <button type="button" onClick={() => setShowNewPatient(false)}><X size={14} className="text-muted-foreground"/></button>
+                            <button type="button" onClick={() => setShowNewPatient(false)}><X size={14} className="text-on-surface-variant"/></button>
                           </div>
                           <div className="grid grid-cols-2 gap-2">
-                            <input type="text" placeholder="Nombre *" required className="w-full bg-background border border-border/50 p-2 rounded-lg text-sm" value={newPatientData.nombre} onChange={e=>setNewPatientData({...newPatientData, nombre: e.target.value})}/>
-                            <input type="text" placeholder="Apellido *" required className="w-full bg-background border border-border/50 p-2 rounded-lg text-sm" value={newPatientData.apellido} onChange={e=>setNewPatientData({...newPatientData, apellido: e.target.value})}/>
+                            <input type="text" placeholder="Nombre *" required className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm" value={newPatientData.nombre} onChange={e=>setNewPatientData({...newPatientData, nombre: e.target.value})}/>
+                            <input type="text" placeholder="Apellido *" required className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm" value={newPatientData.apellido} onChange={e=>setNewPatientData({...newPatientData, apellido: e.target.value})}/>
                           </div>
-                          <input type="text" placeholder="Cédula" className="w-full bg-background border border-border/50 p-2 rounded-lg text-sm" value={newPatientData.documento} onChange={e=>setNewPatientData({...newPatientData, documento: e.target.value})}/>
-                          <input type="email" placeholder="Email *" required className="w-full bg-background border border-border/50 p-2 rounded-lg text-sm" value={newPatientData.email} onChange={e=>setNewPatientData({...newPatientData, email: e.target.value})}/>
-                          <input type="text" placeholder="Teléfono *" required className="w-full bg-background border border-border/50 p-2 rounded-lg text-sm" value={newPatientData.telefono} onChange={e=>setNewPatientData({...newPatientData, telefono: e.target.value})}/>
+                          <input type="text" placeholder="Cédula" className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm" value={newPatientData.documento} onChange={e=>setNewPatientData({...newPatientData, documento: e.target.value})}/>
+                          <input type="email" placeholder="Email *" required className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm" value={newPatientData.email} onChange={e=>setNewPatientData({...newPatientData, email: e.target.value})}/>
+                          <input type="text" placeholder="Teléfono *" required className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm" value={newPatientData.telefono} onChange={e=>setNewPatientData({...newPatientData, telefono: e.target.value})}/>
                           <button type="button" onClick={async () => {
-                            if (!newPatientData.nombre || !newPatientData.apellido || !newPatientData.email || !newPatientData.telefono) { alert("Nombre, Apellido, Email y Teléfono son obligatorios"); return; }
+                            if (!newPatientData.nombre || !newPatientData.apellido || !newPatientData.email || !newPatientData.telefono) { toast.success("Nombre, Apellido, Email y Teléfono son obligatorios"); return; }
                             try {
                               setIsSavingPatient(true);
                               const res = await api.post("/api/pacientes", newPatientData);
@@ -362,8 +363,8 @@ export default function CalendarPage() {
                               setFormData({...formData, paciente_id: newPac.id});
                               setPatientSearch(`${newPac.nombre} ${newPac.apellido} - ${newPac.documento || 'S/D'}`);
                               setShowNewPatient(false);
-                            } catch(err: any) { alert("Error creando paciente: " + (err.response?.data?.detail || "")); } finally { setIsSavingPatient(false); }
-                          }} className="w-full bg-primary text-primary-foreground py-2 rounded-lg font-bold text-sm shadow flex justify-center items-center gap-2">
+                            } catch(err: any) { toast.error("Error creando paciente: " + (err.response?.data?.detail || "")); } finally { setIsSavingPatient(false); }
+                          }} className="w-full flex justify-center items-center gap-2 py-4 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all active:scale-[0.98]">
                             {isSavingPatient ? <Loader2 size={16} className="animate-spin" /> : "Guardar Paciente y Seleccionar"}
                           </button>
                         </div>
@@ -371,13 +372,13 @@ export default function CalendarPage() {
                     </div>
 
                     <div className="space-y-1.5" ref={serviceDropdownRef}>
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Servicio / Tratamiento</label>
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Servicio / Tratamiento</label>
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={14} />
                         <input 
                           type="text" 
                           placeholder="Buscar servicio o dejar vacío..." 
-                          className="w-full pl-9 pr-8 py-2.5 bg-background border border-border/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" 
+                          className="w-full pl-9 pr-8 py-2.5 bg-surface border border-outline-variant/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" 
                           value={serviceSearch} 
                           onChange={(e) => { 
                             setServiceSearch(e.target.value); 
@@ -386,14 +387,14 @@ export default function CalendarPage() {
                           }}
                           onFocus={() => setIsServiceDropdownOpen(true)}
                         />
-                        <ChevronDown size={14} className={`absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-transform ${isServiceDropdownOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={14} className={`absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-transform ${isServiceDropdownOpen ? 'rotate-180' : ''}`} />
                       </div>
                       {isServiceDropdownOpen && (
-                        <div className="mt-1 max-h-48 overflow-y-auto border border-border/30 rounded-xl bg-card shadow-2xl z-[120] custom-scrollbar">
+                        <div className="mt-1 max-h-48 overflow-y-auto border border-outline-variant/30 rounded-xl bg-surface-container-low shadow-2xl z-[120] custom-scrollbar">
                           <button 
                             type="button" 
                             onClick={() => { setFormData({...formData, servicio_id: ''}); setServiceSearch(''); setIsServiceDropdownOpen(false); }}
-                            className={`w-full text-left px-4 py-2.5 text-sm border-b border-border/5 transition-colors ${!formData.servicio_id ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-secondary/50 text-muted-foreground italic'}`}
+                            className={`w-full text-left px-4 py-2.5 text-sm border-b border-outline-variant/5 transition-colors ${!formData.servicio_id ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-surface-container-highest/50 text-on-surface-variant italic'}`}
                           >
                             Sin servicio específico
                           </button>
@@ -402,30 +403,30 @@ export default function CalendarPage() {
                               key={s.id} 
                               type="button" 
                               onClick={() => { setFormData({...formData, servicio_id: s.id}); setServiceSearch(s.nombre); setIsServiceDropdownOpen(false); }}
-                              className={`w-full text-left px-4 py-2.5 text-sm flex justify-between items-center border-b border-border/5 last:border-0 transition-colors ${formData.servicio_id === s.id ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/50'}`}
+                              className={`w-full text-left px-4 py-2.5 text-sm flex justify-between items-center border-b border-outline-variant/5 last:border-0 transition-colors ${formData.servicio_id === s.id ? 'bg-primary/10 text-primary' : 'hover:bg-surface-container-highest/50'}`}
                             >
                               <span className="font-bold truncate">{s.nombre}</span>
-                              <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground shrink-0 ml-2">${s.precio.toLocaleString()}</span>
+                              <span className="text-[10px] bg-surface-container-highest px-2 py-0.5 rounded text-on-surface-variant shrink-0 ml-2">${s.precio.toLocaleString()}</span>
                             </button>
                           ))}
                           {filteredServiciosForSelect.length === 0 && serviceSearch && (
-                            <div className="px-4 py-3 text-sm text-muted-foreground text-center italic">Sin coincidencias</div>
+                            <div className="px-4 py-3 text-sm text-on-surface-variant text-center italic">Sin coincidencias</div>
                           )}
                         </div>
                       )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Fecha *</label><input type="date" required className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" value={formData.fecha} onChange={(e) => setFormData({...formData, fecha: e.target.value})}/></div>
-                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Hora *</label><input type="time" required className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" value={formData.hora} onChange={(e) => setFormData({...formData, hora: e.target.value})}/></div>
+                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Fecha *</label><input type="date" required className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" value={formData.fecha} onChange={(e) => setFormData({...formData, fecha: e.target.value})}/></div>
+                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Hora *</label><input type="time" required className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" value={formData.hora} onChange={(e) => setFormData({...formData, hora: e.target.value})}/></div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Duración (min)</label><input type="number" required min="15" step="15" className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" value={formData.duracion_min} onChange={(e) => setFormData({...formData, duracion_min: Number(e.target.value)})}/></div>
+                      <div className="space-y-1.5"><label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Duración (min)</label><input type="number" required min="15" step="15" className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" value={formData.duracion_min} onChange={(e) => setFormData({...formData, duracion_min: Number(e.target.value)})}/></div>
                       {selectedCita && (
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Estado</label>
-                          <select className={`w-full border border-border/50 rounded-xl p-2.5 text-sm font-bold outline-none ${getStatusColor(selectedCita.estado)}`} value={selectedCita.estado} onChange={(e) => handleUpdateStatus(selectedCita.id, e.target.value)}>
+                          <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Estado</label>
+                          <select className={`w-full border border-outline-variant/50 rounded-xl p-2.5 text-sm font-bold outline-none ${getStatusColor(selectedCita.estado)}`} value={selectedCita.estado} onChange={(e) => handleUpdateStatus(selectedCita.id, e.target.value)}>
                             <option value="programada">Programada</option><option value="confirmada">Confirmada</option><option value="cancelada">Cancelada</option><option value="completada">Completada</option>
                           </select>
                         </div>
@@ -433,22 +434,22 @@ export default function CalendarPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Vincular a Presupuesto</label>
-                      <select className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" value={formData.presupuesto_id || ""} onChange={(e) => setFormData({...formData, presupuesto_id: e.target.value})} disabled={!formData.paciente_id}>
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Vincular a Presupuesto</label>
+                      <select className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" value={formData.presupuesto_id || ""} onChange={(e) => setFormData({...formData, presupuesto_id: e.target.value})} disabled={!formData.paciente_id}>
                         <option value="">Cita Independiente (Consulta)</option>
                         {presupuestos.filter(p => (p.paciente_id === formData.paciente_id && p.estado !== 'cancelado' && p.estado !== 'pagado') || p.id === formData.presupuesto_id).map(p => <option key={p.id} value={p.id}>Tratamiento: ${p.total.toLocaleString()} (Pend: ${p.saldo_pendiente.toLocaleString()})</option>)}
                       </select>
                     </div>
 
-                    <div className="space-y-1.5"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Notas / Observaciones</label><textarea className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none resize-none h-24" value={formData.notas} onChange={(e) => setFormData({...formData, notas: e.target.value})}/></div>
+                    <div className="space-y-1.5"><label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Notas / Observaciones</label><textarea className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none resize-none h-24" value={formData.notas} onChange={(e) => setFormData({...formData, notas: e.target.value})}/></div>
                   </div>
                 </div>
-                <div className="flex justify-between items-center p-6 border-t border-border/10 bg-secondary/5 shrink-0">
-                  <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+                <div className="flex justify-between items-center p-6 border-t border-outline-variant/10 bg-surface-container-highest/5 shrink-0">
+                  <p className="text-[11px] text-on-surface-variant italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
                   <div className="flex items-center gap-2">
-                    {selectedCita && <button type="button" onClick={() => { if(confirm("¿Cancelar cita?")) handleUpdateStatus(selectedCita.id, "cancelada"); }} className="text-destructive hover:bg-destructive/10 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Cancelar Cita</button>}
-                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-bold hover:bg-secondary rounded-xl transition-colors">Cerrar</button>
-                    <button type="submit" disabled={isSaving} className="bg-primary text-primary-foreground px-8 py-2.5 rounded-xl text-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2">{isSaving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}{selectedCita ? 'Actualizar' : 'Agendar'}</button>
+                    {selectedCita && <button type="button" onClick={() => { if(confirm("¿Cancelar cita?")) handleUpdateStatus(selectedCita.id, "cancelada"); }} className="text-error hover:bg-error/10 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Cancelar Cita</button>}
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-bold hover:bg-surface-container-highest rounded-xl transition-colors">Cerrar</button>
+                    <button type="submit" disabled={isSaving} className="bg-primary text-primary-foreground px-8 py-2.5 rounded-lg text-sm font-black flex items-center gap-2 border border-primary/20">{isSaving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}{selectedCita ? 'Actualizar' : 'Agendar'}</button>
                   </div>
                 </div>
               </form>
@@ -461,21 +462,21 @@ export default function CalendarPage() {
       <AnimatePresence>
         {isCompleteModalOpen && selectedCita && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/90 backdrop-blur-md" onClick={() => setIsCompleteModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }} className="bg-card w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-border relative z-10 overflow-hidden">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" onClick={() => setIsCompleteModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }} className="bg-surface-container-low w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-outline-variant relative z-10 overflow-hidden">
               <div className="p-8 text-center space-y-6">
                 <div className="w-16 h-16 bg-green-500/20 text-green-500 rounded-2xl flex items-center justify-center mx-auto"><DollarSign size={32} /></div>
-                <div className="space-y-2"><h3 className="text-2xl font-black">Completar Cita</h3><p className="text-muted-foreground text-sm">Ingresa el monto final cobrado al paciente.</p></div>
+                <div className="space-y-2"><h3 className="text-2xl font-black">Completar Cita</h3><p className="text-on-surface-variant text-sm">Ingresa el monto final cobrado al paciente.</p></div>
                 <div className="space-y-4">
-                  <div className="bg-secondary/30 p-4 rounded-2xl space-y-3">
-                    <div className="space-y-1"><p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Monto Final USD</p><input type="number" autoFocus className="w-full bg-transparent text-center text-4xl font-black outline-none text-primary" value={montoCobrado} onChange={(e) => setMontoCobrado(Number(e.target.value))}/></div>
-                    <div className="grid grid-cols-1 gap-3 pt-3 border-t border-border/10">
+                  <div className="bg-surface-container-highest/30 p-4 rounded-2xl space-y-3">
+                    <div className="space-y-1"><p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Monto Final USD</p><input type="number" autoFocus className="w-full bg-transparent text-center text-4xl font-black outline-none text-primary" value={montoCobrado} onChange={(e) => setMontoCobrado(Number(e.target.value))}/></div>
+                    <div className="grid grid-cols-1 gap-3 pt-3 border-t border-outline-variant/10">
                       <div className="bg-indigo-500/10 p-3 rounded-2xl text-center border border-indigo-500/20"><p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1.5">Monto en Bs. (BCV Euro)</p><p className="text-xl font-black text-white">{(montoCobrado * finConfig.tasa_eur).toLocaleString('es-VE', { minimumFractionDigits: 2 })}</p></div>
-                      <div className="opacity-40 text-center"><p className="text-[9px] font-bold text-muted-foreground uppercase leading-none mb-1">Ref. Informativa USD</p><p className="text-sm font-bold text-slate-400">{(montoCobrado * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}</p></div>
+                      <div className="opacity-40 text-center"><p className="text-[9px] font-bold text-on-surface-variant uppercase leading-none mb-1">Ref. Informativa USD</p><p className="text-sm font-bold text-slate-400">{(montoCobrado * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}</p></div>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <button onClick={() => setIsCompleteModalOpen(false)} className="flex-1 py-4 font-bold hover:bg-secondary rounded-2xl transition-colors">Volver</button>
+                    <button onClick={() => setIsCompleteModalOpen(false)} className="flex-1 py-4 font-bold hover:bg-surface-container-highest rounded-2xl transition-colors">Volver</button>
                     <button onClick={() => handleUpdateStatus(selectedCita.id, "completada", montoCobrado)} className="flex-1 py-4 bg-green-500 text-white font-black rounded-2xl shadow-xl shadow-green-500/20 hover:scale-105 transition-all">Confirmar</button>
                   </div>
                 </div>

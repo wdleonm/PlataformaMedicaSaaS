@@ -526,7 +526,7 @@ export default function Home() {
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Correo Electrónico</label>
+                    <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Correo Electrónico</label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
                       <input 
@@ -542,7 +542,7 @@ export default function Home() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between pl-1">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Contraseña</label>
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Contraseña</label>
                       <a href="#" className="text-xs text-cyan-400 hover:underline">¿Olvidaste tu clave?</a>
                     </div>
                     <div className="relative">

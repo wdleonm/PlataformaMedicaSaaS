@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
@@ -102,9 +103,9 @@ export default function SeguridadPage() {
         exigir_cambio_password: exigirCambio,
         intervalo_cambio_password: exigirCambio ? intervalo : null
       });
-      alert("Preferencias de seguridad actualizadas");
+      toast.success("Preferencias de seguridad actualizadas");
     } catch (err: any) {
-      alert("Error al actualizar preferencias: " + (err.response?.data?.detail || "Intente de nuevo"));
+      toast.error("Error al actualizar preferencias: " + (err.response?.data?.detail || "Intente de nuevo"));
     } finally {
       setIsUpdatingSettings(false);
     }
@@ -117,7 +118,7 @@ export default function SeguridadPage() {
           <ShieldCheck size={28} />
         </div>
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-foreground">Seguridad Clínica</h1>
+          <h1 className="text-2xl font-black tracking-tight text-on-surface">Seguridad Clínica</h1>
           <p className="text-primary font-black uppercase tracking-[0.2em] text-[9px] mt-0.5 opacity-90">Protección y Gestión de Accesos</p>
         </div>
       </div>
@@ -147,10 +148,10 @@ export default function SeguridadPage() {
         
         {/* Columna Izquierda: Formulario (8 cols) */}
         <div className="lg:col-span-8 h-full">
-          <div className="glass-panel p-8 rounded-[36px] border border-border/50 shadow-xl bg-card/40 backdrop-blur-2xl relative overflow-hidden h-full flex flex-col justify-center">
+          <div className="glass-panel p-8 rounded-[36px] border border-outline-variant/50 shadow-xl bg-surface-container-low/40 backdrop-blur-2xl relative overflow-hidden h-full flex flex-col justify-center">
             <div className="absolute right-0 top-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
             
-            <h3 className="text-lg font-black mb-8 italic tracking-tight flex items-center gap-3 text-foreground">
+            <h3 className="text-lg font-black mb-8 italic tracking-tight flex items-center gap-3 text-on-surface">
               <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center text-primary">
                 <Lock size={16} />
               </div>
@@ -161,9 +162,9 @@ export default function SeguridadPage() {
               <AnimatePresence>
                 {message && (
                   <motion.div 
-                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.9, y: -10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
                     className={`p-4 rounded-[20px] flex items-center gap-4 border ${
                       message.type === 'success' 
                       ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' 
@@ -180,9 +181,9 @@ export default function SeguridadPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2 space-y-2 group">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-2 group-focus-within:text-primary transition-all">Contraseña Actual</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface/70 ml-2 group-focus-within:text-primary transition-all">Contraseña Actual</label>
                   <div className="relative">
-                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-primary transition-colors">
+                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-on-surface/30 group-focus-within:text-primary transition-colors">
                       <Lock size={16} />
                     </div>
                     <input 
@@ -190,13 +191,13 @@ export default function SeguridadPage() {
                       required
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
+                      className="w-full bg-surface-container-highest/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-on-surface/20 text-on-surface text-sm"
                       placeholder="Actual"
                     />
                     <button 
                       type="button"
                       onClick={() => setShowPasswords(!showPasswords)}
-                      className="absolute right-5 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors p-2"
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-on-surface/30 hover:text-primary transition-colors p-2"
                     >
                       {showPasswords ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -204,9 +205,9 @@ export default function SeguridadPage() {
                 </div>
 
                 <div className="space-y-2 group relative">
-                   <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-2 group-focus-within:text-primary transition-all">Nueva Contraseña</label>
+                   <label className="text-[10px] font-black uppercase tracking-widest text-on-surface/70 ml-2 group-focus-within:text-primary transition-all">Nueva Contraseña</label>
                    <div className="relative">
-                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-primary transition-colors">
+                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-on-surface/30 group-focus-within:text-primary transition-colors">
                       <Lock size={16} />
                     </div>
                     <input 
@@ -214,13 +215,13 @@ export default function SeguridadPage() {
                       required
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
+                      className="w-full bg-surface-container-highest/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 focus:ring-4 focus:ring-primary/15 focus:border-primary/30 outline-none transition-all font-bold placeholder:text-on-surface/20 text-on-surface text-sm"
                       placeholder="8+ Caracteres"
                     />
                     <button 
                       type="button"
                       onClick={() => setShowPasswords(!showPasswords)}
-                      className="absolute right-5 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors p-2"
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-on-surface/30 hover:text-primary transition-colors p-2"
                     >
                       {showPasswords ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -228,9 +229,9 @@ export default function SeguridadPage() {
                 </div>
 
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-2 group-focus-within:text-primary transition-all">Repetir Nueva</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface/70 ml-2 group-focus-within:text-primary transition-all">Repetir Nueva</label>
                   <div className="relative">
-                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-foreground/30 group-focus-within:text-primary transition-colors">
+                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-on-surface/30 group-focus-within:text-primary transition-colors">
                       <Lock size={16} />
                     </div>
                     <input 
@@ -238,13 +239,13 @@ export default function SeguridadPage() {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-secondary/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 outline-none focus:ring-4 focus:ring-primary/15 focus:border-primary/30 transition-all font-bold placeholder:text-foreground/20 text-foreground text-sm"
+                      className="w-full bg-surface-container-highest/30 border border-white/5 rounded-[22px] p-4.5 pl-14 pr-14 outline-none focus:ring-4 focus:ring-primary/15 focus:border-primary/30 transition-all font-bold placeholder:text-on-surface/20 text-on-surface text-sm"
                       placeholder="Confirmar"
                     />
                     <button 
                       type="button"
                       onClick={() => setShowPasswords(!showPasswords)}
-                      className="absolute right-5 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors p-2"
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-on-surface/30 hover:text-primary transition-colors p-2"
                     >
                       {showPasswords ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -261,7 +262,7 @@ export default function SeguridadPage() {
                           className="mt-4 p-4 bg-black/20 rounded-[24px] border border-white/5"
                         >
                             <div className="flex justify-between items-center mb-2 px-1">
-                                <span className="text-[9px] font-black uppercase text-foreground/60 tracking-[0.1em]">Fortaleza:</span>
+                                <span className="text-[9px] font-black uppercase text-on-surface/60 tracking-[0.1em]">Fortaleza:</span>
                                 <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${
                                    strength <= 1 ? 'bg-red-500/20 text-red-500' : strength <= 3 ? 'bg-amber-500/20 text-amber-500' : 'bg-emerald-500/20 text-emerald-500'
                                 }`}>
@@ -288,7 +289,7 @@ export default function SeguridadPage() {
                                  { check: /[0-9]/.test(newPassword), label: '123' },
                                  { check: /[^A-Za-z0-9]/.test(newPassword), label: '@#$' }
                                ].map((cond, i) => (
-                                 <div key={i} className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all ${cond.check ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-black/10 border-white/5 text-foreground/30'}`}>
+                                 <div key={i} className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all ${cond.check ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-black/10 border-white/5 text-on-surface/30'}`}>
                                     <div className={`w-1.5 h-1.5 rounded-full ${cond.check ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-current opacity-20'}`} />
                                     <span className="text-[8px] font-black uppercase tracking-tighter">{cond.label}</span>
                                  </div>
@@ -320,10 +321,10 @@ export default function SeguridadPage() {
 
         {/* Columna Derecha: Reglas de Oro (4 cols) */}
         <div className="lg:col-span-4 h-full">
-          <div className="glass-panel p-8 rounded-[36px] border border-border/50 bg-secondary/10 h-full flex flex-col relative overflow-hidden group">
+          <div className="glass-panel p-8 rounded-[36px] border border-outline-variant/50 bg-surface-container-highest/10 h-full flex flex-col relative overflow-hidden group">
             <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-primary/5 rounded-full blur-[60px]" />
             
-            <h2 className="text-sm font-black mb-6 flex items-center gap-3 tracking-tight italic text-foreground relative z-10 uppercase">
+            <h2 className="text-sm font-black mb-6 flex items-center gap-3 tracking-tight italic text-on-surface relative z-10 uppercase">
                <div className="w-8 h-8 bg-primary/20 rounded-xl flex items-center justify-center text-primary shadow-lg border border-primary/20">
                  <Clock size={16} />
                </div>
@@ -331,7 +332,7 @@ export default function SeguridadPage() {
             </h2>
             
             <div className="space-y-4 relative z-10 flex-1">
-              <p className="text-[11px] text-foreground/80 font-bold leading-relaxed px-1">
+              <p className="text-[11px] text-on-surface/80 font-bold leading-relaxed px-1">
                 Blindar el acceso es tu mayor compromiso ético profesional.
               </p>
               
@@ -347,7 +348,7 @@ export default function SeguridadPage() {
                     className="p-3 bg-black/20 rounded-2xl border border-white/5 flex gap-3 items-center group/tip hover:bg-black/40 transition-all"
                   >
                      <span className="text-sm">{tip.icon}</span>
-                     <span className="text-[10px] font-black uppercase tracking-wider text-foreground/90">{tip.text}</span>
+                     <span className="text-[10px] font-black uppercase tracking-wider text-on-surface/90">{tip.text}</span>
                   </motion.div>
                 ))}
               </div>
@@ -355,7 +356,7 @@ export default function SeguridadPage() {
               <div className="mt-4 p-4 bg-primary/10 rounded-[20px] border border-primary/20">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                  <span className="text-[9px] font-black text-foreground uppercase tracking-widest">Encriptación Activa</span>
+                  <span className="text-[9px] font-black text-on-surface uppercase tracking-widest">Encriptación Activa</span>
                 </div>
               </div>
             </div>
@@ -374,10 +375,10 @@ export default function SeguridadPage() {
                   <Settings2 size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black italic tracking-tighter text-foreground leading-none mb-1">
+                  <h2 className="text-xl font-black italic tracking-tighter text-on-surface leading-none mb-1">
                     Caducidad Automática
                   </h2>
-                  <p className="text-[11px] text-foreground/70 font-bold max-w-xs leading-tight">
+                  <p className="text-[11px] text-on-surface/70 font-bold max-w-xs leading-tight">
                     Fuerza un cambio de clave periódico para máxima seguridad.
                   </p>
                 </div>
@@ -394,7 +395,7 @@ export default function SeguridadPage() {
                   <div className={`w-10 h-6 rounded-full relative transition-all duration-300 ${exigirCambio ? 'bg-primary' : 'bg-white/10'}`}>
                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 shadow-md ${exigirCambio ? 'left-5' : 'left-1'}`} />
                   </div>
-                  <span className={`text-[10px] font-black uppercase tracking-widest ${exigirCambio ? 'text-foreground' : 'text-foreground/40'}`}>
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${exigirCambio ? 'text-on-surface' : 'text-on-surface/40'}`}>
                     {exigirCambio ? 'Activado' : 'Desactivado'}
                   </span>
                 </div>
@@ -411,7 +412,7 @@ export default function SeguridadPage() {
                       <select 
                         value={intervalo}
                         onChange={(e) => setIntervalo(parseInt(e.target.value))}
-                        className="w-full bg-[#070c0c] border border-primary/20 rounded-2xl p-4 text-[11px] font-black text-foreground outline-none focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer"
+                        className="w-full bg-[#070c0c] border border-primary/20 rounded-2xl p-4 text-[11px] font-black text-on-surface outline-none focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer"
                       >
                         <option value={60}>60 Días (Seguro)</option>
                         <option value={90}>90 Días (Estándar)</option>

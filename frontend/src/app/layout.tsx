@@ -3,6 +3,7 @@ import { Outfit } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
+import { Toaster } from 'react-hot-toast';
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -30,6 +31,7 @@ export default function RootLayout({
         
         <AdminAuthProvider>
           <AuthProvider>
+            <Toaster position="bottom-right" toastOptions={{ style: { background: '#1E293B', color: '#fff', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' } }} />
             {children}
           </AuthProvider>
         </AdminAuthProvider>

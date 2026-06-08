@@ -103,23 +103,23 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-background/80 backdrop-blur-sm"
         />
         
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-2xl bg-[#0a0514] border border-white/10 rounded-3xl shadow-2xl overflow-hidden"
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          className="relative w-full max-w-2xl bg-background border border-outline-variant/30 rounded-3xl shadow-2xl overflow-hidden"
         >
-          <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-white/5">
-            <h2 className="text-xl font-black text-white flex items-center gap-2">
+          <div className="px-6 py-5 border-b border-outline-variant/20 flex items-center justify-between bg-surface-container-highest/50">
+            <h2 className="text-xl font-black text-on-surface flex items-center gap-2">
               <Shield className="text-violet-500" />
               {plan ? "Editar Plan de Suscripción" : "Crear Nuevo Plan"}
             </h2>
             <button 
               onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white"
+              className="p-2 hover:bg-surface-container-highest rounded-full transition-colors text-on-surface-variant hover:text-on-surface"
             >
               <X size={20} />
             </button>
@@ -136,7 +136,7 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-300">Código del Plan</label>
+                  <label className="text-sm font-bold text-on-surface">Código del Plan</label>
                   <input
                     type="text"
                     name="codigo"
@@ -144,31 +144,31 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
                     onChange={handleChange}
                     disabled={!!plan}
                     placeholder="ej: basico, profesional"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:opacity-50"
                     required
                   />
-                  {!plan && <p className="text-xs text-slate-500">Debe ser único y sin espacios.</p>}
+                  {!plan && <p className="text-xs text-on-surface-variant">Debe ser único y sin espacios.</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-300">Nombre Visible</label>
+                  <label className="text-sm font-bold text-on-surface">Nombre Visible</label>
                   <input
                     type="text"
                     name="nombre"
                     value={formData.nombre || ""}
                     onChange={handleChange}
                     placeholder="ej: Plan Básico"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-300 flex justify-between">
+                  <label className="text-sm font-bold text-on-surface flex justify-between">
                     <span>Precio Mensual ($)</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant">
                       <DollarSign size={18} />
                     </div>
                     <input
@@ -177,7 +177,7 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
                       name="precio_mensual"
                       value={formData.precio_mensual === undefined ? "" : formData.precio_mensual}
                       onChange={handleChange}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl pl-10 pr-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                       required
                     />
                   </div>
@@ -193,27 +193,27 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
                         onChange={handleChange}
                         className="before:content[''] peer relative h-6 w-6 cursor-pointer appearance-none rounded-md border border-white/20 bg-white/5 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-violet-500 before:opacity-0 before:transition-opacity checked:border-violet-500 checked:bg-violet-500 checked:before:bg-violet-500 hover:before:opacity-10"
                       />
-                      <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                      <span className="absolute text-on-surface transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                         </svg>
                       </span>
                     </label>
-                    <span className="font-bold text-white ml-2">Plan Activo</span>
+                    <span className="font-bold text-on-surface ml-2">Plan Activo</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-white/5">
-                <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2">
+              <div className="pt-6 border-t border-outline-variant/20">
+                <h3 className="text-lg font-black text-on-surface mb-4 flex items-center gap-2">
                   <Star className="text-yellow-500" size={18} />
                   Límites y Características
                 </h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-300 flex items-center gap-2">
-                      <Users size={16} className="text-slate-400" />
+                    <label className="text-sm font-bold text-on-surface flex items-center gap-2">
+                      <Users size={16} className="text-on-surface-variant" />
                       Máximo Pacientes
                     </label>
                     <input
@@ -222,13 +222,13 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
                       value={formData.max_pacientes || ""}
                       onChange={handleChange}
                       placeholder="Dejar vacío para ilimitado"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-300 flex items-center gap-2">
-                      <Calendar size={16} className="text-slate-400" />
+                    <label className="text-sm font-bold text-on-surface flex items-center gap-2">
+                      <Calendar size={16} className="text-on-surface-variant" />
                       Citas Mensuales
                     </label>
                     <input
@@ -237,37 +237,37 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
                       value={formData.max_citas_mes || ""}
                       onChange={handleChange}
                       placeholder="Dejar vacío para ilimitadas"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4 bg-white/[0.02] p-4 rounded-2xl border border-white/5">
-                  <label className="flex items-center gap-4 cursor-pointer p-2 hover:bg-white/5 rounded-xl transition-colors">
+                <div className="space-y-4 bg-white/[0.02] p-4 rounded-2xl border border-outline-variant/20">
+                  <label className="flex items-center gap-4 cursor-pointer p-2 hover:bg-surface-container-highest/50 rounded-xl transition-colors">
                     <div className="relative flex items-center">
                       <input
                         type="checkbox"
                         name="incluye_whatsapp"
                         checked={formData.incluye_whatsapp || false}
                         onChange={handleChange}
-                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-white/20 bg-white/5 checked:border-emerald-500 checked:bg-emerald-500 transition-all"
+                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-white/20 bg-surface-container-highest/50 checked:border-emerald-500 checked:bg-emerald-500 transition-all"
                       />
-                      <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 peer-checked:opacity-100">
+                      <span className="absolute text-on-surface transition-opacity opacity-0 pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 peer-checked:opacity-100">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                         </svg>
                       </span>
                     </div>
                     <div className="flex-1">
-                      <div className="font-bold text-white flex items-center gap-2">
+                      <div className="font-bold text-on-surface flex items-center gap-2">
                         <MessageCircle size={16} className="text-emerald-400" />
                         Alertas y Recordatorios por WhatsApp
                       </div>
-                      <div className="text-xs text-slate-500 mt-1">Permite automatización de mensajes</div>
+                      <div className="text-xs text-on-surface-variant mt-1">Permite automatización de mensajes</div>
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-4 cursor-pointer p-2 hover:bg-white/5 rounded-xl transition-colors">
+                  <label className="flex items-center gap-4 cursor-pointer p-2 hover:bg-surface-container-highest/50 rounded-xl transition-colors">
                     <div className="relative flex items-center">
                       <input
                         type="checkbox"
@@ -276,42 +276,42 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
                         onChange={handleChange}
                         className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-white/20 bg-white/5 checked:border-violet-500 checked:bg-violet-500 transition-all"
                       />
-                      <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 peer-checked:opacity-100">
+                      <span className="absolute text-on-surface transition-opacity opacity-0 pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 peer-checked:opacity-100">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                         </svg>
                       </span>
                     </div>
                     <div className="flex-1">
-                      <div className="font-bold text-white flex items-center gap-2">
+                      <div className="font-bold text-on-surface flex items-center gap-2">
                         <Users size={16} className="text-violet-400" />
                         Acceso Multi-Usuario
                       </div>
-                      <div className="text-xs text-slate-500 mt-1">Permite asistentes y secretarias</div>
+                      <div className="text-xs text-on-surface-variant mt-1">Permite asistentes y secretarias</div>
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-4 cursor-pointer p-2 hover:bg-white/5 rounded-xl transition-colors">
+                  <label className="flex items-center gap-4 cursor-pointer p-2 hover:bg-surface-container-highest/50 rounded-xl transition-colors">
                     <div className="relative flex items-center">
                       <input
                         type="checkbox"
                         name="soporte_prioritario"
                         checked={formData.soporte_prioritario || false}
                         onChange={handleChange}
-                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-white/20 bg-white/5 checked:border-amber-500 checked:bg-amber-500 transition-all"
+                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-white/20 bg-surface-container-highest/50 checked:border-amber-500 checked:bg-amber-500 transition-all"
                       />
-                      <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 peer-checked:opacity-100">
+                      <span className="absolute text-on-surface transition-opacity opacity-0 pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 peer-checked:opacity-100">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                         </svg>
                       </span>
                     </div>
                     <div className="flex-1">
-                      <div className="font-bold text-white flex items-center gap-2">
+                      <div className="font-bold text-on-surface flex items-center gap-2">
                         <Star size={16} className="text-amber-400" />
                         Soporte Prioritario 24/7
                       </div>
-                      <div className="text-xs text-slate-500 mt-1">Asistencia técnica y respuesta rápida en todo momento</div>
+                      <div className="text-xs text-on-surface-variant mt-1">Asistencia técnica y respuesta rápida en todo momento</div>
                     </div>
                   </label>
                 </div>
@@ -319,12 +319,12 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
             </form>
           </div>
 
-          <div className="p-6 border-t border-white/5 bg-white/5 flex gap-4 justify-end">
+          <div className="p-6 border-t border-outline-variant/20 bg-surface-container-highest/50 flex gap-4 justify-end">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-6 py-3 font-bold text-slate-300 hover:text-white transition-colors"
+              className="px-6 py-3 font-bold text-on-surface hover:text-on-surface transition-colors"
             >
               Cancelar
             </button>

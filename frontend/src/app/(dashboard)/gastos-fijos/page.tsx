@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect, useMemo, useRef } from "react";
 import { api } from "@/lib/api";
 import { 
@@ -108,7 +109,7 @@ export default function GastosFijosPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.categoria_id) {
-      alert("Por favor selecciona una categoría válida");
+      toast.success("Por favor selecciona una categoría válida");
       return;
     }
     try {
@@ -131,7 +132,7 @@ export default function GastosFijosPage() {
       fetchData();
     } catch (error) {
       console.error("Error saving gasto:", error);
-      alert("Error al guardar el gasto");
+      toast.error("Error al guardar el gasto");
     }
   };
 
@@ -170,7 +171,7 @@ export default function GastosFijosPage() {
       setIsCategoryDropdownOpen(false);
     } catch (error) {
       console.error("Error creating category:", error);
-      alert("Error al crear la categoría");
+      toast.error("Error al crear la categoría");
     } finally {
       setIsCreatingCategory(false);
     }
@@ -196,7 +197,7 @@ export default function GastosFijosPage() {
             </div>
             Gastos Fijos Operativos
           </h1>
-          <p className="text-muted-foreground mt-2 font-medium">
+          <p className="text-on-surface-variant mt-2 font-medium">
             Gestiona los costos fijos mensuales de tu clínica para calcular tu utilidad neta real.
           </p>
         </div>
@@ -230,20 +231,20 @@ export default function GastosFijosPage() {
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-rose-500 mb-1">Total Gastos Fijos</p>
               <h2 className="text-4xl font-black text-rose-500">{formatCurrency(totalMensual)}</h2>
-              <p className="text-sm text-muted-foreground font-bold mt-1 uppercase tracking-tighter">
+              <p className="text-sm text-on-surface-variant font-bold mt-1 uppercase tracking-tighter">
                 Periodo: {format(new Date(selectedYear, selectedMonth - 1), "MMMM yyyy", { locale: es })}
               </p>
             </div>
 
             <div className="pt-6 border-t border-rose-500/10">
-              <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground">
+              <div className="flex items-center gap-3 text-sm font-bold text-on-surface-variant">
                 <AlertCircle size={18} className="text-rose-400" />
                 <span>Este monto se restará automáticamente de tu utilidad neta en el dashboard.</span>
               </div>
             </div>
 
             {/* Selector de Periodo */}
-            <div className="flex items-center gap-2 bg-background/40 p-2 rounded-2xl border border-white/5">
+            <div className="flex items-center gap-2 bg-surface/40 p-2 rounded-2xl border border-white/5">
               <button 
                 onClick={() => {
                   if (selectedMonth === 1) {
@@ -287,15 +288,15 @@ export default function GastosFijosPage() {
           <div className="flex items-center justify-between mb-6 px-2">
             <h3 className="font-black text-lg flex items-center gap-2">
               Detalle de Egresos
-              <span className="text-xs bg-secondary px-2 py-0.5 rounded-full text-muted-foreground">{gastos.length} registros</span>
+              <span className="text-xs bg-surface-container-highest px-2 py-0.5 rounded-full text-on-surface-variant">{gastos.length} registros</span>
             </h3>
             <div className="flex items-center gap-2">
                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={14} />
                   <input 
                     type="text" 
                     placeholder="Buscar gasto..." 
-                    className="pl-9 pr-4 py-2 bg-secondary/50 rounded-xl text-xs outline-none border border-transparent focus:border-primary/30 transition-all w-48"
+                    className="pl-9 pr-4 py-2 bg-surface-container-highest/50 rounded-xl text-xs outline-none border border-transparent focus:border-primary/30 transition-all w-48"
                   />
                </div>
             </div>
@@ -304,12 +305,12 @@ export default function GastosFijosPage() {
           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
             {loading ? (
               <div className="py-20 text-center animate-pulse">
-                <p className="text-muted-foreground font-bold uppercase tracking-[0.2em] text-xs">Sincronizando Gastos...</p>
+                <p className="text-on-surface-variant font-bold uppercase tracking-[0.2em] text-xs">Sincronizando Gastos...</p>
               </div>
             ) : gastos.length === 0 ? (
-              <div className="py-20 text-center border-2 border-dashed border-border/10 rounded-[2rem] flex flex-col items-center gap-4">
-                <Wallet className="text-muted-foreground/20" size={48} />
-                <p className="text-muted-foreground font-medium italic">No hay gastos fijos registrados para este mes.</p>
+              <div className="py-20 text-center border-2 border-dashed border-outline-variant/10 rounded-[2rem] flex flex-col items-center gap-4">
+                <Wallet className="text-on-surface-variant/20" size={48} />
+                <p className="text-on-surface-variant font-medium italic">No hay gastos fijos registrados para este mes.</p>
                 <button 
                    onClick={() => setIsModalOpen(true)}
                    className="text-xs font-black text-primary hover:underline uppercase tracking-widest"
@@ -324,7 +325,7 @@ export default function GastosFijosPage() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="flex items-center gap-4 p-4 rounded-[1.5rem] bg-secondary/20 hover:bg-secondary/40 border border-transparent hover:border-primary/10 transition-all group"
+                  className="flex items-center gap-4 p-4 rounded-[1.5rem] bg-surface-container-highest/20 hover:bg-surface-container-highest/40 border border-transparent hover:border-primary/10 transition-all group"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
                     <Calendar size={20} />
@@ -336,8 +337,8 @@ export default function GastosFijosPage() {
                         <span className="text-[8px] font-black uppercase tracking-tighter bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded-full border border-indigo-500/20">Recurrente</span>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground truncate">{g.descripcion || "Sin descripción"}</p>
-                    <p className="text-[10px] text-muted-foreground font-bold mt-0.5">Pagado el {format(new Date(g.fecha_pago + 'T12:00:00'), "dd 'de' MMMM", { locale: es })}</p>
+                    <p className="text-xs text-on-surface-variant truncate">{g.descripcion || "Sin descripción"}</p>
+                    <p className="text-[10px] text-on-surface-variant font-bold mt-0.5">Pagado el {format(new Date(g.fecha_pago + 'T12:00:00'), "dd 'de' MMMM", { locale: es })}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="font-black text-rose-500 text-lg">{formatCurrency(g.monto)}</p>
@@ -383,7 +384,7 @@ export default function GastosFijosPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]"
             />
             
             <motion.div 
@@ -399,7 +400,7 @@ export default function GastosFijosPage() {
                   </div>
                   {editingGasto ? "Editar Gasto" : "Nuevo Gasto Mensual"}
                 </h2>
-                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-secondary rounded-full transition-colors text-muted-foreground"><X size={20}/></button>
+                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-surface-container-highest rounded-full transition-colors text-on-surface-variant"><X size={20}/></button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5 overflow-y-auto pr-2 custom-scrollbar">
@@ -407,7 +408,7 @@ export default function GastosFijosPage() {
                   {/* Buscador de Categoría */}
                   <div className="space-y-1.5 relative" ref={categoryDropdownRef}>
                     <div className="flex justify-between items-center px-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Categoría</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Categoría</label>
                       <button 
                         type="button" 
                         onClick={handleCreateCategory}
@@ -428,9 +429,9 @@ export default function GastosFijosPage() {
                           if (!e.target.value) setFormData({...formData, categoria_id: ""});
                         }}
                         onFocus={() => setIsCategoryDropdownOpen(true)}
-                        className="w-full bg-secondary/50 border border-border/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm pr-10"
+                        className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm pr-10"
                       />
-                      <ChevronDown size={16} className={`absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown size={16} className={`absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
                     </div>
 
                     <AnimatePresence>
@@ -439,12 +440,12 @@ export default function GastosFijosPage() {
                           initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 5 }}
-                          className="absolute top-full left-0 right-0 mt-2 bg-card border border-border/50 rounded-2xl shadow-2xl z-[110] overflow-hidden"
+                          className="absolute top-full left-0 right-0 mt-2 bg-surface-container-low border border-outline-variant/50 rounded-2xl shadow-2xl z-[110] overflow-hidden"
                         >
                           <div className="max-h-48 overflow-y-auto custom-scrollbar">
                             {filteredCategorias.length === 0 ? (
                               <div className="p-4 text-center">
-                                <p className="text-xs text-muted-foreground italic mb-2">No existe esta categoría</p>
+                                <p className="text-xs text-on-surface-variant italic mb-2">No existe esta categoría</p>
                                 <button 
                                   type="button"
                                   onClick={handleCreateCategory}
@@ -463,7 +464,7 @@ export default function GastosFijosPage() {
                                     setCategorySearch(c.nombre);
                                     setIsCategoryDropdownOpen(false);
                                   }}
-                                  className={`w-full text-left px-4 py-3 text-sm flex justify-between items-center transition-colors border-b border-border/5 last:border-0 ${formData.categoria_id === c.id ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/50'}`}
+                                  className={`w-full text-left px-4 py-3 text-sm flex justify-between items-center transition-colors border-b border-outline-variant/5 last:border-0 ${formData.categoria_id === c.id ? 'bg-primary/10 text-primary' : 'hover:bg-surface-container-highest/50'}`}
                                 >
                                   <span className="font-bold">{c.nombre}</span>
                                   {c.especialista_id && <span className="text-[8px] font-black bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded-full uppercase">Personal</span>}
@@ -477,7 +478,7 @@ export default function GastosFijosPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Monto (USD)</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Monto (USD)</label>
                     <input 
                       required
                       type="number"
@@ -485,31 +486,31 @@ export default function GastosFijosPage() {
                       placeholder="0.00"
                       value={formData.monto}
                       onChange={(e) => setFormData({...formData, monto: e.target.value})}
-                      className="w-full bg-secondary/50 border border-border/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Descripción / Notas</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Descripción / Notas</label>
                   <input 
                     type="text"
                     placeholder="Ej. Pago correspondiente al mes actual..."
                     value={formData.descripcion}
                     onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
-                    className="w-full bg-secondary/50 border border-border/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm"
+                    className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Fecha de Pago</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Fecha de Pago</label>
                     <input 
                       required
                       type="date"
                       value={formData.fecha_pago}
                       onChange={(e) => setFormData({...formData, fecha_pago: e.target.value})}
-                      className="w-full bg-secondary/50 border border-border/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm [color-scheme:dark]"
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm [color-scheme:dark]"
                     />
                   </div>
                   <div className="flex items-end pb-3">
@@ -523,16 +524,16 @@ export default function GastosFijosPage() {
                         checked={formData.es_recurrente}
                         onChange={(e) => setFormData({...formData, es_recurrente: e.target.checked})}
                       />
-                      <span className="text-xs font-bold text-muted-foreground group-hover:text-foreground transition-colors">Gasto Recurrente</span>
+                      <span className="text-xs font-bold text-on-surface-variant group-hover:text-on-surface transition-colors">Gasto Recurrente</span>
                     </label>
                   </div>
                 </div>
 
-                <div className="pt-4 flex gap-3 sticky bottom-0 bg-card py-2">
+                <div className="pt-4 flex gap-3 sticky bottom-0 bg-surface-container-low py-2">
                   <button 
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="flex-1 py-4 bg-secondary/50 text-muted-foreground font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-secondary transition-all"
+                    className="flex-1 py-4 bg-surface-container-highest/50 text-on-surface-variant font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-surface-container-highest transition-all"
                   >
                     Cancelar
                   </button>

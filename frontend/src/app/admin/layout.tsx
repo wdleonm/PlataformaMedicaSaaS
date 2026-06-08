@@ -18,7 +18,9 @@ import {
   MapPin,
   Calendar,
   Clock,
-  Stethoscope
+  Stethoscope,
+  Sun,
+  Moon
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,6 +32,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDarkMode) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   // Actualizar hora cada minuto sin necesidad de alta precisión
   useEffect(() => {
@@ -65,8 +77,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const SidebarContent = ({ onClose }: { onClose?: () => void }) => (
     <div className="flex flex-col h-full">
-      <div className="p-6 flex flex-col items-center gap-4 text-center border-b border-white/5">
-        <div className="w-16 h-16 bg-white/5 rounded-3xl flex items-center justify-center shadow-2xl shadow-violet-500/20 ring-1 ring-white/10 overflow-hidden group hover:scale-105 transition-transform duration-500">
+      <div className="p-6 flex flex-col items-center gap-4 text-center border-b border-outline-variant/20">
+        <div className="w-16 h-16 bg-surface-container-highest/50 rounded-3xl flex items-center justify-center shadow-2xl shadow-violet-500/20 ring-1 ring-white/10 overflow-hidden group hover:scale-105 transition-transform duration-500">
           <img 
             src="/img/logo/isotipo.png"
             alt="Admin Logo"
@@ -75,7 +87,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         <div className="overflow-hidden whitespace-nowrap">
           <h1 className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-violet-400 tracking-tighter">VITALNEXUS</h1>
-          <p className="text-[10px] text-violet-400 font-black uppercase tracking-[0.3em] opacity-60">MASTER ADMIN PANEL</p>
+          <p className="text-[10px] text-violet-700 dark:text-violet-400 font-black uppercase tracking-[0.3em] opacity-60">MASTER ADMIN PANEL</p>
         </div>
       </div>
 
@@ -89,11 +101,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               onClick={onClose}
               className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group ${
                 isActive 
-                  ? "bg-violet-600/10 text-violet-400 border border-violet-500/20 shadow-[0_4px_20px_rgba(139,92,246,0.1)]" 
-                  : "text-slate-500 hover:text-violet-300 hover:bg-violet-500/5 hover:translate-x-1"
+                  ? "bg-violet-600/10 text-violet-700 dark:text-violet-400 border border-violet-500/20 shadow-[0_4px_20px_rgba(139,92,246,0.1)]" 
+                  : "text-slate-500 hover:text-violet-700 dark:hover:text-violet-300 hover:bg-violet-500/5 hover:translate-x-1"
               }`}
             >
-              <item.icon size={20} className={isActive ? "text-violet-400" : "group-hover:text-violet-400 transition-colors"} />
+              <item.icon size={20} className={isActive ? "text-violet-700 dark:text-violet-400" : "group-hover:text-violet-700 dark:text-violet-400 transition-colors"} />
               <span className="font-bold text-sm tracking-tight">{item.label}</span>
               {isActive && (
                 <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,1)]" />
@@ -106,17 +118,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="p-4 mt-auto">
         <div className="bg-violet-500/5 rounded-3xl p-4 border border-violet-500/10 mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-violet-600/20 flex items-center justify-center text-violet-400 font-bold border border-violet-500/20 shrink-0">
+            <div className="w-10 h-10 rounded-full bg-violet-600/20 flex items-center justify-center text-violet-700 dark:text-violet-400 font-bold border border-violet-500/20 shrink-0">
               {admin?.nombre[0]}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-bold text-white truncate">{admin?.nombre} {admin?.apellido}</p>
-              <p className="text-[10px] text-violet-400/60 truncate font-mono uppercase">Master Admin</p>
+              <p className="text-sm font-bold text-on-surface truncate">{admin?.nombre} {admin?.apellido}</p>
+              <p className="text-[10px] text-violet-700 dark:text-violet-400/60 truncate font-mono uppercase">Master Admin</p>
             </div>
           </div>
           <button 
             onClick={logoutAdmin}
-            className="w-full mt-4 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-violet-500/10 hover:bg-red-500/10 text-violet-400 hover:text-red-400 border border-violet-500/20 hover:border-red-500/20 transition-all font-bold text-xs"
+            className="w-full mt-4 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-violet-500/10 hover:bg-red-500/10 text-violet-700 dark:text-violet-400 hover:text-red-400 border border-violet-500/20 hover:border-red-500/20 transition-all font-bold text-xs"
           >
             <LogOut size={14} /> Cerrar Sesión
           </button>
@@ -126,12 +138,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="flex h-screen bg-[#0a0514] text-slate-200 overflow-hidden font-sans">
+    <div className="flex h-screen bg-background text-on-surface overflow-hidden font-sans">
       {/* Sidebar Desktop (solo visible en lg+) */}
       <motion.aside 
         initial={false}
         animate={{ width: isSidebarOpen ? 280 : 0, opacity: isSidebarOpen ? 1 : 0 }}
-        className="hidden lg:flex bg-[#130b22] border-r border-violet-500/10 flex-col relative z-20 overflow-hidden"
+        className="hidden lg:flex bg-surface-container-low/80 backdrop-blur-xl border-r border-outline-variant/10 flex-col relative z-20 overflow-hidden"
       >
         <SidebarContent />
       </motion.aside>
@@ -146,7 +158,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileSidebarOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
+              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] lg:hidden"
             />
             {/* Panel */}
             <motion.aside
@@ -154,11 +166,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 w-[85%] max-w-xs bg-[#130b22] z-[110] lg:hidden shadow-2xl flex flex-col border-r border-violet-500/10"
+              className="fixed top-0 left-0 bottom-0 w-[85%] max-w-xs bg-surface-container-low z-[110] lg:hidden shadow-2xl flex flex-col border-r border-outline-variant/10"
             >
               <button
                 onClick={() => setIsMobileSidebarOpen(false)}
-                className="absolute top-4 right-4 p-2 bg-white/5 rounded-xl text-slate-400 hover:text-white active:scale-90 transition-all"
+                className="absolute top-4 right-4 p-2 bg-surface-container-highest/50 rounded-xl text-on-surface-variant hover:text-on-surface active:scale-90 transition-all"
               >
                 <X size={20} />
               </button>
@@ -171,11 +183,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content */}
       <main className="flex-1 flex flex-col relative overflow-hidden">
         {/* Header */}
-        <header className="bg-[#0a0514]/80 backdrop-blur-xl border-b border-white/5 flex flex-col z-10 sticky top-0">
+        <header className="bg-background/80 backdrop-blur-xl border-b border-outline-variant/20 flex flex-col z-10 sticky top-0">
           
           {/* CINTILLO ADMIN (TOP HEADER) - solo desktop */}
-          <div className="hidden md:flex items-center justify-between px-8 py-2 border-b border-white/5 bg-violet-950/20">
-            <div className="flex items-center gap-6 text-[10px] text-violet-400/60 font-black uppercase tracking-widest">
+          <div className="hidden md:flex items-center justify-between px-8 py-2 border-b border-outline-variant/10 bg-surface-container-low/30 backdrop-blur-xl">
+            <div className="flex items-center gap-6 text-[10px] text-violet-700 dark:text-violet-400/60 font-black uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <Phone className="w-2.5 h-2.5" /> +58 0412-4444621
               </div>
@@ -183,7 +195,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Mail className="w-2.5 h-2.5" /> smartlift1608@gmail.com
               </div>
             </div>
-            <div className="flex items-center gap-6 text-[10px] text-violet-400/60 font-black uppercase tracking-widest">
+            <div className="flex items-center gap-6 text-[10px] text-violet-700 dark:text-violet-400/60 font-black uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <MapPin className="w-2.5 h-2.5" /> Valencia, Edo. Carabobo
               </div>
@@ -207,29 +219,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     setIsSidebarOpen(!isSidebarOpen);
                   }
                 }}
-                className="p-2.5 hover:bg-white/5 rounded-xl transition-colors text-slate-400 hover:text-white"
+                className="p-2.5 hover:bg-surface-container-highest/50 rounded-xl transition-colors text-on-surface-variant hover:text-on-surface"
               >
                 <Menu size={22} />
               </button>
-              <div className="h-6 w-[1px] bg-white/10" />
+              <div className="h-6 w-[1px] bg-surface-container-highest" />
               {/* Logo visible solo en móvil en el header */}
               <div className="flex items-center gap-2 lg:hidden">
                 <img src="/img/logo/isotipo.png" alt="VitalNexus" className="w-7 h-7 rounded-lg" />
-                <span className="font-black text-sm text-violet-400 tracking-tighter">VitalNexus Admin</span>
+                <span className="font-black text-sm text-violet-700 dark:text-violet-400 tracking-tighter">VitalNexus Admin</span>
               </div>
-              <h2 className="hidden lg:block font-bold text-slate-200 tracking-tight">
+              <h2 className="hidden lg:block font-bold text-on-surface tracking-tight">
                 {menuItems.find(i => i.href === pathname)?.label || "Panel Admin"}
               </h2>
             </div>
 
             <div className="flex items-center gap-3">
               {/* Nombre de página en móvil */}
-              <span className="lg:hidden text-xs font-bold text-slate-400 truncate max-w-[120px]">
+              <span className="lg:hidden text-xs font-bold text-on-surface-variant truncate max-w-[120px]">
                 {menuItems.find(i => i.href === pathname)?.label || "Panel"}
               </span>
-              <button className="relative p-2.5 hover:bg-white/5 rounded-xl transition-colors text-slate-400 hover:text-white">
+              <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2.5 hover:bg-surface-container-highest/50 rounded-xl transition-colors text-on-surface-variant hover:text-on-surface">
+                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+              <button className="relative p-2.5 hover:bg-surface-container-highest/50 rounded-xl transition-colors text-on-surface-variant hover:text-on-surface">
                 <Bell size={20} />
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-violet-500 rounded-full border-2 border-[#0a0514]" />
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-violet-500 rounded-full border-2 border-background" />
               </button>
             </div>
           </div>

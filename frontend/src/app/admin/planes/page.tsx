@@ -54,8 +54,8 @@ export default function AdminPlanesPage() {
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Planes de Suscripción</h1>
-          <p className="text-slate-400 mt-1 font-medium">Configura la oferta comercial y los límites de la plataforma.</p>
+          <h1 className="text-3xl font-black text-on-surface tracking-tight">Planes de Suscripción</h1>
+          <p className="text-on-surface-variant mt-1 font-medium">Configura la oferta comercial y los límites de la plataforma.</p>
         </div>
         <button 
           onClick={handleCreate}
@@ -92,14 +92,14 @@ export default function AdminPlanesPage() {
               </div>
               <div className="text-right">
                 <p className="text-[10px] font-black text-violet-400 uppercase tracking-widest">{plan.codigo}</p>
-                <h3 className="text-2xl font-black text-white">{plan.nombre}</h3>
+                <h3 className="text-2xl font-black text-on-surface">{plan.nombre}</h3>
               </div>
             </div>
 
             <div className="mb-8">
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-black text-white">${plan.precio_mensual}</span>
-                <span className="text-slate-500 font-bold text-sm">/mes</span>
+                <span className="text-4xl font-black text-on-surface">${plan.precio_mensual}</span>
+                <span className="text-on-surface-variant font-bold text-sm">/mes</span>
               </div>
             </div>
 
@@ -108,7 +108,7 @@ export default function AdminPlanesPage() {
                 <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
                   <Check size={12} strokeWidth={4} />
                 </div>
-                <span className="text-slate-300 font-medium">
+                <span className="text-on-surface font-medium">
                   {plan.max_pacientes ? `${plan.max_pacientes} Pacientes` : "Pacientes Ilimitados"}
                 </span>
               </div>
@@ -116,7 +116,7 @@ export default function AdminPlanesPage() {
                 <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
                   <Check size={12} strokeWidth={4} />
                 </div>
-                <span className="text-slate-300 font-medium">
+                <span className="text-on-surface font-medium">
                   {plan.max_citas_mes ? `${plan.max_citas_mes} Citas / mes` : "Citas Ilimitadas"}
                 </span>
               </div>
@@ -142,7 +142,7 @@ export default function AdminPlanesPage() {
 
             <button 
               onClick={() => handleEdit(plan)}
-              className="w-full mt-10 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-all group-hover:border-violet-500/50"
+              className="w-full mt-10 py-4 rounded-2xl bg-surface-container-highest/50 border border-outline-variant/30 hover:bg-surface-container-highest text-on-surface font-bold text-sm transition-all group-hover:border-violet-500/50"
             >
               Editar Características
             </button>
