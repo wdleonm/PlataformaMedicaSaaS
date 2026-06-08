@@ -199,10 +199,10 @@ export default function AdminConfigPage() {
   const TabButton = ({ id, icon: Icon, label }: { id: any, icon: any, label: string }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all ${
+      className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all border ${
         activeTab === id 
-          ? "bg-violet-600 text-white shadow-lg shadow-violet-900/40" 
-          : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/5"
+          ? "bg-violet-600 text-white border-transparent shadow-lg shadow-violet-900/40" 
+          : "bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
       }`}
     >
       <Icon size={20} />
@@ -263,7 +263,7 @@ export default function AdminConfigPage() {
               </div>
               <button 
                 onClick={handleOpenCreateEsp}
-                className="bg-white/5 border border-white/10 hover:bg-violet-600/10 hover:border-violet-500/30 text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all active:scale-95 text-sm"
+                className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-300 dark:hover:border-violet-500/30 text-slate-700 dark:text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all active:scale-95 text-sm shadow-sm dark:shadow-none"
               >
                 <Plus size={18} /> Nueva Especialidad
               </button>
@@ -283,40 +283,40 @@ export default function AdminConfigPage() {
                   <motion.div 
                     key={esp.id}
                     layoutId={esp.id}
-                    className="p-6 glass-panel rounded-[2.5rem] border-none group hover:border-violet-500/30 transition-all flex flex-col justify-between"
+                    className="p-6 bg-white dark:bg-[#0b1c30]/50 border border-slate-200 dark:border-outline-variant/20 rounded-[2rem] group hover:border-violet-500/30 transition-all flex flex-col justify-between shadow-sm dark:shadow-2xl"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-4">
                         <div className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${
-                          esp.activo ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
+                          esp.activo ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
                         }`}>
                           {esp.activo ? "Activa" : "Inactiva"}
                         </div>
                         <button 
                           onClick={() => handleOpenEditEsp(esp)}
-                          className="p-2 bg-white/5 rounded-lg text-slate-500 hover:text-violet-400 hover:bg-violet-500/10 transition-all"
+                          className="p-2 bg-slate-100 dark:bg-white/5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
                         >
                           <Edit size={16} />
                         </button>
                       </div>
-                      <h3 className="text-lg font-black text-on-surface group-hover:text-violet-400 transition-colors">{esp.nombre}</h3>
+                      <h3 className="text-lg font-black text-on-surface group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{esp.nombre}</h3>
                       <p className="text-xs font-mono text-on-surface-variant font-bold uppercase tracking-tighter mt-1">{esp.codigo}</p>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-1">
                       {['CONSULTA', 'ANTECEDENTES', 'EXAMEN_FISICO', 'PLAN'].map(sec => (
-                        <span key={sec} className="text-[8px] bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded border border-violet-500/10 font-black">
+                        <span key={sec} className="text-[8px] bg-violet-500/10 text-violet-600 dark:text-violet-400 px-1.5 py-0.5 rounded border border-violet-500/10 dark:border-violet-500/10 font-black">
                           {sec.replace('_', ' ')}
                         </span>
                       ))}
                       {esp.codigo.includes('ODONTO') && (
-                        <span className="text-[8px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/10 font-black">
+                        <span className="text-[8px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/10 dark:border-emerald-500/10 font-black">
                           ODONTOGRAMA
                         </span>
                       )}
                     </div>
-                    <div className="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">ID: {esp.id.slice(0,8)}...</span>
-                      <ChevronRight className="text-slate-700 group-hover:translate-x-1 transition-transform" size={16} />
+                    <div className="mt-6 pt-4 border-t border-slate-100 dark:border-outline-variant/20 flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-600">ID: {esp.id.slice(0,8)}...</span>
+                      <ChevronRight className="text-slate-400 dark:text-slate-700 group-hover:translate-x-1 transition-transform" size={16} />
                     </div>
                   </motion.div>
                 ))
@@ -346,24 +346,24 @@ export default function AdminConfigPage() {
               </div>
               <button 
                 onClick={handleOpenCreateHal}
-                className="bg-white/5 border border-white/10 hover:bg-violet-600/10 hover:border-violet-500/30 text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all active:scale-95 text-sm"
+                className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-300 dark:hover:border-violet-500/30 text-slate-700 dark:text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all active:scale-95 text-sm shadow-sm dark:shadow-none"
               >
                 <Plus size={18} /> Nuevo Hallazgo
               </button>
             </div>
 
-            <div className="bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] overflow-hidden">
+            <div className="bg-white dark:bg-[#0b1c30]/50 border border-slate-200 dark:border-outline-variant/20 rounded-[2rem] shadow-sm dark:shadow-2xl overflow-hidden">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-surface-container-highest/50 border-b border-outline-variant/20">
-                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Orden/Ref</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Hallazgo</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Categoría</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Visualización</th>
-                    <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-widest text-violet-400/80 italic">Acciones</th>
+                  <tr className="bg-slate-50 dark:bg-surface-container-highest/50 border-b border-slate-200 dark:border-outline-variant/20">
+                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Orden/Ref</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Hallazgo</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Categoría</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Visualización</th>
+                    <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80 italic">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                   {isLoading ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-20 text-center">
@@ -378,21 +378,21 @@ export default function AdminConfigPage() {
                     </tr>
                   ) : (
                     hallazgos.map((hal) => (
-                      <tr key={hal.id} className="group hover:bg-white/[0.02] transition-colors">
+                      <tr key={hal.id} className="group hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-xs font-mono font-bold text-slate-600">#{hal.orden}</span>
-                            <span className="text-xs font-mono font-bold text-on-surface bg-surface-container-highest/50 px-2 py-1 rounded-lg border border-outline-variant/20">{hal.codigo}</span>
+                            <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-600">#{hal.orden}</span>
+                            <span className="text-xs font-mono font-bold text-on-surface bg-slate-100 dark:bg-surface-container-highest/50 px-2 py-1 rounded-lg border border-slate-200 dark:border-outline-variant/20">{hal.codigo}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="font-black text-on-surface text-sm uppercase tracking-tight group-hover:text-violet-400 transition-colors">{hal.nombre}</p>
+                          <p className="font-black text-on-surface text-sm uppercase tracking-tight group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{hal.nombre}</p>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border ${
-                            hal.categoria === 'patologia' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                            hal.categoria === 'restauracion' ? 'bg-sky-500/10 text-sky-400 border-sky-500/20' :
-                            'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                            hal.categoria === 'patologia' ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20' :
+                            hal.categoria === 'restauracion' ? 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20' :
+                            'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                           }`}>
                             {hal.categoria}
                           </span>
@@ -405,7 +405,7 @@ export default function AdminConfigPage() {
                              <div className={`w-2 h-2 rounded-full ${hal.activo ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-500 opacity-50'}`} />
                             <button 
                               onClick={() => handleOpenEditHal(hal)}
-                              className="p-2.5 bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl text-on-surface-variant hover:text-on-surface transition-all"
+                              className="p-2 bg-slate-100 dark:bg-white/5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
                             >
                               <Edit size={16} />
                             </button>
@@ -429,8 +429,10 @@ export default function AdminConfigPage() {
             exit={{ opacity: 0, y: -10 }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-8"
           >
-            <div className="p-8 bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] space-y-8">
-              <div className="flex justify-between items-start">
+            <div className="p-8 bg-white dark:bg-[#0b1c30]/50 border border-slate-200 dark:border-outline-variant/20 rounded-[2rem] shadow-sm dark:shadow-2xl space-y-8 relative overflow-hidden group hover:border-violet-500/20 transition-all duration-500">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/5 rounded-full blur-[80px] group-hover:bg-violet-600/10 transition-colors pointer-events-none" />
+              
+              <div className="flex justify-between items-start relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="p-3 bg-violet-600/10 rounded-2xl border border-violet-500/20">
                     <Coins className="text-violet-500" size={24} />
@@ -444,13 +446,13 @@ export default function AdminConfigPage() {
                   <button 
                     onClick={handleSyncBCV}
                     disabled={isSyncing}
-                    className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-2xl flex items-center gap-2 transition-all disabled:opacity-50 shadow-xl shadow-indigo-900/40"
+                    className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-2xl flex items-center gap-2 transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/20 dark:shadow-indigo-900/40 active:scale-95"
                   >
                     {isSyncing ? <Loader2 className="animate-spin" size={14} /> : <Globe size={14} />}
                     Sincronizar BCV ahora
                   </button>
                   {config?.bcv_ultima_sincronizacion && (
-                    <div className="flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest/50 border border-outline-variant/20 rounded-lg">
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/20 rounded-lg">
                       <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
                       <p className="text-[9px] text-on-surface-variant font-black uppercase tracking-tighter">
                           Sincronizado: {new Date(config.bcv_ultima_sincronizacion).toLocaleString('es-VE')}
@@ -460,7 +462,7 @@ export default function AdminConfigPage() {
                 </div>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-4 relative z-10">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-1">Moneda Local (Símbolo)</label>
@@ -468,7 +470,7 @@ export default function AdminConfigPage() {
                       type="text" 
                       value={config?.moneda_simbolo || ""} 
                       onChange={(e) => setConfig(config ? {...config, moneda_simbolo: e.target.value} : null)}
-                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface font-black" 
+                      className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-bold transition-all shadow-sm dark:shadow-none" 
                     />
                   </div>
                   <div className="space-y-2">
@@ -477,21 +479,21 @@ export default function AdminConfigPage() {
                       type="number" 
                       value={config?.iva_porcentaje || 0} 
                       onChange={(e) => setConfig(config ? {...config, iva_porcentaje: parseFloat(e.target.value)} : null)}
-                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface font-black" 
+                      className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-bold transition-all shadow-sm dark:shadow-none" 
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-surface-container-highest/50 p-6 rounded-3xl border border-outline-variant/20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-surface-container-highest/50 p-6 rounded-3xl border border-slate-200 dark:border-outline-variant/20">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400 ml-1 flex items-center gap-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 ml-1 flex items-center gap-2">
                         <Globe size={12} /> Tasa EUR (Referencia Principal Bs)
                       </label>
                       <input 
                         type="number" step="0.0001"
                         value={config?.tasa_eur || 0} 
                         onChange={(e) => setConfig(config ? {...config, tasa_eur: parseFloat(e.target.value)} : null)}
-                        className="w-full bg-indigo-600/10 border border-indigo-500/30 rounded-2xl p-4 text-white font-black text-xl focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all" 
+                        className="w-full bg-indigo-50 dark:bg-indigo-600/10 border border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-4 text-indigo-900 dark:text-white font-black text-xl focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all" 
                       />
                       <p className="text-[9px] text-on-surface-variant font-bold italic ml-1">Esta tasa se usará para convertir montos de $ a Bs automáticamente.</p>
                     </div>
@@ -502,24 +504,26 @@ export default function AdminConfigPage() {
                         type="number" step="0.0001"
                         value={config?.tasa_usd || 0} 
                         onChange={(e) => setConfig(config ? {...config, tasa_usd: parseFloat(e.target.value)} : null)}
-                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface-variant font-black text-xl focus:ring-2 focus:ring-white/20 outline-none transition-all" 
+                        className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-2xl p-4 text-on-surface font-black text-xl focus:ring-2 focus:ring-violet-500/50 outline-none transition-all shadow-sm dark:shadow-none" 
                       />
                     </div>
                 </div>
 
-                <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-start gap-3">
-                  <div className="mt-1 p-1 bg-indigo-500/20 rounded-lg">
-                    <CheckCircle2 size={14} className="text-indigo-400" />
+                <div className="p-4 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 rounded-2xl flex items-start gap-3">
+                  <div className="mt-1 p-1 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg">
+                    <CheckCircle2 size={14} className="text-indigo-600 dark:text-indigo-400" />
                   </div>
-                  <p className="text-xs text-indigo-300 font-bold leading-relaxed">
+                  <p className="text-xs text-indigo-800 dark:text-indigo-300 font-bold leading-relaxed">
                     Motor Financiero: Los precios base en Dólares ($) se multiplicarán por la <span className="text-on-surface italic underline">Tasa Euro</span> para determinar el cobro final en Bolívares (Bs.). La tasa USD se mantiene como referencia comparativa.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="p-8 bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] space-y-8">
-              <div className="flex items-center gap-3">
+            <div className="p-8 bg-white dark:bg-[#0b1c30]/50 border border-slate-200 dark:border-outline-variant/20 rounded-[2rem] shadow-sm dark:shadow-2xl space-y-8 relative overflow-hidden group hover:border-violet-500/20 transition-all duration-500">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/5 rounded-full blur-[80px] group-hover:bg-violet-600/10 transition-colors pointer-events-none" />
+              
+              <div className="flex items-center gap-3 relative z-10">
                 <div className="p-3 bg-violet-600/10 rounded-2xl border border-violet-500/20">
                   <ShieldCheck className="text-violet-500" size={24} />
                 </div>
@@ -529,18 +533,18 @@ export default function AdminConfigPage() {
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 relative z-10">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-1">YCloud API Key (WhatsApp)</label>
                   <input 
                     type="password" 
                     placeholder="Escriba nueva key para actualizar..."
                     onChange={(e) => setConfig(config ? {...config, ycloud_api_key: e.target.value} : null)}
-                    className="w-full bg-black/20 border border-outline-variant/20 rounded-2xl p-4 text-violet-500 font-mono tracking-widest" 
+                    className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-mono tracking-widest transition-all shadow-sm dark:shadow-none" 
                   />
                 </div>
-                <div className="p-4 bg-violet-600/5 border border-violet-500/20 rounded-2xl flex items-center gap-4">
-                  <span className="text-xs text-violet-400 font-bold italic">La llave se guarda encriptada. Solo ingrésela si desea cambiarla.</span>
+                <div className="p-4 bg-violet-50 dark:bg-violet-600/5 border border-violet-100 dark:border-violet-500/20 rounded-2xl flex items-center gap-4">
+                  <span className="text-xs text-violet-700 dark:text-violet-400 font-bold italic">La llave se guarda encriptada. Solo ingrésela si desea cambiarla.</span>
                 </div>
 
                 <div className="space-y-2">
@@ -550,7 +554,7 @@ export default function AdminConfigPage() {
                     placeholder="Ej: 584141234567 (sin +)"
                     value={config?.ycloud_whatsapp_number || ""}
                     onChange={(e) => setConfig(config ? {...config, ycloud_whatsapp_number: e.target.value} : null)}
-                    className="w-full bg-black/20 border border-outline-variant/20 rounded-2xl p-4 text-violet-400 font-mono" 
+                    className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-mono transition-all shadow-sm dark:shadow-none" 
                   />
                 </div>
               </div>
@@ -560,7 +564,7 @@ export default function AdminConfigPage() {
                 <button 
                   onClick={handleSaveGlobal}
                   disabled={isSaving}
-                  className="bg-violet-600 text-white font-black px-10 py-4 rounded-2xl shadow-xl shadow-violet-900/30 hover:scale-[1.02] active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-3"
+                  className="bg-violet-600 text-white font-black px-10 py-4 rounded-2xl shadow-lg shadow-violet-500/20 dark:shadow-violet-900/30 hover:scale-[1.02] active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-3"
                 >
                     {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
                     Guardar Configuración Maestra
@@ -590,7 +594,7 @@ export default function AdminConfigPage() {
               </div>
               <button 
                 onClick={handleOpenCreateAdmin}
-                className="bg-white/5 border border-white/10 hover:bg-indigo-600/10 hover:border-indigo-500/30 text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all active:scale-95 text-sm"
+                className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:border-indigo-300 dark:hover:border-indigo-500/30 text-slate-700 dark:text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all active:scale-95 text-sm shadow-sm dark:shadow-none"
               >
                 <Plus size={18} /> Nuevo Administrador
               </button>
@@ -609,30 +613,30 @@ export default function AdminConfigPage() {
                 admins.map((admin) => (
                   <motion.div 
                     key={admin.id}
-                    className="p-6 glass-panel rounded-[2.5rem] border-none group hover:border-indigo-500/30 transition-all flex flex-col justify-between relative overflow-hidden"
+                    className="p-6 bg-white dark:bg-[#0b1c30]/50 border border-slate-200 dark:border-outline-variant/20 rounded-[2rem] group hover:border-indigo-500/30 transition-all flex flex-col justify-between relative overflow-hidden shadow-sm dark:shadow-2xl"
                   >
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full -mr-8 -mt-8" />
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none" />
                     <div className="relative z-10">
                       <div className="flex justify-between items-start mb-4">
                         <div className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${
-                          admin.rol === 'master' ? "bg-amber-500/10 text-amber-400 border border-amber-500/10" : "bg-blue-500/10 text-blue-400 border border-blue-500/10"
+                          admin.rol === 'master' ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20" : "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20"
                         }`}>
                           {admin.rol}
                         </div>
                         <button 
                           onClick={() => handleOpenEditAdmin(admin)}
-                          className="p-2 bg-white/5 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all"
+                          className="p-2 bg-slate-100 dark:bg-white/5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-all border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
                         >
                           <Edit size={16} />
                         </button>
                       </div>
-                      <h3 className="text-lg font-black text-on-surface group-hover:text-indigo-400 transition-colors uppercase tracking-tight">
+                      <h3 className="text-lg font-black text-on-surface group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors uppercase tracking-tight">
                         {admin.nombre} {admin.apellido}
                       </h3>
                       <p className="text-xs text-on-surface-variant font-bold mt-1">{admin.email}</p>
                     </div>
                     
-                    <div className="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between relative z-10">
+                    <div className="mt-6 pt-4 border-t border-slate-100 dark:border-outline-variant/20 flex items-center justify-between relative z-10">
                        <span className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${admin.activo ? 'text-emerald-500' : 'text-red-500'}`}>
                          <div className={`w-1.5 h-1.5 rounded-full ${admin.activo ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
                          {admin.activo ? 'Activado' : 'Inactivo'}
@@ -661,18 +665,18 @@ export default function AdminConfigPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-xl bg-[#0f0a1a] border border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden"
+              className="relative w-full max-w-xl bg-white dark:bg-[#0f0a1a] border border-slate-200 dark:border-outline-variant/30 rounded-[2.5rem] shadow-2xl overflow-hidden"
             >
-               <div className="p-8 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-highest/50">
+               <div className="p-8 border-b border-slate-100 dark:border-outline-variant/20 flex justify-between items-center bg-slate-50 dark:bg-surface-container-highest/50">
                 <div>
                   <h3 className="text-2xl font-black text-on-surface italic tracking-tight uppercase">
                     {isEditing ? `Editar ${modalType}` : `Nuevo ${modalType}`}
                   </h3>
-                  <p className="text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Actualización de Estructura Maestra</p>
+                  <p className="text-violet-600/60 dark:text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Actualización de Estructura Maestra</p>
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 hover:bg-surface-container-highest/50 rounded-full text-on-surface-variant transition-colors"
+                  className="p-2 hover:bg-slate-200/50 dark:hover:bg-surface-container-highest/50 rounded-full text-on-surface-variant transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -688,7 +692,7 @@ export default function AdminConfigPage() {
                         required
                         value={currentEntity.nombre || ""}
                         onChange={(e) => setCurrentEntity({...currentEntity, nombre: e.target.value})}
-                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
+                        className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all shadow-sm dark:shadow-none"
                         placeholder="Ej: Odontología, Cardiología..."
                       />
                     </div>
@@ -700,7 +704,7 @@ export default function AdminConfigPage() {
                         disabled={isEditing}
                         value={currentEntity.codigo || ""}
                         onChange={(e) => setCurrentEntity({...currentEntity, codigo: e.target.value.toUpperCase().replace(/\s/g, '_')})}
-                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none uppercase font-mono disabled:opacity-50"
+                        className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-mono tracking-widest transition-all shadow-sm dark:shadow-none uppercase disabled:opacity-50"
                         placeholder="ODO_GEN"
                       />
                     </div>
@@ -714,7 +718,7 @@ export default function AdminConfigPage() {
                           type="text" required
                           value={currentEntity.nombre || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, nombre: e.target.value})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all shadow-sm dark:shadow-none text-sm"
                         />
                       </div>
                       <div className="space-y-2">
@@ -723,7 +727,7 @@ export default function AdminConfigPage() {
                           type="text" required disabled={isEditing}
                           value={currentEntity.codigo || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, codigo: e.target.value.toUpperCase()})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm font-mono outline-none disabled:opacity-50"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-mono transition-all shadow-sm dark:shadow-none text-sm disabled:opacity-50"
                         />
                       </div>
                     </div>
@@ -733,7 +737,7 @@ export default function AdminConfigPage() {
                         <select 
                           value={currentEntity.categoria || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, categoria: e.target.value})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none appearance-none"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-medium transition-all shadow-sm dark:shadow-none text-sm appearance-none"
                         >
                           <option value="patologia">Patología</option>
                           <option value="restauracion">Restauración</option>
@@ -746,7 +750,7 @@ export default function AdminConfigPage() {
                           type="number" required
                           value={currentEntity.orden || 0}
                           onChange={(e) => setCurrentEntity({...currentEntity, orden: parseInt(e.target.value)})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all shadow-sm dark:shadow-none text-sm"
                         />
                       </div>
                     </div>
@@ -756,7 +760,7 @@ export default function AdminConfigPage() {
                         type="text"
                         value={currentEntity.descripcion_visual || ""}
                         onChange={(e) => setCurrentEntity({...currentEntity, descripcion_visual: e.target.value})}
-                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm italic outline-none"
+                        className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all shadow-sm dark:shadow-none text-sm italic"
                         placeholder="Ej: Mancha roja, Área azul..."
                       />
                     </div>
@@ -770,7 +774,7 @@ export default function AdminConfigPage() {
                           type="text" required
                           value={currentEntity.nombre || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, nombre: e.target.value})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all shadow-sm dark:shadow-none text-sm"
                         />
                       </div>
                       <div className="space-y-2">
@@ -779,7 +783,7 @@ export default function AdminConfigPage() {
                           type="text" required
                           value={currentEntity.apellido || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, apellido: e.target.value})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all shadow-sm dark:shadow-none text-sm"
                         />
                       </div>
                     </div>
@@ -789,7 +793,7 @@ export default function AdminConfigPage() {
                           type="email" required
                           value={currentEntity.email || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, email: e.target.value})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all shadow-sm dark:shadow-none text-sm"
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -801,7 +805,7 @@ export default function AdminConfigPage() {
                           required={!isEditing}
                           value={currentEntity.password || ""}
                           onChange={(e) => setCurrentEntity({...currentEntity, password: e.target.value})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all shadow-sm dark:shadow-none text-sm"
                         />
                       </div>
                       <div className="space-y-2">
@@ -809,7 +813,7 @@ export default function AdminConfigPage() {
                         <select 
                           value={currentEntity.rol || "master"}
                           onChange={(e) => setCurrentEntity({...currentEntity, rol: e.target.value})}
-                          className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface text-sm outline-none appearance-none"
+                          className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 font-medium transition-all shadow-sm dark:shadow-none text-sm appearance-none"
                         >
                           <option value="master">Master Admin (Acceso Total)</option>
                           <option value="solo_lectura">Solo Lectura (Soporte)</option>
@@ -819,13 +823,13 @@ export default function AdminConfigPage() {
                   </>
                 ) : null}
 
-                <div className="flex items-center gap-4 p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/30">
+                <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-surface-container-highest/50 rounded-2xl border border-slate-200 dark:border-outline-variant/30">
                   <input 
                     type="checkbox" 
                     id="entity_activo"
                     checked={currentEntity.activo}
                     onChange={(e) => setCurrentEntity({...currentEntity, activo: e.target.checked})}
-                    className="w-5 h-5 rounded border-white/20 bg-surface-container-highest text-violet-600 focus:ring-violet-500"
+                    className="w-5 h-5 rounded border-slate-300 dark:border-white/20 bg-white dark:bg-surface-container-highest text-violet-600 focus:ring-violet-500 focus:ring-offset-0"
                   />
                   <label htmlFor="entity_activo" className="text-sm font-bold text-on-surface cursor-pointer select-none tracking-tight">
                     Elemento Activo
@@ -833,18 +837,18 @@ export default function AdminConfigPage() {
                 </div>
               </form>
 
-              <div className="p-8 bg-black/20 border-t border-outline-variant/20 flex gap-4">
+              <div className="p-8 bg-slate-50 dark:bg-black/20 border-t border-slate-100 dark:border-outline-variant/20 flex gap-4">
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-4 px-6 rounded-2xl border border-outline-variant/30 text-on-surface-variant font-bold hover:bg-surface-container-highest/50 transition-all text-xs uppercase tracking-widest"
+                  className="flex-1 py-4 px-6 rounded-2xl border border-slate-200 dark:border-outline-variant/30 text-on-surface-variant font-bold hover:bg-slate-100 dark:hover:bg-surface-container-highest/50 transition-all text-xs uppercase tracking-widest"
                 >
                   Cancelar
                 </button>
                 <button 
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex-[2] py-4 px-6 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white font-black shadow-lg shadow-violet-900/20 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 group tracking-tight"
+                  className="flex-[2] py-4 px-6 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white font-black shadow-lg shadow-violet-500/20 dark:shadow-violet-900/20 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 group tracking-tight"
                 >
                   {isSaving ? (
                     <Loader2 className="animate-spin" size={20} />

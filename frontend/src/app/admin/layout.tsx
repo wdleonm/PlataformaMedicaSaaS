@@ -78,7 +78,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const SidebarContent = ({ onClose }: { onClose?: () => void }) => (
     <div className="flex flex-col h-full">
       <div className="p-6 flex flex-col items-center gap-4 text-center border-b border-outline-variant/20">
-        <div className="w-16 h-16 bg-surface-container-highest/50 rounded-3xl flex items-center justify-center shadow-2xl shadow-violet-500/20 ring-1 ring-white/10 overflow-hidden group hover:scale-105 transition-transform duration-500">
+        <div className="w-16 h-16 bg-surface-container-highest/50 rounded-3xl flex items-center justify-center shadow-2xl shadow-violet-500/20 ring-1 ring-slate-200/50 dark:ring-white/10 overflow-hidden group hover:scale-105 transition-transform duration-500">
           <img 
             src="/img/logo/isotipo.png"
             alt="Admin Logo"
@@ -86,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           />
         </div>
         <div className="overflow-hidden whitespace-nowrap">
-          <h1 className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-violet-400 tracking-tighter">VITALNEXUS</h1>
+          <h1 className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-800 to-indigo-600 dark:from-white dark:to-violet-400 tracking-tighter">VITALNEXUS</h1>
           <p className="text-[10px] text-violet-700 dark:text-violet-400 font-black uppercase tracking-[0.3em] opacity-60">MASTER ADMIN PANEL</p>
         </div>
       </div>

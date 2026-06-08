@@ -110,12 +110,12 @@ export default function AdminDashboardPage() {
           >
             <Link href={card.href} className="block group">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-[32px] blur-xl" />
-              <div className="relative bg-surface-container-highest/50 border border-outline-variant/30 p-6 rounded-[32px] shadow-sm group-hover:border-violet-500/50 group-hover:bg-surface-container-highest transition-all duration-500 active:scale-[0.98]">
+              <div className="relative bg-white dark:bg-[#0b1c30] border border-slate-200 dark:border-violet-500/20 p-6 rounded-[32px] shadow-sm group-hover:border-violet-500/50 group-hover:bg-violet-50/20 dark:group-hover:bg-surface-container-high transition-all duration-500 active:scale-[0.98]">
                 <div className="flex justify-between items-start mb-4">
                   <div className={`p-3 rounded-2xl bg-gradient-to-br ${card.color} shadow-lg ring-4 ring-white/5`}>
-                    <card.icon className="text-on-surface" size={24} />
+                    <card.icon className="text-white" size={24} />
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">
+                  <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/10 px-2 py-1 rounded-full">
                     <TrendingUp size={10} />
                     {card.trend}
                   </div>
@@ -123,7 +123,7 @@ export default function AdminDashboardPage() {
                 <p className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">{card.label}</p>
                 <div className="flex items-baseline gap-2">
                   <h3 className="text-3xl font-black text-on-surface">{card.value}</h3>
-                  <ArrowUpRight size={14} className="text-on-surface/20 group-hover:text-on-surface transition-all ml-auto" />
+                  <ArrowUpRight size={14} className="text-violet-600/30 dark:text-on-surface/20 group-hover:text-violet-600 dark:group-hover:text-on-surface transition-all ml-auto" />
                 </div>
               </div>
             </Link>
@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
       {/* Main Content Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Revenue Projection */}
-        <div className="lg:col-span-2 bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] p-8 overflow-hidden relative group">
+        <div className="lg:col-span-2 bg-white dark:bg-[#0b1c30] border border-slate-200 dark:border-violet-500/20 shadow-sm rounded-[40px] p-8 overflow-hidden relative group">
           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
             <DollarSign size={160} className="text-violet-500" />
           </div>
@@ -149,11 +149,11 @@ export default function AdminDashboardPage() {
             
             <div className="mt-auto">
               <p className="text-on-surface-variant text-sm font-medium mb-1">Ingresos estimados para este periodo:</p>
-              <h4 className="text-5xl font-black text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-500">
+              <h4 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
                 ${stats?.ingresos_estimados_mes?.toLocaleString() || "0.00"}
               </h4>
               <div className="flex items-center gap-4 mt-8">
-                <div className="flex-1 h-3 bg-surface-container-highest/50 rounded-full overflow-hidden p-[2px] ring-1 ring-white/10">
+                <div className="flex-1 h-3 bg-slate-100 dark:bg-surface-container-highest/50 rounded-full overflow-hidden p-[2px] ring-1 ring-slate-200/50 dark:ring-white/10">
                   <div className="h-full bg-gradient-to-r from-violet-600 to-indigo-500 rounded-full w-[65%]" />
                 </div>
                 <span className="text-xs font-bold text-violet-700 dark:text-violet-400">65% Meta</span>
@@ -163,23 +163,23 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Quick Actions / Activity */}
-        <div className="glass-panel border-primary/20 ring-1 ring-primary/10 rounded-[40px] p-8 text-white shadow-2xl shadow-violet-900/40 relative overflow-hidden group">
+        <div className="glass-panel border-primary/20 ring-1 ring-primary/10 rounded-[40px] p-8 shadow-2xl shadow-violet-900/10 relative overflow-hidden group">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
           <div className="relative z-10">
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white">
               <Activity size={20} />
               Acciones Rápidas
             </h3>
             <div className="space-y-4">
-              <Link href="/admin/especialistas" className="w-full bg-surface-container-highest hover:bg-white/20 border border-white/20 py-4 rounded-2xl flex items-center justify-between px-6 transition-all group/btn active:scale-[0.98] block">
+              <Link href="/admin/especialistas" className="w-full bg-violet-50 hover:bg-violet-100 border border-violet-200/50 dark:bg-violet-950/20 dark:hover:bg-violet-900/30 dark:border-violet-500/20 py-4 rounded-2xl flex items-center justify-between px-6 text-violet-700 dark:text-violet-300 transition-all group/btn active:scale-[0.98] block">
                 <span className="font-bold text-sm">Registrar Especialista</span>
                 <ArrowUpRight size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
               </Link>
-              <Link href="/admin/planes" className="w-full bg-surface-container-highest hover:bg-white/20 border border-white/20 py-4 rounded-2xl flex items-center justify-between px-6 transition-all group/btn active:scale-[0.98] block">
+              <Link href="/admin/planes" className="w-full bg-violet-50 hover:bg-violet-100 border border-violet-200/50 dark:bg-violet-950/20 dark:hover:bg-violet-900/30 dark:border-violet-500/20 py-4 rounded-2xl flex items-center justify-between px-6 text-violet-700 dark:text-violet-300 transition-all group/btn active:scale-[0.98] block">
                 <span className="font-bold text-sm">Gestionar Planes</span>
                 <PlusIcon size={18} className="group-hover/btn:rotate-90 transition-transform" />
               </Link>
-              <button className="w-full bg-white/20 hover:bg-white/30 border border-white/30 py-4 rounded-2xl flex items-center justify-center gap-2 transition-all font-black text-sm tracking-tight active:scale-[0.98]">
+              <button className="w-full bg-violet-600 hover:bg-violet-500 border border-violet-600 text-white py-4 rounded-2xl flex items-center justify-center gap-2 transition-all font-black text-sm tracking-tight active:scale-[0.98]">
                 Enviar Reporte Global
               </button>
             </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { toast } from 'react-hot-toast';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { 
   Package, 
@@ -169,13 +170,25 @@ const NumberInput = ({
   );
 };
 
-export default function InventarioPage() {
+function InventarioContent() {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<"insumos" | "servicios">("insumos");
   const [insumos, setInsumos] = useState<Insumo[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    const search = searchParams.get("search");
+    if (tab === "insumos" || tab === "servicios") {
+      setActiveTab(tab);
+    }
+    if (search !== null) {
+      setSearchTerm(search);
+    }
+  }, [searchParams]);
 
   // Modales
   const [isInsumoModalOpen, setIsInsumoModalOpen] = useState(false);
@@ -1385,5 +1398,18 @@ export default function InventarioPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function InventarioPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 size={40} className="animate-spin text-primary mb-4" />
+        <p className="text-on-surface-variant">Cargando...</p>
+      </div>
+    }>
+      <InventarioContent />
+    </Suspense>
   );
 }

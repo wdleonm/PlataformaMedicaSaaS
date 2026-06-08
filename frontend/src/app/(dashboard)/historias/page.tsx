@@ -570,6 +570,31 @@ function HistoriasContent() {
   const [selectedHistoriaId, setSelectedHistoriaId] = useState<string | null>(null);
   const [currentStepIdx, setCurrentStepIdx] = useState(0); // índice dentro de `secciones[]`
   const [formData, setFormData] = useState<FormDataHistoria>(formDataVacio());
+  const [hasOdontogramaRecords, setHasOdontogramaRecords] = useState(false);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "ODONTOGRAMA_UPDATED" && pacienteId) {
+        api.get(`/api/pacientes/${pacienteId}/odontograma`)
+          .then(res => {
+            setHasOdontogramaRecords(res.data?.dientes?.length > 0);
+          })
+          .catch(err => console.error(err));
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [pacienteId]);
+
+  useEffect(() => {
+    if (pacienteId && isModalOpen) {
+      api.get(`/api/pacientes/${pacienteId}/odontograma`)
+        .then(res => {
+          setHasOdontogramaRecords(res.data?.dientes?.length > 0);
+        })
+        .catch(err => console.error(err));
+    }
+  }, [pacienteId, isModalOpen, currentStepIdx]);
 
   const filteredPacientes = pacientesList.filter((p) =>
     `${p.nombre} ${p.apellido}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -663,6 +688,12 @@ function HistoriasContent() {
       setPaciente(pacRes.data);
       const histRes = await api.get(`/api/pacientes/${pacienteId}/historias`);
       setHistorias(histRes.data);
+      try {
+        const odontoRes = await api.get(`/api/pacientes/${pacienteId}/odontograma`);
+        setHasOdontogramaRecords(odontoRes.data?.dientes?.length > 0);
+      } catch (e) {
+        console.error("Error loading initial odontograma state:", e);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       setErrorMsg("No se pudieron cargar los datos del paciente o su historial.");
@@ -1081,12 +1112,13 @@ function HistoriasContent() {
                       <Loader2 size={14} className="animate-spin" /> Cargando secciones...
                     </div>
                   ) : (() => {
-                    const isStepComplete = (codigo) => {
+                    const isStepComplete = (codigo: string) => {
                       if (!formData) return false;
                       switch (codigo) {
                         case "CONSULTA": return formData.motivo_consulta?.trim() !== "" || formData.enfermedad_actual?.trim() !== "";
                         case "ANTECEDENTES": return formData.antecedentes_personales?.patologias?.length > 0 || formData.antecedentes_personales?.medicamentos?.trim() !== "";
                         case "EXAMEN_FISICO": return formData.examen_clinico?.observaciones?.trim() !== "" || (formData.examen_clinico?.encias && formData.examen_clinico.encias !== "");
+                        case "ODONTOGRAMA": return hasOdontogramaRecords;
                         case "PLAN": return formData.plan_tratamiento?.trim() !== "";
                         case "ACTIVIDADES": return formData.actividades_realizadas?.trim() !== "";
                         default: return false;
@@ -1094,10 +1126,33 @@ function HistoriasContent() {
                     };
                     return secciones.map((s, idx) => {
                       const completed = isStepComplete(s.codigo);
+                      const isActive = currentStepIdx === idx;
+                      
+                      let btnClasses = "";
+                      let spanClasses = "";
+                      
+                      if (completed) {
+                        if (isActive) {
+                          btnClasses = "bg-green-500/20 text-green-500 border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.2)] scale-105";
+                          spanClasses = "border-green-500";
+                        } else {
+                          btnClasses = "bg-green-500/10 text-green-500 border-green-500/30";
+                          spanClasses = "border-green-500";
+                        }
+                      } else {
+                        if (isActive) {
+                          btnClasses = "bg-primary/20 text-primary border-primary shadow-[0_0_15px_rgba(77,158,170,0.2)] scale-105";
+                          spanClasses = "border-primary";
+                        } else {
+                          btnClasses = "bg-surface border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest hover:border-outline-variant/50";
+                          spanClasses = "border-current";
+                        }
+                      }
+
                       return (
                         <button key={s.id} type="button" onClick={() => setCurrentStepIdx(idx)}
-                          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 border ${currentStepIdx === idx ? "bg-primary/20 text-primary border-primary shadow-[0_0_15px_rgba(77,158,170,0.2)] scale-105" : (completed ? "bg-green-500/10 text-green-500 border-green-500/30" : "bg-surface border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest hover:border-outline-variant/50")}`}>
-                          <span className={`w-5 h-5 rounded-full flex items-center justify-center border text-[10px] ${currentStepIdx === idx ? "border-primary" : (completed ? "border-green-500" : "border-current")}`}>
+                          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 border ${btnClasses}`}>
+                          <span className={`w-5 h-5 rounded-full flex items-center justify-center border text-[10px] ${spanClasses}`}>
                             {completed ? <CheckCircle2 size={10} /> : idx + 1}
                           </span>
                           {s.nombre}

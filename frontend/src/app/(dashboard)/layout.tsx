@@ -169,7 +169,7 @@ export default function DashboardLayout({
               onClick={() => setIsMobileMenuOpen(false)}
               className={`flex items-center gap-4 px-6 py-2.5 transition-all duration-200 group font-label-md text-label-md ${
                 isActive 
-                  ? "text-primary bg-secondary-container/10 border-r-4 border-primary" 
+                  ? "text-primary bg-primary/10 dark:bg-primary/15 border-r-4 border-primary" 
                   : "text-on-surface-variant hover:bg-surface-container-highest/40"
               }`}
             >
@@ -219,12 +219,17 @@ export default function DashboardLayout({
             </button>
 
             {/* Global Search */}
-            <div className="hidden md:flex items-center bg-surface-container-highest/40 px-4 py-1.5 rounded-full border border-outline-variant/20">
+            <div className="hidden md:flex items-center bg-surface-container-highest/40 px-4 py-1.5 rounded-full border border-outline-variant/20 cursor-pointer" onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}>
               <Search size={16} className="text-outline mr-2" />
               <input 
-                className="bg-transparent border-none focus:ring-0 text-sm w-48 lg:w-64 placeholder:text-on-surface-variant/50 outline-none text-on-surface" 
+                className="bg-transparent border-none focus:ring-0 text-sm w-48 lg:w-64 placeholder:text-on-surface-variant/50 outline-none text-on-surface cursor-pointer" 
                 placeholder="Buscar pacientes, historias..." 
                 type="text" 
+                readOnly
+                onFocus={(e) => {
+                  e.target.blur();
+                  window.dispatchEvent(new CustomEvent("open-command-palette"));
+                }}
               />
             </div>
           </div>

@@ -68,7 +68,7 @@ export default function AdminEspecialistasPage() {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentEsp, setCurrentEsp] = useState<Partial<Especialista & { password?: string, especialidad_principal_id?: string }>>({});
+  const [currentEsp, setCurrentEsp] = useState<Partial<Especialista & { password?: string, especialidad_principal_id?: string | null }>>({});
   const [isSaving, setIsSaving] = useState(false);
   
   // Delete state
@@ -277,9 +277,9 @@ export default function AdminEspecialistasPage() {
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-violet-500/5 border border-violet-500/10 p-4 rounded-3xl">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-violet-50 dark:bg-violet-500/5 border border-violet-200/50 dark:border-violet-500/10 p-4 rounded-3xl">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-violet-500/10 rounded-xl text-violet-400">
+          <div className="p-2 bg-violet-100 dark:bg-violet-500/10 rounded-xl text-violet-700 dark:text-violet-400">
             <ShieldCheck size={20} />
           </div>
           <div>
@@ -289,7 +289,7 @@ export default function AdminEspecialistasPage() {
         </div>
         <button 
           onClick={() => setShowPinSetup(true)}
-          className="text-[10px] font-black uppercase tracking-widest bg-violet-600/10 hover:bg-violet-600/20 text-violet-400 px-4 py-2 rounded-xl transition-all border border-violet-500/20"
+          className="text-[10px] font-black uppercase tracking-widest bg-violet-100/50 hover:bg-violet-200/50 dark:bg-violet-600/10 dark:hover:bg-violet-600/20 text-violet-700 dark:text-violet-400 px-4 py-2 rounded-xl transition-all border border-violet-200 dark:border-violet-500/20"
         >
           {dependencyCheck?.pin_configurado ? "Cambiar PIN de Seguridad" : "Configurar PIN de Seguridad"}
         </button>
@@ -304,29 +304,29 @@ export default function AdminEspecialistasPage() {
             placeholder="Buscar por nombre o correo electrónico..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full glass-panel rounded-[2.5rem] border-none py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-violet-500/40 outline-none transition-all placeholder:text-slate-600 font-medium"
+            className="w-full glass-panel rounded-[2.5rem] py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-violet-500/40 outline-none transition-all placeholder:text-slate-600 font-medium"
           />
         </div>
-        <button className="bg-surface-container-highest/50 border border-outline-variant/30 p-4 rounded-2xl text-on-surface-variant hover:text-on-surface transition-colors">
+        <button className="bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/30 p-4 rounded-2xl text-on-surface-variant hover:text-on-surface hover:bg-slate-50 dark:hover:bg-surface-container-high transition-colors">
           <Filter size={20} />
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-surface-container-highest/50 border border-outline-variant/30 rounded-[40px] overflow-hidden">
+      <div className="bg-white dark:bg-surface-container-low border border-slate-200 dark:border-violet-500/20 shadow-sm rounded-[40px] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-surface-container-highest/50 border-b border-outline-variant/20">
-                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Especialista</th>
-                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Especialidad</th>
-                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Plan / Estado</th>
-                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Vencimiento</th>
-                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-400/80">Registro</th>
-                <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-widest text-violet-400/80">Acciones</th>
+              <tr className="bg-slate-50/50 dark:bg-surface-container-high/50 border-b border-slate-200 dark:border-outline-variant/20">
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Especialista</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Especialidad</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Plan / Estado</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Vencimiento</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Registro</th>
+                <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/5">
               {isLoading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-20 text-center">
@@ -347,11 +347,11 @@ export default function AdminEspecialistasPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="group hover:bg-white/[0.02] transition-colors"
+                    className="group hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors"
                   >
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600/20 to-indigo-600/20 border border-violet-500/20 flex items-center justify-center font-black text-violet-400">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600/10 to-indigo-600/10 dark:from-violet-600/20 dark:to-indigo-600/20 border border-violet-500/10 dark:border-violet-500/20 flex items-center justify-center font-black text-violet-700 dark:text-violet-400">
                           {esp.nombre[0]}{esp.apellido[0]}
                         </div>
                         <div>
@@ -382,7 +382,9 @@ export default function AdminEspecialistasPage() {
                           </span>
                         </div>
                         <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                          esp.suscripcion_activa ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
+                          esp.suscripcion_activa 
+                            ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20" 
+                            : "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/20"
                         }`}>
                           {esp.suscripcion_activa ? <CheckCircle2 size={10} /> : <XCircle size={10} />}
                           {esp.suscripcion_activa ? "Suscrip. Activa" : "Suscrip. Inactiva"}
@@ -417,7 +419,7 @@ export default function AdminEspecialistasPage() {
                         </button>
                         <button 
                           onClick={() => handleOpenEdit(esp)}
-                          className="p-2.5 bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all"
+                          className="p-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl text-on-surface-variant hover:text-on-surface dark:hover:bg-surface-container-highest transition-all"
                           title="Editar Especialista"
                         >
                           <Edit size={18} />
@@ -454,15 +456,15 @@ export default function AdminEspecialistasPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#130b22] border border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl bg-white dark:bg-[#130b22] border border-slate-200 dark:border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden"
             >
               {/* Header Modal */}
-              <div className="p-8 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-highest/50">
+              <div className="p-8 border-b border-slate-100 dark:border-outline-variant/20 flex justify-between items-center bg-slate-50 dark:bg-surface-container-highest/50">
                 <div>
                   <h3 className="text-2xl font-black text-on-surface italic tracking-tight">
                     {isEditing ? `Editar: ${currentEsp.nombre}` : "Registrar Nuevo Especialista"}
                   </h3>
-                  <p className="text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Configuración Master de Acceso</p>
+                  <p className="text-violet-700 dark:text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Configuración Master de Acceso</p>
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(false)}
@@ -512,8 +514,8 @@ export default function AdminEspecialistasPage() {
                   </div>
                 </div>
 
-                <div className="space-y-4 p-6 bg-slate-900/40 rounded-[32px] border border-outline-variant/20">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400/80 ml-1">Seguridad de Acceso</h4>
+                <div className="space-y-4 p-6 bg-slate-50 dark:bg-slate-900/40 rounded-[32px] border border-slate-200 dark:border-outline-variant/20">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-700 dark:text-violet-400/80 ml-1">Seguridad de Acceso</h4>
                   
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">
@@ -527,12 +529,12 @@ export default function AdminEspecialistasPage() {
                         placeholder={isEditing ? "Ingresa nueva clave para resetear..." : "••••••••"}
                         value={currentEsp.password || ""}
                         onChange={(e) => setCurrentEsp({...currentEsp, password: e.target.value})}
-                        className="w-full glass-panel rounded-[2.5rem] border-none p-4 pl-12 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
+                        className="w-full glass-panel rounded-[2.5rem] p-4 pl-12 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
                       />
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 p-4 bg-violet-500/5 rounded-2xl border border-violet-500/10 hover:bg-violet-500/10 transition-colors cursor-pointer" onClick={() => setCurrentEsp({...currentEsp, forzar_cambio_password_proximo_acceso: !currentEsp.forzar_cambio_password_proximo_acceso})}>
+                  <div className="flex items-center gap-4 p-4 bg-violet-50 dark:bg-violet-500/5 rounded-2xl border border-violet-100 dark:border-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/10 transition-colors cursor-pointer" onClick={() => setCurrentEsp({...currentEsp, forzar_cambio_password_proximo_acceso: !currentEsp.forzar_cambio_password_proximo_acceso})}>
                     <input 
                       type="checkbox" 
                       id="forzar_pw_next"
@@ -540,7 +542,7 @@ export default function AdminEspecialistasPage() {
                       onChange={(e) => setCurrentEsp({...currentEsp, forzar_cambio_password_proximo_acceso: e.target.checked})}
                       className="w-5 h-5 rounded border-violet-500/20 bg-violet-500/10 text-violet-500 focus:ring-violet-500"
                     />
-                    <label htmlFor="forzar_pw_next" className="text-sm font-bold text-violet-200 cursor-pointer select-none tracking-tight">
+                    <label htmlFor="forzar_pw_next" className="text-sm font-bold text-violet-900 dark:text-violet-200 cursor-pointer select-none tracking-tight">
                       Forzar cambio de clave en el próximo inicio de sesión
                     </label>
                   </div>
@@ -552,10 +554,10 @@ export default function AdminEspecialistasPage() {
                     <select 
                       value={currentEsp.plan_suscripcion_id || ""}
                       onChange={(e) => setCurrentEsp({...currentEsp, plan_suscripcion_id: e.target.value})}
-                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none appearance-none"
+                      className="w-full glass-panel rounded-[2.5rem] p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none appearance-none"
                     >
                       {planes.map(p => (
-                        <option key={p.id} value={p.id} className="bg-[#130b22] text-on-surface">{p.nombre}</option>
+                        <option key={p.id} value={p.id} className="bg-white dark:bg-[#130b22] text-on-surface">{p.nombre}</option>
                       ))}
                     </select>
                   </div>
@@ -565,7 +567,7 @@ export default function AdminEspecialistasPage() {
                       <button 
                         type="button"
                         onClick={() => setIsQuickSpecModalOpen(true)}
-                        className="text-[10px] font-black uppercase tracking-widest text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1"
+                        className="text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400 hover:text-violet-600 dark:hover:text-violet-300 transition-colors flex items-center gap-1"
                       >
                         <Plus size={10} /> Nueva
                       </button>
@@ -573,36 +575,36 @@ export default function AdminEspecialistasPage() {
                     <select 
                       value={currentEsp.especialidad_principal_id || ""}
                       onChange={(e) => setCurrentEsp({...currentEsp, especialidad_principal_id: e.target.value})}
-                      className="w-full glass-panel rounded-[2.5rem] border-none p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none appearance-none disabled:opacity-50"
+                      className="w-full glass-panel rounded-[2.5rem] p-4 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none appearance-none disabled:opacity-50"
                     >
-                      <option value="" className="bg-[#130b22]">Seleccionar Especialidad...</option>
+                      <option value="" className="bg-white dark:bg-[#130b22]">Seleccionar Especialidad...</option>
                       {especialidades.map(e => (
-                        <option key={e.id} value={e.id} className="bg-[#130b22] text-on-surface">{e.nombre}</option>
+                        <option key={e.id} value={e.id} className="bg-white dark:bg-[#130b22] text-on-surface">{e.nombre}</option>
                       ))}
                     </select>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                   <div className="flex items-center gap-4 p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/30">
+                   <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-surface-container-highest/50 rounded-2xl border border-slate-200 dark:border-outline-variant/30">
                     <input 
                       type="checkbox" 
                       id="suscrip_activa"
                       checked={currentEsp.suscripcion_activa}
                       onChange={(e) => setCurrentEsp({...currentEsp, suscripcion_activa: e.target.checked})}
-                      className="w-5 h-5 rounded border-white/20 bg-surface-container-highest text-violet-600 focus:ring-violet-500"
+                      className="w-5 h-5 rounded border-slate-200 dark:border-white/20 bg-white dark:bg-surface-container text-violet-600 focus:ring-violet-500"
                     />
                     <label htmlFor="suscrip_activa" className="text-sm font-bold text-on-surface cursor-pointer select-none tracking-tight">
                       Suscripción Activa
                     </label>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/30">
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-surface-container-highest/50 rounded-2xl border border-slate-200 dark:border-outline-variant/30">
                     <input 
                       type="checkbox" 
                       id="acc_activo"
                       checked={currentEsp.activo}
                       onChange={(e) => setCurrentEsp({...currentEsp, activo: e.target.checked})}
-                      className="w-5 h-5 rounded border-white/20 bg-surface-container-highest text-violet-600 focus:ring-violet-500"
+                      className="w-5 h-5 rounded border-slate-200 dark:border-white/20 bg-white dark:bg-surface-container text-violet-600 focus:ring-violet-500"
                     />
                     <label htmlFor="acc_activo" className="text-sm font-bold text-on-surface cursor-pointer select-none tracking-tight">
                       Acceso a Plataforma
@@ -611,7 +613,7 @@ export default function AdminEspecialistasPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                  <div className="flex flex-col gap-3 p-5 bg-surface-container-highest/50 rounded-[24px] border border-outline-variant/30">
+                  <div className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-surface-container-highest/50 rounded-[24px] border border-slate-200 dark:border-outline-variant/30">
                     <div className="flex items-center gap-4">
                       <input 
                         type="checkbox" 
@@ -630,12 +632,12 @@ export default function AdminEspecialistasPage() {
                         <select 
                           value={currentEsp.intervalo_cambio_password || 90}
                           onChange={(e) => setCurrentEsp({...currentEsp, intervalo_cambio_password: parseInt(e.target.value)})}
-                          className="w-full bg-background/40 border border-white/20 rounded-xl p-3 text-on-surface text-sm focus:ring-2 focus:ring-violet-500/40 outline-none"
+                          className="w-full bg-white dark:bg-background/40 border border-slate-200 dark:border-white/20 rounded-xl p-3 text-on-surface text-sm focus:ring-2 focus:ring-violet-500/40 outline-none"
                         >
-                          <option value={60} className="bg-[#130b22]">60 Días (Cada 2 meses)</option>
-                          <option value={90} className="bg-[#130b22]">90 Días (Cada 3 meses)</option>
-                          <option value={120} className="bg-[#130b22]">120 Días (Cada 4 meses)</option>
-                          <option value={180} className="bg-[#130b22]">180 Días (Semestral)</option>
+                          <option value={60} className="bg-white dark:bg-[#130b22]">60 Días (Cada 2 meses)</option>
+                          <option value={90} className="bg-white dark:bg-[#130b22]">90 Días (Cada 3 meses)</option>
+                          <option value={120} className="bg-white dark:bg-[#130b22]">120 Días (Cada 4 meses)</option>
+                          <option value={180} className="bg-white dark:bg-[#130b22]">180 Días (Semestral)</option>
                         </select>
                       </div>
                     )}
@@ -644,15 +646,15 @@ export default function AdminEspecialistasPage() {
               </form>
 
               {/* Footer Modal */}
-              <div className="p-8 bg-black/20 border-t border-outline-variant/20 flex items-center justify-between gap-4">
+              <div className="p-8 bg-slate-50 dark:bg-black/20 border-t border-slate-100 dark:border-outline-variant/20 flex items-center justify-between gap-4">
                 <p className="text-[10px] text-on-surface-variant italic font-medium">
-                  <span className="text-violet-400 font-black not-italic">*</span> Campos obligatorios
+                  <span className="text-violet-700 dark:text-violet-400 font-black not-italic">*</span> Campos obligatorios
                 </p>
                 <div className="flex gap-4">
                   <button 
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="py-4 px-8 rounded-2xl border border-outline-variant/30 text-on-surface-variant font-bold hover:bg-surface-container-highest/50 transition-all outline-none uppercase tracking-widest text-[10px]"
+                    className="py-4 px-8 rounded-2xl border border-slate-200 dark:border-outline-variant/30 text-on-surface-variant font-bold hover:bg-slate-100 dark:hover:bg-surface-container-highest/50 transition-all outline-none uppercase tracking-widest text-[10px]"
                   >
                     Cancelar
                   </button>
@@ -680,10 +682,10 @@ export default function AdminEspecialistasPage() {
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-              className="relative w-full max-w-lg bg-background border border-red-500/20 rounded-[40px] shadow-2xl overflow-hidden p-8"
+              className="relative w-full max-w-lg bg-white dark:bg-background border border-slate-200 dark:border-red-500/20 rounded-[40px] shadow-2xl overflow-hidden p-8"
             >
               <div className="flex flex-col items-center text-center gap-6">
-                <div className="w-20 h-20 rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 animate-pulse">
+                <div className="w-20 h-20 rounded-3xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 flex items-center justify-center text-red-600 dark:text-red-500 animate-pulse">
                   <Trash2 size={40} />
                 </div>
                 
@@ -693,8 +695,8 @@ export default function AdminEspecialistasPage() {
                 </div>
 
                 {/* Resumen de Dependencias */}
-                <div className="w-full bg-red-500/5 border border-red-500/10 rounded-3xl p-6 space-y-4">
-                  <div className="flex items-center gap-3 text-red-400 mb-2">
+                <div className="w-full bg-red-50 dark:bg-red-500/5 border border-red-100 dark:border-red-500/10 rounded-3xl p-6 space-y-4">
+                  <div className="flex items-center gap-3 text-red-600 dark:text-red-400 mb-2">
                     <ShieldAlert size={18} />
                     <span className="text-[10px] font-black uppercase tracking-widest">Registros Vinculados Encontrados</span>
                   </div>
@@ -706,9 +708,9 @@ export default function AdminEspecialistasPage() {
                       { label: "Servicios", val: dependencyCheck.servicios },
                       { label: "Insumos", val: dependencyCheck.insumos },
                     ].map(d => (
-                      <div key={d.label} className="bg-black/40 border border-outline-variant/20 p-3 rounded-2xl flex justify-between items-center">
+                      <div key={d.label} className="bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-outline-variant/20 p-3 rounded-2xl flex justify-between items-center">
                         <span className="text-[10px] font-bold text-on-surface-variant uppercase">{d.label}</span>
-                        <span className={`text-sm font-black ${d.val > 0 ? 'text-red-400' : 'text-slate-600'}`}>{d.val}</span>
+                        <span className={`text-sm font-black ${d.val > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-600'}`}>{d.val}</span>
                       </div>
                     ))}
                   </div>
@@ -731,15 +733,15 @@ export default function AdminEspecialistasPage() {
 
                 {!dependencyCheck.es_borrable_directo && (
                   <div className="w-full space-y-2 animate-in slide-in-from-top-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-red-400/80 ml-1">Ingresa PIN de Seguridad Master</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-red-600 dark:text-red-400/80 ml-1">Ingresa PIN de Seguridad Master</label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400/50" size={18} />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-red-600/50" size={18} />
                       <input 
                         type="password"
                         placeholder="••••"
                         value={adminPin}
                         onChange={(e) => setAdminPin(e.target.value)}
-                        className="w-full bg-red-500/5 border border-red-500/20 rounded-2xl p-4 pl-12 text-white text-center text-xl tracking-[0.5em] focus:ring-2 focus:ring-red-500/50 outline-none font-black"
+                        className="w-full bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20 rounded-2xl p-4 pl-12 text-on-surface text-center text-xl tracking-[0.5em] focus:ring-2 focus:ring-red-500/50 outline-none font-black"
                       />
                     </div>
                   </div>
@@ -758,7 +760,7 @@ export default function AdminEspecialistasPage() {
                   <button 
                     onClick={() => setIsDeleteModalOpen(false)}
                     disabled={isDeleting}
-                    className="w-full py-4 bg-surface-container-highest/50 hover:bg-surface-container-highest text-on-surface-variant font-bold rounded-2xl transition-all uppercase tracking-widest text-xs"
+                    className="w-full py-4 bg-slate-100 hover:bg-slate-200 dark:bg-surface-container-highest/50 dark:hover:bg-surface-container-highest text-on-surface-variant font-bold rounded-2xl transition-all uppercase tracking-widest text-xs"
                   >
                     Cancelar y Volver
                   </button>
@@ -780,7 +782,7 @@ export default function AdminEspecialistasPage() {
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-              className="relative w-full max-w-sm bg-[#130b22] border border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden p-8"
+              className="relative w-full max-w-sm bg-white dark:bg-[#130b22] border border-slate-200 dark:border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden p-8"
             >
               <div className="flex flex-col items-center text-center gap-6">
                  <div className="w-20 h-20 rounded-3xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
@@ -831,12 +833,12 @@ export default function AdminEspecialistasPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-sm bg-[#1a0f2e] border border-violet-500/30 rounded-[32px] shadow-2xl overflow-hidden p-8"
+              className="relative w-full max-w-sm bg-white dark:bg-[#1a0f2e] border border-slate-200 dark:border-violet-500/30 rounded-[32px] shadow-2xl overflow-hidden p-8"
             >
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <h4 className="text-xl font-black text-on-surface italic tracking-tight">Agregar Especialidad</h4>
-                  <p className="text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Acceso Rápido</p>
+                  <p className="text-violet-700 dark:text-violet-400/60 text-[10px] font-black uppercase tracking-widest mt-1">Acceso Rápido</p>
                 </div>
                 <button onClick={() => setIsQuickSpecModalOpen(false)} className="text-on-surface-variant hover:text-on-surface transition-colors">
                   <X size={20} />
@@ -851,7 +853,7 @@ export default function AdminEspecialistasPage() {
                     placeholder="Ej. Endodoncia"
                     value={newSpec.nombre}
                     onChange={(e) => setNewSpec({...newSpec, nombre: e.target.value})}
-                    className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
+                    className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -864,7 +866,7 @@ export default function AdminEspecialistasPage() {
                       setIsQuickCodeManuallyEdited(true);
                       setNewSpec({...newSpec, codigo: e.target.value.toUpperCase()});
                     }}
-                    className="w-full bg-surface-container-highest/50 border border-outline-variant/30 rounded-xl p-3 text-on-surface font-mono focus:ring-2 focus:ring-violet-500/50 outline-none"
+                    className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl p-3 text-on-surface font-mono focus:ring-2 focus:ring-violet-500/50 outline-none"
                   />
                 </div>
 
