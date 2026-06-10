@@ -1,0 +1,528 @@
+<!DOCTYPE html><html class="dark" lang="es"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Inventario y Servicios | VitalNexus</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#e89337",
+                      "outline-variant": "#3d494c",
+                      "primary": "#4cd7f6",
+                      "on-tertiary": "#4b2800",
+                      "tertiary": "#ffb873",
+                      "on-secondary-fixed-variant": "#3f465c",
+                      "surface-container-high": "#1b2b3f",
+                      "secondary": "#bec6e0",
+                      "on-secondary-container": "#adb4ce",
+                      "on-primary-fixed-variant": "#004e5c",
+                      "tertiary-fixed-dim": "#ffb873",
+                      "on-primary": "#003640",
+                      "error-container": "#93000a",
+                      "secondary-container": "#3f465c",
+                      "surface-container-highest": "#26364a",
+                      "secondary-fixed-dim": "#bec6e0",
+                      "secondary-fixed": "#dae2fd",
+                      "primary-container": "#06b6d4",
+                      "on-tertiary-fixed": "#2d1600",
+                      "surface-container-low": "#0b1c30",
+                      "surface-container": "#102034",
+                      "on-surface": "#d3e4fe",
+                      "on-error-container": "#ffdad6",
+                      "on-error": "#690005",
+                      "on-background": "#d3e4fe",
+                      "on-secondary-fixed": "#131b2e",
+                      "background": "#031427",
+                      "surface-variant": "#26364a",
+                      "surface-container-lowest": "#000f21",
+                      "outline": "#869397",
+                      "tertiary-fixed": "#ffdcbf",
+                      "surface": "#031427",
+                      "inverse-surface": "#d3e4fe",
+                      "surface-bright": "#2a3a4f",
+                      "surface-tint": "#4cd7f6",
+                      "primary-fixed": "#acedff",
+                      "on-surface-variant": "#bcc9cd",
+                      "inverse-primary": "#00687a",
+                      "on-primary-container": "#00424f",
+                      "primary-fixed-dim": "#4cd7f6",
+                      "on-tertiary-fixed-variant": "#6a3b00",
+                      "on-secondary": "#283044",
+                      "on-primary-fixed": "#001f26",
+                      "surface-dim": "#031427",
+                      "on-tertiary-container": "#5b3200",
+                      "inverse-on-surface": "#213145",
+                      "error": "#ffb4ab"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "lg": "24px",
+                      "gutter": "24px",
+                      "margin": "24px",
+                      "xl": "32px",
+                      "3xl": "64px",
+                      "2xl": "48px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Geist"],
+                      "label-sm": ["Geist"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Geist"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #031427;
+            color: #d3e4fe;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(16, 32, 52, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(76, 215, 246, 0.1);
+        }
+        .cyan-glow-hover:hover {
+            box-shadow: 0 0 20px -5px rgba(76, 215, 246, 0.3);
+            border-color: rgba(76, 215, 246, 0.4);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3d494c; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-body-md overflow-hidden">
+<!-- Layout Container -->
+<div class="flex h-screen w-full">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col h-full py-md overflow-y-auto bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant/20 shadow-lg dark:shadow-none z-50">
+<div class="px-lg mb-xl">
+<div class="h-10 mb-2 flex items-center">https://lh3.googleusercontent.com/aida/AP1WRLu4ghZK-5WiN80kqfKePjXF04X_cQN8Dn8euljjimZ2SKD0Ncex7ARKEh63KHiL8gy7kf-4Kv8JtAvM3TL4GRg2fKrGpefErhW8rLOJ5hXXTNVzowaljPfymnDJH-O9dUcY2GRz3XIk3ugCGB0U43drnceEmF4mypBk4PKwN6tGCRIAjEHdcU60PU99-wIpq96zYXkj39_TNn5RrWTPtPoevf608atbhJtoSRKPp309H3KxjxDSj3wePpg</div>
+<div class="font-headline-md text-headline-md font-black text-primary dark:text-primary-fixed-dim"><span class="text-white">VITAL</span><span class="text-primary">NEXUS</span></div>
+<div class="font-label-md text-label-md text-on-surface-variant opacity-70">Clinical Management</div>
+</div>
+<nav class="flex-1 space-y-1 px-sm">
+<a class="flex items-center gap-md px-md py-sm rounded-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest/40 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest/40 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-md text-label-md">Patients</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest/40 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-md text-label-md">Medical Agenda</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-sm text-primary dark:text-primary-fixed-dim bg-secondary-container/20 dark:bg-secondary-container/10 border-r-4 border-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest/40 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="clinical_notes">clinical_notes</span>
+<span class="font-label-md text-label-md">Medical Records</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest/40 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+</nav>
+<div class="px-md mt-auto pt-lg border-t border-outline-variant/20">
+<button class="w-full bg-primary-container text-on-primary-container py-sm font-label-md text-label-md rounded-sm mb-lg active:scale-95 transition-transform flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    New Appointment
+                </button>
+<div class="space-y-1">
+<a class="flex items-center gap-md px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-highest/40" href="#">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-highest/40" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 overflow-y-auto bg-background">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-lg w-full sticky top-0 z-40 bg-surface dark:bg-surface-container border-b border-outline-variant/30 h-16 shadow-sm">
+<div class="flex items-center gap-lg">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-sm pl-10 pr-md py-2 w-64 focus:ring-1 focus:ring-primary text-body-sm" placeholder="Search services, products..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="px-md py-2 bg-red-600/10 text-red-500 border border-red-600/20 font-label-md text-label-md rounded-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="emergency">emergency</span>
+                        Emergency
+                    </button>
+<div class="flex items-center gap-sm px-sm">
+<span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors" data-icon="help">help</span>
+</div>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-primary/30">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6uvsz8-6naJILbE7fQyacSd7SYuq3H7j2nmIwg_-tYOpXgXkmFqJ604h17xh2zDwCP-j61zwMX2BGKWk-P5BljoWAA6x7x3LiJhlHKR4oT43ZRJ7A6RXc1V3_3lPvHyaQQIXIFTijOlEB5oJCIXArh_RL7_GGkPyscZnSuJ8d2tjmUdZG64PtWkIkp6TW_opBXp8hzJvqCkcTvTSXhdAwJQFf1rPj6iUC0TnsaAhNxWmMjuOVzzrZSat26pKH-cDE71KBRmqCld6K">
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-lg space-y-lg">
+<!-- Page Header & Tabs -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md border-b border-outline-variant/10 pb-md">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Inventario y Servicios</h1>
+<p class="text-on-surface-variant font-body-md">Gestión centralizada de insumos médicos y oferta prestacional.</p>
+</div>
+<div class="flex bg-surface-container-high p-1 rounded-sm">
+<button class="px-xl py-2 font-label-md text-label-md rounded-sm transition-all text-on-surface-variant" id="tab-insumos" onclick="switchTab('insumos')">
+                            Insumos
+                        </button>
+<button class="px-xl py-2 font-label-md text-label-md rounded-sm transition-all bg-primary text-on-primary-container shadow-sm" id="tab-servicios" onclick="switchTab('servicios')">
+                            Servicios
+                        </button>
+</div>
+</div>
+<!-- Bento Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Profitability Card -->
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between cyan-glow-hover transition-all group">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-sm rounded-sm" data-icon="trending_up">trending_up</span>
+<span class="text-xs font-bold text-green-400 bg-green-400/10 px-sm py-1 rounded-full">+2.4%</span>
+</div>
+<div class="mt-md">
+<div class="text-on-surface-variant font-label-md text-label-md">Profitability</div>
+<div class="text-headline-md font-headline-md text-on-surface">84.2%</div>
+</div>
+<div class="mt-sm w-full bg-outline-variant/20 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 84.2%"></div>
+</div>
+</div>
+<!-- Critical Items Card -->
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between cyan-glow-hover transition-all">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-error bg-error/10 p-sm rounded-sm" data-icon="inventory_2">inventory_2</span>
+<span class="text-xs font-bold text-error bg-error/10 px-sm py-1 rounded-full">Alerta</span>
+</div>
+<div class="mt-md">
+<div class="text-on-surface-variant font-label-md text-label-md">Critical Items</div>
+<div class="text-headline-md font-headline-md text-error">14</div>
+</div>
+<div class="text-xs text-on-surface-variant mt-sm">Requiere reabastecimiento inmediato</div>
+</div>
+<!-- Active Services Card -->
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between cyan-glow-hover transition-all">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-sm rounded-sm" data-icon="medical_services">medical_services</span>
+</div>
+<div class="mt-md">
+<div class="text-on-surface-variant font-label-md text-label-md">Active Services</div>
+<div class="text-headline-md font-headline-md text-on-surface">128</div>
+</div>
+<div class="text-xs text-on-surface-variant mt-sm">94% operatividad de equipos</div>
+</div>
+<!-- Monthly Projection Card -->
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between cyan-glow-hover transition-all bg-gradient-to-br from-surface-container to-surface-container-high">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-sm rounded-sm" data-icon="payments">payments</span>
+</div>
+<div class="mt-md">
+<div class="text-on-surface-variant font-label-md text-label-md">Monthly Projection</div>
+<div class="text-headline-md font-headline-md text-primary">$42.8k</div>
+</div>
+<div class="text-xs text-on-surface-variant mt-sm">Meta: $45.0k (95.1%)</div>
+</div>
+</div>
+<!-- Main Data Table Container -->
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="p-lg border-b border-outline-variant/20 flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md">Detalle de Servicios</h2>
+<div class="flex gap-sm">
+<button class="px-md py-sm border border-outline-variant text-on-surface-variant rounded-sm font-label-md text-label-md flex items-center gap-xs hover:bg-surface-container-highest/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                                Filtrar
+                            </button>
+<button class="px-md py-sm border border-outline-variant text-on-surface-variant rounded-sm font-label-md text-label-md flex items-center gap-xs hover:bg-surface-container-highest/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+                                Exportar
+                            </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-highest/30">
+<th class="px-lg py-md font-label-md text-label-md text-outline uppercase tracking-wider">Categoría</th>
+<th class="px-lg py-md font-label-md text-label-md text-outline uppercase tracking-wider">Servicio</th>
+<th class="px-lg py-md font-label-md text-label-md text-outline uppercase tracking-wider text-right">Precio ($)</th>
+<th class="px-lg py-md font-label-md text-label-md text-outline uppercase tracking-wider text-right">Costo ($)</th>
+<th class="px-lg py-md font-label-md text-label-md text-outline uppercase tracking-wider text-right">Utilidad Neta</th>
+<th class="px-lg py-md font-label-md text-label-md text-outline uppercase tracking-wider text-center">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<span class="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(76,215,246,0.6)]"></span>
+<span class="font-body-md text-on-surface">Cardiología</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface">Ecocardiograma Doppler Color</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">250.00</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">85.50</td>
+<td class="px-lg py-md text-right">
+<span class="font-bold text-primary">65.8%</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-green-400/10 text-green-400 text-xs font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-green-400"></span> Activo
+                                        </span>
+</td>
+</tr>
+<tr class="bg-surface-container/20 hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<span class="h-2 w-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(255,184,115,0.6)]"></span>
+<span class="font-body-md text-on-surface">Radiología</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface">Resonancia Magnética Cerebral</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">850.00</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">412.00</td>
+<td class="px-lg py-md text-right">
+<span class="font-bold text-primary">51.5%</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-green-400/10 text-green-400 text-xs font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-green-400"></span> Activo
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<span class="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(76,215,246,0.6)]"></span>
+<span class="font-body-md text-on-surface">Laboratorio</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface">Perfil Bioquímico Completo</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">120.00</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">18.00</td>
+<td class="px-lg py-md text-right">
+<span class="font-bold text-primary">85.0%</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-green-400/10 text-green-400 text-xs font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-green-400"></span> Activo
+                                        </span>
+</td>
+</tr>
+<tr class="bg-surface-container/20 hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<span class="h-2 w-2 rounded-full bg-error shadow-[0_0_8px_rgba(255,180,171,0.6)]"></span>
+<span class="font-body-md text-on-surface">Gastroenterología</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface">Endoscopía Digestiva Alta</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">450.00</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">320.00</td>
+<td class="px-lg py-md text-right">
+<span class="font-bold text-primary">28.9%</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-yellow-400/10 text-yellow-400 text-xs font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-yellow-400"></span> Revisión
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<span class="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(76,215,246,0.6)]"></span>
+<span class="font-body-md text-on-surface">Oftalmología</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface">Fondo de Ojo Computarizado</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">85.00</td>
+<td class="px-lg py-md font-body-md text-on-surface text-right">15.20</td>
+<td class="px-lg py-md text-right">
+<span class="font-bold text-primary">82.1%</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-green-400/10 text-green-400 text-xs font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-green-400"></span> Activo
+                                        </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-md border-t border-outline-variant/10 flex justify-between items-center text-body-sm text-on-surface-variant">
+<div class="">Mostrando 1-5 de 128 servicios</div>
+<div class="flex gap-xs">
+<button class="w-8 h-8 rounded-sm border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container-highest transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span></button>
+<button class="w-8 h-8 rounded-sm bg-primary text-on-primary-container flex items-center justify-center">1</button>
+<button class="w-8 h-8 rounded-sm border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container-highest transition-colors">2</button>
+<button class="w-8 h-8 rounded-sm border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container-highest transition-colors">3</button>
+<button class="w-8 h-8 rounded-sm border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container-highest transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Secondary Section: Advanced Analysis -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter pb-lg">
+<!-- Cost Analysis -->
+<div class="lg:col-span-2 glass-card p-lg rounded-xl">
+<h3 class="font-headline-md text-headline-md mb-md">Análisis de Costos Operativos</h3>
+<div class="h-64 flex items-end justify-between px-md">
+<div class="flex flex-col items-center gap-sm flex-1">
+<div class="w-full max-w-[40px] bg-primary/20 h-48 rounded-t-sm relative group cursor-pointer overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary h-3/4 transition-all group-hover:h-[80%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant">Personal</span>
+</div>
+<div class="flex flex-col items-center gap-sm flex-1">
+<div class="w-full max-w-[40px] bg-primary/20 h-48 rounded-t-sm relative group cursor-pointer overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary h-1/2 transition-all group-hover:h-[55%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant">Insumos</span>
+</div>
+<div class="flex flex-col items-center gap-sm flex-1">
+<div class="w-full max-w-[40px] bg-primary/20 h-48 rounded-t-sm relative group cursor-pointer overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary h-1/4 transition-all group-hover:h-[30%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant">Equipos</span>
+</div>
+<div class="flex flex-col items-center gap-sm flex-1">
+<div class="w-full max-w-[40px] bg-primary/20 h-48 rounded-t-sm relative group cursor-pointer overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary h-[90%] transition-all group-hover:h-full"></div>
+</div>
+<span class="text-xs text-on-surface-variant">Marketing</span>
+</div>
+<div class="flex flex-col items-center gap-sm flex-1">
+<div class="w-full max-w-[40px] bg-primary/20 h-48 rounded-t-sm relative group cursor-pointer overflow-hidden">
+<div class="absolute bottom-0 w-full bg-primary h-2/3 transition-all group-hover:h-[70%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant">Local</span>
+</div>
+</div>
+</div>
+<!-- Supply Status -->
+<div class="glass-card p-lg rounded-xl flex flex-col">
+<h3 class="font-headline-md text-headline-md mb-md">Estado de Insumos</h3>
+<div class="space-y-md flex-1">
+<div class="flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-on-surface font-body-md">Reactivos Lab B</span>
+<span class="text-xs text-on-surface-variant">Lote: L-2309</span>
+</div>
+<div class="text-right">
+<div class="text-error font-bold">12%</div>
+<div class="text-[10px] text-error uppercase">Stock Crítico</div>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-on-surface font-body-md">Guantes Nitrilo (M)</span>
+<span class="text-xs text-on-surface-variant">Lote: G-4412</span>
+</div>
+<div class="text-right">
+<div class="text-tertiary font-bold">45%</div>
+<div class="text-[10px] text-tertiary uppercase">Bajo</div>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-on-surface font-body-md">Mascarillas KN95</span>
+<span class="text-xs text-on-surface-variant">Lote: M-1102</span>
+</div>
+<div class="text-right">
+<div class="text-green-400 font-bold">92%</div>
+<div class="text-[10px] text-green-400 uppercase">Óptimo</div>
+</div>
+</div>
+</div>
+<button class="w-full mt-lg border border-primary/30 text-primary py-sm rounded-sm font-label-md text-label-md hover:bg-primary/10 transition-colors">Generar Orden de Compra</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Floating Action Button Contextual -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-primary text-on-primary shadow-[0_0_20px_rgba(76,215,246,0.5)] rounded-full flex items-center justify-center hover:scale-110 transition-transform z-50">
+<span class="material-symbols-outlined text-[28px]" data-icon="add">add</span>
+</button>
+<script>
+        function switchTab(tab) {
+            const insumosBtn = document.getElementById('tab-insumos');
+            const serviciosBtn = document.getElementById('tab-servicios');
+            
+            if(tab === 'insumos') {
+                insumosBtn.className = 'px-xl py-2 font-label-md text-label-md rounded-sm transition-all bg-primary text-on-primary-container shadow-sm';
+                serviciosBtn.className = 'px-xl py-2 font-label-md text-label-md rounded-sm transition-all text-on-surface-variant';
+                // Trigger content update here if needed
+            } else {
+                serviciosBtn.className = 'px-xl py-2 font-label-md text-label-md rounded-sm transition-all bg-primary text-on-primary-container shadow-sm';
+                insumosBtn.className = 'px-xl py-2 font-label-md text-label-md rounded-sm transition-all text-on-surface-variant';
+                // Trigger content update here if needed
+            }
+        }
+
+        // Simple animation for numbers (atmospheric)
+        document.querySelectorAll('.text-headline-md').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                el.classList.add('scale-105');
+                el.style.color = '#4cd7f6';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.classList.remove('scale-105');
+                el.style.color = '';
+            });
+        });
+    </script>
+
+
+
+
+</body></html>

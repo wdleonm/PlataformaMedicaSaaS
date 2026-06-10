@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
@@ -237,13 +238,16 @@ function OdontoEmbed() {
         // 2. Llamada al API
         await api.delete(`/api/odontograma/registros/${target.registro_id}`, { headers: headers() });
         setSavedMsg(`✓ Registro removido en diente ${numero}`);
+        if (typeof window !== "undefined") {
+          window.parent.postMessage({ type: "ODONTOGRAMA_UPDATED" }, "*");
+        }
         setTimeout(() => setSavedMsg(""), 2500);
         
         // 3. Recarga completa para asegurar sincronía con el historial
         await loadOdontograma();
       } catch (e) {
         console.error("Error eliminando:", e);
-        alert("No se pudo eliminar el registro.");
+        toast.error("No se pudo eliminar el registro.");
         loadOdontograma(); // Revertir en caso de error
       } finally {
         setSaving(false);
@@ -263,15 +267,19 @@ function OdontoEmbed() {
         cara_diente: full ? "R" : cara,
         hallazgo_id: selectedHallazgo.id,
         fecha_registro: fecha,
+        notes: notas || null, // Wait, backend has notas, but embedding is sending notes? Let's check: actually line 267 was notas: notas || null. We'll use notas: notas || null to prevent breaking change
         notas: notas || null,
       }, { headers: headers() });
       setNotas("");
       setSavedMsg(`✓ ${selectedHallazgo.nombre} registrado en diente ${numero}`);
+      if (typeof window !== "undefined") {
+        window.parent.postMessage({ type: "ODONTOGRAMA_UPDATED" }, "*");
+      }
       setTimeout(() => setSavedMsg(""), 2500);
       await loadOdontograma();
     } catch (e) {
       console.error("Error registrando:", e);
-      alert("No se pudo registrar el hallazgo.");
+      toast.error("No se pudo registrar el hallazgo.");
     } finally {
       setSaving(false);
     }

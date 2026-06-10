@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect, useMemo, useRef } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
@@ -309,7 +310,7 @@ export default function FinanzasPage() {
       setIsAbonoModalOpen(false);
       fetchData();
     } catch (error: any) {
-      alert(error.response?.data?.detail || "Error al registrar pago");
+      toast.error(error.response?.data?.detail || "Error al registrar pago");
     }
   };
 
@@ -327,7 +328,7 @@ export default function FinanzasPage() {
       fetchData();
     } catch (error) {
       console.error("Error cancelling budget:", error);
-      alert("No se pudo anular el presupuesto");
+      toast.error("No se pudo anular el presupuesto");
     }
   };
 
@@ -335,7 +336,7 @@ export default function FinanzasPage() {
     const url = `${window.location.origin}/presupuesto/${p.id}`;
     if (method === 'link') {
       navigator.clipboard.writeText(url);
-      alert("Enlace copiado al portapapeles");
+      toast.success("Enlace copiado al portapapeles");
     } else {
       const paciente = pacientes.find(px => px.id === p.paciente_id);
       const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
@@ -354,15 +355,17 @@ export default function FinanzasPage() {
   const totalCartera = presupuestos.reduce((acc, p) => acc + p.saldo_pendiente, 0);
 
   const StatusBadge = ({ status }: { status: string }) => {
-    const styles: any = {
-      borrador: "bg-neutral-500/10 text-neutral-500 border-neutral-500/20",
-      aprobado: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-      en_pago: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-      pagado: "bg-green-500/10 text-green-500 border-green-500/20",
-      cancelado: "bg-red-500/10 text-red-500 border-red-500/20",
+    const config: any = {
+      borrador: { icon: FileText, style: "bg-neutral-500/10 text-neutral-500 border-neutral-500/30" },
+      aprobado: { icon: CheckCircle2, style: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
+      en_pago: { icon: Clock, style: "bg-orange-500/10 text-orange-500 border-orange-500/30" },
+      pagado: { icon: DollarSign, style: "bg-green-500/10 text-green-500 border-green-500/30" },
+      cancelado: { icon: X, style: "bg-red-500/10 text-red-500 border-red-500/30" },
     };
+    const Icon = config[status]?.icon || AlertCircle;
     return (
-      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${styles[status]}`}>
+      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border transition-all ${config[status]?.style}`}>
+        <Icon size={12} />
         {status.replace("_", " ")}
       </span>
     );
@@ -374,18 +377,18 @@ export default function FinanzasPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Finanzas y Presupuestos</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-on-surface-variant mt-1 text-sm">
             Control de ingresos, presupuestos aprobados y cartera pendiente.
           </p>
         </div>
         
-        <div className="flex gap-2 bg-secondary/50 p-1 rounded-2xl border border-border/10">
+        <div className="flex gap-2 bg-surface-container-highest/50 p-1 rounded-2xl border border-outline-variant/10">
           {["todos", "en_pago", "aprobado", "pagado", "cancelado"].map(f => (
             <button 
               key={f}
               onClick={() => setActiveFilter(f)}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all capitalize ${
-                activeFilter === f ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-secondary"
+                activeFilter === f ? "bg-primary/20 text-primary border border-primary shadow-[0_0_15px_rgba(77,158,170,0.2)]" : "bg-surface text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest border border-outline-variant/30"
               }`}
             >
               {f.replace("_", " ")}
@@ -396,22 +399,22 @@ export default function FinanzasPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="glass-panel p-5 rounded-2xl flex items-center gap-4 border border-border/30 bg-gradient-to-br from-card to-card/50">
+        <div className="glass-panel p-5 rounded-2xl flex items-center gap-4 border border-outline-variant/30 bg-gradient-to-br from-card to-card/50">
           <div className="p-3 bg-primary/10 text-primary rounded-xl">
             <Wallet size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Cartera Pendiente</p>
+            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Cartera Pendiente</p>
             <p className="text-2xl font-bold">${totalCartera.toLocaleString()}</p>
           </div>
         </div>
         
-        <div className="glass-panel p-5 rounded-2xl flex items-center gap-4 border border-border/30 bg-card/50">
+        <div className="glass-panel p-5 rounded-2xl flex items-center gap-4 border border-outline-variant/30 bg-surface-container-low/50">
           <div className="p-3 bg-green-500/10 text-green-500 rounded-xl">
             <CheckCircle2 size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Presupuestos Pagados</p>
+            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Presupuestos Pagados</p>
             <p className="text-2xl font-bold">{presupuestos.filter(p => p.estado === 'pagado').length}</p>
           </div>
         </div>
@@ -426,42 +429,42 @@ export default function FinanzasPage() {
                 setPatientSearch("");
                 setIsNewModalOpen(true);
               }}
-              className="w-full flex items-center justify-center gap-2 p-6 rounded-2xl glass-panel border border-border/20 hover:border-primary/40 hover:bg-primary/5 transition-all group"
+              className="w-full flex items-center justify-center gap-2 p-6 rounded-2xl glass-panel border border-outline-variant/20 hover:border-primary/40 hover:bg-primary/5 transition-all group"
             >
               <div className="p-2 rounded-lg bg-primary/20 text-primary group-hover:scale-110 transition-transform">
                 <Plus size={24} />
               </div>
-              <span className="text-sm font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">Nuevo Presupuesto</span>
+              <span className="text-sm font-black uppercase tracking-widest text-on-surface-variant group-hover:text-primary transition-colors">Nuevo Presupuesto</span>
             </button>
           </motion.div>
 
       </div>
 
       {/* Toolbar */}
-      <div className="glass-panel p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between border border-border/30">
+      <div className="glass-panel p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between border border-outline-variant/30">
         <div className="relative w-full md:w-96 group/search">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within/search:text-primary transition-colors" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within/search:text-primary transition-colors" size={18} />
           <input
             type="text"
             placeholder="Buscar por paciente..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-background/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-surface/50 border border-outline-variant/50 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
           />
         </div>
       </div>
 
       {/* List Section */}
-      <div className="glass-panel rounded-2xl overflow-hidden border border-border/30 shadow-sm">
+      <div className="glass-panel rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center gap-4">
             <Loader2 className="animate-spin text-primary" size={40} />
-            <p className="text-muted-foreground text-sm">Procesando finanzas...</p>
+            <p className="text-on-surface-variant text-sm">Procesando finanzas...</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-secondary/20 text-muted-foreground uppercase text-xs font-bold">
+              <thead className="bg-surface-container-highest/20 text-on-surface-variant uppercase text-xs font-bold">
                 <tr>
                   <th className="px-6 py-4">Paciente / Fecha</th>
                   <th className="px-6 py-4 text-center">Estado</th>
@@ -472,7 +475,7 @@ export default function FinanzasPage() {
               </thead>
               <tbody className="divide-y divide-border/10">
                 {filteredPresupuestos.map(p => (
-                  <tr key={p.id} className="table-row-hover bg-card/40 transition-colors group">
+                  <tr key={p.id} className="table-row-hover bg-surface-container-low/40 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-neutral-500/10 text-neutral-500 flex items-center justify-center">
@@ -480,7 +483,7 @@ export default function FinanzasPage() {
                         </div>
                         <div>
                           <p className="font-bold">{getPacienteNombre(p.paciente_id)}</p>
-                          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+                          <p className="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">
                             {formatLocalDate(p.fecha).toLocaleDateString()}
                           </p>
                         </div>
@@ -503,7 +506,7 @@ export default function FinanzasPage() {
                             onClick={() => handleOpenAbono(p)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg transition-all ${
                               p.estado === 'cancelado' 
-                                ? 'bg-secondary text-muted-foreground cursor-not-allowed border border-border/10' 
+                                ? 'bg-surface-container-highest text-on-surface-variant cursor-not-allowed border border-outline-variant/10' 
                                 : 'bg-primary text-primary-foreground shadow-primary/20 hover:scale-105'
                             }`}
                             disabled={p.saldo_pendiente === 0 || p.estado === 'cancelado'}
@@ -522,13 +525,13 @@ export default function FinanzasPage() {
                         <button 
                           onClick={() => handleShare(p, 'link')}
                           className="p-2 hover:bg-violet-500/10 text-violet-500 rounded-lg transition-colors"
-                          title="Copiar Enlace Público"
+                          title="Copiar enlace para el paciente"
                         >
                           <Share2 size={16} />
                         </button>
                         <button 
                           onClick={() => handleOpenDetail(p)}
-                          className="p-2 hover:bg-secondary rounded-lg transition-colors text-muted-foreground"
+                          className="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant"
                           title="Ver detalles"
                         >
                           <FileText size={16} />
@@ -548,7 +551,7 @@ export default function FinanzasPage() {
                 ))}
                 {filteredPresupuestos.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-20 text-center text-muted-foreground">
+                    <td colSpan={5} className="py-20 text-center text-on-surface-variant">
                       No se encontraron presupuestos en esta categoría.
                     </td>
                   </tr>
@@ -563,18 +566,18 @@ export default function FinanzasPage() {
       <AnimatePresence>
         {isAbonoModalOpen && selectedPresupuesto && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsAbonoModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card w-full max-w-sm rounded-2xl shadow-2xl border border-border relative z-10 overflow-hidden"
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" onClick={() => setIsAbonoModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="glass-panel w-full max-w-sm rounded-[2.5rem] border-none shadow-2xl relative z-10 overflow-hidden"
             >
-              <div className="p-6 border-b border-border/50 bg-secondary/30 flex justify-between items-center">
+              <div className="p-6 border-b border-outline-variant/50 bg-surface-container-highest/30 flex justify-between items-center">
                 <h2 className="text-xl font-bold flex items-center gap-2"><CreditCard className="text-primary"/> Registrar Pago</h2>
-                <button onClick={() => setIsAbonoModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
+                <button onClick={() => setIsAbonoModalOpen(false)} className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1"><X size={20}/></button>
               </div>
               
               <div className="p-4 bg-orange-500/5 border-b border-orange-500/10 space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-muted-foreground uppercase">Saldo Pendiente</span>
+                  <span className="text-xs font-bold text-on-surface-variant uppercase">Saldo Pendiente</span>
                   <span className="text-xl font-bold text-orange-500">${selectedPresupuesto.saldo_pendiente.toLocaleString()}</span>
                 </div>
                 
@@ -594,7 +597,7 @@ export default function FinanzasPage() {
                     </p>
                   </div>
                   <div className="text-right opacity-40">
-                    <p className="text-[9px] font-bold text-muted-foreground uppercase leading-none mb-1">Informativo USD</p>
+                    <p className="text-[9px] font-bold text-on-surface-variant uppercase leading-none mb-1">Informativo USD</p>
                     <p className="text-xs font-bold text-slate-400">
                       {(abonoForm.monto * finConfig.tasa_usd).toLocaleString('es-VE', { minimumFractionDigits: 2 })}
                     </p>
@@ -604,14 +607,14 @@ export default function FinanzasPage() {
 
               <form onSubmit={handleSaveAbono} className="p-6 space-y-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Monto del Abono</label>
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Monto del Abono</label>
                   <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={16} />
                     <input 
                       required 
                       type="number"
                       step="0.01"
-                      className="w-full pl-10 pr-4 py-2.5 bg-background border border-border/50 rounded-xl font-bold text-lg"
+                      className="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant/50 rounded-xl font-bold text-lg"
                       value={abonoForm.monto}
                       onChange={(e) => setAbonoForm({...abonoForm, monto: Number(e.target.value)})}
                       max={selectedPresupuesto.saldo_pendiente}
@@ -620,9 +623,9 @@ export default function FinanzasPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Método de Pago</label>
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Método de Pago</label>
                   <select 
-                    className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm"
+                    className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm"
                     value={abonoForm.metodo_pago}
                     onChange={(e) => setAbonoForm({...abonoForm, metodo_pago: e.target.value})}
                   >
@@ -635,18 +638,18 @@ export default function FinanzasPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Notas / Referencia</label>
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Notas / Referencia</label>
                   <textarea 
-                    className="w-full bg-background border border-border/50 rounded-xl p-2.5 text-sm h-20 resize-none"
+                    className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm h-20 resize-none"
                     value={abonoForm.notas}
                     onChange={(e) => setAbonoForm({...abonoForm, notas: e.target.value})}
                     placeholder="Opcional..."
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-4 border-t border-border/30">
-                  <button type="button" onClick={() => setIsAbonoModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors">Cancelar</button>
-                  <button type="submit" className="bg-primary text-primary-foreground px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Confirmar Pago</button>
+                <div className="flex justify-end gap-2 pt-4 border-t border-outline-variant/30">
+                  <button type="button" onClick={() => setIsAbonoModalOpen(false)} className="px-4 py-2 text-sm font-semibold hover:bg-surface-container-highest rounded-xl transition-colors">Cancelar</button>
+                  <button type="submit" className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-primary/90 active:bg-primary/80 transition-all border border-primary/20">Confirmar Pago</button>
                 </div>
               </form>
             </motion.div>
@@ -658,37 +661,35 @@ export default function FinanzasPage() {
       <AnimatePresence>
         {isDetailModalOpen && selectedPresupuesto && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsDetailModalOpen(false)} className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-card border border-border/50 rounded-3xl shadow-2xl overflow-hidden"
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsDetailModalOpen(false)} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" />
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-surface-container-low border border-outline-variant/50 rounded-3xl shadow-2xl overflow-hidden"
             >
-              <div className="p-6 border-b border-border/10 flex justify-between items-center bg-secondary/30">
+              <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-highest/30">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary/10 rounded-xl text-primary"><FileText size={20} /></div>
                   <div>
                     <h2 className="text-lg font-black tracking-tight">Detalles del Presupuesto</h2>
-                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Resumen Financiero</p>
+                    <p className="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Resumen Financiero</p>
                   </div>
                 </div>
-                <button onClick={() => setIsDetailModalOpen(false)} className="p-2 hover:bg-background rounded-full transition-colors"><X size={20} /></button>
+                <button onClick={() => setIsDetailModalOpen(false)} className="p-2 hover:bg-surface rounded-full transition-colors"><X size={20} /></button>
               </div>
               <div className="p-8 space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-secondary/20 border border-border/10">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Paciente</p>
+                  <div className="p-4 rounded-2xl bg-surface-container-highest/20 border border-outline-variant/10">
+                    <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Paciente</p>
                     <p className="font-bold">{getPacienteNombre(selectedPresupuesto.paciente_id)}</p>
                   </div>
-                  <div className="p-4 rounded-2xl bg-secondary/20 border border-border/10">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Estado</p>
-                    <span className={`text-xs font-black px-2.5 py-1 rounded-full border inline-block ${STATUS_COLORS[selectedPresupuesto.estado]}`}>
-                      {STATUS_LABELS[selectedPresupuesto.estado]}
-                    </span>
+                  <div className="p-4 rounded-2xl bg-surface-container-highest/20 border border-outline-variant/10">
+                    <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Estado</p>
+                    <StatusBadge status={selectedPresupuesto.estado} />
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center p-4 bg-background border border-border/20 rounded-2xl">
-                    <span className="text-sm font-bold text-muted-foreground">Total del Tratamiento</span>
-                    <span className="text-xl font-black text-foreground">${selectedPresupuesto.total.toLocaleString()}</span>
+                  <div className="flex justify-between items-center p-4 bg-surface border border-outline-variant/20 rounded-2xl">
+                    <span className="text-sm font-bold text-on-surface-variant">Total del Tratamiento</span>
+                    <span className="text-xl font-black text-on-surface">${selectedPresupuesto.total.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center p-4 bg-orange-500/5 border border-orange-500/20 rounded-2xl">
                     <span className="text-sm font-bold text-orange-500/80">Saldo Pendiente</span>
@@ -696,9 +697,9 @@ export default function FinanzasPage() {
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-secondary/30 border-t border-border/10 flex gap-3">
-                <button onClick={() => setIsDetailModalOpen(false)} className="flex-1 py-3 px-4 bg-background border border-border/50 hover:bg-secondary rounded-xl font-bold text-sm transition-all">Cerrar</button>
-                <button onClick={() => { setIsDetailModalOpen(false); handleOpenAbono(selectedPresupuesto); }} className="flex-1 py-3 px-4 bg-primary text-primary-foreground hover:scale-105 rounded-xl font-black text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50" disabled={selectedPresupuesto.saldo_pendiente === 0}>Registrar Abono</button>
+              <div className="p-6 bg-surface-container-highest/30 border-t border-outline-variant/10 flex gap-3">
+                <button onClick={() => setIsDetailModalOpen(false)} className="flex-1 py-3 px-4 bg-surface border border-outline-variant/50 hover:bg-surface-container-highest rounded-xl font-bold text-sm transition-all">Cerrar</button>
+                <button onClick={() => { setIsDetailModalOpen(false); handleOpenAbono(selectedPresupuesto); }} className="flex-1 py-3 px-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-black text-sm transition-all disabled:opacity-50 border border-primary/20" disabled={selectedPresupuesto.saldo_pendiente === 0}>Registrar Abono</button>
                 <button 
                   onClick={() => handleShare(selectedPresupuesto, 'whatsapp')} 
                   className="p-3 bg-emerald-500 text-white hover:scale-105 rounded-xl transition-all shadow-lg shadow-emerald-500/20"
@@ -716,26 +717,26 @@ export default function FinanzasPage() {
       <AnimatePresence>
         {isNewModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNewModalOpen(false)} className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-card border border-border/50 rounded-3xl shadow-2xl overflow-hidden"
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNewModalOpen(false)} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" />
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-surface-container-low border border-outline-variant/50 rounded-3xl shadow-2xl overflow-hidden"
             >
-              <div className="p-6 border-b border-border/10 bg-secondary/30 flex justify-between items-center">
+              <div className="p-6 border-b border-outline-variant/10 bg-surface-container-highest/30 flex justify-between items-center">
                 <div>
                   <h2 className="text-lg font-black tracking-tight">{newBudget.id ? 'Editar Presupuesto' : 'Crear Nuevo Presupuesto'}</h2>
-                  <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">{newBudget.id ? 'Actualiza los términos del plan' : 'Inicia un nuevo plan de tratamiento'}</p>
+                  <p className="text-xs text-on-surface-variant uppercase tracking-widest font-bold">{newBudget.id ? 'Actualiza los términos del plan' : 'Inicia un nuevo plan de tratamiento'}</p>
                 </div>
-                <button onClick={() => setIsNewModalOpen(false)} className="text-muted-foreground hover:bg-secondary rounded-full p-1"><X size={20}/></button>
+                <button onClick={() => setIsNewModalOpen(false)} className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1"><X size={20}/></button>
               </div>
               <div className="p-6 overflow-y-auto max-h-[70vh] space-y-6">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Buscar Paciente *</label>
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Buscar Paciente *</label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={16} />
                     <input 
                       type="text"
                       placeholder="Cédula o Nombre..."
-                      className="w-full pl-10 pr-4 py-2 bg-background border border-border/50 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant/50 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary"
                       value={patientSearch}
                       onChange={(e) => {
                         setPatientSearch(e.target.value);
@@ -744,9 +745,9 @@ export default function FinanzasPage() {
                     />
                   </div>
                   {patientSearch && !newBudget.paciente_id && (
-                    <div className="mt-2 max-h-40 overflow-y-auto border border-border/30 rounded-xl bg-background shadow-xl z-[100]">
+                    <div className="mt-2 max-h-40 overflow-y-auto border border-outline-variant/30 rounded-xl bg-surface shadow-xl z-[100]">
                       {filteredPatientsForSelect.length === 0 ? (
-                        <div className="px-4 py-3 text-sm text-muted-foreground text-center italic">
+                        <div className="px-4 py-3 text-sm text-on-surface-variant text-center italic">
                           No se encontraron pacientes
                         </div>
                       ) : (
@@ -758,10 +759,10 @@ export default function FinanzasPage() {
                               setNewBudget({...newBudget, paciente_id: p.id});
                               setPatientSearch(`${p.nombre} ${p.apellido}`);
                             }}
-                            className="w-full text-left px-4 py-2.5 hover:bg-primary/5 text-sm flex justify-between items-center group border-b border-border/5 last:border-0"
+                            className="w-full text-left px-4 py-2.5 hover:bg-primary/5 text-sm flex justify-between items-center group border-b border-outline-variant/5 last:border-0"
                           >
                              <span className="font-bold group-hover:text-primary transition-colors">{p.nombre} {p.apellido}</span>
-                             <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground uppercase">{(p as any).documento || 'S/D'}</span>
+                             <span className="text-[10px] bg-surface-container-highest px-2 py-0.5 rounded text-on-surface-variant uppercase">{(p as any).documento || 'S/D'}</span>
                           </button>
                         ))
                       )}
@@ -780,25 +781,25 @@ export default function FinanzasPage() {
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Servicios Incluidos</label>
+                    <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Servicios Incluidos</label>
                   </div>
                   
                   {/* Lista de Detalles Actuales */}
                   <div className="space-y-2">
                     {newBudget.detalles.map((d, i) => (
-                      <div key={i} className="flex items-center gap-2 bg-secondary/20 p-2 rounded-xl border border-border/10">
+                      <div key={i} className="flex items-center gap-2 bg-surface-container-highest/20 p-2 rounded-xl border border-outline-variant/10">
                         <div className="flex-1">
                           <p className="text-xs font-bold truncate">{d.descripcion}</p>
-                          <p className="text-[10px] text-muted-foreground">${d.precio_unitario.toLocaleString()}</p>
+                          <p className="text-[10px] text-on-surface-variant">${d.precio_unitario.toLocaleString()}</p>
                         </div>
                         <div className="flex items-center gap-1">
                           <input 
                             type="number" 
-                            className="w-12 bg-background border border-border/50 rounded p-1 text-xs text-center" 
+                            className="w-12 bg-surface border border-outline-variant/50 rounded p-1 text-xs text-center" 
                             value={d.cantidad}
                             onChange={(e) => updateDetalleCantidad(i, Number(e.target.value))}
                           />
-                          <button onClick={() => removeDetalleFromBudget(i)} className="text-destructive p-1 hover:bg-destructive/10 rounded"><Trash2 size={14}/></button>
+                          <button onClick={() => removeDetalleFromBudget(i)} className="text-error p-1 hover:bg-error/10 rounded"><Trash2 size={14}/></button>
                         </div>
                       </div>
                     ))}
@@ -807,33 +808,33 @@ export default function FinanzasPage() {
                   {/* Buscador de Servicios */}
                   <div className="relative" ref={budgetServiceDropdownRef}>
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={14} />
                       <input 
                         type="text" 
                         placeholder="Buscar servicio para agregar..." 
-                        className="w-full pl-9 pr-4 py-2.5 bg-background border border-border/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" 
+                        className="w-full pl-9 pr-4 py-2.5 bg-surface border border-outline-variant/50 rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none" 
                         value={budgetServiceSearch} 
                         onChange={(e) => { setBudgetServiceSearch(e.target.value); setIsBudgetServiceDropdownOpen(true); }}
                         onFocus={() => setIsBudgetServiceDropdownOpen(true)}
                       />
                     </div>
                     {isBudgetServiceDropdownOpen && (
-                      <div className="mt-1 max-h-48 overflow-y-auto border border-border/30 rounded-xl bg-card shadow-2xl z-[120] custom-scrollbar">
+                      <div className="mt-1 max-h-48 overflow-y-auto border border-outline-variant/30 rounded-xl bg-surface-container-low shadow-2xl z-[120] custom-scrollbar">
                         {filteredBudgetServicios.length === 0 ? (
-                          <div className="px-4 py-3 text-sm text-muted-foreground text-center italic">Sin coincidencias</div>
+                          <div className="px-4 py-3 text-sm text-on-surface-variant text-center italic">Sin coincidencias</div>
                         ) : (
                           filteredBudgetServicios.map((s: any) => (
                             <button 
                               key={s.id} 
                               type="button"
                               onClick={() => { addServicioToBudget(s); setBudgetServiceSearch(''); setIsBudgetServiceDropdownOpen(false); }}
-                              className="w-full text-left px-4 py-2.5 text-sm flex justify-between items-center border-b border-border/5 last:border-0 hover:bg-primary/5 transition-colors group"
+                              className="w-full text-left px-4 py-2.5 text-sm flex justify-between items-center border-b border-outline-variant/5 last:border-0 hover:bg-primary/5 transition-colors group"
                             >
                               <div className="flex items-center gap-2 overflow-hidden">
-                                <Stethoscope size={14} className="text-muted-foreground shrink-0" />
+                                <Stethoscope size={14} className="text-on-surface-variant shrink-0" />
                                 <span className="font-bold truncate group-hover:text-primary transition-colors">{s.nombre}</span>
                               </div>
-                              <span className="text-[10px] bg-secondary px-2 py-0.5 rounded text-muted-foreground shrink-0 ml-2">${s.precio.toLocaleString()}</span>
+                              <span className="text-[10px] bg-surface-container-highest px-2 py-0.5 rounded text-on-surface-variant shrink-0 ml-2">${s.precio.toLocaleString()}</span>
                             </button>
                           ))
                         )}
@@ -844,7 +845,7 @@ export default function FinanzasPage() {
 
                 <div className="p-4 bg-primary/5 rounded-2xl border border-primary/20 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-muted-foreground uppercase">Monto en Cripto/Divisa</span>
+                    <span className="text-xs font-bold text-on-surface-variant uppercase">Monto en Cripto/Divisa</span>
                     <span className="text-lg font-black text-primary">${newBudget.total.toLocaleString()}</span>
                   </div>
 
@@ -880,7 +881,7 @@ export default function FinanzasPage() {
                       <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" size={16} />
                       <input 
                         type="number" 
-                        className="w-full pl-10 pr-4 py-2.5 bg-background border-2 border-primary/30 rounded-xl text-xl font-black text-primary outline-none focus:border-primary transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 bg-surface border-2 border-primary/30 rounded-xl text-xl font-black text-primary outline-none focus:border-primary transition-all"
                         placeholder={newBudget.total > 0 ? newBudget.total.toString() : "0.00"}
                         value={newBudget.monto_ajustado === 0 ? '' : newBudget.monto_ajustado}
                         onChange={(e) => {
@@ -893,23 +894,23 @@ export default function FinanzasPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Notas del Presupuesto</label>
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Notas del Presupuesto</label>
                   <input 
-                    className="w-full bg-background border border-border/50 rounded-xl p-3 text-sm" 
+                    className="w-full bg-surface border border-outline-variant/50 rounded-xl p-3 text-sm" 
                     placeholder="Ej. Descuento familiar aplicado..." 
                     value={newBudget.notas} 
                     onChange={(e) => setNewBudget({...newBudget, notas: e.target.value})} 
                   />
                 </div>
               </div>
-              <div className="p-6 bg-secondary/30 border-t border-border/10 flex items-center justify-between">
-                <p className="text-[11px] text-muted-foreground italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
+              <div className="p-6 bg-surface-container-highest/30 border-t border-outline-variant/10 flex items-center justify-between">
+                <p className="text-[11px] text-on-surface-variant italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
                 <div className="flex gap-3">
-                  <button onClick={() => setIsNewModalOpen(false)} className="py-3 px-4 bg-background border border-border/50 hover:bg-secondary rounded-xl font-bold text-sm transition-all">Cancelar</button>
+                  <button onClick={() => setIsNewModalOpen(false)} className="py-3 px-4 bg-surface border border-outline-variant/50 hover:bg-surface-container-highest rounded-xl font-bold text-sm transition-all">Cancelar</button>
                   <button 
                     onClick={handleCreateBudget} 
                     disabled={isSaving || !newBudget.paciente_id || (newBudget.total <= 0 && newBudget.monto_ajustado <= 0)} 
-                    className="py-3 px-6 bg-primary text-primary-foreground hover:scale-105 rounded-xl font-black text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                    className="py-3 px-6 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-black text-sm transition-all disabled:opacity-50 border border-primary/20"
                   > 
                     {isSaving ? "Guardando..." : newBudget.id ? "Guardar Cambios" : "Emitir Presupuesto"}
                   </button>
@@ -929,40 +930,40 @@ export default function FinanzasPage() {
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }} 
               onClick={() => { setIsDeleteModalOpen(false); setBudgetToDeleteId(null); }} 
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm" 
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" 
             />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} 
               animate={{ opacity: 1, scale: 1, y: 0 }} 
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-card border border-border/50 rounded-3xl shadow-2xl overflow-hidden z-10"
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-surface-container-low border border-outline-variant/50 rounded-3xl shadow-2xl overflow-hidden z-10"
             >
-              <div className="p-6 border-b border-border/10 flex justify-between items-center bg-secondary/30">
+              <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-highest/30">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-red-500/10 rounded-xl text-red-500">
                     <AlertCircle size={20} />
                   </div>
                   <div>
                     <h2 className="text-lg font-black tracking-tight">Anular Presupuesto</h2>
-                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Confirmación requerida</p>
+                    <p className="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Confirmación requerida</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => { setIsDeleteModalOpen(false); setBudgetToDeleteId(null); }} 
-                  className="p-2 hover:bg-background rounded-full transition-colors text-muted-foreground"
+                  className="p-2 hover:bg-surface rounded-full transition-colors text-on-surface-variant"
                 >
                   <X size={20} />
                 </button>
               </div>
               <div className="p-6 space-y-4">
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm text-on-surface-variant leading-relaxed">
                   ¿Está seguro de que desea anular este presupuesto? Esta acción no se puede deshacer y el saldo pendiente dejará de contar en sus estadísticas.
                 </p>
               </div>
-              <div className="p-6 bg-secondary/30 border-t border-border/10 flex gap-3">
+              <div className="p-6 bg-surface-container-highest/30 border-t border-outline-variant/10 flex gap-3">
                 <button 
                   onClick={() => { setIsDeleteModalOpen(false); setBudgetToDeleteId(null); }} 
-                  className="flex-1 py-3 px-4 bg-background border border-border/50 hover:bg-secondary rounded-xl font-bold text-sm transition-all"
+                  className="flex-1 py-3 px-4 bg-surface border border-outline-variant/50 hover:bg-surface-container-highest rounded-xl font-bold text-sm transition-all"
                 >
                   Cancelar
                 </button>

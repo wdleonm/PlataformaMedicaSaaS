@@ -38,13 +38,34 @@ class BCVService:
                 config.updated_at = ahora_ve
                 session.add(config)
 
-                # 2. Guardar en el historial
-                log_tasa = BCVTasaHistorial(
-                    tasa_usd=rates["USD"],
-                    tasa_eur=rates["EUR"],
-                    fecha=ahora_ve
-                )
-                session.add(log_tasa)
+                # 2. Verificar si ya existe un registro para hoy con las mismas tasas en el historial
+                # Para evitar duplicados en el historial el mismo día
+                stmt_last = select(BCVTasaHistorial).order_by(BCVTasaHistorial.fecha.desc()).limit(1)
+                last_tasa = session.exec(stmt_last).first()
+                
+                debe_registrar = True
+                if last_tasa:
+                    mismo_dia = (
+                        last_tasa.fecha.year == ahora_ve.year and
+                        last_tasa.fecha.month == ahora_ve.month and
+                        last_tasa.fecha.day == ahora_ve.day
+                    )
+                    mismas_tasas = (
+                        last_tasa.tasa_usd == rates["USD"] and
+                        last_tasa.tasa_eur == rates["EUR"]
+                    )
+                    if mismo_dia and mismas_tasas:
+                        debe_registrar = False
+                        logger.info("BCVService: Ya existe un registro idéntico hoy en el historial. Omitiendo inserción de log.")
+                
+                if debe_registrar:
+                    # Guardar en el historial
+                    log_tasa = BCVTasaHistorial(
+                        tasa_usd=rates["USD"],
+                        tasa_eur=rates["EUR"],
+                        fecha=ahora_ve
+                    )
+                    session.add(log_tasa)
 
                 # 3. Limpieza: Eliminar registros antiguos (más de 60 días)
                 try:

@@ -70,3 +70,17 @@ TRUNCATE TABLE
     sys_clinical.cola_mensajes 
 RESTART IDENTITY CASCADE;
 COMMIT;
+
+
+
+-- 1. Eliminar la restricción de clave foránea restrictiva actual
+ALTER TABLE sys_clinical.cola_mensajes 
+DROP CONSTRAINT IF EXISTS cola_mensajes_abono_id_fkey;
+
+-- 2. Crear de nuevo la clave foránea habilitando la eliminación en cascada
+ALTER TABLE sys_clinical.cola_mensajes 
+ADD CONSTRAINT cola_mensajes_abono_id_fkey 
+FOREIGN KEY (abono_id) 
+REFERENCES sys_clinical.abonos(id) 
+ON DELETE CASCADE;
+

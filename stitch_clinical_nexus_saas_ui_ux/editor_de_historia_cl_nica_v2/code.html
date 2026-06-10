@@ -1,0 +1,867 @@
+<!DOCTYPE html><html class="dark" lang="es"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/geist-sans.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#e89337",
+                    "outline-variant": "#3d494c",
+                    "primary": "#4cd7f6",
+                    "on-tertiary": "#4b2800",
+                    "tertiary": "#ffb873",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "surface-container-high": "#1b2b3f",
+                    "secondary": "#bec6e0",
+                    "on-secondary-container": "#adb4ce",
+                    "on-primary-fixed-variant": "#004e5c",
+                    "tertiary-fixed-dim": "#ffb873",
+                    "on-primary": "#003640",
+                    "error-container": "#93000a",
+                    "secondary-container": "#3f465c",
+                    "surface-container-highest": "#26364a",
+                    "secondary-fixed-dim": "#bec6e0",
+                    "secondary-fixed": "#dae2fd",
+                    "primary-container": "#06b6d4",
+                    "on-tertiary-fixed": "#2d1600",
+                    "surface-container-low": "#0b1c30",
+                    "surface-container": "#102034",
+                    "on-surface": "#d3e4fe",
+                    "on-error-container": "#ffdad6",
+                    "on-error": "#690005",
+                    "on-background": "#d3e4fe",
+                    "on-secondary-fixed": "#131b2e",
+                    "background": "#031427",
+                    "surface-variant": "#26364a",
+                    "surface-container-lowest": "#000f21",
+                    "outline": "#869397",
+                    "tertiary-fixed": "#ffdcbf",
+                    "surface": "#031427",
+                    "inverse-surface": "#d3e4fe",
+                    "surface-bright": "#2a3a4f",
+                    "surface-tint": "#4cd7f6",
+                    "primary-fixed": "#acedff",
+                    "on-surface-variant": "#bcc9cd",
+                    "inverse-primary": "#00687a",
+                    "on-primary-container": "#00424f",
+                    "primary-fixed-dim": "#4cd7f6",
+                    "on-tertiary-fixed-variant": "#6a3b00",
+                    "on-secondary": "#283044",
+                    "on-primary-fixed": "#001f26",
+                    "surface-dim": "#031427",
+                    "on-tertiary-container": "#5b3200",
+                    "inverse-on-surface": "#213145",
+                    "error": "#ffb4ab"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "lg": "24px",
+                    "gutter": "24px",
+                    "margin": "24px",
+                    "xl": "32px",
+                    "3xl": "64px",
+                    "2xl": "48px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Geist"],
+                    "headline-lg-mobile": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Geist"],
+                    "label-sm": ["Geist"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Geist"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(16, 32, 52, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .tooth-container:hover .tooth-overlay {
+            opacity: 1;
+        }
+        .tooth-shape {
+            transition: all 0.2s ease;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 20%, 100% 80%, 75% 100%, 25% 100%, 0% 80%, 0% 20%);
+        }
+        .cyan-glow:hover {
+            box-shadow: 0 0 15px rgba(76, 215, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopNavBar (Simulated Shell) -->
+<header class="flex justify-between items-center px-lg w-full sticky top-0 z-50 h-16 bg-surface dark:bg-surface border-b border-outline-variant/30 shadow-sm">
+<div class="flex items-center gap-md">
+<div class="h-8 flex items-center">https://lh3.googleusercontent.com/aida/AP1WRLu4ghZK-5WiN80kqfKePjXF04X_cQN8Dn8euljjimZ2SKD0Ncex7ARKEh63KHiL8gy7kf-4Kv8JtAvM3TL4GRg2fKrGpefErhW8rLOJ5hXXTNVzowaljPfymnDJH-O9dUcY2GRz3XIk3ugCGB0U43drnceEmF4mypBk4PKwN6tGCRIAjEHdcU60PU99-wIpq96zYXkj39_TNn5RrWTPtPoevf608atbhJtoSRKPp309H3KxjxDSj3wePpg</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary"><span class="text-on-background">VITAL</span><span class="text-primary-container">NEXUS</span></h1>
+</div>
+<div class="hidden md:flex items-center gap-xl">
+<nav class="flex gap-lg">
+<span class="font-label-md text-label-md text-on-surface-variant cursor-pointer hover:text-primary transition-colors">Dashboard</span>
+<span class="font-label-md text-label-md text-primary border-b-2 border-primary cursor-pointer">Patients</span>
+<span class="font-label-md text-label-md text-on-surface-variant cursor-pointer hover:text-primary transition-colors">Medical Agenda</span>
+</nav>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant cursor-pointer active:scale-95 duration-200">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant cursor-pointer active:scale-95 duration-200">settings</button>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a senior dentist in a clean, high-tech clinical setting. The lighting is crisp and cool-toned, aligning with a premium healthcare software aesthetic. He wears a sterile white lab coat and modern glasses, conveying expertise and reliability. The background is softly blurred, showing hints of modern medical equipment in a dark slate and cyan-accented office." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOdIjAe5a6-IGtMBA4dmDKQwX1v7MXNSiDcGL9Gx0GYvUZle4t3MKiVS2i0zpjxS9xtQRbXGE8hm7J6FHM87p6ABPBPFRoFVVsUi_n7CUrHMagCvvIwnTNY5UVE0FEmVk-Q4TItUk3fJENt0HRHpX4-kRGcOlPVrr1B3KRBLahc0oU4inUceTIXUqqHhtGnTdSomeJ-SG9Gce6_eNlwQet4zbr9upmu65yTGE9e10sFhBeBhmQoI2-11TnwcCwfPFUBV_jHVniC3CU">
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto p-lg flex flex-col gap-lg">
+<!-- Patient Summary Bar -->
+<div class="glass-panel border border-outline-variant/20 p-md flex flex-wrap items-center justify-between gap-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-headline-md">person</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md leading-tight">Alejandro Ramírez Castro</h2>
+<p class="text-on-surface-variant font-label-sm text-label-sm">ID: 102938475 • 34 años • Sangre A+</p>
+</div>
+</div>
+<div class="flex gap-lg">
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Última Visita</span>
+<span class="font-body-md text-body-md text-on-surface">15 Oct 2023</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Estado</span>
+<div class="flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-body-md text-body-md text-tertiary">En Tratamiento</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Step Navigation -->
+<nav class="flex border-b border-outline-variant/30 overflow-x-auto no-scrollbar">
+<button class="px-xl py-md font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">stethoscope</span> Consulta
+            </button>
+<button class="px-xl py-md font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">history</span> Antecedentes
+            </button>
+<button class="px-xl py-md font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">medical_information</span> Examen Físico
+            </button>
+<button class="px-xl py-md font-label-md text-label-md text-primary border-b-2 border-primary flex items-center gap-sm bg-primary/5">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">dentistry</span> Odontograma
+            </button>
+<button class="px-xl py-md font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">event_note</span> Plan
+            </button>
+</nav>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-12 gap-lg">
+<!-- Odontograma Canvas Area -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-md">
+<div class="glass-panel border border-outline-variant/20 p-lg min-h-[500px]">
+<div class="flex justify-between items-center mb-xl">
+<h3 class="font-headline-md text-headline-md">Mapa Dental Interactivo</h3>
+<div class="flex gap-sm">
+<button class="p-sm glass-panel border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+<button class="p-sm glass-panel border border-outline-variant/30 text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">zoom_out</span>
+</button>
+</div>
+</div>
+<!-- Dental Map Container -->
+<div class="flex flex-col items-center gap-2xl py-lg">
+<!-- Upper Teeth -->
+<div class="flex justify-center flex-wrap gap-md">
+<template id="tooth-row-1">
+<!-- JS will populate or loop -->
+</template>
+<script>
+                                function renderTeeth(containerId, count, startNum) {
+                                    const container = document.getElementById(containerId);
+                                    for(let i=0; i<count; i++) {
+                                        const div = document.createElement('div');
+                                        div.className = 'tooth-container relative flex flex-col items-center gap-sm group cursor-pointer';
+                                        div.innerHTML = `
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">${startNum + i}</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                ${(startNum + i) === 14 ? '<div class="absolute inset-0 bg-error/30 flex items-center justify-center"><span class="text-[10px] font-bold">C</span></div>' : ''}
+                                                ${(startNum + i) === 18 ? '<div class="absolute inset-0 bg-primary/30 flex items-center justify-center"><span class="text-[10px] font-bold">E</span></div>' : ''}
+                                            </div>
+                                        `;
+                                        container.appendChild(div);
+                                    }
+                                }
+                            </script>
+<div class="flex flex-wrap justify-center gap-md" id="upper-teeth"><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">11</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">12</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">13</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">14</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                <div class="absolute inset-0 bg-error/30 flex items-center justify-center"><span class="text-[10px] font-bold">C</span></div>
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">15</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">16</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">17</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">18</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                <div class="absolute inset-0 bg-primary/30 flex items-center justify-center"><span class="text-[10px] font-bold">E</span></div>
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">19</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">20</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">21</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">22</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">23</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">24</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">25</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">26</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">11</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">12</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">13</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">14</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                <div class="absolute inset-0 bg-error/30 flex items-center justify-center"><span class="text-[10px] font-bold">C</span></div>
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">15</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">16</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">17</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">18</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                <div class="absolute inset-0 bg-primary/30 flex items-center justify-center"><span class="text-[10px] font-bold">E</span></div>
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">19</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">20</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">21</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">22</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">23</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">24</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">25</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">26</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div></div>
+</div>
+<!-- Mid Divider -->
+<div class="w-full h-px bg-outline-variant/20 relative">
+<span class="absolute left-1/2 -translate-x-1/2 -top-3 px-sm bg-background text-on-surface-variant text-label-sm font-label-sm uppercase tracking-widest">Plano Oclusal</span>
+</div>
+<!-- Lower Teeth -->
+<div class="flex flex-wrap justify-center gap-md flex-row-reverse" id="lower-teeth"><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">31</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">32</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">33</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">34</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">35</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">36</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">37</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">38</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">39</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">40</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">41</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">42</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">43</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">44</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">45</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">46</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">31</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">32</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">33</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">34</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">35</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">36</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">37</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">38</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">39</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">40</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">41</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">42</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">43</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">44</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">45</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div><div class="tooth-container relative flex flex-col items-center gap-sm group cursor-pointer">
+                                            <span class="text-label-sm font-label-sm text-on-surface-variant">46</span>
+                                            <div class="tooth-shape w-10 h-14 bg-zinc-900 border border-cyan-500/20 group-hover:bg-cyan-500/10 transition-colors flex items-center justify-center relative overflow-hidden">
+                                                <div class="absolute inset-1 border border-outline-variant/30 rounded-xs"></div>
+                                                <!-- Pathology Marker Placeholder -->
+                                                
+                                                
+                                            </div>
+                                        </div></div>
+</div>
+</div>
+<!-- Legend & Actions -->
+<div class="glass-panel border border-outline-variant/20 p-md flex flex-wrap gap-lg items-center justify-center">
+<div class="flex items-center gap-sm">
+<span class="w-4 h-4 bg-error/40 border border-error rounded-xs"></span>
+<span class="font-label-md text-label-md">Caries (C)</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="w-4 h-4 bg-primary/40 border border-primary rounded-xs"></span>
+<span class="font-label-md text-label-md">Endodoncia (E)</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="w-4 h-4 bg-tertiary/40 border border-tertiary rounded-xs"></span>
+<span class="font-label-md text-label-md">Prótesis (P)</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="w-4 h-4 bg-zinc-700 border border-outline rounded-xs"></span>
+<span class="font-label-md text-label-md">Obturado (O)</span>
+</div>
+<div class="ml-auto flex gap-md">
+<button class="px-md py-sm bg-secondary-container/30 border border-outline-variant/30 text-on-surface-variant font-label-md text-label-md flex items-center gap-xs hover:bg-secondary-container/50 transition-all">
+<span class="material-symbols-outlined text-[18px]">history_edu</span> Ver Historial
+                        </button>
+</div>
+</div>
+</div>
+<!-- Side Panel: Diagnosis & Notes -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-lg">
+<!-- Quick Pathology Tags -->
+<div class="glass-panel border border-outline-variant/20 p-lg">
+<h4 class="font-label-md text-label-md text-primary mb-md uppercase tracking-wider">Patologías Comunes</h4>
+<div class="grid grid-cols-2 gap-sm">
+<button class="p-md bg-surface-container-high hover:bg-error/10 border border-outline-variant/20 text-left transition-all duration-200 cyan-glow">
+<p class="font-label-md text-label-md">Caries</p>
+<p class="text-[10px] text-on-surface-variant">Superficial / Profunda</p>
+</button>
+<button class="p-md bg-surface-container-high hover:bg-primary/10 border border-outline-variant/20 text-left transition-all duration-200 cyan-glow">
+<p class="font-label-md text-label-md">Endodoncia</p>
+<p class="text-[10px] text-on-surface-variant">Conducto radicular</p>
+</button>
+<button class="p-md bg-surface-container-high hover:bg-tertiary/10 border border-outline-variant/20 text-left transition-all duration-200 cyan-glow">
+<p class="font-label-md text-label-md">Prótesis</p>
+<p class="text-[10px] text-on-surface-variant">Fija / Removible</p>
+</button>
+<button class="p-md bg-surface-container-high hover:bg-on-surface/10 border border-outline-variant/20 text-left transition-all duration-200 cyan-glow">
+<p class="font-label-md text-label-md">Extracción</p>
+<p class="text-[10px] text-on-surface-variant">Pieza ausente</p>
+</button>
+</div>
+</div>
+<!-- Notes Area -->
+<div class="glass-panel border border-outline-variant/20 p-lg flex flex-col gap-md flex-grow">
+<div class="flex justify-between items-center">
+<h4 class="font-label-md text-label-md text-primary uppercase tracking-wider">Notas Clínicas</h4>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">edit_note</span>
+</div>
+<textarea class="w-full flex-grow min-h-[200px] bg-surface-container-lowest border border-outline-variant/30 rounded-sm p-md text-body-md text-on-surface focus:outline-none focus:border-primary/50 transition-all placeholder:text-on-surface-variant/30" placeholder="Escriba aquí los hallazgos detallados de la exploración..."></textarea>
+<div class="flex items-center gap-sm py-sm border-t border-outline-variant/20">
+<span class="material-symbols-outlined text-[18px] text-primary">verified</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Autoguardado hace 2 minutos</p>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full py-md bg-primary text-on-primary font-label-md text-label-md font-bold uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-[0.98] duration-200 flex items-center justify-center gap-md">
+<span class="material-symbols-outlined">save</span>
+                    Guardar Avance
+                </button>
+</div>
+</div>
+</main>
+<footer class="mt-2xl border-t border-outline-variant/20 py-lg">
+<div class="max-w-[1440px] mx-auto px-lg flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm">
+<p class="">© 2024 VitalNexus Clinical Systems. All rights reserved.</p>
+<div class="flex gap-lg">
+<a class="hover:text-primary transition-colors" href="#">Términos de Servicio</a>
+<a class="hover:text-primary transition-colors" href="#">Privacidad</a>
+<a class="hover:text-primary transition-colors" href="#">Soporte Técnico</a>
+</div>
+</div>
+</footer>
+<script>
+        // Init Dental Map
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTeeth('upper-teeth', 16, 11);
+            renderTeeth('lower-teeth', 16, 31);
+
+            // Simple Interaction Logic
+            document.querySelectorAll('.tooth-container').forEach(tooth => {
+                tooth.addEventListener('click', () => {
+                    // Toggle a "selected" state for demonstration
+                    const shape = tooth.querySelector('.tooth-shape');
+                    const isSelected = shape.classList.contains('border-primary');
+                    
+                    document.querySelectorAll('.tooth-shape').forEach(s => {
+                        s.classList.remove('border-primary', 'bg-primary/20');
+                        s.classList.add('border-cyan-500/20');
+                    });
+
+                    if(!isSelected) {
+                        shape.classList.remove('border-cyan-500/20');
+                        shape.classList.add('border-primary', 'bg-primary/20');
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
+
+</body></html>

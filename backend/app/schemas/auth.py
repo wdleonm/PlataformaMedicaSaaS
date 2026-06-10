@@ -2,7 +2,7 @@
 Schemas Pydantic para autenticación (Fase 1).
 Fase 5: Añadido soporte para cambio de contraseña forzado.
 """
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, field_validator
 from uuid import UUID
 from typing import List, Optional
 
@@ -24,6 +24,18 @@ class EspecialistaRegister(BaseModel):
     nombre: str
     apellido: str
     especialidad_ids: List[UUID] = []
+    turnstile_token: str  # Token CAPTCHA de Cloudflare Turnstile
+
+    @field_validator("email")
+    @classmethod
+    def email_no_vitalnexus(cls, v: str) -> str:
+        """Rechaza correos del dominio interno @vitalnexus.com."""
+        dominio = v.strip().lower().split("@")[-1] if "@" in v else ""
+        if dominio == "vitalnexus.com":
+            raise ValueError(
+                "No se permiten correos del dominio @vitalnexus.com para el registro público."
+            )
+        return v.strip().lower()
 
 
 class EspecialistaLogin(BaseModel):

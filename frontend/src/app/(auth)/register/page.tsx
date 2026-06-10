@@ -1,16 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { Turnstile } from "@marsidev/react-turnstile";
 import {
   Eye, EyeOff, Mail, Lock, User, Loader2, AlertCircle,
   CheckCircle2, ChevronRight, ChevronLeft, Stethoscope,
-  Gift, Shield, Zap, Star
+  Gift, Shield, Zap, Star, ShieldAlert
 } from "lucide-react";
+
+// Dominio interno bloqueado para registro público
+const BLOCKED_DOMAINS = ["vitalnexus.com"];
 
 interface Especialidad {
   id: string;
@@ -53,6 +57,11 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  // Validación de dominio bloqueado
+  const emailDomain = email.includes("@") ? email.split("@")[1]?.toLowerCase() : "";
+  const isBlockedDomain = BLOCKED_DOMAINS.includes(emailDomain);
 
   const pwStrength = getPasswordStrength(password);
 
@@ -77,10 +86,10 @@ export default function RegisterPage() {
 
   // Validar cada paso antes de avanzar
   const canAdvance = () => {
-    if (step === 0) return nombre.trim().length >= 2 && apellido.trim().length >= 2 && /\S+@\S+\.\S+/.test(email);
+    if (step === 0) return nombre.trim().length >= 2 && apellido.trim().length >= 2 && /\S+@\S+\.\S+/.test(email) && !isBlockedDomain;
     if (step === 1) return true; // Especialidad es opcional
     if (step === 2) return pwStrength.score >= 2 && password === confirmPassword && password.length >= 6;
-    if (step === 3) return aceptaTerminos;
+    if (step === 3) return aceptaTerminos && !!turnstileToken;
     return false;
   };
 
@@ -88,13 +97,14 @@ export default function RegisterPage() {
     setError(null);
     setIsSubmitting(true);
     try {
-      // 1. Registrar
+      // 1. Registrar (incluye token CAPTCHA)
       await api.post("/api/auth/register", {
         email,
         password,
         nombre,
         apellido,
         especialidad_ids: especialidadesSeleccionadas,
+        turnstile_token: turnstileToken,
       });
       // 2. Login automático
       const { data } = await api.post("/api/auth/login", { email, password });
@@ -102,7 +112,8 @@ export default function RegisterPage() {
     } catch (err: any) {
       const msg = err?.response?.data?.detail;
       setError(msg || "Ocurrió un error al crear tu cuenta. Intenta con otro correo.");
-      setStep(0);
+      setTurnstileToken(null); // Reset CAPTCHA al haber error
+      setStep(3);
     } finally {
       setIsSubmitting(false);
     }
@@ -208,10 +219,20 @@ export default function RegisterPage() {
                       placeholder="dr.ejemplo@correo.com"
                       required
                       autoComplete="email"
-                      className="w-full pl-9 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-slate-700 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all text-sm"
+                      className={`w-full pl-9 pr-4 py-3 bg-white/5 border rounded-2xl text-white placeholder:text-slate-700 focus:outline-none focus:ring-1 transition-all text-sm ${
+                        isBlockedDomain
+                          ? "border-red-500/60 focus:border-red-500/60 focus:ring-red-500/20"
+                          : "border-white/10 focus:border-primary/50 focus:ring-primary/20"
+                      }`}
                     />
                   </div>
-                  <p className="text-xs text-slate-600 pl-1">Este será tu usuario para iniciar sesión</p>
+                  {isBlockedDomain ? (
+                    <p className="text-xs text-red-400 flex items-center gap-1 pl-1">
+                      <ShieldAlert size={12} /> El dominio @vitalnexus.com no está permitido para registro externo.
+                    </p>
+                  ) : (
+                    <p className="text-xs text-slate-600 pl-1">Este será tu usuario para iniciar sesión</p>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -408,6 +429,38 @@ export default function RegisterPage() {
                     <span className="text-primary underline">Política de privacidad</span> de VitalNexus.
                   </span>
                 </label>
+
+                {/* CAPTCHA Turnstile */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Shield size={13} className="text-slate-500" />
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Verificación de seguridad</span>
+                  </div>
+                  <div className={`rounded-2xl border overflow-hidden transition-all ${
+                    turnstileToken
+                      ? "border-emerald-500/30 bg-emerald-500/5"
+                      : "border-white/10 bg-white/3"
+                  }`}>
+                    <div className="p-3">
+                      <Turnstile
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                        onError={() => setTurnstileToken(null)}
+                        onExpire={() => setTurnstileToken(null)}
+                        options={{ theme: "dark", language: "es" }}
+                      />
+                    </div>
+                    {turnstileToken && (
+                      <div className="px-3 pb-3 flex items-center gap-2 text-emerald-400">
+                        <CheckCircle2 size={13} />
+                        <span className="text-xs font-bold">Verificación completada</span>
+                      </div>
+                    )}
+                  </div>
+                  {!turnstileToken && (
+                    <p className="text-xs text-slate-600 pl-1">Completa la verificación para continuar</p>
+                  )}
+                </div>
 
                 {/* Error */}
                 <AnimatePresence>

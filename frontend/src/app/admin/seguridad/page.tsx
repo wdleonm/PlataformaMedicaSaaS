@@ -95,11 +95,11 @@ export default function AdminSeguridadPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+        <h1 className="text-3xl font-black text-on-surface tracking-tight flex items-center gap-3">
           <ShieldCheck className="text-violet-500" size={32} />
           Seguridad de la Cuenta
         </h1>
-        <p className="text-slate-400 mt-2 font-medium max-w-2xl text-sm leading-relaxed">
+        <p className="text-on-surface-variant mt-2 font-medium max-w-2xl text-sm leading-relaxed">
           Gestiona las credenciales de acceso para tu cuenta de Administrador Maestro. 
           Mantén tu contraseña segura y actualizada para proteger la integridad de la plataforma.
         </p>
@@ -109,17 +109,17 @@ export default function AdminSeguridadPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-[#0a0514]/50 border border-white/5 rounded-3xl p-8 backdrop-blur-xl relative overflow-hidden group hover:border-violet-500/20 transition-all duration-500 shadow-2xl"
+          className="bg-white dark:bg-[#0b1c30]/50 border border-slate-200 dark:border-outline-variant/20 rounded-3xl p-8 backdrop-blur-xl relative overflow-hidden group hover:border-violet-500/20 transition-all duration-500 shadow-sm dark:shadow-2xl"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/5 rounded-full blur-[80px] group-hover:bg-violet-600/10 transition-colors pointer-events-none" />
           
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-              <Key className="text-violet-400" size={24} />
+            <div className="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 flex items-center justify-center">
+              <Key className="text-violet-700 dark:text-violet-400" size={24} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white relative z-10">Cambiar Contraseña</h2>
-              <p className="text-xs text-slate-400 font-medium">Actualiza tu clave de acceso maestro</p>
+              <h2 className="text-xl font-bold text-on-surface relative z-10">Cambiar Contraseña</h2>
+              <p className="text-xs text-on-surface-variant font-medium">Actualiza tu clave de acceso maestro</p>
             </div>
           </div>
 
@@ -151,19 +151,19 @@ export default function AdminSeguridadPage() {
             </AnimatePresence>
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-300 ml-1">Contraseña Actual</label>
+              <label className="text-sm font-bold text-on-surface ml-1">Contraseña Actual</label>
               <div className="relative">
                 <input
                   type={showCurrent ? "text" : "password"}
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all"
+                  className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrent(!showCurrent)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-white transition-colors rounded-lg"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-on-surface-variant hover:text-on-surface transition-colors rounded-lg"
                 >
                   {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -172,19 +172,19 @@ export default function AdminSeguridadPage() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-300 ml-1">Nueva Contraseña</label>
+                <label className="text-sm font-bold text-on-surface ml-1">Nueva Contraseña</label>
                 <div className="relative">
                   <input
                     type={showNew ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all"
+                    className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowNew(!showNew)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-white transition-colors rounded-lg"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-on-surface-variant hover:text-on-surface transition-colors rounded-lg"
                   >
                     {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -195,10 +195,10 @@ export default function AdminSeguridadPage() {
               {newPassword && (
                 <div className="space-y-1.5 px-1">
                   <div className="flex justify-between items-center text-xs font-bold">
-                    <span className="text-slate-400">Nivel de seguridad:</span>
+                    <span className="text-on-surface-variant">Nivel de seguridad:</span>
                     <span className={strength.text}>{strength.label}</span>
                   </div>
-                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-1 w-full bg-slate-100 dark:bg-surface-container-highest/50 rounded-full overflow-hidden">
                     <div className={`h-full transition-all duration-300 ${strength.color} ${strength.width}`} />
                   </div>
                 </div>
@@ -206,19 +206,19 @@ export default function AdminSeguridadPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-300 ml-1">Confirmar Nueva Contraseña</label>
+              <label className="text-sm font-bold text-on-surface ml-1">Confirmar Nueva Contraseña</label>
               <div className="relative">
                 <input
                   type={showConfirm ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all"
+                  className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-medium transition-all"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-white transition-colors rounded-lg"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-on-surface-variant hover:text-on-surface transition-colors rounded-lg"
                 >
                   {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -249,9 +249,9 @@ export default function AdminSeguridadPage() {
           transition={{ delay: 0.1 }}
           className="space-y-6"
         >
-          <div className="bg-gradient-to-br from-indigo-900/40 to-violet-900/20 border border-indigo-500/20 rounded-3xl p-8 backdrop-blur-xl">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <ShieldCheck className="text-indigo-400" size={20} />
+          <div className="bg-gradient-to-br from-indigo-50/50 to-violet-50/30 dark:from-indigo-900/40 dark:to-violet-900/20 border border-indigo-200/50 dark:border-indigo-500/20 rounded-3xl p-8 backdrop-blur-xl">
+            <h3 className="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+              <ShieldCheck className="text-indigo-700 dark:text-indigo-400" size={20} />
               Recomendaciones de Seguridad
             </h3>
             <ul className="space-y-4">
@@ -263,10 +263,10 @@ export default function AdminSeguridadPage() {
                 "No compartas tu clave de acceso maestro con el personal de soporte.",
               ].map((tip, idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <CheckCircle className="text-indigo-400" size={14} />
+                  <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <CheckCircle className="text-indigo-700 dark:text-indigo-400" size={14} />
                   </div>
-                  <span className="text-sm font-medium text-slate-300 leading-relaxed">{tip}</span>
+                  <span className="text-sm font-medium text-on-surface leading-relaxed">{tip}</span>
                 </li>
               ))}
             </ul>

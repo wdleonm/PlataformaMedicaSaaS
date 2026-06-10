@@ -54,8 +54,8 @@ export default function AdminPlanesPage() {
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Planes de Suscripción</h1>
-          <p className="text-slate-400 mt-1 font-medium">Configura la oferta comercial y los límites de la plataforma.</p>
+          <h1 className="text-3xl font-black text-on-surface tracking-tight">Planes de Suscripción</h1>
+          <p className="text-on-surface-variant mt-1 font-medium">Configura la oferta comercial y los límites de la plataforma.</p>
         </div>
         <button 
           onClick={handleCreate}
@@ -76,73 +76,73 @@ export default function AdminPlanesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className={`relative bg-white/5 border rounded-[40px] p-8 flex flex-col h-full group ${
-                plan.activo ? "border-white/10" : "border-red-500/20 grayscale opacity-60"
+            className={`relative bg-white dark:bg-surface-container border rounded-[40px] p-8 flex flex-col h-full group ${
+                plan.activo ? "border-slate-200 dark:border-white/10 shadow-sm" : "border-red-500/20 grayscale opacity-60"
             }`}
           >
             {plan.codigo === 'profesional' && (
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ring-4 ring-[#0a0514]">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ring-4 ring-white dark:ring-[#0a0514]">
                 Más Popular
               </div>
             )}
 
             <div className="flex justify-between items-start mb-6">
-              <div className="p-4 rounded-3xl bg-violet-600/10 text-violet-400 border border-violet-500/20">
+              <div className="p-4 rounded-3xl bg-violet-50 dark:bg-violet-600/10 text-violet-700 dark:text-violet-400 border border-violet-100 dark:border-violet-500/20">
                 <Package size={28} />
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-black text-violet-400 uppercase tracking-widest">{plan.codigo}</p>
-                <h3 className="text-2xl font-black text-white">{plan.nombre}</h3>
+                <p className="text-[10px] font-black text-violet-700 dark:text-violet-400 uppercase tracking-widest">{plan.codigo}</p>
+                <h3 className="text-2xl font-black text-on-surface">{plan.nombre}</h3>
               </div>
             </div>
 
             <div className="mb-8">
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-black text-white">${plan.precio_mensual}</span>
-                <span className="text-slate-500 font-bold text-sm">/mes</span>
+                <span className="text-4xl font-black text-on-surface">${plan.precio_mensual}</span>
+                <span className="text-on-surface-variant font-bold text-sm">/mes</span>
               </div>
             </div>
 
             <div className="space-y-4 flex-1">
               <div className="flex items-center gap-3 text-sm">
-                <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                <div className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-700 dark:text-emerald-400">
                   <Check size={12} strokeWidth={4} />
                 </div>
-                <span className="text-slate-300 font-medium">
+                <span className="text-on-surface font-medium">
                   {plan.max_pacientes ? `${plan.max_pacientes} Pacientes` : "Pacientes Ilimitados"}
                 </span>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                <div className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-700 dark:text-emerald-400">
                   <Check size={12} strokeWidth={4} />
                 </div>
-                <span className="text-slate-300 font-medium">
+                <span className="text-on-surface font-medium">
                   {plan.max_citas_mes ? `${plan.max_citas_mes} Citas / mes` : "Citas Ilimitadas"}
                 </span>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.incluye_whatsapp ? "bg-emerald-500/10 text-emerald-400" : "bg-white/5 text-slate-600"}`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.incluye_whatsapp ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600"}`}>
                   {plan.incluye_whatsapp ? <Check size={12} strokeWidth={4} /> : <X size={12} />}
                 </div>
-                <span className={`${plan.incluye_whatsapp ? "text-slate-300" : "text-slate-600"} font-medium`}>Alertas WhatsApp</span>
+                <span className={`${plan.incluye_whatsapp ? "text-on-surface" : "text-slate-400 dark:text-slate-600"} font-medium`}>Alertas WhatsApp</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.incluye_multiusuario ? "bg-emerald-500/10 text-emerald-400" : "bg-white/5 text-slate-600"}`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.incluye_multiusuario ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600"}`}>
                   {plan.incluye_multiusuario ? <Check size={12} strokeWidth={4} /> : <X size={12} />}
                 </div>
-                <span className={`${plan.incluye_multiusuario ? "text-slate-300" : "text-slate-600"} font-medium`}>Multi-Usuario</span>
+                <span className={`${plan.incluye_multiusuario ? "text-on-surface" : "text-slate-400 dark:text-slate-600"} font-medium`}>Multi-Usuario</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.soporte_prioritario ? "bg-amber-500/10 text-amber-500" : "bg-white/5 text-slate-600"}`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.soporte_prioritario ? "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-500" : "bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600"}`}>
                   {plan.soporte_prioritario ? <Check size={12} strokeWidth={4} /> : <X size={12} />}
                 </div>
-                <span className={`${plan.soporte_prioritario ? "text-amber-500" : "text-slate-600"} font-medium`}>Soporte Prioritario 24/7</span>
+                <span className={`${plan.soporte_prioritario ? "text-amber-700 dark:text-amber-500" : "text-slate-400 dark:text-slate-600"} font-medium`}>Soporte Prioritario 24/7</span>
               </div>
             </div>
 
             <button 
               onClick={() => handleEdit(plan)}
-              className="w-full mt-10 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-all group-hover:border-violet-500/50"
+              className="w-full mt-10 py-4 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 dark:hover:bg-surface-container-highest text-on-surface font-bold text-sm transition-all group-hover:border-violet-500/50"
             >
               Editar Características
             </button>

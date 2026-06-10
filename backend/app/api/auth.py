@@ -5,6 +5,7 @@ Fase 1: Implementación básica con JWT.
 from typing import Optional
 import os
 import shutil
+import httpx
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, BackgroundTasks
 from sqlmodel import Session, select
@@ -65,6 +66,37 @@ def register(
     """Registro de nuevo especialista. Asigna automáticamente Plan Profesional con 30 días de trial."""
     from datetime import date, timedelta
     from app.models.suscripcion import PlanSuscripcion
+
+    # --- Verificar CAPTCHA Cloudflare Turnstile ---
+    try:
+        cf_response = httpx.post(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            data={
+                "secret": settings.turnstile_secret_key,
+                "response": data.turnstile_token,
+            },
+            timeout=10.0,
+        )
+        cf_data = cf_response.json()
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="No se pudo verificar el CAPTCHA. Intenta de nuevo.",
+        )
+
+    if not cf_data.get("success", False):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Verificación CAPTCHA fallida. Por favor recarga la página e inténtalo de nuevo.",
+        )
+
+    # --- Bloquear dominio interno @vitalnexus.com ---
+    dominio_email = data.email.strip().lower().split("@")[-1] if "@" in data.email else ""
+    if dominio_email == "vitalnexus.com":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No se permiten correos del dominio @vitalnexus.com para el registro público.",
+        )
 
     # Verificar si el email ya existe
     statement = select(Especialista).where(Especialista.email == data.email)

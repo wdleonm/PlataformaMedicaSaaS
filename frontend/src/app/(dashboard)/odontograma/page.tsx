@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from 'react-hot-toast';
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
@@ -270,7 +271,7 @@ export default function OdontogramaPage() {
       setNotas("");
     } catch (error) {
       console.error("Error al registrar hallazgo:", error);
-      alert("No se pudo registrar el hallazgo.");
+      toast.error("No se pudo registrar el hallazgo.");
     } finally {
       setIsSaving(false);
     }
@@ -289,24 +290,24 @@ export default function OdontogramaPage() {
             <Stethoscope size={40} />
           </div>
           <h1 className="text-4xl font-black tracking-tighter">Odontograma Digital</h1>
-          <p className="text-muted-foreground text-lg">Selecciona un paciente para visualizar su histórico dental.</p>
+          <p className="text-on-surface-variant text-lg">Selecciona un paciente para visualizar su histórico dental.</p>
         </div>
 
         <div className="glass-panel p-6 rounded-[2rem] border-none">
              <div className="relative mb-6">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={20} />
             <input 
               type="text" 
               placeholder="Buscar paciente por nombre o documento..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-secondary/30 rounded-2xl border-none focus:ring-2 focus:ring-primary outline-none text-lg transition-all"
+              className="w-full pl-12 pr-4 py-4 bg-surface-container-highest/30 rounded-2xl border-none focus:ring-2 focus:ring-primary outline-none text-lg transition-all"
             />
           </div>
 
           {!isLoading && filteredPacientes.length === 0 && (
             <div className="text-center py-10">
-              <p className="text-muted-foreground">No se encontraron pacientes con ese nombre o documento.</p>
+              <p className="text-on-surface-variant">No se encontraron pacientes con ese nombre o documento.</p>
             </div>
           )}
 
@@ -315,14 +316,14 @@ export default function OdontogramaPage() {
               <button
                 key={p.id}
                 onClick={() => setSelectedPacienteId(p.id)}
-                className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 border border-border/10 hover:border-primary/20 transition-all text-left group"
+                className="flex items-center gap-4 p-4 rounded-2xl hover:bg-primary/5 border border-outline-variant/10 hover:border-primary/20 transition-all text-left group"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
                   {p.nombre[0]}{p.apellido[0]}
                 </div>
                 <div>
                   <p className="font-bold text-slate-800 dark:text-slate-100">{p.nombre} {p.apellido}</p>
-                  <p className="text-xs text-muted-foreground">{p.documento || 'Sin documento'}</p>
+                  <p className="text-xs text-on-surface-variant">{p.documento || 'Sin documento'}</p>
                 </div>
               </button>
             ))}
@@ -339,7 +340,7 @@ export default function OdontogramaPage() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setSelectedPacienteId(null)}
-            className="p-3 bg-card hover:bg-secondary rounded-2xl transition-all shadow-sm border border-border/10"
+            className="p-3 bg-surface-container-low hover:bg-surface-container-highest rounded-2xl transition-all shadow-sm border border-outline-variant/10"
           >
             <ChevronLeft size={20} />
           </button>
@@ -347,7 +348,7 @@ export default function OdontogramaPage() {
             <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
               Odontograma: <span className="text-primary">{selectedPaciente?.nombre} {selectedPaciente?.apellido}</span>
             </h1>
-            <p className="text-xs font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest mt-1">
+            <p className="text-xs font-bold text-on-surface-variant flex items-center gap-1.5 uppercase tracking-widest mt-1">
               <User size={12} className="text-primary"/> Documento: {selectedPaciente?.documento || "N/A"}
             </p>
           </div>
@@ -357,14 +358,14 @@ export default function OdontogramaPage() {
             href={`/embed/odontograma?paciente_id=${selectedPacienteId}`} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="px-5 py-2.5 bg-secondary text-foreground text-xs font-bold rounded-xl flex items-center gap-2 hover:bg-secondary/80 transition-all"
+            className="px-5 py-2.5 bg-surface-container-highest text-on-surface text-xs font-bold rounded-xl flex items-center gap-2 hover:bg-surface-container-highest/80 transition-all"
           >
             <History size={14} /> Abrir en Pantalla Completa
           </a>
         </div>
       </div>
 
-      <div className="flex-1 min-h-[600px] rounded-[2.5rem] overflow-hidden border border-border/50 bg-card shadow-2xl relative">
+      <div className="flex-1 min-h-[600px] rounded-[2.5rem] overflow-hidden border border-outline-variant/50 bg-surface-container-low shadow-2xl relative">
         <iframe 
           src={`/embed/odontograma?paciente_id=${selectedPacienteId}`}
           className="w-full h-full border-0"

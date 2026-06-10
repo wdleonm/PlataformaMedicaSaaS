@@ -1,0 +1,402 @@
+<!DOCTYPE html><html class="dark" lang="es"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>VitalNexus | Agenda Médica</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#e89337",
+                      "outline-variant": "#3d494c",
+                      "primary": "#4cd7f6",
+                      "on-tertiary": "#4b2800",
+                      "tertiary": "#ffb873",
+                      "on-secondary-fixed-variant": "#3f465c",
+                      "surface-container-high": "#1b2b3f",
+                      "secondary": "#bec6e0",
+                      "on-secondary-container": "#adb4ce",
+                      "on-primary-fixed-variant": "#004e5c",
+                      "tertiary-fixed-dim": "#ffb873",
+                      "on-primary": "#003640",
+                      "error-container": "#93000a",
+                      "secondary-container": "#3f465c",
+                      "surface-container-highest": "#26364a",
+                      "secondary-fixed-dim": "#bec6e0",
+                      "secondary-fixed": "#dae2fd",
+                      "primary-container": "#06b6d4",
+                      "on-tertiary-fixed": "#2d1600",
+                      "surface-container-low": "#0b1c30",
+                      "surface-container": "#102034",
+                      "on-surface": "#d3e4fe",
+                      "on-error-container": "#ffdad6",
+                      "on-error": "#690005",
+                      "on-background": "#d3e4fe",
+                      "on-secondary-fixed": "#131b2e",
+                      "background": "#031427",
+                      "surface-variant": "#26364a",
+                      "surface-container-lowest": "#000f21",
+                      "outline": "#869397",
+                      "tertiary-fixed": "#ffdcbf",
+                      "surface": "#031427",
+                      "inverse-surface": "#d3e4fe",
+                      "surface-bright": "#2a3a4f",
+                      "surface-tint": "#4cd7f6",
+                      "primary-fixed": "#acedff",
+                      "on-surface-variant": "#bcc9cd",
+                      "inverse-primary": "#00687a",
+                      "on-primary-container": "#00424f",
+                      "primary-fixed-dim": "#4cd7f6",
+                      "on-tertiary-fixed-variant": "#6a3b00",
+                      "on-secondary": "#283044",
+                      "on-primary-fixed": "#001f26",
+                      "surface-dim": "#031427",
+                      "on-tertiary-container": "#5b3200",
+                      "inverse-on-surface": "#213145",
+                      "error": "#ffb4ab"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "lg": "24px",
+                      "gutter": "24px",
+                      "margin": "24px",
+                      "xl": "32px",
+                      "3xl": "64px",
+                      "2xl": "48px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Geist"],
+                      "label-sm": ["Geist"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Geist"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { background-color: #031427; color: #d3e4fe; font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(16, 32, 52, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(76, 215, 246, 0.1); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0b1c30; }
+        ::-webkit-scrollbar-thumb { background: #3d494c; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4cd7f6; }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant/20 shadow-lg dark:shadow-none flex flex-col py-md overflow-y-auto z-40">
+<div class="px-md mb-xl flex flex-col items-center gap-sm">
+<div class="h-12 w-auto object-contain mb-2 flex items-center justify-center">https://lh3.googleusercontent.com/aida/AP1WRLu4ghZK-5WiN80kqfKePjXF04X_cQN8Dn8euljjimZ2SKD0Ncex7ARKEh63KHiL8gy7kf-4Kv8JtAvM3TL4GRg2fKrGpefErhW8rLOJ5hXXTNVzowaljPfymnDJH-O9dUcY2GRz3XIk3ugCGB0U43drnceEmF4mypBk4PKwN6tGCRIAjEHdcU60PU99-wIpq96zYXkj39_TNn5RrWTPtPoevf608atbhJtoSRKPp309H3KxjxDSj3wePpg</div>
+<div class="text-center">
+<h1 class="font-headline-md text-headline-md font-black text-primary dark:text-primary-fixed-dim leading-none"><span style="color: rgb(255, 255, 255);" class="">VITAL</span><span style="color: rgb(6, 182, 212);" class="">NEXUS</span></h1>
+<p class="font-label-md text-label-md text-on-surface-variant/70 uppercase tracking-widest mt-1">Clinical Management</p>
+</div>
+</div>
+<nav class="flex-1 px-sm space-y-1">
+<!-- Mapping JSON tab_labels & tab_icons -->
+<a class="flex items-center gap-md px-md py-3 rounded-sm transition-all duration-200 text-on-surface-variant hover:bg-surface-container-highest/40" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 rounded-sm transition-all duration-200 text-on-surface-variant hover:bg-surface-container-highest/40" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Patients</span>
+</a>
+<!-- Active State: Medical Agenda (The Goal) -->
+<a class="flex items-center gap-md px-md py-3 rounded-sm duration-200 ease-in-out text-primary dark:text-primary-fixed-dim bg-secondary-container/20 dark:bg-secondary-container/10 border-r-4 border-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-label-md text-label-md">Medical Agenda</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 rounded-sm transition-all duration-200 text-on-surface-variant hover:bg-surface-container-highest/40" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 rounded-sm transition-all duration-200 text-on-surface-variant hover:bg-surface-container-highest/40" href="#">
+<span class="material-symbols-outlined">clinical_notes</span>
+<span class="font-label-md text-label-md">Medical Records</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 rounded-sm transition-all duration-200 text-on-surface-variant hover:bg-surface-container-highest/40" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto px-sm border-t border-outline-variant/10 pt-md">
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-3 rounded-sm hover:brightness-110 active:scale-95 transition-all mb-md flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined">add</span>
+                Nueva Cita
+            </button>
+<a class="flex items-center gap-md px-md py-3 rounded-sm text-on-surface-variant hover:bg-surface-container-highest/40 transition-all" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 rounded-sm text-on-surface-variant hover:bg-surface-container-highest/40 transition-all" href="#">
+<span class="material-symbols-outlined text-error">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar (Authority: JSON) -->
+<header class="flex justify-between items-center px-lg w-full sticky top-0 z-50 bg-surface dark:bg-surface border-b border-outline-variant/30 h-16 shadow-sm">
+<div class="flex items-center gap-md">
+<div class="relative">
+<span class="absolute inset-y-0 left-3 flex items-center text-outline">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="bg-surface-container-high border-none rounded-full pl-10 pr-lg py-1.5 font-body-sm text-body-sm text-on-surface focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="Search patients, events..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="bg-error-container/20 text-error px-4 py-1.5 rounded-full font-label-md text-label-sm border border-error/30 hover:bg-error-container/40 transition-all">
+                    Emergency
+                </button>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">settings</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">help</span>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant cursor-pointer">
+<img class="h-full w-full object-cover" data-alt="A professional medical headshot of a male doctor in his 40s wearing a clean white clinical coat and a stethoscope. He has a warm, confident expression. The lighting is high-key and professional, typical of a modern clinical environment. The background is a soft-focus medical office with subtle blue accents, matching a sophisticated healthcare dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaIkF_43XVe48H1SlECpFopymRIQxw_VQPTp8u0w8aY9ziDVXkOKrayxPQl-R_eJKbFY3Vx2KmvTCTpt4CZe6HfdTVL2Gwbxr7VI0B9QX-0eWQDMwhYRuXQHZiswyZRKKON2Fu-GMugG6Z6BbO9jwCdYUCc6VSi5gJC0puTuA3kJR1VFn3qNHpBcdaOc9HGHXoP3unbWyjhvqN00iYKYP7M9URgC4v682XO6XiCVGWo4wDpO0Q3zh1yFYBKzey81V3FgKFr5WDqAFi">
+</div>
+</div>
+</div>
+</header>
+<!-- Calendar Dashboard Area -->
+<div class="p-lg flex-1 flex flex-col gap-lg">
+<!-- Calendar Header Actions -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<p class="font-label-md text-label-md text-primary uppercase tracking-tighter mb-1">Schedule View</p>
+<h2 class="font-headline-lg text-headline-lg text-on-surface flex items-center gap-sm">
+                        June 2026
+                        <div class="flex gap-1 ml-4">
+<button class="p-1 hover:bg-surface-container-high rounded-full transition-colors"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-1 hover:bg-surface-container-high rounded-full transition-colors"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</h2>
+</div>
+<div class="flex items-center gap-md p-1 bg-surface-container rounded-lg border border-outline-variant/20">
+<button class="px-4 py-1.5 rounded-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors">Day</button>
+<button class="px-4 py-1.5 rounded-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors">Week</button>
+<button class="px-4 py-1.5 rounded-sm font-label-md text-label-md bg-primary text-on-primary-container shadow-lg shadow-primary/20">Month</button>
+</div>
+</div>
+<!-- Main Calendar Grid Shell -->
+<div class="flex-1 glass-card rounded-xl overflow-hidden flex flex-col shadow-2xl" style="--mouse-x: 186px; --mouse-y: 420.609375px;">
+<!-- Day Headers -->
+<div class="calendar-grid bg-surface-container-high/50 border-b border-outline-variant/30">
+<div class="py-3 text-center font-label-md text-label-md text-on-surface-variant">Sun</div>
+<div class="py-3 text-center font-label-md text-label-md text-on-surface-variant">Mon</div>
+<div class="py-3 text-center font-label-md text-label-md text-on-surface-variant">Tue</div>
+<div class="py-3 text-center font-label-md text-label-md text-on-surface-variant">Wed</div>
+<div class="py-3 text-center font-label-md text-label-md text-on-surface-variant">Thu</div>
+<div class="py-3 text-center font-label-md text-label-md text-on-surface-variant">Fri</div>
+<div class="py-3 text-center font-label-md text-label-md text-on-surface-variant">Sat</div>
+</div>
+<!-- Calendar Content -->
+<div class="flex-1 grid grid-cols-7 grid-rows-5 min-h-[600px]">
+<!-- Placeholder days before June starts -->
+<div class="border-r border-b border-outline-variant/10 bg-surface-container-lowest/30 p-2 opacity-30">
+<span class="font-label-md text-label-md">31</span>
+</div>
+<!-- June 1st to 30th -->
+<!-- Rendering a few specific days with appointments as per request -->
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant group-hover:text-primary">01</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">02</span>
+<div class="mt-2 space-y-1">
+<div class="bg-primary/20 border-l-2 border-primary p-1.5 rounded-sm cursor-pointer hover:bg-primary/30 transition-all">
+<p class="text-[10px] font-bold text-primary uppercase">Teleconsulta</p>
+<p class="text-xs text-on-surface truncate">G. Ramos</p>
+</div>
+</div>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">03</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">04</span>
+<div class="mt-2 space-y-1">
+<div class="bg-tertiary-container/20 border-l-2 border-tertiary p-1.5 rounded-sm cursor-pointer hover:bg-tertiary-container/30 transition-all">
+<p class="text-[10px] font-bold text-tertiary uppercase">Operación Sala B</p>
+<p class="text-xs text-on-surface truncate">Cirugía Cardíaca</p>
+</div>
+</div>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">05</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">06</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">07</span>
+</div>
+<!-- Row 2 -->
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">08</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors bg-secondary-container/5">
+<span class="font-label-md text-label-md text-primary font-bold">09</span>
+<div class="mt-2 space-y-1">
+<div class="bg-primary/20 border-l-2 border-primary p-1.5 rounded-sm">
+<p class="text-[10px] font-bold text-primary">Teleconsulta</p>
+<p class="text-xs text-on-surface">M. Soria</p>
+</div>
+<div class="bg-primary/20 border-l-2 border-primary p-1.5 rounded-sm">
+<p class="text-[10px] font-bold text-primary">Teleconsulta</p>
+<p class="text-xs text-on-surface">P. Vaca</p>
+</div>
+</div>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">10</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">11</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">12</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">13</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">14</span>
+</div>
+<!-- Row 3 -->
+<div class="border-r border-b border-outline-variant/10 p-2 group hover:bg-surface-container-high/20 transition-colors">
+<span class="font-label-md text-label-md text-on-surface-variant">15</span>
+<div class="mt-2">
+<div class="bg-tertiary-container/20 border-l-2 border-tertiary p-1.5 rounded-sm">
+<p class="text-[10px] font-bold text-tertiary uppercase">Operación Sala B</p>
+<p class="text-xs text-on-surface">Artroscopia</p>
+</div>
+</div>
+</div>
+<!-- Filling the rest with empty cells for layout -->
+<div class="border-r border-b border-outline-variant/10 p-2">
+<span class="font-label-md text-label-md text-on-surface-variant">16</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2">
+<span class="font-label-md text-label-md text-on-surface-variant">17</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2">
+<span class="font-label-md text-label-md text-on-surface-variant">18</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2">
+<span class="font-label-md text-label-md text-on-surface-variant">19</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2">
+<span class="font-label-md text-label-md text-on-surface-variant">20</span>
+</div>
+<div class="border-r border-b border-outline-variant/10 p-2">
+<span class="font-label-md text-label-md text-on-surface-variant">21</span>
+</div>
+<!-- Row 4 -->
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">22</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">23</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">24</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">25</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">26</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">27</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">28</span></div>
+<!-- Row 5 -->
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">29</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2"><span class="text-on-surface-variant font-label-md">30</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2 bg-surface-container-lowest/30 opacity-30"><span class="text-on-surface-variant font-label-md">01</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2 bg-surface-container-lowest/30 opacity-30"><span class="text-on-surface-variant font-label-md">02</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2 bg-surface-container-lowest/30 opacity-30"><span class="text-on-surface-variant font-label-md">03</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2 bg-surface-container-lowest/30 opacity-30"><span class="text-on-surface-variant font-label-md">04</span></div>
+<div class="border-r border-b border-outline-variant/10 p-2 bg-surface-container-lowest/30 opacity-30"><span class="text-on-surface-variant font-label-md">05</span></div>
+</div>
+</div>
+<!-- Bento Stats / Quick Info -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter h-48">
+<div class="md:col-span-1 glass-card p-md rounded-xl flex flex-col justify-center">
+<p class="font-label-md text-label-md text-outline">Appointments Today</p>
+<div class="flex items-end gap-sm mt-2">
+<span class="font-headline-lg text-headline-lg text-primary">12</span>
+<span class="text-success font-label-md mb-2 text-[12px]">+3 vs yesterday</span>
+</div>
+</div>
+<div class="md:col-span-1 glass-card p-md rounded-xl flex flex-col justify-center">
+<p class="font-label-md text-label-md text-outline">Operation Rooms</p>
+<div class="mt-2 flex items-center gap-md">
+<div class="flex -space-x-2">
+<div class="h-8 w-8 rounded-full border-2 border-surface bg-success flex items-center justify-center text-[10px] text-on-surface font-bold">A</div>
+<div class="h-8 w-8 rounded-full border-2 border-surface bg-error flex items-center justify-center text-[10px] text-on-surface font-bold">B</div>
+<div class="h-8 w-8 rounded-full border-2 border-surface bg-success flex items-center justify-center text-[10px] text-on-surface font-bold">C</div>
+</div>
+<span class="text-on-surface-variant text-body-sm">2/3 Available</span>
+</div>
+</div>
+<div class="md:col-span-2 glass-card p-md rounded-xl relative overflow-hidden">
+<div class="relative z-10">
+<p class="font-label-md text-label-md text-outline">System Health</p>
+<div class="mt-2 flex items-center gap-md">
+<div class="flex-1 bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary w-4/5 h-full rounded-full"></div>
+</div>
+<span class="font-label-md text-primary">98% Efficient</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-2">Optimization active for Teleconsulta routing.</p>
+</div>
+<!-- Atmospheric Glow -->
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/10 blur-3xl rounded-full"></div>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction JS -->
+<script>
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+
+
+
+
+</body></html>
