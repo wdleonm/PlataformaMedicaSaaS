@@ -458,7 +458,18 @@ export default function RegisterPage() {
                     )}
                   </div>
                   {!turnstileToken && (
-                    <p className="text-xs text-slate-600 pl-1">Completa la verificación para continuar</p>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-xs text-slate-600 pl-1">Completa la verificación para continuar</p>
+                      {(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY === "1x00000000000000000000AA" || !process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) && (
+                        <button
+                          type="button"
+                          onClick={() => setTurnstileToken("mock-token")}
+                          className="text-xs text-left text-primary hover:text-primary/80 hover:underline font-bold pl-1 mt-1 w-fit transition-colors"
+                        >
+                          [Desarrollo] Simular Verificación Exitosa (Bypass)
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
 

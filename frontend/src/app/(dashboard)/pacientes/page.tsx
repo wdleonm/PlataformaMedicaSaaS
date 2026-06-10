@@ -183,8 +183,8 @@ export default function PacientesPage() {
     setErrorMsg("");
     setInactiveData(null);
 
-    if (!formData.nombre || !formData.apellido || !formData.email || !formData.telefono) {
-      setErrorMsg("Nombre, Apellido, Email y Teléfono son obligatorios.");
+    if (!formData.nombre || !formData.apellido || !formData.telefono) {
+      setErrorMsg("Nombre, Apellido y Teléfono son obligatorios.");
       setActiveTab("personal");
       return;
     }
@@ -507,8 +507,8 @@ export default function PacientesPage() {
                       <input name="lugar_nacimiento" value={formData.lugar_nacimiento} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Email *</label>
-                      <input name="email" type="email" value={formData.email} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" required />
+                      <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Email</label>
+                      <input name="email" type="email" value={formData.email} onChange={handleInputChange} className="w-full bg-surface border border-outline-variant/50 text-on-surface text-sm rounded-xl focus:ring-2 focus:ring-primary outline-none p-2.5" />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Teléfono *</label>
