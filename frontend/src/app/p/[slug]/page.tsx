@@ -103,13 +103,13 @@ export default function PublicBookingPortal() {
     setSubmitting(true);
     const dniRegex = /^[VEP]-\d+$/;
     if (!dniRegex.test(formData.documento)) {
-      toast.success("El documento debe tener el formato V-12345678, E-12345678 o P-12345678 (Letra en mayúscula y con guion).");
+      toast.error("El documento debe tener el formato V-12345678, E-12345678 o P-12345678 (Letra en mayúscula y con guion).");
       setSubmitting(false);
       return;
     }
 
     if (!formData.email && !formData.telefono) {
-      toast.success("Debes proporcionar al menos un medio de contacto (Correo o Teléfono).");
+      toast.error("Debes proporcionar al menos un medio de contacto (Correo o Teléfono).");
       setSubmitting(false);
       return;
     }

@@ -52,28 +52,31 @@ def start_scheduler() -> None:
         replace_existing=True,
     )
     # Job 3: Sincronizar tasas BCV (Específicamente en la tarde cuando el BCV actualiza)
-    # Intento 1: 18:30 VET (22:30 UTC)
+    # Intento 1: 18:30 VET (22:30 UTC) - Lunes a Viernes
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
+        day_of_week="mon-fri",
         hour=22,
         minute=30,
         id="sincronizar_bcv_tarde_1",
         replace_existing=True,
     )
-    # Intento 2: 19:00 VET (23:00 UTC) por si hubo retrasos en la web del BCV
+    # Intento 2: 19:00 VET (23:00 UTC) por si hubo retrasos en la web del BCV - Lunes a Viernes
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
+        day_of_week="mon-fri",
         hour=23,
         minute=0,
         id="sincronizar_bcv_tarde_2",
         replace_existing=True,
     )
-    # Intento 3: 06:00 VET (10:00 UTC) para asegurar que iniciamos el día con la tasa correcta si falló la tarde anterior
+    # Intento 3: 06:00 VET (10:00 UTC) para asegurar que iniciamos el día con la tasa correcta si falló la tarde anterior - Martes a Sábado
     scheduler.add_job(
         sincronizar_tasas_bcv,
         "cron",
+        day_of_week="tue-sat",
         hour=10,
         minute=0,
         id="sincronizar_bcv_manana",
@@ -86,7 +89,7 @@ def start_scheduler() -> None:
 async def sincronizar_tasas_bcv() -> None:
     """
     Sincroniza las tasas USD y EUR desde el BCV.
-    Usa el servicio centralizado para historial y limpieza.
+    Lunes a Viernes a las 18:30 y 19:00 (intento tarde), y Martes a Sábado a las 06:00 (intento recuperación mañana).
     Evita realizar ejecuciones duplicadas si ya se logró una sincronización efectiva para el ciclo actual.
     """
     from app.services.bcv_service import BCVService
@@ -95,37 +98,58 @@ async def sincronizar_tasas_bcv() -> None:
     # Usar hora de Venezuela para validar efectividad del ciclo
     VE_TZ = timezone(timedelta(hours=-4))
     ahora_ve = datetime.now(VE_TZ)
+    dia_semana = ahora_ve.weekday()  # 0: Lunes, 1: Martes, ..., 5: Sábado, 6: Domingo
+    hora = ahora_ve.hour
+
+    # Reglas estrictas de ejecución:
+    # 1. Los domingos nunca se sincroniza
+    if dia_semana == 6:
+        logger.info("Worker: Domingo. Omitiendo sincronización automática de tasas BCV.")
+        return
+
+    # 2. Los sábados solo se permite el intento de la mañana (recuperación del viernes)
+    if dia_semana == 5 and hora >= 12:
+        logger.info("Worker: Sábado por la tarde. Omitiendo sincronización automática de tasas BCV.")
+        return
+
+    # 3. Los lunes solo se permite el intento de la tarde (primer ciclo de la semana)
+    if dia_semana == 0 and hora < 12:
+        logger.info("Worker: Lunes por la mañana. La tasa de fin de semana es vigente. Omitiendo intento.")
+        return
 
     with Session(engine) as session:
         config = session.exec(select(ConfiguracionGlobal)).first()
         if not config or not config.bcv_modo_automatico:
             return
 
-        # Validar si ya se cuenta con una tasa efectiva para el ciclo actual:
-        # - En la mañana (antes de las 12:00 PM): es efectiva si se sincronizó desde la tarde de ayer (16:00 VET).
-        # - En la tarde (después de las 12:00 PM): es efectiva si ya se sincronizó en la tarde de hoy (16:00 VET).
-        if ahora_ve.hour < 12:
-            limite_ciclo = (ahora_ve - timedelta(days=1)).replace(hour=16, minute=0, second=0, microsecond=0)
+        # Calcular el límite inferior del ciclo actual:
+        # - En la mañana (antes de las 12:00 PM): es efectiva si se sincronizó desde la tarde de ayer (12:00 PM de ayer).
+        # - En la tarde (después de las 12:00 PM): es efectiva si ya se sincronizó hoy después del mediodía (12:00 PM de hoy).
+        if hora < 12:
+            limite_ciclo = (ahora_ve - timedelta(days=1)).replace(hour=12, minute=0, second=0, microsecond=0)
         else:
-            limite_ciclo = ahora_ve.replace(hour=16, minute=0, second=0, microsecond=0)
+            limite_ciclo = ahora_ve.replace(hour=12, minute=0, second=0, microsecond=0)
 
         ult_sync = config.bcv_ultima_sincronizacion
         if ult_sync:
-            # En PostgreSQL ult_sync viene con zona horaria (aware), pero en desarrollo/SQLite puede venir sin ella (naive).
-            # Para comparar de forma segura, normalizamos ambos a la zona horaria de Venezuela.
+            # Normalizar zona horaria a Venezuela para comparación segura
             ult_sync_ve = ult_sync.astimezone(VE_TZ) if ult_sync.tzinfo else ult_sync.replace(tzinfo=VE_TZ)
-            if ult_sync_ve >= limite_ciclo:
-                logger.info("Worker: Sincronización del ciclo actual ya está al día (última: %s). Omitiendo intento.", ult_sync_ve)
+            limite_ciclo_aware = limite_ciclo.replace(tzinfo=VE_TZ)
+            
+            if ult_sync_ve >= limite_ciclo_aware:
+                logger.info(
+                    "Worker: Sincronización del ciclo actual ya está al día (última exitosa: %s, límite del ciclo: %s). Omitiendo.",
+                    ult_sync_ve, limite_ciclo_aware
+                )
                 return
 
-        logger.info("Worker: Iniciando sincronización de tasas BCV...")
-        # Lógica centralizada en el servicio
+        logger.info("Worker: Iniciando sincronización de tasas BCV para el ciclo actual...")
         exito = await BCVService.sincronizar_tasas(session)
         
         if exito:
             logger.info("Worker: Tasas BCV sincronizadas exitosamente.")
         else:
-            logger.warning("Worker: No se pudieron sincronizar las tasas del BCV.")
+            logger.warning("Worker: No se pudieron sincronizar las tasas del BCV en este intento.")
 
 
 def stop_scheduler() -> None:

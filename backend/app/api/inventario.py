@@ -492,6 +492,7 @@ def _servicio_to_read(session: Session, servicio: Servicio) -> ServicioRead:
         precio=servicio.precio,
         merma_porcentaje=merma_pct,
         activo=servicio.activo,
+        visible_publico=servicio.visible_publico,
         costo_insumos=round(costo_total, 4),
         costo_merma=costo_merma,
         utilidad_neta=utilidad,

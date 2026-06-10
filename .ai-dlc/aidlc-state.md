@@ -1,6 +1,6 @@
 # Estado de la Metodología AI-DLC
 **Proyecto:** VitalNexus (PlataformaMedicaSaaS)
-**Última Actualización:** 08 de Junio de 2026
+**Última Actualización:** 10 de Junio de 2026
 **Fase Actual:** Construction / Refactoring (Rama `diseño_stitch`)
 
 ## Estado de Entregables por Fase
@@ -15,11 +15,41 @@
 - [x] Rediseño UI/UX de Landing Page Pública y Sección de Precios (Estilo Clinical Precision)
 - [x] Definición de Infraestructura como Código (IaC) (Docker y Docker Compose listos)
 - [x] Estandarización de Interfaz Glassmorphism y Soporte Tema Claro/Oscuro en Módulos y Admin (08/06/2026)
+- [x] Auditoría Final y Ajustes de Visibilidad de Servicios y Receta (10/06/2026)
+- [x] Toggle Inline de Visibilidad Pública en Tabla de Servicios + Corrección de Bugs Toast (10/06/2026)
 
 ### 3. Fase de Operations
 - [ ] Configuración del Pipeline de CI/CD (Despliegues automáticos con EasyPanel vinculados a Github)
 - [ ] Tablero de Observabilidad y Telemetría
 - [x] Documentación de Despliegue y Mantenimiento (PASOS_ARRANQUE.md y guías listos)
+
+## Registro de Decisiones y Calidad (10/06/2026 — Sesión 2: Auditoría Final Fase 10)
+1. **Módulos del Frontend Modificados:**
+   - **[inventario/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(dashboard)/inventario/page.tsx) — Toggle Inline de Visibilidad Pública:**
+     - Añadidos íconos `Eye` / `EyeOff` de `lucide-react` al módulo de inventario.
+     - Implementado handler `handleToggleVisibilidad` que realiza `PATCH /api/servicios/{id}` con `visible_publico: !actual`, actualizando el estado local de forma optimista con `setServicios` (sin refetch completo) y mostrando un `toast.success` descriptivo con emoji.
+     - Añadida columna **"Perfil Público"** en la cabecera de la tabla de servicios con tooltip explicativo.
+     - Cada fila de servicio muestra ahora un badge-botón interactivo: verde `Visible` (con icono Eye) u opaco `Oculto` (con icono EyeOff). Un clic cambia el estado inmediatamente sin abrir el modal.
+   - **[p/[slug]/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/p/%5Bslug%5D/page.tsx) — Corrección de Toasts en Portal Público:**
+     - Corregido bug crítico: mensajes de validación de formato de cédula (`V-12345678`) y de medio de contacto requerido usaban `toast.success` (verde) en lugar de `toast.error` (rojo), confundiendo al usuario del portal de reservas.
+   - **[admin/especialistas/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/admin/especialistas/page.tsx) — Corrección de Toasts Admin:**
+     - Corregidos 3 casos de `toast.success` mal usados para errores: PIN requerido para cascada, PIN con menos de 4 caracteres, y campos vacíos en creación rápida de especialidad.
+   - **[gastos-fijos/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(dashboard)/gastos-fijos/page.tsx) — Corrección de Toasts:**
+     - Corregido `toast.success` por `toast.error` al intentar guardar sin seleccionar una categoría válida.
+   - **[citas/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(dashboard)/citas/page.tsx) — Corrección de Toasts:**
+     - Corregido `toast.success` por `toast.error` en la validación de campos obligatorios del registro rápido de nuevo paciente dentro del modal de citas.
+   - **[inventario/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(dashboard)/inventario/page.tsx) — Corrección de Typo Kardex:**
+     - Corregido typo tipográfico `"Fecha / Hota"` → `"Fecha / Hora"` en el encabezado de la tabla del modal Kardex.
+2. **Verificaciones del Backend:**
+   - Confirmado que el portal público ([public_portal.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/api/public_portal.py)) ya filtra correctamente servicios con `Servicio.visible_publico == True` y `Servicio.activo == True` al construir el perfil público del especialista.
+   - Confirmado que el script de migración SQL [`024_update_visible_publico.sql`](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/scripts/024_update_visible_publico.sql) contiene el `ALTER TABLE` con `ADD COLUMN IF NOT EXISTS` y el `UPDATE` de inicialización para producción.
+   - Confirmada la columna `visible_publico: bool = Field(default=True)` en el modelo ORM [insumo_servicio.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/models/insumo_servicio.py) y su exposición en los tres schemas: `ServicioCreate`, `ServicioUpdate` y `ServicioRead`.
+3. **Corrección de .gitignore:**
+   - La línea `*.sql` estaba activa en `.gitignore`, bloqueando el rastreo de los scripts de migración SQL. Se comentó (`#*.sql`) para que los archivos `scripts/*.sql` queden incluidos en el control de versiones.
+4. **Validaciones de Calidad Superadas:**
+   - **TypeScript Limpio:** `npx tsc --noEmit` ejecutado exitosamente sin errores ni advertencias en todos los archivos modificados.
+   - **Build de Producción Exitoso:** `npm run build` completado con éxito — 25 rutas (estáticas y dinámicas) compiladas correctamente sin regresiones.
+
 
 ## Registro de Decisiones y Calidad (08/06/2026)
 1. **Módulos Modificados:**

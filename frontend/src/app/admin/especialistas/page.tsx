@@ -226,7 +226,7 @@ export default function AdminEspecialistasPage() {
   const handleConfirmDelete = async (cascade: boolean = false) => {
     if (!deleteTarget) return;
     if (cascade && !adminPin) {
-      toast.success("Debes ingresar el PIN de seguridad para eliminaciones en cascada");
+      toast.error("Debes ingresar el PIN de seguridad para eliminaciones en cascada");
       return;
     }
     setIsDeleting(true);
@@ -244,7 +244,7 @@ export default function AdminEspecialistasPage() {
 
   const handleSetPin = async () => {
     if (!newPin || newPin.length < 4) {
-       toast.success("El PIN debe tener al menos 4 caracteres");
+       toast.error("El PIN debe tener al menos 4 caracteres");
        return;
     }
     try {
@@ -872,7 +872,7 @@ export default function AdminEspecialistasPage() {
 
                 <button 
                   onClick={async () => {
-                    if(!newSpec.nombre || !newSpec.codigo) return toast.success("Completa todos los campos");
+                    if(!newSpec.nombre || !newSpec.codigo) return toast.error("Completa todos los campos");
                     setIsSavingSpec(true);
                     try {
                       const { data } = await api.post("/api/admin/config/especialidades", { ...newSpec, activo: true });

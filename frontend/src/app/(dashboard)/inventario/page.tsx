@@ -24,7 +24,9 @@ import {
   ExternalLink,
   Copy,
   Check,
-  History
+  History,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -68,6 +70,7 @@ interface Servicio {
   descripcion: string | null;
   precio: number;
   merma_porcentaje: number;
+  visible_publico: boolean;
   costo_insumos: number;
   costo_merma: number;
   utilidad_neta: number;
@@ -228,6 +231,7 @@ function InventarioContent() {
     descripcion: "",
     precio: 0,
     merma_porcentaje: 0,
+    visible_publico: true,
   });
 
   // Formulario Receta
@@ -462,8 +466,10 @@ function InventarioContent() {
           stock_minimo: 5,
         });
         insumoId = res.data.id;
-        // Refrescar lista de insumos
-        await fetchData();
+        // Agregar localmente para renderizado instantáneo en el selector
+        setInsumos(prev => [...prev, res.data]);
+        // Refrescar lista de insumos en background
+        fetchData();
       }
       
       // 2. Verificar si ya está en la receta actual para no duplicar filas en la UI
@@ -472,6 +478,8 @@ function InventarioContent() {
       if (!yaEnReceta) {
         // 3. Añadirlo a la lista de la receta actual
         setRecetaItems(prev => [...prev, { insumo_id: insumoId, cantidad_utilizada: 1 }]);
+      } else {
+        toast.error("El insumo ya está agregado a esta receta");
       }
       
       // Limpiar búsqueda
@@ -480,7 +488,7 @@ function InventarioContent() {
     } catch (error: any) {
       console.error("Error cloning to recipe:", error);
       const msg = error.response?.data?.detail || "Error al procesar el insumo.";
-      toast.success(msg);
+      toast.error(msg);
     } finally {
       setCloningId(null);
     }
@@ -517,6 +525,7 @@ function InventarioContent() {
       descripcion: servicio?.descripcion || "",
       precio: servicio?.precio || 0,
       merma_porcentaje: servicio?.merma_porcentaje || 0,
+      visible_publico: servicio ? (servicio.visible_publico !== undefined ? servicio.visible_publico : true) : true,
     });
     setIsServicioModalOpen(true);
   };
@@ -533,6 +542,18 @@ function InventarioContent() {
       fetchData();
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Error al guardar el servicio");
+    }
+  };
+
+  // --- Toggle visibilidad pública rápido ---
+  const handleToggleVisibilidad = async (servicio: Servicio) => {
+    try {
+      const res = await api.patch(`/api/servicios/${servicio.id}`, { visible_publico: !servicio.visible_publico });
+      // Actualizar localmente sin refetch completo
+      setServicios(prev => prev.map(s => s.id === servicio.id ? { ...s, visible_publico: res.data.visible_publico } : s));
+      toast.success(res.data.visible_publico ? '✅ Servicio visible en perfil público' : '👁️ Servicio oculto del perfil público');
+    } catch (error) {
+      toast.error('Error al cambiar visibilidad del servicio');
     }
   };
 
@@ -738,6 +759,7 @@ function InventarioContent() {
                     <th className="px-6 py-4 text-center">Precio</th>
                     <th className="px-6 py-4 text-center">Costos (Insumos + Merma)</th>
                     <th className="px-6 py-4 text-center">Utilidad Neta</th>
+                    <th className="px-6 py-4 text-center" title="Visible en perfil público para que los pacientes puedan auto-seleccionar al pedir cita">Perfil Público</th>
                     <th className="px-6 py-4 text-right">Acciones</th>
                   </tr>
                 </thead>
@@ -778,6 +800,21 @@ function InventarioContent() {
                         <span className={`px-2 py-1 rounded-full text-xs font-bold ${servicio.utilidad_neta > 0 ? 'bg-green-500/10 text-green-500' : 'bg-error/10 text-error'}`}>
                            ${servicio.utilidad_neta.toLocaleString()}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          onClick={() => handleToggleVisibilidad(servicio)}
+                          title={servicio.visible_publico ? 'Visible en perfil público — clic para ocultar' : 'Oculto del perfil público — clic para mostrar'}
+                          className={`group/vis inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all duration-200 ${
+                            servicio.visible_publico
+                              ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30 hover:bg-emerald-500/20'
+                              : 'bg-surface-container-highest/50 text-on-surface-variant border-outline-variant/30 hover:bg-surface-container-highest'
+                          }`}
+                        >
+                          {servicio.visible_publico
+                            ? <><Eye size={11} /> Visible</>  
+                            : <><EyeOff size={11} /> Oculto</>}
+                        </button>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1072,6 +1109,26 @@ function InventarioContent() {
                         </span>
                       </div>
                    </div>
+                   {/* Toggle Mostrar en Perfil Público */}
+                   <div className="flex items-center justify-between p-3.5 bg-surface-container-highest/10 border border-outline-variant/30 rounded-2xl">
+                      <div className="space-y-0.5 max-w-[80%]">
+                        <label className="text-[10px] font-black text-on-surface uppercase tracking-widest pl-0.5">Mostrar en Perfil Público</label>
+                        <p className="text-[10px] text-on-surface-variant leading-tight">Permite a los pacientes ver y auto-seleccionar este servicio en el portal de citas.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setServicioForm(prev => ({ ...prev, visible_publico: !prev.visible_publico }))}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${
+                          servicioForm.visible_publico ? 'bg-primary' : 'bg-outline-variant/50'
+                        }`}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            servicioForm.visible_publico ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
                 </div>
                 <div className="flex items-center justify-between pt-4 border-t border-outline-variant/30">
                   <p className="text-[11px] text-on-surface-variant italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
@@ -1239,6 +1296,11 @@ function InventarioContent() {
                                       <button 
                                         key={i.id}
                                         onClick={() => {
+                                          const yaEnReceta = recetaItems.some(ri => ri.insumo_id === i.id);
+                                          if (yaEnReceta) {
+                                            toast.error("Este insumo ya está agregado en la receta");
+                                            return;
+                                          }
                                           updateRecetaItem(idx, "insumo_id", i.id);
                                           setOpenDropdownIdx(null);
                                         }}
@@ -1312,7 +1374,7 @@ function InventarioContent() {
                   <table className="w-full text-left text-sm">
                     <thead className="bg-surface-container-highest/40 text-[10px] uppercase font-black tracking-widest text-on-surface-variant">
                       <tr>
-                        <th className="p-4">Fecha / Hota</th>
+                        <th className="p-4">Fecha / Hora</th>
                         <th className="p-4">Tipo</th>
                         <th className="p-4">Cantidad</th>
                         <th className="p-4">Ref / Motivo</th>

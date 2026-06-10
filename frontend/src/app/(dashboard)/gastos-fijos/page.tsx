@@ -109,7 +109,7 @@ export default function GastosFijosPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.categoria_id) {
-      toast.success("Por favor selecciona una categoría válida");
+      toast.error("Por favor selecciona una categoría válida");
       return;
     }
     try {

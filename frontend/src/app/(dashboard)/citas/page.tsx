@@ -354,7 +354,7 @@ export default function CalendarPage() {
                           <input type="email" placeholder="Email *" required className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm" value={newPatientData.email} onChange={e=>setNewPatientData({...newPatientData, email: e.target.value})}/>
                           <input type="text" placeholder="Teléfono *" required className="w-full bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold text-sm" value={newPatientData.telefono} onChange={e=>setNewPatientData({...newPatientData, telefono: e.target.value})}/>
                           <button type="button" onClick={async () => {
-                            if (!newPatientData.nombre || !newPatientData.apellido || !newPatientData.email || !newPatientData.telefono) { toast.success("Nombre, Apellido, Email y Teléfono son obligatorios"); return; }
+                            if (!newPatientData.nombre || !newPatientData.apellido || !newPatientData.email || !newPatientData.telefono) { toast.error("Nombre, Apellido, Email y Teléfono son obligatorios"); return; }
                             try {
                               setIsSavingPatient(true);
                               const res = await api.post("/api/pacientes", newPatientData);
