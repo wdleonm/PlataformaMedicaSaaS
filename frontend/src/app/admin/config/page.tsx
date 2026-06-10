@@ -452,10 +452,10 @@ export default function AdminConfigPage() {
                     Sincronizar BCV ahora
                   </button>
                   {config?.bcv_ultima_sincronizacion && (
-                    <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/20 rounded-lg">
-                      <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-                      <p className="text-[9px] text-on-surface-variant font-black uppercase tracking-tighter">
-                          Sincronizado: {new Date(config.bcv_ultima_sincronizacion).toLocaleString('es-VE')}
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                      <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                      <p className="text-[9px] text-emerald-400 font-black uppercase tracking-tighter">
+                        Sincronizado: {new Date(config.bcv_ultima_sincronizacion).toLocaleString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                   )}
@@ -484,27 +484,27 @@ export default function AdminConfigPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-surface-container-highest/50 p-6 rounded-3xl border border-slate-200 dark:border-outline-variant/20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#0d1b2e] p-6 rounded-3xl border border-indigo-500/20">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 ml-1 flex items-center gap-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400 ml-1 flex items-center gap-2">
                         <Globe size={12} /> Tasa EUR (Referencia Principal Bs)
                       </label>
                       <input 
                         type="number" step="0.0001"
                         value={config?.tasa_eur || 0} 
                         onChange={(e) => setConfig(config ? {...config, tasa_eur: parseFloat(e.target.value)} : null)}
-                        className="w-full bg-indigo-50 dark:bg-indigo-600/10 border border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-4 text-indigo-900 dark:text-white font-black text-xl focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all" 
+                        className="w-full bg-indigo-600/10 border border-indigo-500/30 rounded-2xl p-4 text-white font-black text-xl focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all" 
                       />
-                      <p className="text-[9px] text-on-surface-variant font-bold italic ml-1">Esta tasa se usará para convertir montos de $ a Bs automáticamente.</p>
+                      <p className="text-[9px] text-slate-400 font-bold italic ml-1">Esta tasa se usará para convertir montos de $ a Bs automáticamente.</p>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Tasa USD (Informativa)</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Tasa USD (Informativa)</label>
                       <input 
                         type="number" step="0.0001"
                         value={config?.tasa_usd || 0} 
                         onChange={(e) => setConfig(config ? {...config, tasa_usd: parseFloat(e.target.value)} : null)}
-                        className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-2xl p-4 text-on-surface font-black text-xl focus:ring-2 focus:ring-violet-500/50 outline-none transition-all shadow-sm dark:shadow-none" 
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-black text-xl focus:ring-2 focus:ring-violet-500/50 outline-none transition-all" 
                       />
                     </div>
                 </div>
