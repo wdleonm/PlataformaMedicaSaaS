@@ -23,6 +23,21 @@
 - [ ] Tablero de Observabilidad y Telemetría
 - [x] Documentación de Despliegue y Mantenimiento (PASOS_ARRANQUE.md y guías listos)
 
+## Registro de Decisiones y Calidad (10/06/2026 — Sesión 3: Bypass CAPTCHA, Registro de Pacientes y Estilos de Botones Admin)
+1. **Módulos Modificados:**
+   - **Bypass de CAPTCHA Cloudflare Turnstile:**
+     - Backend ([auth.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/api/auth.py)): Modificado para omitir la solicitud de verificación externa si el token enviado es `"mock-token"` y se usa la clave de prueba, retornando éxito automáticamente.
+     - Frontend ([page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(auth)/register/page.tsx)): Agregado un botón de bypass de prueba rápido en modo de desarrollo.
+   - **Registro de Pacientes (Email Opcional):**
+     - Backend ([pacientes.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/schemas/pacientes.py)): Cambiado el tipo del campo `email` en el esquema `PacienteCreate` a `Optional[EmailStr] = None` para hacerlo opcional.
+     - Frontend ([page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(dashboard)/pacientes/page.tsx)): Eliminado el asterisco de campo obligatorio y la validación en el formulario de creación de pacientes.
+   - **Estilos en Master Admin:**
+     - **Botones de Acción (Editar/Pencil):** Modificados en [especialidades/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/admin/especialidades/page.tsx), [especialistas/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/admin/especialistas/page.tsx) y [planes/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/admin/planes/page.tsx) para utilizar clases nativas del tema oscuro (`bg-violet-600/10 text-violet-400 border-violet-500/20`) y remover la dependencia del selector `.dark`.
+     - **Contenedores de Tasas y Badges**: Corregidos colores de fondo, bordes y cabeceras de tablas en [config/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/admin/config/page.tsx) para alta legibilidad.
+2. **Validaciones de Calidad Superadas:**
+   - **Pruebas del Backend**: Aprobadas todas las pruebas unitarias relacionadas con pacientes (`pytest backend/tests/test_pacientes.py`).
+   - **Compilación de Producción Exitosa**: Next.js finalizado exitosamente (`npm run build`) para las 25 rutas del frontend.
+
 ## Registro de Decisiones y Calidad (10/06/2026 — Sesión 2: Auditoría Final Fase 10)
 1. **Módulos del Frontend Modificados:**
    - **[inventario/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(dashboard)/inventario/page.tsx) — Toggle Inline de Visibilidad Pública:**
