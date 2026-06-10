@@ -419,7 +419,7 @@ export default function AdminEspecialistasPage() {
                         </button>
                         <button 
                           onClick={() => handleOpenEdit(esp)}
-                          className="p-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl text-on-surface-variant hover:text-on-surface dark:hover:bg-surface-container-highest transition-all"
+                          className="p-2.5 bg-violet-600/10 hover:bg-violet-600/20 border border-violet-500/20 rounded-xl text-violet-400 hover:text-violet-300 transition-all"
                           title="Editar Especialista"
                         >
                           <Edit size={18} />

@@ -142,7 +142,7 @@ export default function AdminPlanesPage() {
 
             <button 
               onClick={() => handleEdit(plan)}
-              className="w-full mt-10 py-4 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white font-bold text-xs uppercase tracking-widest transition-all shadow-sm active:scale-95"
+              className="w-full mt-10 py-4 rounded-2xl bg-violet-600/10 hover:bg-violet-600/20 border border-violet-500/20 text-violet-400 font-bold text-xs uppercase tracking-widest transition-all shadow-sm active:scale-95"
             >
               Editar Características
             </button>
