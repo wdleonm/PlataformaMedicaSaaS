@@ -355,12 +355,12 @@ export default function AdminConfigPage() {
             <div className="bg-white dark:bg-[#0b1c30]/50 border border-slate-200 dark:border-outline-variant/20 rounded-[2rem] shadow-sm dark:shadow-2xl overflow-hidden">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 dark:bg-surface-container-highest/50 border-b border-slate-200 dark:border-outline-variant/20">
-                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Orden/Ref</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Hallazgo</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Categoría</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80">Visualización</th>
-                    <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-widest text-violet-700 dark:text-violet-400/80 italic">Acciones</th>
+                  <tr className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-white/10">
+                    <th className="px-6 py-5 text-left text-xs font-bold uppercase tracking-wider text-violet-700 dark:text-violet-400">Orden/Ref</th>
+                    <th className="px-6 py-5 text-left text-xs font-bold uppercase tracking-wider text-violet-700 dark:text-violet-400">Hallazgo</th>
+                    <th className="px-6 py-5 text-left text-xs font-bold uppercase tracking-wider text-violet-700 dark:text-violet-400">Categoría</th>
+                    <th className="px-6 py-5 text-left text-xs font-bold uppercase tracking-wider text-violet-700 dark:text-violet-400">Visualización</th>
+                    <th className="px-6 py-5 text-right text-xs font-bold uppercase tracking-wider text-violet-700 dark:text-violet-400">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-white/5">
