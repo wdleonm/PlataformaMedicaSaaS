@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     # Moneda para mensajes (usado en plantillas de WhatsApp)
     moneda_simbolo: str = "Bs."
 
+    # Cloudflare Turnstile (CAPTCHA en registro público)
+    turnstile_secret_key: str = "1x0000000000000000000000000000000AA"  # Clave de prueba local
+
     class Config:
         env_file = ".env"
         extra = "ignore"
