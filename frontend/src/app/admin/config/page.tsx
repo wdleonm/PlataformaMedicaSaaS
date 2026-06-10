@@ -452,7 +452,7 @@ export default function AdminConfigPage() {
                     Sincronizar BCV ahora
                   </button>
                   {config?.bcv_ultima_sincronizacion && (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-950/40 border border-emerald-500/30 rounded-xl">
                       <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
                       <p className="text-[9px] text-emerald-400 font-black uppercase tracking-tighter">
                         Sincronizado: {new Date(config.bcv_ultima_sincronizacion).toLocaleString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
@@ -484,7 +484,7 @@ export default function AdminConfigPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#0d1b2e] p-6 rounded-3xl border border-indigo-500/20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-900/60 dark:bg-surface-container-low p-6 rounded-3xl border border-indigo-500/20">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400 ml-1 flex items-center gap-2">
                         <Globe size={12} /> Tasa EUR (Referencia Principal Bs)
