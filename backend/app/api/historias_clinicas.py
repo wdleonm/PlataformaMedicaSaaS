@@ -318,7 +318,7 @@ def delete_historia(
     # 1. Eliminar físicamente los registros del odontograma asociados a esta historia (por paciente y fecha)
     stmt = delete(OdontogramaRegistro).where(
         OdontogramaRegistro.paciente_id == historia.paciente_id,
-        OdontogramaRegistro.fecha_registro == historia.fecha_apertura.date()
+        OdontogramaRegistro.fecha_registro == historia.fecha_apertura
     )
     session.exec(stmt)
 
