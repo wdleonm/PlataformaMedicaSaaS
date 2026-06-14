@@ -22,6 +22,7 @@ import {
   XCircle,
   ArrowLeft,
   Edit2,
+  Trash2,
   X,
   Stethoscope,
   Download,
@@ -281,7 +282,7 @@ function ExamenFisicoStep({ formData, setFormData }: { formData: FormDataHistori
   );
 }
 
-function OdontogramaStep({ pacienteId }: { pacienteId: string | null }) {
+function OdontogramaStep({ pacienteId, historiaId }: { pacienteId: string | null, historiaId: string | null }) {
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
       <div className="flex items-center justify-between border-b border-outline-variant/50 pb-3">
@@ -292,7 +293,7 @@ function OdontogramaStep({ pacienteId }: { pacienteId: string | null }) {
           Odontograma
         </h3>
         {pacienteId && (
-          <a href={`/embed/odontograma?paciente_id=${pacienteId}`} target="_blank" rel="noopener noreferrer"
+          <a href={`/embed/odontograma?paciente_id=${pacienteId}${historiaId ? '&historia_id=' + historiaId : ''}`} target="_blank" rel="noopener noreferrer"
             className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
             Abrir pantalla completa
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -301,7 +302,7 @@ function OdontogramaStep({ pacienteId }: { pacienteId: string | null }) {
       </div>
       <div className="rounded-2xl overflow-hidden border border-outline-variant/30 bg-surface/50">
         {pacienteId ? (
-          <iframe src={`/embed/odontograma?paciente_id=${pacienteId}`}
+          <iframe src={`/embed/odontograma?paciente_id=${pacienteId}${historiaId ? '&historia_id=' + historiaId : ''}`}
             className="w-full h-[480px] border-0" title="Odontograma del paciente" />
         ) : (
           <div className="flex flex-col items-center justify-center h-48 text-on-surface-variant gap-3">
@@ -586,7 +587,7 @@ function renderSeccion(
     case "EXAMEN_FISICO":
       return <ExamenFisicoStep formData={formData} setFormData={setFormData} />;
     case "ODONTOGRAMA":
-      return <OdontogramaStep pacienteId={pacienteId} />;
+      return <OdontogramaStep pacienteId={pacienteId} historiaId={historiaId} />;
     case "PLAN":
       return <PlanStep formData={formData} setFormData={setFormData} />;
     case "ACTIVIDADES":
@@ -625,6 +626,8 @@ function HistoriasContent() {
 
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedHistoriaId, setSelectedHistoriaId] = useState<string | null>(null);
+  const [isDeleteHistoriaModalOpen, setIsDeleteHistoriaModalOpen] = useState(false);
+  const [historiaToDelete, setHistoriaToDelete] = useState<HistoriaClinica | null>(null);
   const [currentStepIdx, setCurrentStepIdx] = useState(0); // índice dentro de `secciones[]`
   const [formData, setFormData] = useState<FormDataHistoria>(formDataVacio());
   const [hasOdontogramaRecords, setHasOdontogramaRecords] = useState(false);
@@ -859,6 +862,20 @@ function HistoriasContent() {
       toast.error("Error al guardar la historia clínica.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteHistoria = async () => {
+    if (!historiaToDelete) return;
+    try {
+      await api.delete(`/api/historias-clinicas/${historiaToDelete.id}`);
+      toast.success("Evolución y datos asociados eliminados correctamente");
+      setIsDeleteHistoriaModalOpen(false);
+      setHistoriaToDelete(null);
+      fetchData();
+    } catch (error) {
+      console.error("Error al eliminar historia:", error);
+      toast.error("Error al eliminar la evolución");
     }
   };
   
@@ -1111,6 +1128,11 @@ function HistoriasContent() {
                       title="Ver/Editar Detalle Completo">
                       <Edit2 size={18} />
                     </button>
+                    <button onClick={() => { setHistoriaToDelete(h); setIsDeleteHistoriaModalOpen(true); }}
+                      className="p-3 hover:bg-error/20 text-error rounded-xl transition-all shadow-sm hover:scale-110"
+                      title="Eliminar Evolución">
+                      <Trash2 size={18} />
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -1289,6 +1311,57 @@ function HistoriasContent() {
         </AnimatePresence>,
         document.body
       )}
+
+      {/* ── Modal de Confirmación de Eliminación ─────────────────────────── */}
+      <AnimatePresence>
+        {isDeleteHistoriaModalOpen && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                setIsDeleteHistoriaModalOpen(false);
+                setHistoriaToDelete(null);
+              }}
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm glass-panel p-6 rounded-[2.5rem] border-none shadow-2xl flex flex-col text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto mb-4">
+                <AlertCircle size={32} />
+              </div>
+              <h3 className="text-xl font-black mb-2">¿Eliminar Evolución?</h3>
+              <p className="text-sm text-on-surface-variant mb-6">
+                Esta acción borrará la evolución y todos los registros asociados a ella, incluyendo el odontograma.
+              </p>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    setIsDeleteHistoriaModalOpen(false);
+                    setHistoriaToDelete(null);
+                  }}
+                  className="flex-1 py-3 bg-surface-container-highest/50 text-on-surface-variant font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-surface-container-highest transition-all"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={handleDeleteHistoria}
+                  className="flex-1 py-3 bg-error text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-lg shadow-error/20 hover:scale-[1.02] transition-all active:scale-[0.98]"
+                >
+                  Sí, Eliminar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

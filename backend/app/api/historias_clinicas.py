@@ -14,12 +14,13 @@ from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlmodel import Session, select
+from sqlmodel import Session, select, delete
 
 from app.api.dependencies import get_current_especialista
 from app.database import get_session
 from app.models.especialista import Especialista
 from app.models.historia_clinica import HistoriaClinica
+from app.models.odontograma import OdontogramaRegistro
 from app.models.paciente import Paciente
 from app.schemas.historias_clinicas import (
     HistoriaClinicaCreate,
@@ -216,6 +217,7 @@ def list_historias_by_paciente(
         .where(
             HistoriaClinica.paciente_id == paciente_id,
             HistoriaClinica.especialista_id == especialista.id,
+            HistoriaClinica.activo == True,
         )
         .order_by(HistoriaClinica.fecha_apertura.desc())  # type: ignore[attr-defined]
     )
@@ -312,6 +314,15 @@ def delete_historia(
     especialista: Especialista = Depends(get_current_especialista),
 ) -> None:
     historia = _get_or_404(session, historia_id, especialista.id)
+    
+    # 1. Eliminar físicamente los registros del odontograma asociados a esta historia (por paciente y fecha)
+    stmt = delete(OdontogramaRegistro).where(
+        OdontogramaRegistro.paciente_id == historia.paciente_id,
+        OdontogramaRegistro.fecha_registro == historia.fecha_apertura.date()
+    )
+    session.exec(stmt)
+
+    # 2. Borrado lógico de la historia
     historia.activo = False
     from datetime import datetime, timezone
     historia.updated_at = datetime.now(timezone.utc)

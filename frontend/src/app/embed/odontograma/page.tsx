@@ -267,8 +267,8 @@ function OdontoEmbed() {
         cara_diente: full ? "R" : cara,
         hallazgo_id: selectedHallazgo.id,
         fecha_registro: fecha,
-        notes: notas || null, // Wait, backend has notas, but embedding is sending notes? Let's check: actually line 267 was notas: notas || null. We'll use notas: notas || null to prevent breaking change
         notas: notas || null,
+        historia_clinica_id: searchParams.get("historia_id") || null,
       }, { headers: headers() });
       setNotas("");
       setSavedMsg(`✓ ${selectedHallazgo.nombre} registrado en diente ${numero}`);
