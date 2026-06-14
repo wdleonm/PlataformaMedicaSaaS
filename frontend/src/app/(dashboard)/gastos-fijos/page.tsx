@@ -51,6 +51,10 @@ export default function GastosFijosPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGasto, setEditingGasto] = useState<GastoFijo | null>(null);
   
+  // Modal de confirmación de eliminación
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [gastoToDelete, setGastoToDelete] = useState<string | null>(null);
+  
   // Búsqueda de categorías
   const [categorySearch, setCategorySearch] = useState("");
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
@@ -147,13 +151,21 @@ export default function GastosFijosPage() {
     setCategorySearch("");
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de eliminar este gasto?")) return;
+  const handleDelete = (id: string) => {
+    setGastoToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!gastoToDelete) return;
     try {
-      await api.delete(`/api/gastos-fijos/${id}`);
+      await api.delete(`/api/gastos-fijos/${gastoToDelete}`);
       fetchData();
+      setIsDeleteModalOpen(false);
+      setGastoToDelete(null);
     } catch (error) {
       console.error("Error deleting gasto:", error);
+      toast.error("Error al eliminar el gasto");
     }
   };
 
@@ -545,6 +557,55 @@ export default function GastosFijosPage() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      {/* ── Modal de Confirmación de Eliminación ─────────────────────────── */}
+      <AnimatePresence>
+        {isDeleteModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setGastoToDelete(null);
+              }}
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm glass-panel p-6 rounded-[2.5rem] border-none shadow-2xl flex flex-col text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto mb-4">
+                <AlertCircle size={32} />
+              </div>
+              <h3 className="text-xl font-black mb-2">¿Eliminar Gasto?</h3>
+              <p className="text-sm text-on-surface-variant mb-6">
+                Esta acción no se puede deshacer y el monto se restará del total de gastos fijos.
+              </p>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    setIsDeleteModalOpen(false);
+                    setGastoToDelete(null);
+                  }}
+                  className="flex-1 py-3 bg-surface-container-highest/50 text-on-surface-variant font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-surface-container-highest transition-all"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={confirmDelete}
+                  className="flex-1 py-3 bg-rose-500 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-lg shadow-rose-500/20 hover:scale-[1.02] transition-all active:scale-[0.98]"
+                >
+                  Eliminar
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

@@ -40,6 +40,7 @@ export default function CalendarPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [finConfig, setFinConfig] = useState({ moneda_principal: "USD", moneda_simbolo: "$", tasa_usd: 1.0, tasa_eur: 1.0 });
 
@@ -447,7 +448,7 @@ export default function CalendarPage() {
                 <div className="flex justify-between items-center p-6 border-t border-outline-variant/10 bg-surface-container-highest/5 shrink-0">
                   <p className="text-[11px] text-on-surface-variant italic"><span className="text-primary font-bold not-italic">*</span> Campos obligatorios</p>
                   <div className="flex items-center gap-2">
-                    {selectedCita && <button type="button" onClick={() => { if(confirm("¿Cancelar cita?")) handleUpdateStatus(selectedCita.id, "cancelada"); }} className="text-error hover:bg-error/10 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Cancelar Cita</button>}
+                    {selectedCita && <button type="button" onClick={() => setIsCancelModalOpen(true)} className="text-error hover:bg-error/10 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Cancelar Cita</button>}
                     <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-bold hover:bg-surface-container-highest rounded-xl transition-colors">Cerrar</button>
                     <button type="submit" disabled={isSaving} className="bg-primary text-primary-foreground px-8 py-2.5 rounded-lg text-sm font-black flex items-center gap-2 border border-primary/20">{isSaving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}{selectedCita ? 'Actualizar' : 'Agendar'}</button>
                   </div>
@@ -480,6 +481,43 @@ export default function CalendarPage() {
                     <button onClick={() => handleUpdateStatus(selectedCita.id, "completada", montoCobrado)} className="flex-1 py-4 bg-green-500 text-white font-black rounded-2xl shadow-xl shadow-green-500/20 hover:scale-105 transition-all">Confirmar</button>
                   </div>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Cancelar Cita */}
+      <AnimatePresence>
+        {isCancelModalOpen && selectedCita && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" onClick={() => setIsCancelModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }} className="bg-surface-container-low w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-outline-variant relative z-10 overflow-hidden text-center p-6 flex flex-col items-center">
+              <div className="w-16 h-16 bg-error/10 text-error rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <AlertCircle size={32} />
+              </div>
+              <h3 className="text-2xl font-black mb-2">¿Cancelar Cita?</h3>
+              <p className="text-on-surface-variant text-sm mb-6">
+                Esta acción marcará la cita como cancelada.
+              </p>
+              
+              <div className="flex gap-3 w-full">
+                <button 
+                  onClick={() => setIsCancelModalOpen(false)} 
+                  className="flex-1 py-3 font-bold hover:bg-surface-container-highest text-on-surface-variant rounded-2xl transition-colors"
+                >
+                  Volver
+                </button>
+                <button 
+                  onClick={() => {
+                    handleUpdateStatus(selectedCita.id, "cancelada");
+                    setIsCancelModalOpen(false);
+                    setIsModalOpen(false);
+                  }} 
+                  className="flex-1 py-3 bg-error text-white font-black rounded-2xl shadow-xl shadow-error/20 hover:scale-105 transition-all"
+                >
+                  Sí, Cancelar
+                </button>
               </div>
             </motion.div>
           </div>

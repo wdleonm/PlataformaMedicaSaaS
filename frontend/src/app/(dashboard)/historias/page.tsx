@@ -420,6 +420,9 @@ function AdjuntosStep({ historiaId, adjuntos, onUpdate }: { historiaId: string |
   const [isUploading, setIsUploading] = useState(false);
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [adjuntoToDelete, setAdjuntoToDelete] = useState<string | null>(null);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length || !historiaId) return;
     try {
@@ -440,11 +443,18 @@ function AdjuntosStep({ historiaId, adjuntos, onUpdate }: { historiaId: string |
     }
   };
 
-  const eliminarAdjunto = async (id: string) => {
-    if (!confirm("¿Seguro que deseas eliminar este archivo?")) return;
+  const eliminarAdjunto = (id: string) => {
+    setAdjuntoToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmEliminarAdjunto = async () => {
+    if (!adjuntoToDelete) return;
     try {
-      await api.delete(`/api/adjuntos/${id}`);
+      await api.delete(`/api/adjuntos/${adjuntoToDelete}`);
       onUpdate();
+      setIsDeleteModalOpen(false);
+      setAdjuntoToDelete(null);
     } catch (error) {
       console.error("Error al eliminar adjunto:", error);
     }
@@ -508,6 +518,53 @@ function AdjuntosStep({ historiaId, adjuntos, onUpdate }: { historiaId: string |
           </div>
         )}
       </div>
+
+      {/* Modal Confirmar Eliminación de Adjunto */}
+      <AnimatePresence>
+        {isDeleteModalOpen && adjuntoToDelete && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" 
+              onClick={() => setIsDeleteModalOpen(false)} 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm glass-panel p-6 rounded-[2.5rem] border-none shadow-2xl flex flex-col text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto mb-4">
+                <XCircle size={32} />
+              </div>
+              <h3 className="text-xl font-black mb-2">¿Eliminar Archivo?</h3>
+              <p className="text-sm text-on-surface-variant mb-6">
+                Esta acción no se puede deshacer y el archivo se eliminará de la historia clínica.
+              </p>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    setIsDeleteModalOpen(false);
+                    setAdjuntoToDelete(null);
+                  }}
+                  className="flex-1 py-3 bg-surface-container-highest/50 text-on-surface-variant font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-surface-container-highest transition-all"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={confirmEliminarAdjunto}
+                  className="flex-1 py-3 bg-error text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-lg shadow-error/20 hover:scale-[1.02] transition-all active:scale-[0.98]"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

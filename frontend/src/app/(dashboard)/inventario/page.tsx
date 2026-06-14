@@ -202,6 +202,9 @@ function InventarioContent() {
   const [serviceToDeleteId, setServiceToDeleteId] = useState<string | null>(null);
   const [serviceToDeleteName, setServiceToDeleteName] = useState<string | null>(null);
 
+  const [isInsumoDeleteModalOpen, setIsInsumoDeleteModalOpen] = useState(false);
+  const [insumoToDeleteId, setInsumoToDeleteId] = useState<string | null>(null);
+
   // Estados Kardex
   const [kardexItems, setKardexItems] = useState<any[]>([]);
   const [kardexInsumo, setKardexInsumo] = useState<Insumo | null>(null);
@@ -340,11 +343,18 @@ function InventarioContent() {
     }
   };
 
-  const handleDeleteInsumo = async (id: string) => {
-    if (!confirm("¿Desactivar este insumo?")) return;
+  const handleDeleteInsumo = (id: string) => {
+    setInsumoToDeleteId(id);
+    setIsInsumoDeleteModalOpen(true);
+  };
+
+  const executeDeleteInsumo = async () => {
+    if (!insumoToDeleteId) return;
     try {
-      await api.delete(`/api/insumos/${id}`);
+      await api.delete(`/api/insumos/${insumoToDeleteId}`);
       fetchData();
+      setIsInsumoDeleteModalOpen(false);
+      setInsumoToDeleteId(null);
     } catch (error) {
       toast.error("Error al eliminar");
     }
@@ -1453,6 +1463,53 @@ function InventarioContent() {
                   className="bg-error text-error-foreground px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-destructive/20 hover:bg-error/90 transition-colors"
                 >
                   Sí, eliminar todo
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Confirmar Eliminación de Insumo */}
+      <AnimatePresence>
+        {isInsumoDeleteModalOpen && insumoToDeleteId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="absolute inset-0 bg-background/50 backdrop-blur-[3px]" 
+              onClick={() => setIsInsumoDeleteModalOpen(false)} 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm glass-panel p-6 rounded-[2.5rem] border-none shadow-2xl flex flex-col text-center z-10"
+            >
+              <div className="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto mb-4">
+                <AlertCircle size={32} />
+              </div>
+              <h3 className="text-xl font-black mb-2">¿Desactivar Insumo?</h3>
+              <p className="text-sm text-on-surface-variant mb-6">
+                El insumo dejará de estar disponible, pero se conservará su historial en el Kardex.
+              </p>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    setIsInsumoDeleteModalOpen(false);
+                    setInsumoToDeleteId(null);
+                  }}
+                  className="flex-1 py-3 bg-surface-container-highest/50 text-on-surface-variant font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-surface-container-highest transition-all"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={executeDeleteInsumo}
+                  className="flex-1 py-3 bg-error text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-lg shadow-error/20 hover:scale-[1.02] transition-all active:scale-[0.98]"
+                >
+                  Desactivar
                 </button>
               </div>
             </motion.div>
