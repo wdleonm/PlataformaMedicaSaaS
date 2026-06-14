@@ -560,6 +560,7 @@ export default function GastosFijosPage() {
             </motion.div>
           </div>
         )}
+      </AnimatePresence>
       {/* ── Modal de Confirmación de Eliminación ─────────────────────────── */}
       <AnimatePresence>
         {isDeleteModalOpen && (
