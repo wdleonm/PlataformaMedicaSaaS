@@ -185,7 +185,7 @@ export default function FinanzasPage() {
     }
   };
 
-  const handleShareAbono = (abono: any, method: 'link' | 'whatsapp') => {
+  const handleShareAbono = async (abono: any, method: 'link' | 'whatsapp') => {
     const url = `${window.location.origin}/recibo/${abono.id}`;
     const paciente = pacientes.find(px => px.id === selectedPresupuesto?.paciente_id);
     const nombreCompleto = paciente ? `${paciente.nombre} ${paciente.apellido}` : 'Estimado/a Paciente';
@@ -202,9 +202,29 @@ Puede visualizar y descargar su recibo oficial en el siguiente enlace:
       navigator.clipboard.writeText(msg);
       toast.success("Mensaje y enlace del recibo copiados al portapapeles");
     } else {
-      const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
-      const text = encodeURIComponent(msg);
-      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+      if ((finConfig as any).ycloud_configured) {
+        const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
+        if (!phone || phone.length < 7) {
+          toast.error("El paciente no tiene un número de teléfono válido registrado.");
+          return;
+        }
+        try {
+          await api.post("/api/mensajes", {
+            tipo: "personalizado",
+            destino: phone,
+            payload: { text: msg },
+            abono_id: abono.id
+          });
+          toast.success("El mensaje ha sido encolado para envío automático por WhatsApp.");
+        } catch (error) {
+          toast.error("Error al encolar el mensaje por YCloud.");
+          console.error(error);
+        }
+      } else {
+        const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
+        const text = encodeURIComponent(msg);
+        window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+      }
     }
   };
 
@@ -388,7 +408,7 @@ Puede visualizar y descargar su recibo oficial en el siguiente enlace:
     }
   };
 
-  const handleShare = (p: Presupuesto, method: 'link' | 'whatsapp') => {
+  const handleShare = async (p: Presupuesto, method: 'link' | 'whatsapp') => {
     const paciente = pacientes.find(px => px.id === p.paciente_id);
     const nombreCompleto = paciente ? `${paciente.nombre} ${paciente.apellido}` : 'Estimado/a Paciente';
     const total = p.total;
@@ -423,9 +443,28 @@ Si tiene alguna duda o consulta, quedamos a su entera disposición. ¡Muchas gra
       navigator.clipboard.writeText(msg);
       toast.success("Mensaje y enlace copiados al portapapeles");
     } else {
-      const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
-      const text = encodeURIComponent(msg);
-      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+      if ((finConfig as any).ycloud_configured) {
+        const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
+        if (!phone || phone.length < 7) {
+          toast.error("El paciente no tiene un número de teléfono válido registrado.");
+          return;
+        }
+        try {
+          await api.post("/api/mensajes", {
+            tipo: "personalizado",
+            destino: phone,
+            payload: { text: msg }
+          });
+          toast.success("El mensaje ha sido encolado para envío automático por WhatsApp.");
+        } catch (error) {
+          toast.error("Error al encolar el mensaje por YCloud.");
+          console.error(error);
+        }
+      } else {
+        const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
+        const text = encodeURIComponent(msg);
+        window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+      }
     }
   };
 
