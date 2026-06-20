@@ -23,7 +23,8 @@ import {
   Edit2,
   Share2,
   MessageCircle,
-  Stethoscope
+  Stethoscope,
+  Printer
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatLocalDate } from "@/lib/utils";
@@ -96,6 +97,8 @@ export default function FinanzasPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [budgetToDeleteId, setBudgetToDeleteId] = useState<string | null>(null);
   const [selectedPresupuesto, setSelectedPresupuesto] = useState<Presupuesto | null>(null);
+  const [selectedAbonos, setSelectedAbonos] = useState<any[]>([]);
+  const [isLoadingAbonos, setIsLoadingAbonos] = useState(false);
   const [montoAbono, setMontoAbono] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [finConfig, setFinConfig] = useState({
@@ -119,6 +122,7 @@ export default function FinanzasPage() {
     monto: 0,
     metodo_pago: "efectivo",
     notas: "",
+    fecha_abono: new Date().toISOString().split("T")[0],
   });
 
   const STATUS_LABELS: Record<string, string> = {
@@ -166,9 +170,60 @@ export default function FinanzasPage() {
     return p ? `${p.nombre} ${p.apellido}` : "Paciente Desconocido";
   };
 
-  const handleOpenDetail = (p: Presupuesto) => {
+  const handleOpenDetail = async (p: Presupuesto) => {
     setSelectedPresupuesto(p);
     setIsDetailModalOpen(true);
+    setSelectedAbonos([]);
+    try {
+      setIsLoadingAbonos(true);
+      const res = await api.get(`/api/presupuestos/${p.id}/abonos`);
+      setSelectedAbonos(res.data.items || []);
+    } catch (err) {
+      console.error("Error loading abonos:", err);
+    } finally {
+      setIsLoadingAbonos(false);
+    }
+  };
+
+  const handleShareAbono = (abono: any, method: 'link' | 'whatsapp') => {
+    const url = `${window.location.origin}/recibo/${abono.id}`;
+    const paciente = pacientes.find(px => px.id === selectedPresupuesto?.paciente_id);
+    const nombreCompleto = paciente ? `${paciente.nombre} ${paciente.apellido}` : 'Estimado/a Paciente';
+    const msg = `Estimado/a ${nombreCompleto},
+
+Le compartimos el recibo correspondiente a su abono de $${abono.monto.toLocaleString('es-ES', { minimumFractionDigits: 2 })}.
+
+Puede visualizar y descargar su recibo oficial en el siguiente enlace:
+🔗 ${url}
+
+¡Muchas gracias por su confianza!`;
+
+    if (method === 'link') {
+      navigator.clipboard.writeText(msg);
+      toast.success("Mensaje y enlace del recibo copiados al portapapeles");
+    } else {
+      const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
+      const text = encodeURIComponent(msg);
+      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    }
+  };
+
+  const handleDeleteAbono = async (abonoId: string) => {
+    if (!confirm("¿Está seguro de que desea eliminar este abono? El saldo del presupuesto volverá a aumentar.")) return;
+    try {
+      await api.delete(`/api/abonos/${abonoId}`);
+      toast.success("Abono eliminado");
+      fetchData();
+      if (selectedPresupuesto) {
+        const res = await api.get(`/api/presupuestos/${selectedPresupuesto.id}/abonos`);
+        setSelectedAbonos(res.data.items || []);
+        const budgetRes = await api.get(`/api/presupuestos/${selectedPresupuesto.id}`);
+        setSelectedPresupuesto(budgetRes.data);
+      }
+    } catch (err) {
+      console.error("Error al eliminar abono:", err);
+      toast.error("No se pudo eliminar el abono");
+    }
   };
 
   const handleCreateBudget = async () => {
@@ -295,6 +350,7 @@ export default function FinanzasPage() {
       monto: p.saldo_pendiente,
       metodo_pago: "efectivo",
       notas: "",
+      fecha_abono: new Date().toISOString().split("T")[0],
     });
     setIsAbonoModalOpen(true);
   };
@@ -333,17 +389,46 @@ export default function FinanzasPage() {
   };
 
   const handleShare = (p: Presupuesto, method: 'link' | 'whatsapp') => {
+    const paciente = pacientes.find(px => px.id === p.paciente_id);
+    const nombreCompleto = paciente ? `${paciente.nombre} ${paciente.apellido}` : 'Estimado/a Paciente';
+    const total = p.total;
+    const saldo = p.saldo_pendiente;
+    const abonado = total - saldo;
     const url = `${window.location.origin}/presupuesto/${p.id}`;
+
+    let estadoStr = p.estado as string;
+    if (p.estado === 'borrador') estadoStr = 'Borrador';
+    else if (p.estado === 'aprobado') estadoStr = 'Aprobado';
+    else if (p.estado === 'en_pago') estadoStr = 'En pago (abonos parciales)';
+    else if (p.estado === 'pagado') estadoStr = 'Totalmente Pagado';
+    else if (p.estado === 'cancelado') estadoStr = 'Cancelado';
+
+    const msg = `Estimado/a ${nombreCompleto},
+
+Esperamos que se encuentre muy bien. Nos comunicamos para compartirle la información actualizada de su presupuesto.
+
+A continuación, el resumen financiero de su tratamiento:
+
+📊 Estado Actual: ${estadoStr}
+💰 Total del Presupuesto: $${total.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+💵 Monto Abonado: $${abonado.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+📉 Saldo Pendiente: $${saldo.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+
+Puede consultar y descargar el documento oficial detallado en el siguiente enlace:
+🔗 ${url}
+
+Si tiene alguna duda o consulta, quedamos a su entera disposición. ¡Muchas gracias por su confianza!`;
+
     if (method === 'link') {
-      navigator.clipboard.writeText(url);
-      toast.success("Enlace copiado al portapapeles");
+      navigator.clipboard.writeText(msg);
+      toast.success("Mensaje y enlace copiados al portapapeles");
     } else {
-      const paciente = pacientes.find(px => px.id === p.paciente_id);
       const phone = (paciente as any)?.telefono?.replace(/\D/g, '') || "";
-      const text = encodeURIComponent(`Hola ${paciente?.nombre}, le adjunto el presupuesto de su tratamiento en OdontoFocus: ${url}`);
+      const text = encodeURIComponent(msg);
       window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
     }
   };
+
 
   const filteredPresupuestos = presupuestos.filter(p => {
     const nombre = getPacienteNombre(p.paciente_id).toLowerCase();
@@ -505,11 +590,11 @@ export default function FinanzasPage() {
                           <button 
                             onClick={() => handleOpenAbono(p)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg transition-all ${
-                              p.estado === 'cancelado' 
-                                ? 'bg-surface-container-highest text-on-surface-variant cursor-not-allowed border border-outline-variant/10' 
-                                : 'bg-primary text-primary-foreground shadow-primary/20 hover:scale-105'
+                              p.estado === 'cancelado' || p.saldo_pendiente <= 0
+                                ? 'bg-surface-container-highest/50 text-on-surface-variant/40 cursor-not-allowed border border-outline-variant/10 shadow-none hover:scale-100' 
+                                : 'bg-primary text-primary-foreground shadow-primary/20 hover:scale-105 active:scale-95'
                             }`}
-                            disabled={p.saldo_pendiente === 0 || p.estado === 'cancelado'}
+                            disabled={p.saldo_pendiente <= 0 || p.estado === 'cancelado'}
                           >
                             Abonar
                           </button>
@@ -623,6 +708,17 @@ export default function FinanzasPage() {
                 </div>
 
                 <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Fecha del Abono</label>
+                  <input 
+                    required 
+                    type="date"
+                    className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm [color-scheme:dark]"
+                    value={abonoForm.fecha_abono}
+                    onChange={(e) => setAbonoForm({...abonoForm, fecha_abono: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-1">
                   <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Método de Pago</label>
                   <select 
                     className="w-full bg-surface border border-outline-variant/50 rounded-xl p-2.5 text-sm"
@@ -695,6 +791,57 @@ export default function FinanzasPage() {
                     <span className="text-sm font-bold text-orange-500/80">Saldo Pendiente</span>
                     <span className="text-xl font-black text-orange-500">${selectedPresupuesto.saldo_pendiente.toLocaleString()}</span>
                   </div>
+                </div>
+
+                {/* Historial de Abonos */}
+                <div className="space-y-3 pt-2">
+                  <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-1">Historial de Abonos / Pagos</p>
+                  {isLoadingAbonos ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="animate-spin text-primary" size={20} />
+                    </div>
+                  ) : selectedAbonos.length === 0 ? (
+                    <p className="text-xs text-on-surface-variant italic pl-1">No se han registrado abonos para este presupuesto.</p>
+                  ) : (
+                    <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                      {selectedAbonos.map((abono) => (
+                        <div key={abono.id} className="flex justify-between items-center bg-surface p-3 rounded-2xl border border-outline-variant/20">
+                          <div>
+                            <p className="text-xs font-bold capitalize">{abono.metodo_pago.replace('_', ' ')}</p>
+                            <p className="text-[10px] text-on-surface-variant">{new Date(abono.fecha_abono).toLocaleDateString()}</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="font-bold text-green-500">${abono.monto.toLocaleString()}</span>
+                            <div className="flex gap-1">
+                              <a 
+                                href={`/recibo/${abono.id}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="p-1.5 hover:bg-primary/20 text-primary rounded-lg transition-colors"
+                                title="Ver / Imprimir Recibo"
+                              >
+                                <Printer size={14} />
+                              </a>
+                              <button 
+                                onClick={() => handleShareAbono(abono, 'whatsapp')} 
+                                className="p-1.5 hover:bg-emerald-500/20 text-emerald-500 rounded-lg transition-colors"
+                                title="Compartir por WhatsApp"
+                              >
+                                <Share2 size={14} />
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteAbono(abono.id)} 
+                                className="p-1.5 hover:bg-red-500/20 text-red-500 rounded-lg transition-colors"
+                                title="Eliminar Abono"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="p-6 bg-surface-container-highest/30 border-t border-outline-variant/10 flex gap-3">
