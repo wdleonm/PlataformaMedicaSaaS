@@ -63,6 +63,8 @@ class ConfigGlobalRead(BaseModel):
     iva_porcentaje: float
     bcv_modo_automatico: bool
     bcv_ultima_sincronizacion: Optional[datetime]
+    ycloud_whatsapp_number: Optional[str] = None
+    ycloud_usar_plantillas: bool
     updated_at: datetime
 
     class Config:
@@ -77,3 +79,4 @@ class ConfigGlobalUpdate(BaseModel):
     bcv_modo_automatico: Optional[bool] = None
     ycloud_api_key: Optional[str] = None
     ycloud_whatsapp_number: Optional[str] = None
+    ycloud_usar_plantillas: Optional[bool] = None

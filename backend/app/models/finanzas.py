@@ -100,8 +100,11 @@ class PresupuestoDetalle(SQLModel, table=True):
 # 3.4c  Abono
 # ---------------------------------------------------------------------------
 
-METODOS_PAGO = ("efectivo", "transferencia", "tarjeta_debito",
-                "tarjeta_credito", "cheque", "otro")
+METODOS_PAGO = (
+    "efectivo_dolar", "efectivo_bs", "tarjeta_debito", "tarjeta_debito_internacional",
+    "tarjeta_credito", "zelle", "transferencia_nacional", "transferencia_internacional",
+    "criptomonedas", "usdt", "zinli", "wally", "otro"
+)
 
 
 class Abono(SQLModel, table=True):

@@ -207,8 +207,10 @@ async def procesar_cola() -> None:
                 )
             else:
                 # Lógica predeterminada: WhatsApp (YCloud)
-                # Si corresponde a una plantilla registrada de WhatsApp, usar enviar_plantilla
-                if msg.tipo == "recordatorio_cita":
+                # Si corresponde a una plantilla registrada de WhatsApp y está configurado usar plantillas, usar enviar_plantilla
+                usar_plantillas = config.ycloud_usar_plantillas if config else False
+                
+                if msg.tipo == "recordatorio_cita" and usar_plantillas:
                     parametros = [
                         msg.payload.get("paciente_nombre", ""),
                         msg.payload.get("fecha_hora", ""),
@@ -222,7 +224,7 @@ async def procesar_cola() -> None:
                         api_key=ycloud_key,
                         from_number=ycloud_num,
                     )
-                elif msg.tipo == "abono_confirmacion":
+                elif msg.tipo == "abono_confirmacion" and usar_plantillas:
                     # El template espera: {{1}} paciente, {{2}} monto con moneda, {{3}} saldo con moneda, {{4}} fecha, {{5}} url recibo
                     monto_formateado = f"{msg.payload.get('moneda', '')} {msg.payload.get('monto', '')}".strip()
                     saldo_formateado = f"{msg.payload.get('moneda', '')} {msg.payload.get('saldo_pendiente', '')}".strip()

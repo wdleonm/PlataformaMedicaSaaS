@@ -23,6 +23,18 @@
 - [ ] Tablero de Observabilidad y Telemetría
 - [x] Documentación de Despliegue y Mantenimiento (PASOS_ARRANQUE.md y guías listos)
 
+## Registro de Decisiones y Calidad (21/06/2026 — Mensajería YCloud sin Plantillas y Reestructuración de Métodos de Pago)
+1. **Módulos Modificados:**
+   - **Configuración de WhatsApp sin Plantillas (YCloud):**
+     - Base de Datos y Backend: Creado script de migración para agregar `ycloud_usar_plantillas` a `sys_config.configuracion_global`. Modificados modelos y esquemas en backend, y worker (`mensajes_worker.py`) para evitar el uso de plantillas Meta y enviar como texto libre cuando el campo es `False` (por defecto).
+     - Frontend: Añadido checkbox interactivo moderno en `/admin/config` (pestaña Ajustes Plataforma) para habilitar/deshabilitar el uso de plantillas en WhatsApp.
+   - **Reestructuración de Métodos de Pago:**
+     - Base de Datos y Backend: Ejecutada migración para actualizar registros existentes a los nuevos formatos y recreada la restricción `CHECK` en la tabla `abonos` para soportar: `efectivo_dolar`, `efectivo_bs`, `tarjeta_debito`, `tarjeta_debito_internacional`, `tarjeta_credito`, `zelle`, `transferencia_nacional`, `transferencia_internacional`, `criptomonedas`, `usdt`, `zinli`, `wally` y `otro`. Actualizados modelos, esquemas y pruebas unitarias.
+     - Frontend: Actualizado el estado inicial y el listado de opciones del select en el formulario de registro de abono con la nueva lista personalizada.
+2. **Validaciones de Calidad:**
+   - Verificada la compilación completa de TypeScript sin errores en el frontend.
+   - Pruebas unitarias de finanzas, pacientes y odontología pasadas exitosamente (12/12).
+
 ## Registro de Decisiones y Calidad (20/06/2026 — Mejoras en Módulo de Presupuestos y Portal Público / Integración YCloud)
 1. **Módulos Modificados:**
    - **Módulo de Presupuestos (Dashboard):**

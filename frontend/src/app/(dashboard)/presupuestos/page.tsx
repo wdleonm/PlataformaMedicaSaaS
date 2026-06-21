@@ -120,7 +120,7 @@ export default function FinanzasPage() {
   // Formulario Abono
   const [abonoForm, setAbonoForm] = useState({
     monto: 0,
-    metodo_pago: "efectivo",
+    metodo_pago: "efectivo_dolar",
     notas: "",
     fecha_abono: new Date().toISOString().split("T")[0],
   });
@@ -368,7 +368,7 @@ Puede visualizar y descargar su recibo oficial en el siguiente enlace:
     setSelectedPresupuesto(p);
     setAbonoForm({
       monto: p.saldo_pendiente,
-      metodo_pago: "efectivo",
+      metodo_pago: "efectivo_dolar",
       notas: "",
       fecha_abono: new Date().toISOString().split("T")[0],
     });
@@ -764,10 +764,18 @@ Si tiene alguna duda o consulta, quedamos a su entera disposición. ¡Muchas gra
                     value={abonoForm.metodo_pago}
                     onChange={(e) => setAbonoForm({...abonoForm, metodo_pago: e.target.value})}
                   >
-                    <option value="efectivo">Efectivo</option>
-                    <option value="transferencia">Transferencia</option>
+                    <option value="efectivo_dolar">Efectivo Dólar</option>
+                    <option value="efectivo_bs">Efectivo Bs.</option>
                     <option value="tarjeta_debito">Tarjeta Débito</option>
+                    <option value="tarjeta_debito_internacional">Tarjeta Débito Internacional</option>
                     <option value="tarjeta_credito">Tarjeta Crédito</option>
+                    <option value="zelle">Zelle</option>
+                    <option value="transferencia_nacional">Transferencia Nacional</option>
+                    <option value="transferencia_internacional">Transferencia Internacional</option>
+                    <option value="criptomonedas">Criptomonedas</option>
+                    <option value="usdt">USDT</option>
+                    <option value="zinli">Zinli</option>
+                    <option value="wally">Wally</option>
                     <option value="otro">Otro</option>
                   </select>
                 </div>
