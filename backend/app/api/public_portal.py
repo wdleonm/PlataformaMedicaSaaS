@@ -182,6 +182,10 @@ def get_public_budget(presupuesto_id: UUID, session: Session = Depends(get_sessi
     
     paciente = session.get(Paciente, presupuesto.paciente_id)
     especialista = session.get(Especialista, presupuesto.especialista_id)
+    from app.models.finanzas import Abono
+    abonos = session.exec(
+        select(Abono).where(Abono.presupuesto_id == presupuesto.id).order_by(Abono.fecha_abono.desc())
+    ).all()
     detalles = session.exec(
         select(PresupuestoDetalle).where(PresupuestoDetalle.presupuesto_id == presupuesto.id)
     ).all()
@@ -213,5 +217,14 @@ def get_public_budget(presupuesto_id: UUID, session: Session = Depends(get_sessi
                 "precio_unitario": float(d.precio_unitario),
                 "subtotal": float(d.cantidad * d.precio_unitario)
             } for d in detalles
+        ],
+        "abonos": [
+            {
+                "id": a.id,
+                "monto": float(a.monto),
+                "fecha": a.fecha_abono,
+                "metodo_pago": a.metodo_pago,
+                "notas": a.notas
+            } for a in abonos
         ]
     }

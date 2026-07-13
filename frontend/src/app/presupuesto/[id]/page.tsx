@@ -46,6 +46,13 @@ interface BudgetData {
     precio_unitario: number;
     subtotal: number;
   }>;
+  abonos: Array<{
+    id: string;
+    monto: number;
+    fecha: string;
+    metodo_pago: string;
+    notas: string | null;
+  }>;
 }
 
 export default function PublicBudgetPage() {
@@ -210,7 +217,24 @@ export default function PublicBudgetPage() {
 
           {/* Totals */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pt-6 border-t border-slate-100">
-            <div className="flex-1 max-w-sm">
+            <div className="flex-1 max-w-md space-y-6">
+              {data.abonos && data.abonos.length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Historial de Pagos / Abonos</p>
+                  <div className="border border-slate-100 rounded-[24px] overflow-hidden divide-y divide-slate-100 bg-slate-50/50">
+                    {data.abonos.map((abono) => (
+                      <div key={abono.id} className="p-4 flex justify-between items-center text-sm">
+                        <div>
+                          <p className="font-bold text-slate-800 capitalize">{abono.metodo_pago.replace('_', ' ')}</p>
+                          <p className="text-xs text-slate-400">{new Date(abono.fecha).toLocaleDateString()}</p>
+                        </div>
+                        <span className="font-black text-emerald-600">+${abono.monto.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {data.notas && (
                 <div className="space-y-2">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Info size={12} /> Observaciones</p>
@@ -220,17 +244,21 @@ export default function PublicBudgetPage() {
             </div>
             
             <div className="w-full md:w-80 space-y-3">
-              <div className="flex justify-between items-center px-4">
-                <span className="text-slate-500 font-medium">Subtotal</span>
+              <div className="flex justify-between items-center px-4 text-sm">
+                <span className="text-slate-500 font-medium">Total Presupuesto</span>
                 <span className="font-bold text-slate-900">${data.total.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</span>
+              </div>
+              <div className="flex justify-between items-center px-4 text-sm">
+                <span className="text-slate-500 font-medium">Total Abonado</span>
+                <span className="font-bold text-emerald-600">-${(data.total - data.saldo_pendiente).toLocaleString('es-ES', { minimumFractionDigits: 2 })}</span>
               </div>
               <div className="bg-slate-900 rounded-[28px] p-6 text-white shadow-xl shadow-slate-200">
                 <div className="flex justify-between items-center">
                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-violet-400">Inversión Recomendada</span>
-                      <span className="text-sm text-slate-400">Total presupuesto</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-violet-400">Saldo Restante</span>
+                      <span className="text-sm text-slate-400">Pendiente de pago</span>
                    </div>
-                   <span className="text-3xl font-black italic tracking-tighter">${data.total.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</span>
+                   <span className="text-3xl font-black italic tracking-tighter">${data.saldo_pendiente.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</span>
                 </div>
               </div>
             </div>

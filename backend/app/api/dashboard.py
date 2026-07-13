@@ -247,7 +247,8 @@ def get_financial_config(
         "tasa_usd": config.tasa_usd,
         "tasa_eur": config.tasa_eur,
         "ultima_sincronizacion": config.bcv_ultima_sincronizacion,
-        "sincronizacion_retrasada": retrasada
+        "sincronizacion_retrasada": retrasada,
+        "ycloud_configured": bool(config.ycloud_api_key and config.ycloud_whatsapp_number)
     }
 
 @router.get("/bcv-historial")

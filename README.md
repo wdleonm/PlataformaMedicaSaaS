@@ -80,14 +80,26 @@ Control total de presupuestos y abonos con actualización de saldo pendiente aut
 
 ```text
 PlataformaMedicaSaaS/
-├── backend/            # FastAPI Project (Python)
-├── frontend/           # Next.js 14 Application (TypeScript)
-├── docker/             # Docker configuration and orchestration
-├── scripts/            # Database migrations and helper scripts
-├── VITALNEXUS_FUNCIONALIDADES.md  # Documentación detallada de todas las funcionalidades y módulos
-├── VITALNEXUS_NOTEBOOKLM_PACK.md  # Pack para NotebookLM (Personas, FAQ, Guión de demo)
-└── MEJORAS_Y_CORRECCIONES.md      # Change log and milestones
+├── .ai-dlc/            # Archivos de control y estado de la metodología AI-DLC
+├── backend/            # API REST construida con FastAPI (Python)
+├── frontend/           # Aplicación web construida con Next.js 14 (TypeScript)
+├── docker/             # Orquestación y archivos de configuración de Docker
+├── scripts/            # Migraciones de base de datos SQL y herramientas auxiliares
+├── VITALNEXUS_FUNCIONALIDADES.md  # Documentación funcional completa y detalle de módulos
+├── VITALNEXUS_NOTEBOOKLM_PACK.md  # Pack de recursos comerciales y guión de demostración
+└── MEJORAS_Y_CORRECCIONES.md      # Historial de cambios y metas alcanzadas
 ```
+
+---
+
+## 🤖 Metodología de Desarrollo (AI-DLC)
+
+Este proyecto se desarrolla y optimiza bajo el marco metodológico **AI-DLC (Artificial Intelligence Development Life Cycle)**, estructurado de la siguiente forma:
+- **Inception:** Requerimientos validados en `requerimientos/` y diagramas de base de datos.
+- **Construction (Refactoring):** Completada la fusión de la estética *Stitch Clinical Precision* (Modo Claro/Oscuro, Glassmorphism, micro-interacciones avanzadas) directamente a la rama principal `main`.
+- **Operations:** Automatización del despliegue en EasyPanel (VPS) y configuración de observabilidad/telemetría.
+
+El archivo de control de estado local para agentes y desarrolladores se ubica en [`.ai-dlc/aidlc-state.md`](file:///.ai-dlc/aidlc-state.md).
 
 ---
 
@@ -98,4 +110,4 @@ Si buscas información sobre las funcionalidades de la plataforma para presentac
 
 ---
 
-*Desarrollado con enfoque en escalabilidad y seguridad de grado médico.* 🖖
+*Desarrollado con enfoque en escalabilidad, seguridad de grado médico y metodologías ágiles asistidas por IA.* 🏥🖖

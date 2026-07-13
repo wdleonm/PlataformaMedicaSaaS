@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, field_validator
 
-ESTADOS_PRESUPUESTO = ("borrador", "aprobado", "en_pago", "pagado", "cancelado")
-METODOS_PAGO = ("efectivo", "transferencia", "tarjeta_debito",
-                "tarjeta_credito", "cheque", "otro")
+METODOS_PAGO = (
+    "efectivo_dolar", "efectivo_bs", "tarjeta_debito", "tarjeta_debito_internacional",
+    "tarjeta_credito", "zelle", "transferencia_nacional", "transferencia_internacional",
+    "criptomonedas", "usdt", "zinli", "wally", "otro"
+)
 
 
 # ---------------------------------------------------------------------------

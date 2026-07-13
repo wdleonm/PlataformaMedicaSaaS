@@ -46,9 +46,9 @@ async def subir_adjunto(
 
     # Validar tamaño del archivo (máximo 10 MB)
     try:
-        await file.seek(0, os.SEEK_END)
-        file_size = await file.tell()
-        await file.seek(0)
+        file.file.seek(0, os.SEEK_END)
+        file_size = file.file.tell()
+        file.file.seek(0)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

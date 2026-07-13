@@ -64,5 +64,5 @@ Este documento detalla el paso a paso de la refactorización visual del frontend
 - [x] Refactor del Portal Público del Doctor (`/app/p/[slug]/page.tsx`).
 
 ### Fase 10: Auditoría Final
-- [ ] Revisión General (QA) del diseño responsivo en móvil.
-- [ ] Validación estricta del switch "Modo Claro" / "Modo Oscuro" (verificando contrastes en tablas y modales).
+- [x] Revisión General (QA) del diseño responsivo en móvil.
+- [x] Validación estricta del switch "Modo Claro" / "Modo Oscuro" (verificando contrastes en tablas y modales).

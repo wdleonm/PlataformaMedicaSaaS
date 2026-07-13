@@ -1,7 +1,7 @@
 # Estado de la Metodología AI-DLC
 **Proyecto:** VitalNexus (PlataformaMedicaSaaS)
 **Última Actualización:** 13 de Julio de 2026
-**Fase Actual:** Construction / Refactoring (Rama `diseño_stitch`)
+**Fase Actual:** Operations / WhatsApp & YCloud Integration (Rama `main`)
 
 ## Estado de Entregables por Fase
 ### 1. Fase de Inception
@@ -22,6 +22,45 @@
 - [ ] Configuración del Pipeline de CI/CD (Despliegues automáticos con EasyPanel vinculados a Github)
 - [ ] Tablero de Observabilidad y Telemetría
 - [x] Documentación de Despliegue y Mantenimiento (PASOS_ARRANQUE.md y guías listos)
+
+## Registro de Decisiones y Calidad (21/06/2026 — Mensajería YCloud sin Plantillas y Reestructuración de Métodos de Pago)
+1. **Módulos Modificados:**
+   - **Configuración de WhatsApp sin Plantillas (YCloud):**
+     - Base de Datos y Backend: Creado script de migración para agregar `ycloud_usar_plantillas` a `sys_config.configuracion_global`. Modificados modelos y esquemas en backend, y worker (`mensajes_worker.py`) para evitar el uso de plantillas Meta y enviar como texto libre cuando el campo es `False` (por defecto).
+     - Frontend: Añadido checkbox interactivo moderno en `/admin/config` (pestaña Ajustes Plataforma) para habilitar/deshabilitar el uso de plantillas en WhatsApp.
+   - **Reestructuración de Métodos de Pago:**
+     - Base de Datos y Backend: Ejecutada migración para actualizar registros existentes a los nuevos formatos y recreada la restricción `CHECK` en la tabla `abonos` para soportar: `efectivo_dolar`, `efectivo_bs`, `tarjeta_debito`, `tarjeta_debito_internacional`, `tarjeta_credito`, `zelle`, `transferencia_nacional`, `transferencia_internacional`, `criptomonedas`, `usdt`, `zinli`, `wally` y `otro`. Actualizados modelos, esquemas y pruebas unitarias.
+     - Frontend: Actualizado el estado inicial y el listado de opciones del select en el formulario de registro de abono con la nueva lista personalizada.
+2. **Validaciones de Calidad:**
+   - Verificada la compilación completa de TypeScript sin errores en el frontend.
+   - Pruebas unitarias de finanzas, pacientes y odontología pasadas exitosamente (12/12).
+
+## Registro de Decisiones y Calidad (20/06/2026 — Mejoras en Módulo de Presupuestos y Portal Público / Integración YCloud)
+1. **Módulos Modificados:**
+   - **Módulo de Presupuestos (Dashboard):**
+     - Frontend ([page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(dashboard)/presupuestos/page.tsx)): Actualizado el texto base al compartir un presupuesto vía WhatsApp, dotándolo de un tono más profesional. Ahora el mensaje detalla explícitamente el "Estado Actual", "Total del Presupuesto", "Monto Abonado" y "Saldo Pendiente", facilitando una comunicación financiera más clara con el paciente.
+     - **Integración YCloud (Opción A - Texto Libre):** Modificadas las funciones `handleShare` y `handleShareAbono` para que, en caso de estar configurada la pasarela de YCloud, encolen automáticamente los mensajes y enlaces de forma directa en el backend a través de `POST /api/mensajes` en lugar de copiar al portapapeles o redirigir por `wa.me`. Se mantiene `wa.me` como fallback si YCloud no está activo.
+   - **Portal Público de Presupuestos (Visita de Paciente):**
+     - Backend ([public_portal.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/api/public_portal.py)): Modificado el endpoint público para adjuntar el historial de `abonos` correspondientes al presupuesto consultado.
+     - Frontend ([page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/presupuesto/[id]/page.tsx)): Integrada la sección "Historial de Pagos / Abonos" para mostrar los pagos realizados, y rediseñadas las tarjetas de totales para desglosar el total del presupuesto, lo abonado y el saldo restante.
+   - **Correcciones Menores Backend:**
+     - Backend ([citas.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/api/citas.py)): Corregida la lógica en el registro de abonos desde citas, sustituyendo `datetime.now().date()` por `cita.fecha_hora.date()`.
+     - Backend ([dashboard.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/api/dashboard.py)): Modificado el endpoint de configuración global del dashboard para exponer dinámicamente `ycloud_configured` evaluando la existencia de la API Key y número de origen de WhatsApp.
+2. **Validaciones de Calidad y Despliegue:**
+   - **Pruebas de Envío:** Verificadas de forma local mediante un script que dispara el worker. La cola responde y procesa los mensajes de prueba con éxito, derivando el error controlado (HTTP 403) cuando el número origen no está verificado en Meta Business de YCloud.
+3. **Tareas Pendientes Identificadas:**
+   - **Configuración YCloud / Meta Business en Producción:** Se pospone la configuración de la cuenta oficial y vinculación de número en producción por decisión del cliente. El backend y frontend quedan totalmente integrados y con fallback automático a WhatsApp Web (`wa.me`) operativo.
+   - **Video Demostrativo:** Integración del video explicativo pendiente en la Landing Page pública.
+
+
+## Registro de Decisiones y Calidad (19/06/2026 — Fusión de diseño_stitch a main)
+1. **Fusión y Estabilización:**
+   - La rama `diseño_stitch` que contenía el rediseño completo UI/UX de la plataforma con la estética "Clinical Precision" (Glassmorphism, Modo Claro/Oscuro dinámico) fue completamente integrada y probada en la rama principal (`main`).
+   - Se completaron las auditorías finales y la verificación del linter y TypeScript sin errores.
+2. **Tareas Pendientes Identificadas:**
+   - **Mensajería por WhatsApp:** Implementación pendiente de la lógica de envío automático y plantillas en base a YCloud.
+   - **Video Demostrativo:** Integración del video explicativo y funcionamiento de la plataforma en la Landing Page pública.
+   - **Actualización de README.md:** Documentar el estado de desarrollo, metodología y accesos.
 
 ## Registro de Decisiones y Calidad (10/06/2026 — Sesión 3: Bypass CAPTCHA, Registro de Pacientes y Estilos de Botones Admin)
 1. **Módulos Modificados:**

@@ -50,6 +50,7 @@ interface GlobalConfig {
   bcv_ultima_sincronizacion: string | null;
   ycloud_api_key?: string;
   ycloud_whatsapp_number?: string;
+  ycloud_usar_plantillas?: boolean;
 }
 
 export default function AdminConfigPage() {
@@ -555,6 +556,19 @@ export default function AdminConfigPage() {
                     value={config?.ycloud_whatsapp_number || ""}
                     onChange={(e) => setConfig(config ? {...config, ycloud_whatsapp_number: e.target.value} : null)}
                     className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 placeholder:text-slate-600 font-mono transition-all shadow-sm dark:shadow-none" 
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl">
+                  <div className="space-y-0.5">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Usar Plantillas en WhatsApp</label>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 italic">Desactívelo para enviar como mensaje de texto libre sin plantillas de Meta.</p>
+                  </div>
+                  <input 
+                    type="checkbox"
+                    checked={config?.ycloud_usar_plantillas || false}
+                    onChange={(e) => setConfig(config ? {...config, ycloud_usar_plantillas: e.target.checked} : null)}
+                    className="w-5 h-5 accent-violet-600 rounded cursor-pointer"
                   />
                 </div>
               </div>

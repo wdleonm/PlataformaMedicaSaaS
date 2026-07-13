@@ -163,7 +163,7 @@ def update_cita(
                 especialista_id=especialista.id,
                 presupuesto_id=cita.presupuesto_id,
                 monto=cita.monto_cobrado,
-                fecha_abono=datetime.now().date(),
+                fecha_abono=cita.fecha_hora.date(),
                 metodo_pago="efectivo", 
                 cita_id=cita.id,
                 notas=f"Cobro automático cita {cita.fecha_hora.strftime('%d/%m %H:%M')}"

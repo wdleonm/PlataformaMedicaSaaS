@@ -115,7 +115,7 @@ def test_presupuesto_and_abonos_database_triggers(client, specialist_headers, se
     abono_payload1 = {
         "presupuesto_id": pres_id,
         "monto": 20.0,
-        "metodo_pago": "efectivo",
+        "metodo_pago": "efectivo_dolar",
         "notas": "Primer abono"
     }
     abono_res1 = client.post("/api/abonos", json=abono_payload1, headers=specialist_headers)
@@ -132,7 +132,7 @@ def test_presupuesto_and_abonos_database_triggers(client, specialist_headers, se
     abono_payload2 = {
         "presupuesto_id": pres_id,
         "monto": 30.0,
-        "metodo_pago": "transferencia"
+        "metodo_pago": "transferencia_nacional"
     }
     abono_res2 = client.post("/api/abonos", json=abono_payload2, headers=specialist_headers)
     assert abono_res2.status_code == 201
