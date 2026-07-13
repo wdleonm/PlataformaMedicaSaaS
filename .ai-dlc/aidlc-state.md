@@ -2,6 +2,7 @@
 **Proyecto:** VitalNexus (PlataformaMedicaSaaS)
 **Última Actualización:** 13 de Julio de 2026
 **Fase Actual:** Operations / WhatsApp & YCloud Integration (Rama `main`)
+**Convención Git:** Siempre trabajar sobre `main` directamente, salvo indicación explícita del usuario.
 
 ## Estado de Entregables por Fase
 ### 1. Fase de Inception
