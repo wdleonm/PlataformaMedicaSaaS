@@ -41,6 +41,8 @@ class Settings(BaseSettings):
 
     # Cloudflare Turnstile (CAPTCHA en registro público)
     turnstile_secret_key: str = "1x0000000000000000000000000000000AA"  # Clave de prueba local
+    # Poner TURNSTILE_ENABLED=false en el .env del VPS para deshabilitar Cloudflare CAPTCHA
+    turnstile_enabled: bool = True
 
     class Config:
         env_file = ".env"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
@@ -58,6 +58,15 @@ export default function RegisterPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  // Detectar si hay una site key real de Cloudflare configurada
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+  const turnstileEnabledEnv = process.env.NEXT_PUBLIC_TURNSTILE_ENABLED;
+  const isTurnstileEnabled =
+    turnstileEnabledEnv !== "false" &&
+    !!turnstileSiteKey &&
+    turnstileSiteKey !== "1x00000000000000000000AA" &&
+    turnstileSiteKey.length > 10;
 
   // Validación de dominio bloqueado
   const emailDomain = email.includes("@") ? email.split("@")[1]?.toLowerCase() : "";
@@ -430,46 +439,79 @@ export default function RegisterPage() {
                   </span>
                 </label>
 
-                {/* CAPTCHA Turnstile */}
+                {/* CAPTCHA / Verificación de seguridad */}
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Shield size={13} className="text-slate-500" />
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Verificación de seguridad</span>
                   </div>
-                  <div className={`rounded-2xl border overflow-hidden transition-all ${
-                    turnstileToken
-                      ? "border-emerald-500/30 bg-emerald-500/5"
-                      : "border-white/10 bg-white/3"
-                  }`}>
-                    <div className="p-3">
-                      <Turnstile
-                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
-                        onSuccess={(token) => setTurnstileToken(token)}
-                        onError={() => setTurnstileToken(null)}
-                        onExpire={() => setTurnstileToken(null)}
-                        options={{ theme: "dark", language: "es" }}
-                      />
-                    </div>
-                    {turnstileToken && (
-                      <div className="px-3 pb-3 flex items-center gap-2 text-emerald-400">
-                        <CheckCircle2 size={13} />
-                        <span className="text-xs font-bold">Verificación completada</span>
+
+                  {isTurnstileEnabled ? (
+                    /* Modo producción: widget real de Cloudflare Turnstile */
+                    <div className={`rounded-2xl border overflow-hidden transition-all ${
+                      turnstileToken
+                        ? "border-emerald-500/30 bg-emerald-500/5"
+                        : "border-white/10 bg-white/3"
+                    }`}>
+                      <div className="p-3">
+                        <Turnstile
+                          siteKey={turnstileSiteKey}
+                          onSuccess={(token: string) => setTurnstileToken(token)}
+                          onError={() => setTurnstileToken(null)}
+                          onExpire={() => setTurnstileToken(null)}
+                          options={{ theme: "dark", language: "es" }}
+                        />
                       </div>
-                    )}
-                  </div>
-                  {!turnstileToken && (
-                    <div className="flex flex-col gap-1">
-                      <p className="text-xs text-slate-600 pl-1">Completa la verificación para continuar</p>
-                      {(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY === "1x00000000000000000000AA" || !process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) && (
-                        <button
-                          type="button"
-                          onClick={() => setTurnstileToken("mock-token")}
-                          className="text-xs text-left text-primary hover:text-primary/80 hover:underline font-bold pl-1 mt-1 w-fit transition-colors"
-                        >
-                          [Desarrollo] Simular Verificación Exitosa (Bypass)
-                        </button>
+                      {turnstileToken && (
+                        <div className="px-3 pb-3 flex items-center gap-2 text-emerald-400">
+                          <CheckCircle2 size={13} />
+                          <span className="text-xs font-bold">Verificación completada</span>
+                        </div>
                       )}
                     </div>
+                  ) : (
+                    /* Modo local/desarrollo: verificación local sin Cloudflare */
+                    <motion.button
+                      type="button"
+                      onClick={() => setTurnstileToken(turnstileToken ? null : "mock-token")}
+                      whileTap={{ scale: 0.98 }}
+                      className={`w-full flex items-center gap-3 p-4 rounded-2xl border transition-all cursor-pointer ${
+                        turnstileToken
+                          ? "bg-emerald-500/10 border-emerald-500/30"
+                          : "bg-white/3 border-white/10 hover:border-white/20"
+                      }`}
+                    >
+                      {/* Checkbox animado */}
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                        turnstileToken
+                          ? "bg-emerald-500 border-emerald-500"
+                          : "border-slate-600 bg-white/5"
+                      }`}>
+                        {turnstileToken && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                          >
+                            <CheckCircle2 size={12} className="text-white" />
+                          </motion.div>
+                        )}
+                      </div>
+                      <span className={`text-sm font-bold flex-1 text-left transition-colors ${
+                        turnstileToken ? "text-emerald-400" : "text-slate-400"
+                      }`}>
+                        {turnstileToken ? "¡Verificado! No soy un robot" : "No soy un robot"}
+                      </span>
+                      {/* Logo decorativo */}
+                      <div className="flex flex-col items-end opacity-40 shrink-0">
+                        <Shield size={18} className="text-slate-500" />
+                        <span className="text-[9px] text-slate-600 font-bold mt-0.5">VitalNexus</span>
+                      </div>
+                    </motion.button>
+                  )}
+
+                  {!turnstileToken && (
+                    <p className="text-xs text-slate-600 pl-1">Completa la verificación para continuar</p>
                   )}
                 </div>
 

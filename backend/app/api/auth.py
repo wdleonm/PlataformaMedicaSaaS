@@ -68,7 +68,10 @@ def register(
     from app.models.suscripcion import PlanSuscripcion
 
     # --- Verificar CAPTCHA Cloudflare Turnstile ---
-    if settings.turnstile_secret_key == "1x0000000000000000000000000000000AA" and data.turnstile_token == "mock-token":
+    if not settings.turnstile_enabled:
+        # Turnstile deshabilitado por variable de entorno (TURNSTILE_ENABLED=false)
+        cf_data = {"success": True}
+    elif settings.turnstile_secret_key == "1x0000000000000000000000000000000AA" and data.turnstile_token == "mock-token":
         cf_data = {"success": True}
     else:
         try:
