@@ -24,6 +24,19 @@
 - [ ] Tablero de Observabilidad y Telemetría
 - [x] Documentación de Despliegue y Mantenimiento (PASOS_ARRANQUE.md y guías listos)
 
+## Registro de Decisiones y Calidad (13/07/2026 — Corrección y Flexibilización de CAPTCHA Turnstile en Registro Público)
+1. **Módulos Modificados:**
+   - **Backend (Configuración y Validación de CAPTCHA):**
+     - [config.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/config.py): Añadido el flag `turnstile_enabled: bool = True` para controlar la validación del CAPTCHA mediante variables de entorno.
+     - [auth.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/api/auth.py): Modificada la ruta de registro público (`POST /api/auth/register`) para omitir la solicitud externa de verificación a Cloudflare cuando `settings.turnstile_enabled` es `False`, retornando éxito inmediatamente.
+   - **Frontend (Interfaz Dinámica del CAPTCHA):**
+     - [register/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/(auth)/register/page.tsx): Reemplazado el widget de Cloudflare Turnstile por un checkbox interactivo animado ("No soy un robot") cuando no existe una Site Key configurada o cuando `NEXT_PUBLIC_TURNSTILE_ENABLED` está explícitamente en `false`. Esto previene el bloqueo de la UI ante errores de red o configuraciones locales/dev.
+   - **Documentación de Entorno:**
+     - [.env.example](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/.env.example): Actualizado para detallar el uso de `TURNSTILE_ENABLED` y `NEXT_PUBLIC_TURNSTILE_ENABLED` para activar o desactivar la verificación real de Cloudflare.
+2. **Validaciones de Calidad Realizadas:**
+   - **Verificación de Tipos TypeScript:** Corregida la firma en la función callback `onSuccess` de Turnstile para evitar tipos implícitos `any` (`token: string`). Compilación validada mediante `npx tsc --noEmit` de forma exitosa y limpia.
+   - **Configuración de Producción:** Se guiaron los pasos en Cloudflare de producción (`Smartlift1608@gmail.com` -> Widget *VitalNexus Register*) para registrar correctamente el dominio de producción `vitalnexusmed.com` y el subdominio de Easypanel, restaurando el funcionamiento del CAPTCHA real sin errores.
+
 ## Registro de Decisiones y Calidad (21/06/2026 — Mensajería YCloud sin Plantillas y Reestructuración de Métodos de Pago)
 1. **Módulos Modificados:**
    - **Configuración de WhatsApp sin Plantillas (YCloud):**
