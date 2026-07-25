@@ -163,8 +163,18 @@ def register(
 
 @router.get("/especialidades")
 def get_especialidades(session: Session = Depends(get_session)):
-    """Listar especialidades disponibles para el registro público."""
-    statement = select(Especialidad).where(Especialidad.activo == True).order_by(Especialidad.nombre)
+    """Listar especialidades disponibles para el registro público que tengan secciones de historia clínica configuradas."""
+    from app.models.hc_seccion import EspecialidadHCSeccion, HCSeccion
+    
+    statement = (
+        select(Especialidad)
+        .join(EspecialidadHCSeccion, Especialidad.id == EspecialidadHCSeccion.especialidad_id)
+        .join(HCSeccion, EspecialidadHCSeccion.hc_seccion_id == HCSeccion.id)
+        .where(Especialidad.activo == True)
+        .where(HCSeccion.activo == True)
+        .distinct()
+        .order_by(Especialidad.nombre)
+    )
     return session.exec(statement).all()
 
 

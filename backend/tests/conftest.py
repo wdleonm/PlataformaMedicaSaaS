@@ -296,7 +296,7 @@ def test_specialist_fixture(session):
     if not specialist:
         specialist = Especialista(
             id="c0943115-4691-4413-97fa-1efa21723b51",
-            email="test_doc@vitalnexus.com",
+            email="test_doc@example.com",
             password_hash=get_password_hash("password123"),
             nombre="Juan",
             apellido="Perez",

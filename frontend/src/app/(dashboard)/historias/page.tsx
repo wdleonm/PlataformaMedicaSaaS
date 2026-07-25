@@ -85,11 +85,13 @@ interface FormDataHistoria {
   antecedentes_familiares: {
     madre: { viva: boolean; patologias: string[]; especifique?: string };
     padre: { viva: boolean; patologias: string[]; especifique?: string };
+    [key: string]: any;
   };
   antecedentes_personales: {
     patologias: string[];
     especifique: string;
     medicamentos: string;
+    [key: string]: any;
   };
   examen_clinico: {
     encias: string;
@@ -99,6 +101,7 @@ interface FormDataHistoria {
     paladar_blando: string;
     piso_boca: string;
     observaciones: string;
+    [key: string]: any;
   };
   estudios_complementarios: {
     radiografias: string[];
@@ -411,7 +414,523 @@ function ActividadesStep({ formData, setFormData }: { formData: FormDataHistoria
         <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant">Actividades Realizadas / Evolución</label>
         <textarea rows={8} value={formData.actividades_realizadas} placeholder="Describa el procedimiento, tratamientos aplicados o evolución de hoy..."
           onChange={(e) => setFormData({ ...formData, actividades_realizadas: e.target.value })}
+          className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none transition-all resize-none" />
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Nuevos Componentes para Especialidades Médicas (Fase 15) ─────────────────
+
+function ExamenFuncionalStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <div className="space-y-2">
+        <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant">Examen Funcional / Revisión por Sistemas</label>
+        <textarea rows={6} placeholder="Detalles de interrogatorio por aparatos y sistemas (cardiovascular, respiratorio, digestivo...)..."
+          value={formData.examen_clinico.examen_funcional || ""}
+          onChange={(e) => setFormData({ ...formData, examen_clinico: { ...formData.examen_clinico, examen_funcional: e.target.value } })}
           className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none resize-none" />
+      </div>
+    </motion.div>
+  );
+}
+
+function DiagnosticoStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <div className="space-y-2">
+        <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant">Impresión Diagnóstica (CIE-10 / Diagnósticos)</label>
+        <textarea rows={6} placeholder="Ej. E11.9 Diabetes mellitus tipo 2 no insulinodependiente sin complicaciones, I10 Hipertensión esencial..."
+          value={formData.diagnostico}
+          onChange={(e) => setFormData({ ...formData, diagnostico: e.target.value })}
+          className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none resize-none" />
+      </div>
+    </motion.div>
+  );
+}
+
+function AntPerinatalesStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getFamiliarVal = (key: string) => formData.antecedentes_personales.perinatales?.[key] || "";
+  const setFamiliarVal = (key: string, val: any) => {
+    const peri = formData.antecedentes_personales.perinatales || {};
+    setFormData({
+      ...formData,
+      antecedentes_personales: {
+        ...formData.antecedentes_personales,
+        perinatales: { ...peri, [key]: val }
+      }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Antecedentes Perinatales</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Edad Gestacional (Semanas)</label>
+          <input type="text" placeholder="Ej. 38" value={getFamiliarVal("edad_gestacional")}
+            onChange={(e) => setFamiliarVal("edad_gestacional", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Tipo de Parto</label>
+          <select value={getFamiliarVal("tipo_parto")}
+            onChange={(e) => setFamiliarVal("tipo_parto", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]">
+            <option value="">Seleccione...</option>
+            <option value="Natural">Eutócico (Natural)</option>
+            <option value="Cesarea">Cesárea</option>
+            <option value="Instrumental">Instrumental / Fórceps</option>
+          </select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Puntaje APGAR</label>
+          <input type="text" placeholder="Ej. 9/10" value={getFamiliarVal("apgar")}
+            onChange={(e) => setFamiliarVal("apgar", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Peso al Nacer (g)</label>
+          <input type="text" placeholder="Ej. 3200" value={getFamiliarVal("peso_nacer")}
+            onChange={(e) => setFamiliarVal("peso_nacer", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Talla al Nacer (cm)</label>
+          <input type="text" placeholder="Ej. 50" value={getFamiliarVal("talla_nacer")}
+            onChange={(e) => setFamiliarVal("talla_nacer", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <label className="text-xs font-bold uppercase text-on-surface-variant">Complicaciones en el Parto / Embarazo</label>
+        <textarea rows={3} placeholder="Describa si hubo preeclampsia, asfixia, ictericia..." value={getFamiliarVal("complicaciones")}
+          onChange={(e) => setFamiliarVal("complicaciones", e.target.value)}
+          className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+      </div>
+    </motion.div>
+  );
+}
+
+function PsicomotorStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.antecedentes_personales.psicomotor?.[key] || "";
+  const setVal = (key: string, val: any) => {
+    const psi = formData.antecedentes_personales.psicomotor || {};
+    setFormData({
+      ...formData,
+      antecedentes_personales: {
+        ...formData.antecedentes_personales,
+        psicomotor: { ...psi, [key]: val }
+      }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Hitos del Desarrollo Psicomotor</h3>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Desarrollo Motor (Sostén cefálico, gateo, bipedestación...)</label>
+          <input type="text" placeholder="Ej. Sostén cefálico a los 3 meses, gateo a los 8..." value={getVal("hitos_motor")}
+            onChange={(e) => setVal("hitos_motor", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Desarrollo del Lenguaje (Silabeo, primeras palabras...)</label>
+          <input type="text" placeholder="Ej. Primeras palabras a los 12 meses..." value={getVal("hitos_lenguaje")}
+            onChange={(e) => setVal("hitos_lenguaje", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Desarrollo Social / Cognitivo (Sonrisa social, interacción...)</label>
+          <input type="text" placeholder="Ej. Sonrisa social al mes..." value={getVal("hitos_social")}
+            onChange={(e) => setVal("hitos_social", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Observaciones del Desarrollo</label>
+          <textarea rows={3} placeholder="Notas adicionales sobre hitos alcanzados..." value={getVal("observaciones")}
+            onChange={(e) => setVal("observaciones", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function VacunasStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.antecedentes_personales.inmunizaciones?.[key] || "";
+  const setVal = (key: string, val: any) => {
+    const inm = formData.antecedentes_personales.inmunizaciones || {};
+    setFormData({
+      ...formData,
+      antecedentes_personales: {
+        ...formData.antecedentes_personales,
+        inmunizaciones: { ...inm, [key]: val }
+      }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Esquema de Vacunación (PAI)</h3>
+      <div className="space-y-4">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" checked={!!getVal("vacunas_al_dia")}
+            onChange={(e) => setVal("vacunas_al_dia", e.target.checked)}
+            className="w-5 h-5 rounded border-outline-variant/50 focus:ring-primary bg-surface" />
+          <span className="text-sm font-bold text-on-surface">¿Tiene el esquema de vacunas al día para su edad?</span>
+        </label>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Vacunas faltantes o retrasadas</label>
+          <input type="text" placeholder="Ej. Falta dosis de Pentavalente, Rotavirus..." value={getVal("vacunas_faltantes")}
+            onChange={(e) => setVal("vacunas_faltantes", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Notas sobre Inmunizaciones</label>
+          <textarea rows={3} placeholder="Observaciones sobre reacciones o historial..." value={getVal("observaciones")}
+            onChange={(e) => setVal("observaciones", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function AntropometriaStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.examen_clinico[key] || "";
+  const setVal = (key: string, val: any) => {
+    setFormData({
+      ...formData,
+      examen_clinico: { ...formData.examen_clinico, [key]: val }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Antropometría y Signos Vitales</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Peso (kg)</label>
+          <input type="text" placeholder="Ej. 14.5" value={getVal("peso")}
+            onChange={(e) => setVal("peso", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Talla / Estatura (cm)</label>
+          <input type="text" placeholder="Ej. 98" value={getVal("talla")}
+            onChange={(e) => setVal("talla", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Perímetro Cefálico (cm)</label>
+          <input type="text" placeholder="Ej. 48" value={getVal("cc")}
+            onChange={(e) => setVal("cc", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Percentil de Peso (OMS)</label>
+          <input type="text" placeholder="Ej. Percentil 50" value={getVal("percentil_peso")}
+            onChange={(e) => setVal("percentil_peso", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Percentil de Talla (OMS)</label>
+          <input type="text" placeholder="Ej. Percentil 45" value={getVal("percentil_talla")}
+            onChange={(e) => setVal("percentil_talla", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function AntGinecoStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.antecedentes_personales.gineco?.[key] || "";
+  const setVal = (key: string, val: any) => {
+    const gin = formData.antecedentes_personales.gineco || {};
+    setFormData({
+      ...formData,
+      antecedentes_personales: {
+        ...formData.antecedentes_personales,
+        gineco: { ...gin, [key]: val }
+      }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Antecedentes Gineco-Obstétricos</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Menarquia (Edad)</label>
+          <input type="text" placeholder="Ej. 12" value={getVal("menarquia")}
+            onChange={(e) => setVal("menarquia", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Última Regla (FUM)</label>
+          <input type="date" value={getVal("fum")}
+            onChange={(e) => setVal("fum", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none [color-scheme:dark]" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Ciclos Menstruales</label>
+          <input type="text" placeholder="Ej. Regulares de 28 días" value={getVal("ciclos")}
+            onChange={(e) => setVal("ciclos", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Fórmula Obstétrica (G-P-A-C)</label>
+          <input type="text" placeholder="Ej. G2 P1 A0 C1" value={getVal("formula_obstetrica")}
+            onChange={(e) => setVal("formula_obstetrica", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Método Anticonceptivo</label>
+          <input type="text" placeholder="Ej. DIU, ACO..." value={getVal("anticonceptivos")}
+            onChange={(e) => setVal("anticonceptivos", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function ExamenGinecoStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.examen_clinico[key] || "";
+  const setVal = (key: string, val: any) => {
+    setFormData({
+      ...formData,
+      examen_clinico: { ...formData.examen_clinico, [key]: val }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Examen Físico Ginecológico</h3>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Examen de Mamas</label>
+          <textarea rows={2} placeholder="Descripción de cuadrantes, nódulos, simetría..." value={getVal("mamas")}
+            onChange={(e) => setVal("mamas", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Especuloscopia</label>
+          <textarea rows={2} placeholder="Características del cuello uterino, flujo, paredes vaginales..." value={getVal("especuloscopia")}
+            onChange={(e) => setVal("especuloscopia", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Tacto Vaginal</label>
+          <textarea rows={2} placeholder="Movilidad del útero, anexos, dolor a la palpación..." value={getVal("tacto_vaginal")}
+            onChange={(e) => setVal("tacto_vaginal", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function TraumaStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.examen_clinico[key] || "";
+  const setVal = (key: string, val: any) => {
+    setFormData({
+      ...formData,
+      examen_clinico: { ...formData.examen_clinico, [key]: val }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Cinemática y Mecanismo del Trauma</h3>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Mecanismo del Trauma</label>
+          <textarea rows={3} placeholder="Describa detalladamente cómo ocurrió la lesión (ej. caída de altura, colisión vehicular, torsión en fútbol...)..."
+            value={getVal("mecanismo_trauma")}
+            onChange={(e) => setVal("mecanismo_trauma", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase text-on-surface-variant">Intensidad / Energía del Impacto</label>
+            <input type="text" placeholder="Ej. Alta energía, baja energía..." value={getVal("trauma_energia")}
+              onChange={(e) => setVal("trauma_energia", e.target.value)}
+              className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase text-on-surface-variant">Tiempo Transcurrido (Horas/Días)</label>
+            <input type="text" placeholder="Ej. 2 horas, 3 días..." value={getVal("trauma_tiempo")}
+              onChange={(e) => setVal("trauma_tiempo", e.target.value)}
+              className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function OsteomuscularStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.examen_clinico[key] || "";
+  const setVal = (key: string, val: any) => {
+    setFormData({
+      ...formData,
+      examen_clinico: { ...formData.examen_clinico, [key]: val }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Examen Osteomuscular</h3>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Arcos de Movilidad (ROM)</label>
+          <textarea rows={2} placeholder="Ej. Flexo-extensión de rodilla limitada a 90 grados, dolorosa..." value={getVal("rom")}
+            onChange={(e) => setVal("rom", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Fuerza Muscular (Escala de Daniels 0-5)</label>
+          <textarea rows={2} placeholder="Ej. Miembro inferior derecho 4/5 para dorsiflexión..." value={getVal("fuerza_muscular")}
+            onChange={(e) => setVal("fuerza_muscular", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Pruebas Ortopédicas Específicas / Hallazgos</label>
+          <textarea rows={2} placeholder="Ej. Cajón anterior positivo, Lachman positivo, McMurray negativo..." value={getVal("pruebas_ortopedicas")}
+            onChange={(e) => setVal("pruebas_ortopedicas", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function BiograficaStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.antecedentes_personales.biografia?.[key] || "";
+  const setVal = (key: string, val: any) => {
+    const bio = formData.antecedentes_personales.biografia || {};
+    setFormData({
+      ...formData,
+      antecedentes_personales: {
+        ...formData.antecedentes_personales,
+        biografia: { ...bio, [key]: val }
+      }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Historia Biográfica y Familiar</h3>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Genograma / Composición Familiar</label>
+          <textarea rows={2} placeholder="Describa la estructura familiar de convivencia (padres, hermanos, pareja...)..." value={getVal("genograma")}
+            onChange={(e) => setVal("genograma", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Estructura Familiar</label>
+          <input type="text" placeholder="Ej. Nuclear funcional, monoparental conflictiva..." value={getVal("estructura_familiar")}
+            onChange={(e) => setVal("estructura_familiar", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Dinámica Psicosocial / Antecedentes relevantes</label>
+          <textarea rows={3} placeholder="Observaciones de relaciones intrafamiliares, red de apoyo, estrés..." value={getVal("observaciones")}
+            onChange={(e) => setVal("observaciones", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function ExamenMentalStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.examen_clinico[key] || "";
+  const setVal = (key: string, val: any) => {
+    setFormData({
+      ...formData,
+      examen_clinico: { ...formData.examen_clinico, [key]: val }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Examen Mental</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Orientación (Tiempo, espacio, persona)</label>
+          <input type="text" placeholder="Ej. Orientado autopsíquicamente y alopsíquicamente..." value={getVal("orientacion")}
+            onChange={(e) => setVal("orientacion", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Atención y Concentración</label>
+          <input type="text" placeholder="Ej. Normoproxésico, distraible..." value={getVal("atencion")}
+            onChange={(e) => setVal("atencion", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Memoria (Corto / Largo plazo)</label>
+          <input type="text" placeholder="Ej. Conservada, amnesia anterógrada..." value={getVal("memoria")}
+            onChange={(e) => setVal("memoria", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Afecto y Juicio</label>
+          <input type="text" placeholder="Ej. Afecto eutímico, congruente, juicio conservado..." value={getVal("afecto")}
+            onChange={(e) => setVal("afecto", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <label className="text-xs font-bold uppercase text-on-surface-variant">Otras Funciones / Observaciones de Conducta</label>
+        <textarea rows={3} placeholder="Aspecto, lenguaje, sensopercepción, pensamiento..." value={getVal("observaciones")}
+          onChange={(e) => setVal("observaciones", e.target.value)}
+          className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+      </div>
+    </motion.div>
+  );
+}
+
+function PsicometriaStep({ formData, setFormData }: { formData: FormDataHistoria; setFormData: any }) {
+  const getVal = (key: string) => formData.examen_clinico[key] || "";
+  const setVal = (key: string, val: any) => {
+    setFormData({
+      ...formData,
+      examen_clinico: { ...formData.examen_clinico, [key]: val }
+    });
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+      <h3 className="font-bold border-b border-outline-variant/20 pb-2">Pruebas Psicométricas Aplicadas</h3>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Tests Aplicados</label>
+          <input type="text" placeholder="Ej. MMPI-2, HTP, WAIS-IV..." value={getVal("pruebas_aplicadas")}
+            onChange={(e) => setVal("pruebas_aplicadas", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-on-surface-variant">Resultados e Interpretación</label>
+          <textarea rows={4} placeholder="Resultados cuantitativos y cualitativos obtenidos..." value={getVal("resultados_pruebas")}
+            onChange={(e) => setVal("resultados_pruebas", e.target.value)}
+            className="w-full bg-surface border border-outline-variant/50 rounded-2xl p-3 focus:ring-2 focus:ring-primary outline-none resize-none" />
+        </div>
       </div>
     </motion.div>
   );
@@ -592,6 +1111,32 @@ function renderSeccion(
       return <PlanStep formData={formData} setFormData={setFormData} />;
     case "ACTIVIDADES":
       return <ActividadesStep formData={formData} setFormData={setFormData} />;
+    case "EXAMEN_FUNCIONAL":
+      return <ExamenFuncionalStep formData={formData} setFormData={setFormData} />;
+    case "IMPRESION_DIAGNOSTICA":
+      return <DiagnosticoStep formData={formData} setFormData={setFormData} />;
+    case "ANT_PERINATALES":
+      return <AntPerinatalesStep formData={formData} setFormData={setFormData} />;
+    case "DESARROLLO_PSICOMOTOR":
+      return <PsicomotorStep formData={formData} setFormData={setFormData} />;
+    case "INMUNIZACIONES":
+      return <VacunasStep formData={formData} setFormData={setFormData} />;
+    case "ANTROPOMETRIA":
+      return <AntropometriaStep formData={formData} setFormData={setFormData} />;
+    case "ANT_GINECOBSTETRICOS":
+      return <AntGinecoStep formData={formData} setFormData={setFormData} />;
+    case "EXAMEN_GINECOLOGICO":
+      return <ExamenGinecoStep formData={formData} setFormData={setFormData} />;
+    case "MECANISMO_TRAUMA":
+      return <TraumaStep formData={formData} setFormData={setFormData} />;
+    case "EXAMEN_OSTEOMUSCULAR":
+      return <OsteomuscularStep formData={formData} setFormData={setFormData} />;
+    case "HISTORIA_BIOGRAFICA":
+      return <BiograficaStep formData={formData} setFormData={setFormData} />;
+    case "EXAMEN_MENTAL":
+      return <ExamenMentalStep formData={formData} setFormData={setFormData} />;
+    case "PRUEBAS_PSICOMETRICAS":
+      return <PsicometriaStep formData={formData} setFormData={setFormData} />;
     case "ADJUNTOS":
       return <AdjuntosStep historiaId={historiaId} adjuntos={formData.adjuntos} onUpdate={onUpdateAdjuntos} />;
     default:
@@ -663,23 +1208,7 @@ function HistoriasContent() {
 
   // ── Carga de secciones desde la API ──────────────────────────────────────
   const filterSecciones = (seccionesList: any[]) => {
-    const codigo = usuario?.especialidad_principal?.codigo?.toUpperCase() || "";
-    const nombre = usuario?.especialidad_principal?.nombre?.toLowerCase() || "";
-    
-    // Identificar si es una especialidad dental (Odontología General, Cirugía Maxilofacial, Endodoncia, Ortodoncia)
-    const isDental = 
-      codigo.startsWith("ODO_") || 
-      codigo.startsWith("ORT") ||
-      nombre.includes("odontolog") || 
-      nombre.includes("ortodoncia") || 
-      nombre.includes("endodoncia") || 
-      nombre.includes("maxilofacial");
-
-    if (isDental) return seccionesList;
-
-    // Si no es dental, eliminamos EXAMEN_FISICO, ODONTOGRAMA, PLAN por solicitud del usuario
-    const excluded = ["EXAMEN_FISICO", "ODONTOGRAMA", "PLAN"];
-    return seccionesList.filter((s) => !excluded.includes(s.codigo));
+    return seccionesList;
   };
 
   const fetchSecciones = async (especialidadId: string) => {
@@ -1200,6 +1729,19 @@ function HistoriasContent() {
                         case "ODONTOGRAMA": return hasOdontogramaRecords;
                         case "PLAN": return formData.plan_tratamiento?.trim() !== "";
                         case "ACTIVIDADES": return formData.actividades_realizadas?.trim() !== "";
+                        case "EXAMEN_FUNCIONAL": return !!formData.examen_clinico.examen_funcional?.trim();
+                        case "IMPRESION_DIAGNOSTICA": return !!formData.diagnostico?.trim();
+                        case "ANT_PERINATALES": return !!formData.antecedentes_personales.perinatales?.apgar?.trim() || !!formData.antecedentes_personales.perinatales?.edad_gestacional?.trim();
+                        case "DESARROLLO_PSICOMOTOR": return !!formData.antecedentes_personales.psicomotor?.hitos_motor?.trim();
+                        case "INMUNIZACIONES": return !!formData.antecedentes_personales.inmunizaciones?.vacunas_faltantes?.trim() || !!formData.antecedentes_personales.inmunizaciones?.vacunas_al_dia;
+                        case "ANTROPOMETRIA": return !!formData.examen_clinico.peso?.trim() || !!formData.examen_clinico.talla?.trim();
+                        case "ANT_GINECOBSTETRICOS": return !!formData.antecedentes_personales.gineco?.fum?.trim() || !!formData.antecedentes_personales.gineco?.formula_obstetrica?.trim();
+                        case "EXAMEN_GINECOLOGICO": return !!formData.examen_clinico.mamas?.trim() || !!formData.examen_clinico.especuloscopia?.trim();
+                        case "MECANISMO_TRAUMA": return !!formData.examen_clinico.mecanismo_trauma?.trim();
+                        case "EXAMEN_OSTEOMUSCULAR": return !!formData.examen_clinico.rom?.trim() || !!formData.examen_clinico.fuerza_muscular?.trim();
+                        case "HISTORIA_BIOGRAFICA": return !!formData.antecedentes_personales.biografia?.genograma?.trim();
+                        case "EXAMEN_MENTAL": return !!formData.examen_clinico.orientacion?.trim() || !!formData.examen_clinico.atencion?.trim();
+                        case "PRUEBAS_PSICOMETRICAS": return !!formData.examen_clinico.pruebas_aplicadas?.trim();
                         default: return false;
                       }
                     };

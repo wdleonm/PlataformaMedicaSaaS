@@ -4,13 +4,14 @@ from uuid import uuid4
 def test_register_especialista_success(client, session):
     from app.models.especialista import Especialista
     from sqlmodel import select
-    email = f"doc_{uuid4().hex[:6]}@vitalnexus.com"
+    email = f"doc_{uuid4().hex[:6]}@example.com"
     payload = {
         "email": email,
         "password": "password123.",
         "nombre": "Pedro",
         "apellido": "Gomez",
-        "especialidad_ids": []
+        "especialidad_ids": [],
+        "turnstile_token": "mock-token"
     }
     response = client.post("/api/auth/register", json=payload)
     assert response.status_code == 201
@@ -33,7 +34,8 @@ def test_register_especialista_duplicate(client, test_specialist):
         "password": "newpassword123.",
         "nombre": "Pedro",
         "apellido": "Gomez",
-        "especialidad_ids": []
+        "especialidad_ids": [],
+        "turnstile_token": "mock-token"
     }
     response = client.post("/api/auth/register", json=payload)
     assert response.status_code == 400
@@ -144,3 +146,47 @@ def test_forced_password_change_redirection(client, session, test_specialist):
     change_response = client.post("/api/auth/change-password", json=change_payload, headers=headers)
     assert change_response.status_code == 200
     assert change_response.json()["message"] == "Contraseña actualizada exitosamente"
+
+
+def test_get_especialidades_filtered(client, session):
+    from app.models.especialidad import Especialidad
+    from app.models.hc_seccion import HCSeccion, EspecialidadHCSeccion
+    
+    # Create an active specialty without config
+    esp_no_config = Especialidad(nombre="Sin Configurar", codigo="SIN_CONFIG", activo=True)
+    # Create an active specialty with config
+    esp_with_config = Especialidad(nombre="Con Configurar", codigo="CON_CONFIG", activo=True)
+    # Create an inactive specialty with config
+    esp_inactive = Especialidad(nombre="Inactiva", codigo="INACTIVA", activo=False)
+    
+    session.add(esp_no_config)
+    session.add(esp_with_config)
+    session.add(esp_inactive)
+    session.commit()
+    
+    # Create an active section
+    seccion = HCSeccion(nombre="Seccion Test", codigo="SEC_TEST", componente_frontend="test", activo=True)
+    session.add(seccion)
+    session.commit()
+    
+    # Associate active specialty with the active section
+    assoc1 = EspecialidadHCSeccion(especialidad_id=esp_with_config.id, hc_seccion_id=seccion.id, orden=1, obligatoria=True)
+    # Associate inactive specialty with the active section
+    assoc2 = EspecialidadHCSeccion(especialidad_id=esp_inactive.id, hc_seccion_id=seccion.id, orden=1, obligatoria=True)
+    
+    session.add(assoc1)
+    session.add(assoc2)
+    session.commit()
+    
+    # Get request
+    response = client.get("/api/auth/especialidades")
+    assert response.status_code == 200
+    data = response.json()
+    
+    # Extract codes
+    codigos = [x["codigo"] for x in data]
+    
+    # CON_CONFIG should be in it, but SIN_CONFIG and INACTIVA should NOT
+    assert "CON_CONFIG" in codigos
+    assert "SIN_CONFIG" not in codigos
+    assert "INACTIVA" not in codigos

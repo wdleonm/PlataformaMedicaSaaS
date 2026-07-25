@@ -459,7 +459,7 @@ export default function AdminEspecialistasPage() {
               className="relative w-full max-w-2xl bg-white dark:bg-[#130b22] border border-slate-200 dark:border-outline-variant/30 rounded-[40px] shadow-2xl overflow-hidden"
             >
               {/* Header Modal */}
-              <div className="p-8 border-b border-slate-100 dark:border-outline-variant/20 flex justify-between items-center bg-slate-50 dark:bg-surface-container-highest/50">
+              <div className="p-8 border-b border-slate-100 dark:border-outline-variant/20 flex justify-between items-center bg-slate-50 dark:bg-surface-container">
                 <div>
                   <h3 className="text-2xl font-black text-on-surface italic tracking-tight">
                     {isEditing ? `Editar: ${currentEsp.nombre}` : "Registrar Nuevo Especialista"}
@@ -586,7 +586,7 @@ export default function AdminEspecialistasPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                   <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-surface-container-highest/50 rounded-2xl border border-slate-200 dark:border-outline-variant/30">
+                   <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-surface-container rounded-2xl border border-slate-200 dark:border-outline-variant/30">
                     <input 
                       type="checkbox" 
                       id="suscrip_activa"
@@ -598,7 +598,7 @@ export default function AdminEspecialistasPage() {
                       Suscripción Activa
                     </label>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-surface-container-highest/50 rounded-2xl border border-slate-200 dark:border-outline-variant/30">
+                   <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-surface-container rounded-2xl border border-slate-200 dark:border-outline-variant/30">
                     <input 
                       type="checkbox" 
                       id="acc_activo"
@@ -613,7 +613,7 @@ export default function AdminEspecialistasPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                  <div className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-surface-container-highest/50 rounded-[24px] border border-slate-200 dark:border-outline-variant/30">
+                  <div className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-surface-container rounded-[24px] border border-slate-200 dark:border-outline-variant/30">
                     <div className="flex items-center gap-4">
                       <input 
                         type="checkbox" 
