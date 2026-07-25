@@ -24,13 +24,21 @@
 - [ ] Tablero de Observabilidad y Telemetría
 - [x] Documentación de Despliegue y Mantenimiento (PASOS_ARRANQUE.md y guías listos)
 
-## Registro de Decisiones y Calidad (25/07/2026 — Limpieza de Relaciones Obsoletas de Especialidades en Historias Clínicas)
-1. **Módulos Modificados:**
-   - **Base de Datos / Migración de Depuración:**
-     - Creado y ejecutado el script de migración [028_limpiar_especialidades_obsoletas.sql](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/scripts/028_limpiar_especialidades_obsoletas.sql) para depurar las relaciones genéricas u obsoletas heredadas en `sys_config.especialidad_hc_secciones` (ej. `CONSULTA`, `ANTECEDENTES`, `ACTIVIDADES`) en especialidades con flujos dedicados como Medicina General y Psicología.
-     - Estandarizados los números de orden (1..N) de las pestañas dinámicas por especialidad.
-   - **Suite de Pruebas:**
-     - Ejecutada la suite completa con 24/24 pruebas pasando exitosamente en Pytest.
+## Registro de Decisiones y Calidad (25/07/2026 — Despliegue a Producción de Historias Clínicas Multiespecialidad)
+1. **Módulos Modificados & Refactorizaciones:**
+   - **Frontend (`/historias`):**
+     - Verificado e integrado el renderizado dinámico de formularios React en [historias/page.tsx](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/frontend/src/app/%28dashboard%29/historias/page.tsx) para las especialidades sanitarias: Medicina General (`ExamenFuncionalStep`), Pediatría (`AntPerinatalesStep`, `PsicomotorStep`, `VacunasStep`, `AntropometriaStep`), Ginecología (`AntGinecoStep`, `ExamenGinecoStep`), Traumatología (`TraumaStep`, `OsteomuscularStep`), Psicología (`BiograficaStep`, `ExamenMentalStep`, `PsicometriaStep`) y Impresión Diagnóstica (`DiagnosticoStep`).
+     - Reestructurada la persistencia a las columnas JSONB de la base de datos (`antecedentes_personales`, `antecedentes_familiares`, `examen_clinico`, `diagnostico`).
+   - **Backend (`/api/auth/especialidades`):**
+     - Filtrado en [auth.py](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/backend/app/api/auth.py) para que la API de registro público solo exponga especialidades con al menos 1 sección activa de historias clínicas.
+   - **Base de Datos y Scripts de Migración:**
+     - Creado y ejecutado [027_secciones_y_especialidades_medicas.sql](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/scripts/027_secciones_y_especialidades_medicas.sql) para sembrar las 13 secciones clínicas y asociarlas a especialidades.
+     - Creado y ejecutado [028_limpiar_especialidades_obsoletas.sql](file:///c:/xampp/htdocs/github/PlataformaMedicaSaaS/scripts/028_limpiar_especialidades_obsoletas.sql) para remover asignaciones genéricas duplicadas (ej: `CONSULTA`, `ANTECEDENTES`) de especialidades con flujos específicos y estandarizar la secuencia de orden (1..N).
+2. **Validaciones de Calidad y Despliegue:**
+   - **Pruebas de Backend:** Ejecutadas 24/24 pruebas con `pytest` de forma 100% exitosa.
+   - **Compilación Frontend:** Validación estricta de tipos de TypeScript mediante `tsc` sin errores de compilación.
+   - **Sincronización Git:** Conflicto de merge resuelto y cambios enviados a la rama `main` de GitHub mediante `git push origin main`.
+   - **Base de Datos Producción:** Scripts SQL `027` y `028` ejecutados en PostgreSQL del servidor VPS, quedando listo el panel Easypanel para el despliegue automático.
 
 ## Registro de Decisiones y Calidad (25/07/2026 — Filtrado de Especialidades y Registro de Nuevas Secciones Médicas)
 1. **Módulos Modificados:**
