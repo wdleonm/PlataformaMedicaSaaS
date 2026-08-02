@@ -101,16 +101,16 @@ export default function Home() {
                 <X size={20} />
               </button>
 
-              <div className="aspect-video bg-black relative flex items-center justify-center group">
-                <img src="/images/doctor_tablet.png" alt="Demo Preview" className="absolute inset-0 w-full h-full object-cover opacity-35 grayscale" />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent" />
-                
-                <div className="relative z-10 flex flex-col items-center gap-4">
-                  <div className="w-20 h-20 bg-cyan-500/20 hover:bg-cyan-500/40 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer transition-all hover:scale-110 border border-cyan-500/30 group-hover:border-cyan-400/60 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
-                    <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
-                  </div>
-                  <p className="text-white font-semibold text-sm tracking-widest uppercase text-shadow-sm pl-1">Reproducir Video Demo</p>
-                </div>
+              <div className="aspect-video bg-black relative flex items-center justify-center">
+                <video 
+                  src="/videos/DemoVitalNexus.mp4" 
+                  controls 
+                  autoPlay 
+                  playsInline
+                  className="w-full h-full object-contain bg-black"
+                >
+                  Tu navegador no soporta la reproducción de video HTML5.
+                </video>
               </div>
 
               <div className="p-6 md:p-8 bg-gradient-to-br from-zinc-950 to-zinc-900 border-t border-cyan-500/10 flex flex-col md:flex-row items-center justify-between gap-6">
