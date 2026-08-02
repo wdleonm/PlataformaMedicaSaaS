@@ -1,6 +1,6 @@
 # Estado de la Metodología AI-DLC
 **Proyecto:** VitalNexus (PlataformaMedicaSaaS)
-**Última Actualización:** 25 de Julio de 2026
+**Última Actualización:** 02 de Agosto de 2026
 **Fase Actual:** Operations / WhatsApp & YCloud Integration (Rama `main`)
 **Convención Git:** Siempre trabajar sobre `main` directamente, salvo indicación explícita del usuario.
 
@@ -20,9 +20,19 @@
 - [x] Toggle Inline de Visibilidad Pública en Tabla de Servicios + Corrección de Bugs Toast (10/06/2026)
 
 ### 3. Fase de Operations
-- [ ] Configuración del Pipeline de CI/CD (Despliegues automáticos con EasyPanel vinculados a Github)
+- [x] Configuración del Pipeline de CI/CD (Despliegues automáticos con EasyPanel vinculados a Github)
 - [ ] Tablero de Observabilidad y Telemetría
 - [x] Documentación de Despliegue y Mantenimiento (PASOS_ARRANQUE.md y guías listos)
+
+## Registro de Decisiones y Calidad (02/08/2026 — Integración de Video Promocional en Modal de Landing Page)
+1. **Módulos Modificados & Recursos:**
+   - **Multimedia (`/public/videos`):**
+     - Añadido el recurso de video publicitario/demostrativo `DemoVitalNexus.mp4` en `frontend/public/videos/DemoVitalNexus.mp4`.
+   - **Frontend (`/src/app/page.tsx`):**
+     - Reemplazada la maqueta de imagen estática (`doctor_tablet.png`) y el botón simulado por la etiqueta de reproducción HTML5 nativa `<video>` con atributos `controls`, `autoPlay` y `playsInline`.
+2. **Validaciones de Calidad y Despliegue:**
+   - **Compilación TypeScript:** Verificación de tipos mediante `tsc --noEmit` de forma 100% limpia.
+   - **Sincronización Git & CI/CD VPS:** Cambios integrados y subidos exitosamente a la rama `main` de GitHub (`da3ef90`), desencadenando la reconstrucción y despliegue automático del contenedor frontend en EasyPanel (VPS `147.93.184.194`).
 
 ## Registro de Decisiones y Calidad (25/07/2026 — Despliegue a Producción de Historias Clínicas Multiespecialidad)
 1. **Módulos Modificados & Refactorizaciones:**
