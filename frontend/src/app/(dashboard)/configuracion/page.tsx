@@ -97,7 +97,10 @@ export default function ConfiguracionPage() {
       facebook: "",
       whatsapp: "",
       tiktok: ""
-    }
+    },
+    codigo_colegio_medico: usuario?.codigo_colegio_medico || "",
+    codigo_mpps: usuario?.codigo_mpps || "",
+    codigo_regional: usuario?.codigo_regional || ""
   });
 
   const handleSave = async () => {
@@ -226,6 +229,42 @@ export default function ConfiguracionPage() {
                   className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none resize-none"
                 />
                 <p className="text-[10px] text-on-surface-variant italic px-1">Este texto aparecerá en tu perfil público para que los pacientes te conozcan.</p>
+              </div>
+
+              <div className="space-y-4 pt-4 border-t border-outline-variant/10">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Credenciales Médicas</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Colegio Médico</label>
+                    <input 
+                      type="text" 
+                      placeholder="Ej: CM-12345"
+                      value={formData.codigo_colegio_medico}
+                      onChange={(e) => setFormData({...formData, codigo_colegio_medico: e.target.value})}
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">MPPS</label>
+                    <input 
+                      type="text" 
+                      placeholder="Ej: MPPS-9876"
+                      value={formData.codigo_mpps}
+                      onChange={(e) => setFormData({...formData, codigo_mpps: e.target.value})}
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Cod. Regional</label>
+                    <input 
+                      type="text" 
+                      placeholder="Ej: CR-5432"
+                      value={formData.codigo_regional}
+                      onChange={(e) => setFormData({...formData, codigo_regional: e.target.value})}
+                      className="w-full bg-surface-container-highest/50 border border-outline-variant/10 rounded-2xl px-4 py-3 text-sm focus:ring-2 ring-primary/20 transition-all outline-none"
+                    />
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}

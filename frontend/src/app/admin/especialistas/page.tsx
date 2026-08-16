@@ -56,6 +56,9 @@ interface Especialista {
   created_at: string;
   plan?: Plan;
   especialidad_principal_id?: string | null;
+  codigo_colegio_medico?: string | null;
+  codigo_mpps?: string | null;
+  codigo_regional?: string | null;
 }
 
 export default function AdminEspecialistasPage() {
@@ -511,6 +514,43 @@ export default function AdminEspecialistasPage() {
                       onChange={(e) => setCurrentEsp({...currentEsp, email: e.target.value})}
                       className="w-full glass-panel rounded-[2.5rem] border-none p-4 pl-12 text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none disabled:opacity-50"
                     />
+                  </div>
+                </div>
+
+                <div className="space-y-4 p-6 bg-slate-50 dark:bg-slate-900/40 rounded-[32px] border border-slate-200 dark:border-outline-variant/20">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-700 dark:text-violet-400/80 ml-1">Credenciales Médicas</h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Colegio Médico</label>
+                      <input 
+                        type="text" 
+                        placeholder="Ej: CM-12345"
+                        value={currentEsp.codigo_colegio_medico || ""}
+                        onChange={(e) => setCurrentEsp({...currentEsp, codigo_colegio_medico: e.target.value})}
+                        className="w-full glass-panel rounded-2xl border-none p-3 text-sm text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">MPPS</label>
+                      <input 
+                        type="text" 
+                        placeholder="Ej: MPPS-9876"
+                        value={currentEsp.codigo_mpps || ""}
+                        onChange={(e) => setCurrentEsp({...currentEsp, codigo_mpps: e.target.value})}
+                        className="w-full glass-panel rounded-2xl border-none p-3 text-sm text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">Cod. Regional</label>
+                      <input 
+                        type="text" 
+                        placeholder="Ej: CR-5432"
+                        value={currentEsp.codigo_regional || ""}
+                        onChange={(e) => setCurrentEsp({...currentEsp, codigo_regional: e.target.value})}
+                        className="w-full glass-panel rounded-2xl border-none p-3 text-sm text-on-surface focus:ring-2 focus:ring-violet-500/50 outline-none"
+                      />
+                    </div>
                   </div>
                 </div>
 

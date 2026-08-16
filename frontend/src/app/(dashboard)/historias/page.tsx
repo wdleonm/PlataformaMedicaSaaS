@@ -26,9 +26,11 @@ import {
   X,
   Stethoscope,
   Download,
-  ExternalLink
+  ExternalLink,
+  Pill
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import RecipeModal from "@/components/RecipeModal";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { formatLocalDate } from "@/lib/utils";
@@ -1177,6 +1179,10 @@ function HistoriasContent() {
   const [formData, setFormData] = useState<FormDataHistoria>(formDataVacio());
   const [hasOdontogramaRecords, setHasOdontogramaRecords] = useState(false);
 
+  // Estados de Récipes
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [selectedHistoriaForRecipe, setSelectedHistoriaForRecipe] = useState<string | null>(null);
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "ODONTOGRAMA_UPDATED" && pacienteId) {
@@ -1304,21 +1310,30 @@ function HistoriasContent() {
     // Pre-llenar con alertas globales del paciente si existen
     if (paciente) {
       const patologias: string[] = [];
+      const especifiqueExtra: string[] = [];
       
       // 1. Si el paciente tiene alergias registradas, marcamos el botón "Alergias"
       if (paciente.alergias) {
         patologias.push("Alergias");
+        if (paciente.alergias.toLowerCase() !== "alergias (ver antecedentes)") {
+           especifiqueExtra.push(`Alergia: ${paciente.alergias}`);
+        }
       }
       
       // 2. Si tiene patologías crónicas, intentamos mapearlas a los botones disponibles
       if (paciente.patologias_cronicas) {
-        // Personales disponibles (copiamos la lógica para referencia o usamos la constante)
+        // Personales disponibles
         const botonesDisponibles = ["Cardiovasculares", "Enf. Pulmonar", "Sanguíneos", "Hemorrágicos", "Quirúrgicos", "Hospitalización", "Alergias", "Diabetes", "Convulsión", "Enf. Renal", "Asma"];
-        const actualPatologias = paciente.patologias_cronicas.toLowerCase();
+        const patologiasExistentes = paciente.patologias_cronicas.split(/\||,/).map((s: string) => s.trim()).filter(Boolean);
         
-        botonesDisponibles.forEach(btn => {
-          if (actualPatologias.includes(btn.toLowerCase()) && !patologias.includes(btn)) {
-            patologias.push(btn);
+        patologiasExistentes.forEach((pe: string) => {
+          const btnMatch = botonesDisponibles.find(b => b.toLowerCase() === pe.toLowerCase());
+          if (btnMatch) {
+            if (!patologias.includes(btnMatch)) patologias.push(btnMatch);
+          } else {
+            if (!especifiqueExtra.includes(pe) && pe.toLowerCase() !== "otros" && !pe.toLowerCase().includes("alergia")) {
+              especifiqueExtra.push(pe);
+            }
           }
         });
       }
@@ -1326,7 +1341,7 @@ function HistoriasContent() {
       initialData.antecedentes_personales = {
         ...initialData.antecedentes_personales,
         patologias: patologias,
-        especifique: [paciente.alergias, paciente.patologias_cronicas].filter(Boolean).join(" | "),
+        especifique: especifiqueExtra.join(", "),
         medicamentos: paciente.medicacion_frecuente || ""
       };
     }
@@ -1511,10 +1526,16 @@ function HistoriasContent() {
             </p>
           </div>
         </div>
-        <button onClick={handleOpenCreateModal}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 transform transition-all shadow-lg hover:shadow-primary/40 active:scale-95">
-          <Plus size={18} /> Nueva Evolución
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => { setSelectedHistoriaForRecipe(null); setIsRecipeModalOpen(true); }}
+            className="bg-violet-500 hover:bg-violet-600 text-white font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 transform transition-all shadow-lg hover:shadow-violet-500/40 active:scale-95">
+            <Pill size={18} /> Ver Récipes
+          </button>
+          <button onClick={handleOpenCreateModal}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 transform transition-all shadow-lg hover:shadow-primary/40 active:scale-95">
+            <Plus size={18} /> Nueva Evolución
+          </button>
+        </div>
       </div>
 
       {errorMsg && (
@@ -1524,35 +1545,59 @@ function HistoriasContent() {
       )}
 
       {/* Alertas Médicas Banners */}
-      {(historias.length > 0 && (historias[0].antecedentes_personales?.patologias?.length > 0 || historias[0].antecedentes_personales?.especifique || paciente?.alergias || paciente?.medicacion_frecuente)) && (
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap gap-2">
-          {paciente?.alergias && (
-            <div className="px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2">
-              <AlertCircle className="text-red-500 shrink-0" size={16} />
-              <span className="text-xs font-bold text-red-600">Alergias: {paciente.alergias}</span>
-            </div>
-          )}
-          {historias[0].antecedentes_personales?.patologias?.filter((p:string) => p !== "Otros").map((pat: string) => (
-            <div key={pat} className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-2">
-              <Activity className="text-amber-500 shrink-0" size={16} />
-              <span className="text-xs font-bold text-amber-600">{pat}</span>
-            </div>
-          ))}
-          {historias[0].antecedentes_personales?.especifique && (
-            <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-2">
-              <Activity className="text-amber-500 shrink-0" size={16} />
-              <span className="text-xs font-bold text-amber-600">{historias[0].antecedentes_personales.especifique}</span>
-            </div>
-          )}
-          {paciente?.medicacion_frecuente && (
-            <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center gap-2">
-              <Stethoscope className="text-blue-500 shrink-0" size={16} />
-              <span className="text-xs font-bold text-blue-600">Medicación: {paciente.medicacion_frecuente}</span>
-            </div>
-          )}
-        </motion.div>
-      )}
+      {(() => {
+        const allAlergias = new Set<string>();
+        const allPatologias = new Set<string>();
+
+        if (paciente?.alergias && paciente.alergias.toLowerCase() !== "alergias (ver antecedentes)") {
+           allAlergias.add(paciente.alergias);
+        }
+        
+        const patBtns = historias.length > 0 ? (historias[0].antecedentes_personales?.patologias || []) : [];
+        patBtns.filter((p:string) => p !== "Otros" && p !== "Alergias").forEach((p:string) => allPatologias.add(p.trim()));
+
+        const patString1 = historias.length > 0 ? (historias[0].antecedentes_personales?.especifique || "") : "";
+        const patString2 = paciente?.patologias_cronicas || "";
+        
+        [patString1, patString2].forEach(str => {
+          str.split(/\||,/).forEach(item => {
+             const clean = item.trim();
+             if (clean && clean.toLowerCase() !== "otros" && clean.toLowerCase() !== "alergias") {
+                 if (clean.toLowerCase().includes("alergia")) {
+                    const allergyText = clean.replace(/alergia:?/i, "").trim();
+                    if (allergyText && allergyText !== "(ver antecedentes)") allAlergias.add(allergyText);
+                 } else {
+                    allPatologias.add(clean);
+                 }
+             }
+          });
+        });
+
+        if (allAlergias.size === 0 && allPatologias.size === 0 && !paciente?.medicacion_frecuente) return null;
+
+        return (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap gap-2">
+            {Array.from(allAlergias).map((al) => (
+              <div key={al} className="px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2">
+                <AlertCircle className="text-red-500 shrink-0" size={16} />
+                <span className="text-xs font-bold text-red-600">Alergias: {al}</span>
+              </div>
+            ))}
+            {Array.from(allPatologias).map((pat) => (
+              <div key={pat} className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-2">
+                <Activity className="text-amber-500 shrink-0" size={16} />
+                <span className="text-xs font-bold text-amber-600">{pat}</span>
+              </div>
+            ))}
+            {paciente?.medicacion_frecuente && (
+              <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center gap-2">
+                <Stethoscope className="text-blue-500 shrink-0" size={16} />
+                <span className="text-xs font-bold text-blue-600">Medicación: {paciente.medicacion_frecuente}</span>
+              </div>
+            )}
+          </motion.div>
+        );
+      })()}
 
       {/* Timeline */}
       <div className="relative space-y-6">
@@ -1652,6 +1697,11 @@ function HistoriasContent() {
                     )}
                   </div>
                   <div className="p-4 flex md:flex-col justify-center md:justify-start gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity bg-surface-container-highest/5">
+                    <button onClick={() => { setSelectedHistoriaForRecipe(h.id); setIsRecipeModalOpen(true); }}
+                      className="p-3 hover:bg-violet-500/20 text-violet-500 rounded-xl transition-all shadow-sm hover:scale-110"
+                      title="Crear/Ver Récipe para esta evolución">
+                      <Pill size={18} />
+                    </button>
                     <button onClick={() => handleOpenEditModal(h)}
                       className="p-3 hover:bg-primary/20 text-primary rounded-xl transition-all shadow-sm hover:scale-110"
                       title="Ver/Editar Detalle Completo">
@@ -1707,10 +1757,12 @@ function HistoriasContent() {
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => setIsModalOpen(false)}
-                    className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1.5 transition-colors">
-                    <X size={20} />
-                  </button>
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => setIsModalOpen(false)}
+                      className="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-1.5 transition-colors">
+                      <X size={20} />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Tabs de secciones — dinámicos desde API */}
@@ -1781,32 +1833,52 @@ function HistoriasContent() {
                       );
                     });
                   })()}
+                  
+                  {/* Tab Especial para Récipes (Solo en edición) */}
+                  {modalMode === "edit" && selectedHistoriaId && (
+                    <button type="button" onClick={() => setCurrentStepIdx(secciones.length)}
+                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 border ${currentStepIdx === secciones.length ? 'bg-violet-500/20 text-violet-500 border-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.2)] scale-105' : 'bg-surface border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest hover:border-outline-variant/50'}`}>
+                      <Pill size={14} /> Récipes
+                    </button>
+                  )}
                 </div>
 
                 {/* Contenido del paso actual */}
-                <form onSubmit={handleSaveHistoria} className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                  {seccionActual
-                    ? renderSeccion(
-                        seccionActual.codigo, 
-                        formData, 
-                        setFormData, 
-                        pacienteId, 
-                        selectedHistoriaId,
-                        () => {
-                          if (selectedHistoriaId) {
-                            api.get(`/api/adjuntos/historia/${selectedHistoriaId}`).then(res => {
-                              setFormData(prev => ({ ...prev, adjuntos: res.data || [] }));
-                            });
+                {currentStepIdx === secciones.length ? (
+                  <div className="flex-1 overflow-hidden bg-surface-container-lowest">
+                    <RecipeModal 
+                      isOpen={true} 
+                      onClose={() => {}} 
+                      paciente={paciente} 
+                      historiaClinicaId={selectedHistoriaId} 
+                      isTab={true}
+                    />
+                  </div>
+                ) : (
+                  <form onSubmit={handleSaveHistoria} className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                    {seccionActual
+                      ? renderSeccion(
+                          seccionActual.codigo, 
+                          formData, 
+                          setFormData, 
+                          pacienteId, 
+                          selectedHistoriaId,
+                          () => {
+                            if (selectedHistoriaId) {
+                              api.get(`/api/adjuntos/historia/${selectedHistoriaId}`).then(res => {
+                                setFormData(prev => ({ ...prev, adjuntos: res.data || [] }));
+                              });
+                            }
                           }
-                        }
+                        )
+                      : (
+                        <div className="flex items-center justify-center h-48 text-on-surface-variant">
+                          <Loader2 size={32} className="animate-spin" />
+                        </div>
                       )
-                    : (
-                      <div className="flex items-center justify-center h-48 text-on-surface-variant">
-                        <Loader2 size={32} className="animate-spin" />
-                      </div>
-                    )
-                  }
-                </form>
+                    }
+                  </form>
+                )}
 
                 {/* Footer de navegación */}
                 <div className="p-6 border-t border-outline-variant/50 bg-surface-container-highest/30 flex justify-between items-center">
@@ -1825,7 +1897,12 @@ function HistoriasContent() {
                       Cancelar
                     </button>
                     
-                    {currentStepIdx < totalSecciones - 1 ? (
+                    {currentStepIdx === secciones.length ? (
+                      <button type="button" onClick={() => setIsModalOpen(false)}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold px-8 py-3 rounded-2xl flex items-center gap-2 transition-all shadow-xl active:scale-95">
+                        <Save size={18} /> Cerrar y Volver
+                      </button>
+                    ) : currentStepIdx < totalSecciones - 1 ? (
                       <>
                         <button type="button"
                           onClick={(e) => handleSaveHistoria(e, true)}
@@ -1904,6 +1981,16 @@ function HistoriasContent() {
           </div>
         )}
       </AnimatePresence>
+
+      <RecipeModal 
+        isOpen={isRecipeModalOpen} 
+        onClose={() => {
+          setIsRecipeModalOpen(false);
+          setSelectedHistoriaForRecipe(null);
+        }}
+        paciente={paciente}
+        historiaClinicaId={selectedHistoriaForRecipe}
+      />
     </div>
   );
 }

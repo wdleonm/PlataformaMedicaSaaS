@@ -31,6 +31,11 @@ class EspecialistaBase(SQLModel):
     nombre: str = Field(max_length=120)
     apellido: str = Field(max_length=120)
     activo: bool = Field(default=True)
+    
+    # Credenciales médicas
+    codigo_colegio_medico: Optional[str] = Field(default=None, max_length=50)
+    codigo_mpps: Optional[str] = Field(default=None, max_length=50)
+    codigo_regional: Optional[str] = Field(default=None, max_length=50)
 
 
 class Especialista(EspecialistaBase, table=True):

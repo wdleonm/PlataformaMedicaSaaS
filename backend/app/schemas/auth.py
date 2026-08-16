@@ -76,6 +76,11 @@ class EspecialistaRead(BaseModel):
     clinica_logo_url: Optional[str] = None
     clinica_direccion: Optional[str] = None
     especialidades: List[EspecialidadRead] = []
+    portal_visible: bool = False
+    mostrar_precios_portal: bool = False
+    codigo_colegio_medico: Optional[str] = None
+    codigo_mpps: Optional[str] = None
+    codigo_regional: Optional[str] = None
 
 
 class EspecialistaUpdate(BaseModel):
@@ -89,7 +94,11 @@ class EspecialistaUpdate(BaseModel):
     clinica_logo_url: Optional[str] = None
     clinica_direccion: Optional[str] = None
     portal_visible: Optional[bool] = None
+    mostrar_precios_portal: Optional[bool] = None
     slug_url: Optional[str] = None
+    codigo_colegio_medico: Optional[str] = None
+    codigo_mpps: Optional[str] = None
+    codigo_regional: Optional[str] = None
 
 
 class Token(BaseModel):

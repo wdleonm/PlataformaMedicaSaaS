@@ -4,8 +4,9 @@ import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { Plus, Search, User, Phone, Mail, FileText, Calendar, Edit2, UserX, X, Loader2, AlertCircle, RotateCcw } from "lucide-react";
+import { Plus, Search, User, Phone, Mail, FileText, Calendar, Edit2, UserX, X, Loader2, AlertCircle, RotateCcw, Pill } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import RecipeModal from "@/components/RecipeModal";
 
 interface Paciente {
   id: string;
@@ -37,10 +38,13 @@ export default function PacientesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Estado para Múltiples Acciones (Crear/Editar)
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"personal" | "emergencia" | "alertas">("personal");
+
+  // Estado para Récipes
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [selectedPacienteForRecipe, setSelectedPacienteForRecipe] = useState<Paciente | null>(null);
 
   // Estado para el formulario
   const [formData, setFormData] = useState({
@@ -397,6 +401,16 @@ export default function PacientesPage() {
                           <Edit2 size={16} />
                         </button>
                         <button
+                          onClick={() => {
+                            setSelectedPacienteForRecipe(paciente);
+                            setIsRecipeModalOpen(true);
+                          }}
+                          className="p-2 hover:bg-violet-500/10 text-violet-500 rounded-lg transition-colors"
+                          title="Gestionar Récipes"
+                        >
+                          <Pill size={16} />
+                        </button>
+                        <button
                           onClick={() => handleOpenDeleteModal(paciente)}
                           className="p-2 hover:bg-error/10 text-error rounded-lg transition-colors"
                           title="Desactivar paciente"
@@ -634,6 +648,15 @@ export default function PacientesPage() {
           </div>
         )}
       </AnimatePresence>
+
+      <RecipeModal 
+        isOpen={isRecipeModalOpen} 
+        onClose={() => {
+          setIsRecipeModalOpen(false);
+          setSelectedPacienteForRecipe(null);
+        }}
+        paciente={selectedPacienteForRecipe}
+      />
     </div>
   );
 }

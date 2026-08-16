@@ -32,6 +32,9 @@ type UsoUsuario = {
   exigir_cambio_password: boolean;
   intervalo_cambio_password: number | null;
   forzar_cambio_password_proximo_acceso: boolean;
+  codigo_colegio_medico: string | null;
+  codigo_mpps: string | null;
+  codigo_regional: string | null;
 };
 
 type AuthContextType = {
@@ -102,6 +105,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         exigir_cambio_password: data.exigir_cambio_password ?? false,
         intervalo_cambio_password: data.intervalo_cambio_password ?? 90,
         forzar_cambio_password_proximo_acceso: data.forzar_cambio_password_proximo_acceso ?? false,
+        codigo_colegio_medico: data.codigo_colegio_medico ?? null,
+        codigo_mpps: data.codigo_mpps ?? null,
+        codigo_regional: data.codigo_regional ?? null,
       });
 
       return data; // Retornamos los datos para usarlos en el login si es necesario
