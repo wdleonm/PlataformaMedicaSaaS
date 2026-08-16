@@ -24,6 +24,22 @@
 - [ ] Tablero de Observabilidad y Telemetría
 - [x] Documentación de Despliegue y Mantenimiento (PASOS_ARRANQUE.md y guías listos)
 
+## Registro de Decisiones y Calidad (16/08/2026 — Módulo de Récipes Médicos, Credenciales y Optimización de Historias Clínicas)
+1. **Módulos Modificados & Recursos:**
+   - **Módulo de Récipes (Backend/DB):**
+     - Creada la tabla `sys_clinical.recipes` y sus políticas RLS mediante `030_recipes_medicos.sql` y `fix_recipes_rls.sql`.
+     - Añadidos endpoints CRUD (POST, GET, PATCH, DELETE) para récipes y verificación pública de QR en `/api/recipes`.
+   - **Perfil del Especialista:**
+     - Añadidos campos `codigo_colegio_medico`, `codigo_mpps`, `codigo_regional` y `mostrar_precios_portal` a través de `029_add_medical_credentials.sql` e integrados al modelo de datos.
+   - **Interfaz de Récipes y Vista de Impresión (Frontend):**
+     - Desarrollado el componente interactivo `RecipeModal.tsx` con soporte para creación, previsualización, edición y listado de récipes, permitiendo filtrar por consulta o historial general.
+     - Implementada técnica de impresión aislada mediante un `iframe` oculto en formato "Media Carta Horizontal" (`size: 8.5in 5.5in landscape`), inyectando el QR dinámico (vía `qrcode.react`) y configurando el título del documento temporalmente para un guardado óptimo del PDF nativo.
+   - **Optimización de Alertas Médicas (Historias Clínicas):**
+     - Implementado un algoritmo de deduplicación en la cabecera de historia clínica (`historias/page.tsx`) para aislar y limpiar patologías/alergias, corrigiendo de raíz un efecto "bola de nieve" de duplicación de cadenas al redactar nuevas evoluciones.
+2. **Validaciones de Calidad y Despliegue:**
+   - **Control de Versiones & CI/CD:** Cambios integrados a `main` vía Git, permitiendo el redespliegue directo de contenedores en EasyPanel.
+   - **Seguridad y Acceso:** Revisión manual de políticas RLS confirmada y controlada; endpoints REST blindados contra inyecciones y validados por el esquema Pydantic actualizado.
+
 ## Registro de Decisiones y Calidad (02/08/2026 — Integración de Video Promocional en Modal de Landing Page)
 1. **Módulos Modificados & Recursos:**
    - **Multimedia (`/public/videos`):**
