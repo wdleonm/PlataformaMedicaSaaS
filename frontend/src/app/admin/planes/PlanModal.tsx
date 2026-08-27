@@ -112,7 +112,7 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           className="relative w-full max-w-2xl bg-white dark:bg-background border border-slate-200 dark:border-outline-variant/30 rounded-3xl shadow-2xl overflow-hidden"
         >
-          <div className="px-6 py-5 border-b border-slate-100 dark:border-outline-variant/20 flex items-center justify-between bg-slate-50 dark:bg-surface-container-highest/50">
+          <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700/50 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
             <h2 className="text-xl font-black text-on-surface flex items-center gap-2">
               <Shield className="text-violet-500" />
               {plan ? "Editar Plan de Suscripción" : "Crear Nuevo Plan"}
@@ -319,20 +319,12 @@ export default function PlanModal({ isOpen, onClose, plan, onSuccess }: PlanModa
             </form>
           </div>
 
-          <div className="p-6 border-t border-slate-100 dark:border-outline-variant/20 bg-slate-50 dark:bg-surface-container-highest/50 flex gap-4 justify-end">
+          <div className="p-6 border-t border-slate-100 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/50 flex gap-4 justify-end">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
               className="px-6 py-3 font-bold text-on-surface-variant hover:text-on-surface transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              form="planForm"
-              disabled={isSubmitting}
-              className="px-6 py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-violet-900/20 active:scale-95 disabled:opacity-50 disabled:active:scale-100"
             >
               Cancelar
             </button>
