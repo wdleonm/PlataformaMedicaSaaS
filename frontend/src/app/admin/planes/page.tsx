@@ -121,12 +121,6 @@ export default function AdminPlanesPage() {
                 </span>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.incluye_whatsapp ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600"}`}>
-                  {plan.incluye_whatsapp ? <Check size={12} strokeWidth={4} /> : <X size={12} />}
-                </div>
-                <span className={`${plan.incluye_whatsapp ? "text-on-surface" : "text-slate-400 dark:text-slate-600"} font-medium`}>Alertas WhatsApp</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.incluye_multiusuario ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600"}`}>
                   {plan.incluye_multiusuario ? <Check size={12} strokeWidth={4} /> : <X size={12} />}
                 </div>
@@ -137,6 +131,12 @@ export default function AdminPlanesPage() {
                   {plan.soporte_prioritario ? <Check size={12} strokeWidth={4} /> : <X size={12} />}
                 </div>
                 <span className={`${plan.soporte_prioritario ? "text-amber-700 dark:text-amber-500" : "text-slate-400 dark:text-slate-600"} font-medium`}>Soporte Prioritario 24/7</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.incluye_whatsapp ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600"}`}>
+                  {plan.incluye_whatsapp ? <Check size={12} strokeWidth={4} /> : <X size={12} />}
+                </div>
+                <span className={`${plan.incluye_whatsapp ? "text-on-surface" : "text-slate-400 dark:text-slate-600"} font-medium`}>Alertas WhatsApp</span>
               </div>
             </div>
 
