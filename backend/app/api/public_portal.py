@@ -228,3 +228,24 @@ def get_public_budget(presupuesto_id: UUID, session: Session = Depends(get_sessi
             } for a in abonos
         ]
     }
+
+@router.get("/system-status")
+def get_system_status(session: Session = Depends(get_session)):
+    """
+    Obtiene el estado global del sistema (alertas de mantenimiento y versión requerida).
+    """
+    from app.models.config_global import ConfiguracionGlobal
+    config = session.exec(select(ConfiguracionGlobal)).first()
+    
+    if not config:
+        return {
+            "alerta_mantenimiento_activa": False,
+            "alerta_mantenimiento_mensaje": "",
+            "version_minima_app": "1.0.0"
+        }
+        
+    return {
+        "alerta_mantenimiento_activa": config.alerta_mantenimiento_activa,
+        "alerta_mantenimiento_mensaje": config.alerta_mantenimiento_mensaje,
+        "version_minima_app": config.version_minima_app
+    }

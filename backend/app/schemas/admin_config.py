@@ -65,6 +65,9 @@ class ConfigGlobalRead(BaseModel):
     bcv_ultima_sincronizacion: Optional[datetime]
     ycloud_whatsapp_number: Optional[str] = None
     ycloud_usar_plantillas: bool
+    alerta_mantenimiento_activa: bool
+    alerta_mantenimiento_mensaje: str
+    version_minima_app: str
     updated_at: datetime
 
     class Config:
@@ -80,3 +83,6 @@ class ConfigGlobalUpdate(BaseModel):
     ycloud_api_key: Optional[str] = None
     ycloud_whatsapp_number: Optional[str] = None
     ycloud_usar_plantillas: Optional[bool] = None
+    alerta_mantenimiento_activa: Optional[bool] = None
+    alerta_mantenimiento_mensaje: Optional[str] = None
+    version_minima_app: Optional[str] = None

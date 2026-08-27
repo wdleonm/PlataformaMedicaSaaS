@@ -51,6 +51,9 @@ interface GlobalConfig {
   ycloud_api_key?: string;
   ycloud_whatsapp_number?: string;
   ycloud_usar_plantillas?: boolean;
+  alerta_mantenimiento_activa?: boolean;
+  alerta_mantenimiento_mensaje?: string;
+  version_minima_app?: string;
 }
 
 export default function AdminConfigPage() {
@@ -570,6 +573,57 @@ export default function AdminConfigPage() {
                     onChange={(e) => setConfig(config ? {...config, ycloud_usar_plantillas: e.target.checked} : null)}
                     className="w-5 h-5 accent-violet-600 rounded cursor-pointer"
                   />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8 bg-white dark:bg-[#0b1c30]/50 border border-slate-200 dark:border-outline-variant/20 rounded-[2rem] shadow-sm dark:shadow-2xl space-y-8 relative overflow-hidden group hover:border-amber-500/20 transition-all duration-500">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-600/5 rounded-full blur-[80px] group-hover:bg-amber-600/10 transition-colors pointer-events-none" />
+              
+              <div className="flex items-center gap-3 relative z-10">
+                <div className="p-3 bg-amber-600/10 rounded-2xl border border-amber-500/20">
+                  <ShieldCheck className="text-amber-500" size={24} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-on-surface italic">Alertas y Actualizaciones (Mantenimiento)</h2>
+                  <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">Control del acceso de usuarios a la plataforma</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 relative z-10">
+                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl">
+                  <div className="space-y-0.5">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Activar Alerta de Mantenimiento</label>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 italic">Muestra un banner global a todos los usuarios conectados.</p>
+                  </div>
+                  <input 
+                    type="checkbox"
+                    checked={config?.alerta_mantenimiento_activa || false}
+                    onChange={(e) => setConfig(config ? {...config, alerta_mantenimiento_activa: e.target.checked} : null)}
+                    className="w-5 h-5 accent-amber-600 rounded cursor-pointer"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-1">Mensaje de Mantenimiento</label>
+                  <textarea 
+                    placeholder="Ej: El sistema estará en mantenimiento desde las 10:00 PM..."
+                    value={config?.alerta_mantenimiento_mensaje || ""}
+                    onChange={(e) => setConfig(config ? {...config, alerta_mantenimiento_mensaje: e.target.value} : null)}
+                    className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 placeholder:text-slate-600 transition-all shadow-sm dark:shadow-none min-h-[100px] resize-y" 
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-1">Versión Mínima de la App</label>
+                  <input 
+                    type="text"
+                    placeholder="Ej: 1.0.0"
+                    value={config?.version_minima_app || ""}
+                    onChange={(e) => setConfig(config ? {...config, version_minima_app: e.target.value} : null)}
+                    className="w-full bg-white dark:bg-surface-container-highest/50 border border-slate-200 dark:border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 placeholder:text-slate-600 font-mono tracking-widest transition-all shadow-sm dark:shadow-none" 
+                  />
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 italic px-1 mt-1">Si configuras un número mayor a la versión actual de la app cliente, el sistema los bloqueará para obligar a recargar la página.</p>
                 </div>
               </div>
             </div>

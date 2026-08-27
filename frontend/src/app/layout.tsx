@@ -4,6 +4,7 @@ import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
 import { Toaster } from 'react-hot-toast';
+import SystemAlertManager from '@/components/SystemAlertManager';
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -32,6 +33,7 @@ export default function RootLayout({
         <AdminAuthProvider>
           <AuthProvider>
             <Toaster position="bottom-right" toastOptions={{ style: { background: '#1E293B', color: '#fff', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' } }} />
+            <SystemAlertManager />
             {children}
           </AuthProvider>
         </AdminAuthProvider>

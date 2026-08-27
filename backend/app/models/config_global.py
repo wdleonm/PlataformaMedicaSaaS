@@ -26,6 +26,10 @@ class ConfiguracionGlobal(SQLModel, table=True):
     ycloud_whatsapp_number: Optional[str] = Field(default=None)
     ycloud_usar_plantillas: bool = Field(default=False)
     
+    alerta_mantenimiento_activa: bool = Field(default=False)
+    alerta_mantenimiento_mensaje: str = Field(default="")
+    version_minima_app: str = Field(default="1.0.0")
+    
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
